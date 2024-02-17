@@ -10,7 +10,7 @@ if(CLANG_TIDY AND ENABLE_CLANG_TIDY AND NOT GCC) # GCC doesn't support clang-tid
 
     add_custom_target(
         run_clang_tidy
-        COMMAND ${CLANG_TIDY} ${CMAKE_SOURCE_DIR}/src/* ${CMAKE_SOURCE_DIR}/demos/* -p ${CMAKE_BINARY_DIR}/compile_commands.json
+        COMMAND ${CLANG_TIDY} ${CMAKE_SOURCE_DIR}/src/* -p ${CMAKE_BINARY_DIR}/compile_commands.json
         COMMENT "running clang-tidy static analysis"
     )
 
@@ -22,7 +22,6 @@ find_program(CPPCHECK NAMES "cppcheck")
 if(CPPCHECK AND ENABLE_CPPCHECK)
     set(CPPCHECK_SOURCES
         ${CMAKE_SOURCE_DIR}/src
-        ${CMAKE_SOURCE_DIR}/demos
     )
 
     set(CPPCHECK_OPTIONS

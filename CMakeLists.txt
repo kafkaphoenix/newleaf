@@ -25,8 +25,6 @@ message(VERBOSE "*")
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/demos/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/demos/*.cpp"
 )
 
 add_subdirectory(vendor)
@@ -45,7 +43,6 @@ add_executable(
     ${SOURCE_FILES}
 )
 target_include_directories(${PROJECT_NAME} PRIVATE src)
-target_include_directories(${PROJECT_NAME} PRIVATE demos)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h)
 
@@ -62,5 +59,4 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE "RMLUI_STATIC_LIB")
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw glm glad imgui EnTT nlohmann_json::nlohmann_json assimp ${ASSIMP_LIBRARIES} spdlog RmlCore freetype ${CMAKE_DL_LIBS})
 
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/warnings.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/copy_assets.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/static_analysis.cmake)
