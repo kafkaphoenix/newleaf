@@ -6,7 +6,6 @@
 #include <spdlog/spdlog.h>
 #pragma warning(pop)
 
-#include <memory>
 #include <shared_mutex> // read-write lock (many readers allowed, but writing must be exclusive)
 #include <string>
 #include <vector>

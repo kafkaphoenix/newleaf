@@ -1,5 +1,11 @@
 #include "imgui/imguiLogSink.h"
 
+#include <string_view>
+#include <chrono>
+#include <format>
+#include <mutex>
+#include <memory>
+
 extern template class spdlog::sinks::base_sink<std::mutex>;
 namespace potatoengine {
 void ImGuiLogSink::Clear() {

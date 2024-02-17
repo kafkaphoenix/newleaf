@@ -1,5 +1,13 @@
 #include "core/backtraceLogSink.h"
 
+#include <string_view>
+#include <chrono>
+#include <filesystem>
+#include <format>
+#include <iosfwd>
+#include <mutex>
+#include <memory>
+
 extern template class spdlog::sinks::base_sink<std::mutex>;
 namespace potatoengine {
 

@@ -115,27 +115,3 @@ if(NOT spdlog_POPULATED)
   set(SPDLOG_USE_STD_FORMAT ON CACHE INTERNAL "" FORCE)
   add_subdirectory(${spdlog_SOURCE_DIR} ${spdlog_BINARY_DIR})
 endif()
-
-FetchContent_Declare(
-  freetype
-  GIT_REPOSITORY https://github.com/freetype/freetype.git
-  GIT_TAG VER-2-13-2
-)
-
-FetchContent_MakeAvailable(freetype)
-
-# Set Freetype variables so rmlui can find it
-set(FREETYPE_INCLUDE_DIRS ${freetype_SOURCE_DIR}/include)
-set(FREETYPE_LIBRARY freetype)
-
-FetchContent_Declare(
-  rmlui
-  GIT_REPOSITORY https://github.com/mikke89/rmlui.git
-  GIT_TAG 5.1
-)
-
-FetchContent_GetProperties(rmlui)
-if(NOT rmlui_POPULATED)
-  FetchContent_Populate(rmlui)
-  add_subdirectory(${rmlui_SOURCE_DIR} ${rmlui_BINARY_DIR})
-endif()

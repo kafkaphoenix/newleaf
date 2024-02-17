@@ -1,6 +1,5 @@
 #include "scene/sceneFactory.h"
 
-#include <glm/gtx/string_cast.hpp>
 #include <nlohmann/json.hpp>
 
 #include "assets/model.h"
@@ -8,29 +7,10 @@
 #include "assets/scene.h"
 #include "assets/shader.h"
 #include "assets/texture.h"
-#include "scene/components/camera/cActiveCamera.h"
-#include "scene/components/camera/cCamera.h"
-#include "scene/components/camera/cDistanceFromCamera.h"
-#include "scene/components/camera/serializer.h"
 #include "scene/components/core/cDeleted.h"
 #include "scene/components/core/cName.h"
 #include "scene/components/core/cTag.h"
-#include "scene/components/core/cTime.h"
 #include "scene/components/core/cUUID.h"
-#include "scene/components/graphics/cBody.h"
-#include "scene/components/graphics/cFBO.h"
-#include "scene/components/graphics/cShaderProgram.h"
-#include "scene/components/graphics/cShape.h"
-#include "scene/components/graphics/cTexture.h"
-#include "scene/components/graphics/cTextureAtlas.h"
-#include "scene/components/input/cActiveInput.h"
-#include "scene/components/input/cInput.h"
-#include "scene/components/physics/cRigidBody.h"
-#include "scene/components/physics/cTransform.h"
-#include "scene/components/terrain/cChunkManager.h"
-#include "scene/components/utils/cNoise.h"
-#include "scene/components/world/cLight.h"
-#include "scene/components/world/cSkybox.h"
 #include "utils/timer.h"
 #include "utils/uuid.h"
 
@@ -88,7 +68,8 @@ entt::entity SceneFactory::cloneEntity(const entt::entity& e, uint32_t uuid,
 void SceneFactory::createScene(
   std::string scene_id, std::string scene_path,
   const std::unique_ptr<assets::AssetsManager>& assets_manager,
-  const std::unique_ptr<RenderManager>& render_manager, entt::registry& registry) {
+  const std::unique_ptr<RenderManager>& render_manager,
+  entt::registry& registry) {
   Timer timer;
   ENGINE_INFO("Creating scene...");
 
@@ -118,8 +99,8 @@ void SceneFactory::createScene(
 
 void SceneFactory::reloadScene(
   const std::unique_ptr<assets::AssetsManager>& assets_manager,
-  const std::unique_ptr<RenderManager>& render_manager, entt::registry& registry,
-  bool reload_prototypes) {
+  const std::unique_ptr<RenderManager>& render_manager,
+  entt::registry& registry, bool reload_prototypes) {
   Timer timer;
   ENGINE_ASSERT(not m_active_scene.empty(), "No scene is active!");
   ENGINE_INFO("Reloading scene {}", m_active_scene);
@@ -139,8 +120,6 @@ void SceneFactory::reloadScene(
     auto to_destroy = registry.view<CUUID>();
     registry.destroy(to_destroy.begin(), to_destroy.end());
   }
-  ENGINE_TRACE("Reloading scene entities...");
-  createSceneEntities(*scene, assets_manager, render_manager, registry);
 
   ENGINE_INFO("Scene {} reloading TIME: {:.6f}s", m_active_scene,
               timer.getSeconds());
@@ -149,8 +128,9 @@ void SceneFactory::reloadScene(
   m_dirtyNamedEntities = true;
 }
 
-void SceneFactory::clearScene(const std::unique_ptr<RenderManager>& render_manager,
-                              entt::registry& registry) {
+void SceneFactory::clearScene(
+  const std::unique_ptr<RenderManager>& render_manager,
+  entt::registry& registry) {
   ENGINE_ASSERT(not m_active_scene.empty(), "No scene is active!");
   ENGINE_WARN("Clearing scene {}", m_active_scene);
 
@@ -173,7 +153,8 @@ void SceneFactory::createShaderPrograms(
     for (const auto& [shader_type, filepath] : shader_program_data.items()) {
       assets_manager->load<assets::Shader>(shader_type, filepath);
     } // TODO maybe remove shader as asset?
-    render_manager->addShaderProgram(std::string(shader_program), assets_manager);
+    render_manager->addShaderProgram(std::string(shader_program),
+                                     assets_manager);
   }
 }
 
@@ -200,24 +181,11 @@ void SceneFactory::createModels(
   }
 }
 
-void SceneFactory::createSceneEntities(
-  const assets::Scene& scene,
-  const std::unique_ptr<assets::AssetsManager>& assets_manager,
-  const std::unique_ptr<RenderManager>& render_manager, entt::registry& registry) {
-
-  createNormalEntities(scene, assets_manager, registry);
-  createLightEntities(scene, assets_manager, registry);
-  createCameraEntities(scene, assets_manager, registry);
-  createSystemEntities(scene, registry);
-  createFBOEntities(scene, registry, render_manager);
-
-  render_manager->reorder();
-}
-
 void SceneFactory::createEntitiesFromPrefabs(
   const assets::Scene& scene,
   const std::unique_ptr<assets::AssetsManager>& assets_manager,
-  const std::unique_ptr<RenderManager>& render_manager, entt::registry& registry) {
+  const std::unique_ptr<RenderManager>& render_manager,
+  entt::registry& registry) {
   for (const auto& [prefab_name, options] : scene.getPrefabs()) {
     auto prefab = assets::Prefab(
       options.at("filepath").get<std::string>(),
@@ -229,456 +197,12 @@ void SceneFactory::createEntitiesFromPrefabs(
     m_entityFactory.createPrototypes(prefab_name, targetedPrototypes, registry,
                                      assets_manager);
   }
-  ENGINE_TRACE("Creating scene entities...");
-  createSceneEntities(scene, assets_manager, render_manager, registry);
 }
 
 void SceneFactory::createChildrenScenes(
   const assets::Scene& scene,
   const std::unique_ptr<assets::AssetsManager>& assets_manager) {
   // TODO: implement
-}
-
-void SceneFactory::createNormalEntities(
-  const assets::Scene& scene,
-  const std::unique_ptr<assets::AssetsManager>& assets_manager,
-  entt::registry& registry) {
-  ENGINE_TRACE("Creating scene normal entities...");
-  for (const auto& [name, data] : scene.getNormalEntities()) {
-    std::string prototype = data.at("prototype").get<std::string>();
-    entt::entity e =
-      createEntity(data.at("prefab").get<std::string>(), std::string(prototype),
-                   registry, std::string(name));
-    if (data.contains("options")) {
-      json options = data.at("options");
-      if (options.contains("isKinematic")) {
-        registry.get<CRigidBody>(e).isKinematic =
-          options.at("isKinematic").get<bool>();
-      }
-      if (options.contains("position")) {
-        json position = options.at("position");
-        registry.get<CTransform>(e).position = {position.at("x").get<float>(),
-                                                position.at("y").get<float>(),
-                                                position.at("z").get<float>()};
-      }
-      if (options.contains("rotation")) {
-        json rotation = options.at("rotation");
-        glm::vec3 rot = {rotation.at("x").get<float>(),
-                         rotation.at("y").get<float>(),
-                         rotation.at("z").get<float>()};
-        registry.get<CTransform>(e).rotate(glm::quat(glm::radians(rot)));
-      }
-      if (registry.all_of<CCamera, CTransform>(e)) {
-        CCamera& cCamera = registry.get<CCamera>(e);
-        CTransform& cTransform = registry.get<CTransform>(e);
-        deserializeCamera(cCamera, options);
-        cCamera.calculateProjection();
-        cCamera.calculateView(cTransform.position, cTransform.rotation);
-      }
-      if (options.contains("isActive")) {
-        bool isActiveCamera = options.at("isActive").get<bool>();
-        if (isActiveCamera and not registry.all_of<CActiveCamera>(e)) {
-          registry.emplace<CActiveCamera>(e);
-        } else if (not isActiveCamera and registry.all_of<CActiveCamera>(e)) {
-          registry.remove<CActiveCamera>(e);
-        }
-      }
-      if (options.contains("hasInput")) {
-        bool hasInput = options.at("hasInput").get<bool>();
-        if (hasInput and not registry.all_of<CActiveInput>(e)) {
-          registry.emplace<CActiveInput>(e);
-        } else if (not hasInput and registry.all_of<CActiveInput>(e)) {
-          registry.remove<CActiveInput>(e);
-        }
-      }
-      if (options.contains("inputMode")) {
-        CInput& cInput = registry.get<CInput>(e);
-        cInput._mode = options.at("inputMode").get<std::string>();
-        cInput.setMode();
-      }
-      if (options.contains("translationSpeed")) {
-        registry.get<CInput>(e).translationSpeed =
-          options.at("translationSpeed").get<float>();
-      }
-      if (options.contains("verticalSpeed")) {
-        registry.get<CInput>(e).verticalSpeed =
-          options.at("verticalSpeed").get<float>();
-      }
-      if (options.contains("mouseSensitivity")) {
-        registry.get<CInput>(e).mouseSensitivity =
-          options.at("mouseSensitivity").get<float>();
-      }
-      if (options.contains("rotationSpeed")) {
-        registry.get<CInput>(e).rotationSpeed =
-          options.at("rotationSpeed").get<float>();
-      }
-      if (options.contains("size")) {
-        CShape& shape = registry.get<CShape>(e);
-        json size = options.at("size");
-        glm::vec3 sizeVec = {size.at("x").get<float>(),
-                             size.at("y").get<float>(),
-                             size.at("z").get<float>()};
-        if (shape.size not_eq sizeVec) {
-          ENGINE_TRACE("Changing shape size from {0} to {1} for entity {2}",
-                       glm::to_string(shape.size), glm::to_string(sizeVec),
-                       name);
-          shape.size = sizeVec;
-          shape.meshes.clear();
-          shape.createMesh();
-        }
-      }
-      if (options.contains("repeatTexture")) {
-        CShape& cShape = registry.get<CShape>(e);
-        bool repeatTexture = options.at("repeatTexture").get<bool>();
-        if (cShape.repeatTexture not_eq repeatTexture) {
-          ENGINE_TRACE(
-            "Changing shape repeatTexture from {0} to {1} for entity {2}",
-            cShape.repeatTexture, repeatTexture, name);
-          cShape.repeatTexture = repeatTexture;
-          cShape.meshes.clear();
-          cShape.createMesh();
-        }
-      }
-      if (options.contains("body")) {
-        registry.get<CBody>(e).reloadMesh(
-          options.at("body").get<std::string>());
-      }
-      if (options.contains("filepaths")) {
-        registry.get<CTexture>(e).reloadTextures(
-          options.at("filepaths").get<std::vector<std::string>>());
-      }
-      if (options.contains("color")) {
-        json color = options.at("color");
-        registry.get<CTexture>(e).color = {
-          color.at("r").get<float>(), color.at("g").get<float>(),
-          color.at("b").get<float>(), color.at("a").get<float>()};
-      }
-      if (options.contains("blendFactor")) {
-        registry.get<CTexture>(e).blendFactor =
-          options.at("blendFactor").get<float>();
-      }
-      if (options.contains("reflectivity")) {
-        registry.get<CTexture>(e).reflectivity =
-          options.at("reflectivity").get<float>();
-      }
-      if (options.contains("refractiveIndex")) {
-        registry.get<CTexture>(e).refractiveIndex =
-          options.at("refractiveIndex").get<float>();
-      }
-      if (options.contains("hasTransparency")) {
-        registry.get<CTexture>(e).hasTransparency =
-          options.at("hasTransparency").get<bool>();
-      }
-      if (options.contains("useLighting")) {
-        registry.get<CTexture>(e).useLighting =
-          options.at("useLighting").get<bool>();
-      }
-      if (options.contains("useReflection")) {
-        registry.get<CTexture>(e).useReflection =
-          options.at("useReflection").get<bool>();
-      }
-      if (options.contains("useRefraction")) {
-        registry.get<CTexture>(e).useRefraction =
-          options.at("useRefraction").get<bool>();
-      }
-      if (options.contains("isVisible")) {
-        registry.get<CShaderProgram>(e).isVisible =
-          options.at("isVisible").get<bool>();
-      }
-      if (options.contains("drawMode")) {
-        registry.get<CTexture>(e)._drawMode =
-          options.at("drawMode").get<std::string>();
-        registry.get<CTexture>(e).setDrawMode();
-      }
-      if (options.contains("textureAtlas")) {
-        CTextureAtlas& cTextureAtlas = registry.get<CTextureAtlas>(e);
-        json textureAtlasOptions = options.at("textureAtlas");
-        if (textureAtlasOptions.contains("index")) {
-          cTextureAtlas.index = textureAtlasOptions.at("index").get<int>();
-        }
-        if (textureAtlasOptions.contains("rows")) {
-          cTextureAtlas.rows = textureAtlasOptions.at("rows").get<int>();
-        }
-      }
-      if (options.contains("scale")) {
-        json scale = options.at("scale");
-        registry.get<CTransform>(e).scale = {scale.at("x").get<float>(),
-                                             scale.at("y").get<float>(),
-                                             scale.at("z").get<float>()};
-      }
-      if (prototype == "chunk_config") {
-        CChunkManager& cChunkManager = registry.get<CChunkManager>(e);
-        if (options.contains("chunkSize")) {
-          cChunkManager.chunkSize = options.at("chunkSize").get<int>();
-        }
-        if (options.contains("blockSize")) {
-          cChunkManager.blockSize = options.at("blockSize").get<int>();
-        }
-        if (options.contains("width")) {
-          cChunkManager.width = options.at("width").get<int>();
-        }
-        if (options.contains("height")) {
-          cChunkManager.height = options.at("height").get<int>();
-        }
-        if (options.contains("meshType")) {
-          cChunkManager._meshType = options.at("meshType").get<std::string>();
-          cChunkManager.setMeshType();
-        }
-        if (options.contains("meshAlgorithm")) {
-          cChunkManager._meshAlgorithm =
-            options.at("meshAlgorithm").get<std::string>();
-          cChunkManager.setMeshAlgorithm();
-        }
-        if (options.contains("useBiomes")) {
-          cChunkManager.useBiomes = options.at("useBiomes").get<bool>();
-        }
-      }
-      if (options.contains("noise")) {
-        CNoise& noise = registry.get<CNoise>(e);
-        json noiseOptions = options.at("noise");
-        if (noiseOptions.contains("type")) {
-          noise._type = noiseOptions.at("type").get<std::string>();
-          noise.setNoiseType();
-        }
-        if (noiseOptions.contains("seed")) {
-          noise.seed = noiseOptions.at("seed").get<int>();
-          noise.setSeed();
-        }
-        if (noiseOptions.contains("octaves")) {
-          noise.octaves = noiseOptions.at("octaves").get<int>();
-          noise.setOctaves();
-        }
-        if (noiseOptions.contains("frequency")) {
-          noise.frequency = noiseOptions.at("frequency").get<float>();
-          noise.setFrequency();
-        }
-        if (noiseOptions.contains("persistence")) {
-          noise.persistence = noiseOptions.at("persistence").get<float>();
-          noise.setPersistence();
-        }
-        if (noiseOptions.contains("lacunarity")) {
-          noise.lacunarity = noiseOptions.at("lacunarity").get<float>();
-          noise.setLacunarity();
-        }
-        if (noiseOptions.contains("amplitude")) {
-          noise.amplitude = noiseOptions.at("amplitude").get<int>();
-        }
-        if (noiseOptions.contains("positive")) {
-          noise.positive = noiseOptions.at("positive").get<bool>();
-        }
-      }
-      if (prototype == "skybox") {
-        CTime& cTime = registry.get<CTime>(e);
-        if (options.contains("time")) {
-          cTime.setTime(options.at("time").get<float>());
-        }
-        if (options.contains("acceleration")) {
-          cTime.acceleration = options.at("acceleration").get<float>();
-        }
-        if (options.contains("useFog")) {
-          registry.get<CSkybox>(e).useFog = options.at("useFog").get<bool>();
-        }
-        if (options.contains("fogColor")) {
-          json fogColor = options.at("fogColor");
-          registry.get<CSkybox>(e).fogColor = {fogColor.at("r").get<float>(),
-                                               fogColor.at("g").get<float>(),
-                                               fogColor.at("b").get<float>()};
-        }
-        if (options.contains("fogDensity")) {
-          registry.get<CSkybox>(e).fogDensity =
-            options.at("fogDensity").get<float>();
-        }
-        if (options.contains("fogGradient")) {
-          registry.get<CSkybox>(e).fogGradient =
-            options.at("fogGradient").get<float>();
-        }
-      }
-    }
-  }
-}
-
-void SceneFactory::createLightEntities(
-  const assets::Scene& scene,
-  const std::unique_ptr<assets::AssetsManager>& assets_manager,
-  entt::registry& registry) {
-  ENGINE_TRACE("Creating scene light entities...");
-  for (const auto& [name, data] : scene.getLightEntities()) {
-    entt::entity e = createEntity(data.at("prefab").get<std::string>(),
-                                  data.at("prototype").get<std::string>(),
-                                  registry, std::string(name));
-    if (data.contains("options")) {
-      CTransform& cTransform = registry.get<CTransform>(e);
-      CLight& cLight = registry.get<CLight>(e);
-      json options = data.at("options");
-      if (options.contains("isKinematic")) {
-        registry.get<CRigidBody>(e).isKinematic =
-          options.at("isKinematic").get<bool>();
-      }
-      if (options.contains("position")) {
-        json position = options.at("position");
-        cTransform.position = {position.at("x").get<float>(),
-                               position.at("y").get<float>(),
-                               position.at("z").get<float>()};
-      }
-      if (options.contains("rotation")) {
-        json rotation = options.at("rotation");
-        glm::vec3 rot = {rotation.at("x").get<float>(),
-                         rotation.at("y").get<float>(),
-                         rotation.at("z").get<float>()};
-        cTransform.rotate(glm::quat(glm::radians(rot)));
-      }
-      if (options.contains("scale")) {
-        json scale = options.at("scale");
-        cTransform.scale = {scale.at("x").get<float>(),
-                            scale.at("y").get<float>(),
-                            scale.at("z").get<float>()};
-      }
-      if (options.contains("intensity")) {
-        cLight.intensity = options.at("intensity").get<float>();
-      }
-      if (options.contains("color")) {
-        json color = options.at("color");
-        cLight.color = {color.at("r").get<float>(), color.at("g").get<float>(),
-                        color.at("b").get<float>()};
-      }
-      if (options.contains("isVisible")) {
-        registry.get<CShaderProgram>(e).isVisible =
-          options.at("isVisible").get<bool>();
-      }
-      if (options.contains("body")) {
-        registry.get<CBody>(e).reloadMesh(
-          options.at("body").get<std::string>());
-      }
-    }
-  }
-}
-
-void SceneFactory::createCameraEntities(
-  const assets::Scene& scene,
-  const std::unique_ptr<assets::AssetsManager>& assets_manager,
-  entt::registry& registry) {
-  ENGINE_TRACE("Creating scene camera entities...");
-  for (const auto& [name, data] : scene.getCameraEntities()) {
-    entt::entity e = createEntity(data.at("prefab").get<std::string>(),
-                                  data.at("prototype").get<std::string>(),
-                                  registry, std::string(name));
-    if (data.contains("options")) {
-      CCamera& cCamera = registry.get<CCamera>(e);
-      CTransform& cTransform = registry.get<CTransform>(e);
-      json options = data.at("options");
-      if (options.contains("isKinematic")) {
-        registry.get<CRigidBody>(e).isKinematic =
-          options.at("isKinematic").get<bool>();
-      }
-      if (options.contains("position")) {
-        json position = options.at("position");
-        cTransform.position = {position.at("x").get<float>(),
-                               position.at("y").get<float>(),
-                               position.at("z").get<float>()};
-      }
-      if (options.contains("rotation")) {
-        json rotation = options.at("rotation");
-        glm::vec3 rot = {rotation.at("x").get<float>(),
-                         rotation.at("y").get<float>(),
-                         rotation.at("z").get<float>()};
-        cTransform.rotate(glm::quat(glm::radians(
-          rot))); // TODO: fix this will glitch with camera movement
-      }
-      deserializeCamera(cCamera, options);
-      cCamera.calculateProjection();
-      if (options.contains("isActive")) {
-        bool isActiveCamera = options.at("isActive").get<bool>();
-        if (isActiveCamera and not registry.all_of<CActiveCamera>(e)) {
-          registry.emplace<CActiveCamera>(e);
-        } else if (not isActiveCamera and registry.all_of<CActiveCamera>(e)) {
-          registry.remove<CActiveCamera>(e);
-        }
-      }
-      if (options.contains("hasInput")) {
-        bool hasInput = options.at("hasInput").get<bool>();
-        if (hasInput and not registry.all_of<CActiveInput>(e)) {
-          registry.emplace<CActiveInput>(e);
-        } else if (not hasInput and registry.all_of<CActiveInput>(e)) {
-          registry.remove<CActiveInput>(e);
-        }
-      }
-      if (options.contains("inputMode")) {
-        CInput& cInput = registry.get<CInput>(e);
-        cInput._mode = options.at("inputMode").get<std::string>();
-        cInput.setMode();
-      }
-      if (options.contains("translationSpeed")) {
-        registry.get<CInput>(e).translationSpeed =
-          options.at("translationSpeed").get<float>();
-      }
-      if (options.contains("verticalSpeed")) {
-        registry.get<CInput>(e).verticalSpeed =
-          options.at("verticalSpeed").get<float>();
-      }
-      if (options.contains("mouseSensitivity")) {
-        registry.get<CInput>(e).mouseSensitivity =
-          options.at("mouseSensitivity").get<float>();
-      }
-      if (options.contains("rotationSpeed")) {
-        registry.get<CInput>(e).rotationSpeed =
-          options.at("rotationSpeed").get<float>();
-      }
-      if (options.contains("isVisible")) {
-        registry.get<CShaderProgram>(e).isVisible =
-          options.at("isVisible").get<bool>();
-      }
-      if (options.contains("body")) {
-        registry.get<CBody>(e).reloadMesh(
-          options.at("body").get<std::string>());
-      }
-    }
-  }
-}
-
-void SceneFactory::createSystemEntities(const assets::Scene& scene,
-                                        entt::registry& registry) {
-  ENGINE_TRACE("Creating scene system entities...");
-  for (const auto& [name, data] : scene.getSystemEntities()) {
-    entt::entity e = createEntity(data.at("prefab").get<std::string>(),
-                                  data.at("prototype").get<std::string>(),
-                                  registry, std::string(name));
-    if (data.contains("options")) {
-      json options = data.at("options");
-      // TODO: implement
-    }
-  }
-}
-
-void SceneFactory::createFBOEntities(
-  const assets::Scene& scene, entt::registry& registry,
-  const std::unique_ptr<RenderManager>& render_manager) {
-  ENGINE_TRACE("Creating scene FBO entities...");
-  for (const auto& [name, data] : scene.getFBOEntities()) {
-    entt::entity e = createEntity(data.at("prefab").get<std::string>(),
-                                  data.at("prototype").get<std::string>(),
-                                  registry, std::string(name));
-    CFBO& fbo = registry.get<CFBO>(e);
-    if (data.contains("options")) {
-      json options = data.at("options");
-      if (options.contains("width")) {
-        fbo.width = options.at("width").get<int>();
-      }
-      if (options.contains("height")) {
-        fbo.height = options.at("height").get<int>();
-      }
-      if (options.contains("attachment")) {
-        fbo._attachment =
-          std::move(options.at("attachment").get<std::string>());
-        fbo.setAttachment();
-      }
-      if (options.contains("mode")) {
-        fbo._mode = std::move(options.at("mode").get<std::string>());
-        fbo.setMode();
-      }
-    }
-    render_manager->addFramebuffer(std::string(fbo.fbo), fbo.width, fbo.height,
-                             fbo.attachment);
-  }
 }
 
 void SceneFactory::removeEntity(entt::entity& e, entt::registry& registry) {

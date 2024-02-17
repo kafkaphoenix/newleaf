@@ -37,8 +37,7 @@ endif()
 
 configure_file(config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h @ONLY)
 
-# Executable definition and properties
-add_executable(
+add_library(
     ${PROJECT_NAME}
     ${SOURCE_FILES}
 )
@@ -48,15 +47,12 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE "STBI_FAILURE_USERMSG")
 target_include_directories(${PROJECT_NAME} PRIVATE vendor/stb)
-target_include_directories(${PROJECT_NAME} PRIVATE vendor/fastnoiselite)
 target_include_directories(${PROJECT_NAME} PRIVATE ${glfw_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${glm_SOURCE_DIR})
 target_compile_definitions(${PROJECT_NAME} PRIVATE "GLFW_INCLUDE_NONE")
 target_include_directories(${PROJECT_NAME} PRIVATE ${assimp_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${spdlog_SOURCE_DIR}/include)
-target_include_directories(${PROJECT_NAME} PRIVATE ${freetype_SOURCE_DIR}/include)
-target_compile_definitions(${PROJECT_NAME} PRIVATE "RMLUI_STATIC_LIB")
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw glm glad imgui EnTT nlohmann_json::nlohmann_json assimp ${ASSIMP_LIBRARIES} spdlog RmlCore freetype ${CMAKE_DL_LIBS})
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw glm glad imgui EnTT nlohmann_json::nlohmann_json assimp ${ASSIMP_LIBRARIES} spdlog ${CMAKE_DL_LIBS})
 
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/warnings.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/static_analysis.cmake)

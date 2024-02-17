@@ -73,27 +73,5 @@ class SceneFactory {
     void createChildrenScenes(
       const assets::Scene& scene,
       const std::unique_ptr<assets::AssetsManager>& assets_manager);
-    void createSceneEntities(
-      const assets::Scene& scene,
-      const std::unique_ptr<assets::AssetsManager>& assets_manager,
-      const std::unique_ptr<RenderManager>& render_manager,
-      entt::registry& registry);
-    void createNormalEntities(
-      const assets::Scene& scene,
-      const std::unique_ptr<assets::AssetsManager>& assets_manager,
-      entt::registry& registry);
-    void createLightEntities(
-      const assets::Scene& scene,
-      const std::unique_ptr<assets::AssetsManager>& assets_manager,
-      entt::registry& registry);
-    void createCameraEntities(
-      const assets::Scene& scene,
-      const std::unique_ptr<assets::AssetsManager>& assets_manager,
-      entt::registry& registry);
-    void createSystemEntities(const assets::Scene& scene,
-                              entt::registry& registry);
-    void
-    createFBOEntities(const assets::Scene& scene, entt::registry& registry,
-                      const std::unique_ptr<RenderManager>& render_manager);
 };
 }
