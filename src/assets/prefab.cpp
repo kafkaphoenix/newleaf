@@ -4,19 +4,19 @@
 
 namespace potatoengine::assets {
 
-void Prefab::process_prototype(const std::string& name, const json& prototypeData,
-                       const json& data) {
+void Prefab::process_prototype(const std::string& name,
+                               const json& prototype_data, const json& data) {
   std::vector<std::string> inherits;
   std::vector<std::string> ctags;
   std::unordered_map<std::string, json> components;
 
-  if (prototypeData.contains("inherits")) {
-    prototypeData.at("inherits").get_to(inherits);
+  if (prototype_data.contains("inherits")) {
+    prototype_data.at("inherits").get_to(inherits);
     for (std::string_view father : inherits) {
       read(data.at(father), inherits, ctags, components);
     }
   }
-  read(prototypeData, inherits, ctags,
+  read(prototype_data, inherits, ctags,
        components); // child overrides parent if common definition exists
 
   m_prototypes.emplace(name, Prototype{.inherits = std::move(inherits),
@@ -26,9 +26,8 @@ void Prefab::process_prototype(const std::string& name, const json& prototypeDat
 
 Prefab::Prefab(std::filesystem::path&& fp,
                std::vector<std::string>&& targetedPrototypes)
-  : m_name(std::move(fp.filename().string())),
-    m_filepath(std::move(fp.string())),
-    m_targetedPrototypes(std::move(targetedPrototypes)) {
+  : m_name(std::move(fp.filename().string())), m_path(std::move(fp.string())),
+    m_targeted_prototypes(std::move(targetedPrototypes)) {
   // One prefab file can contain multiple prototypes and we target only a subset
   // of them
   std::ifstream f(fp);
@@ -38,19 +37,19 @@ Prefab::Prefab(std::filesystem::path&& fp,
   json data = json::parse(f);
   f.close();
 
-  if (m_targetedPrototypes == std::vector<std::string>{"*"}) {
-    m_targetedPrototypes.clear();
-    for (const auto& [name, prototypeData] : data.items()) {
-      m_targetedPrototypes.emplace_back(name);
-      process_prototype(name, prototypeData, data);
+  if (m_targeted_prototypes == std::vector<std::string>{"*"}) {
+    m_targeted_prototypes.clear();
+    for (const auto& [name, prototype_data] : data.items()) {
+      m_targeted_prototypes.emplace_back(name);
+      process_prototype(name, prototype_data, data);
     }
   } else {
-    for (const auto& [name, prototypeData] : data.items()) {
-      if (std::find(m_targetedPrototypes.begin(), m_targetedPrototypes.end(),
-                    name) == m_targetedPrototypes.end()) {
+    for (const auto& [name, prototype_data] : data.items()) {
+      if (std::find(m_targeted_prototypes.begin(), m_targeted_prototypes.end(),
+                    name) == m_targeted_prototypes.end()) {
         continue;
       }
-      process_prototype(name, prototypeData, data);
+      process_prototype(name, prototype_data, data);
     }
   }
 }
@@ -67,7 +66,8 @@ void Prefab::read(const json& data, std::vector<std::string>& inherits,
   if (data.contains("components")) {
     for (const auto& [cKey, cValue] : data.at("components").items()) {
       if (inherits.size() > 0) {
-        std::erase_if(ctags, [&cKey](const std::string& c) { return c == cKey; });
+        std::erase_if(ctags,
+                      [&cKey](const std::string& c) { return c == cKey; });
       }
       if (components.contains(cKey)) {
         for (const auto& [cFieldKey, cFieldValue] : cValue.items()) {
@@ -84,13 +84,13 @@ void Prefab::read(const json& data, std::vector<std::string>& inherits,
   }
 }
 
-const std::map<std::string, std::string, NumericComparator>& Prefab::getInfo() {
+const std::map<std::string, std::string, NumericComparator>& Prefab::to_map() {
   if (not m_info.empty()) {
     return m_info;
   }
 
   m_info["Type"] = "Prefab";
-  m_info["Filepath"] = m_filepath;
+  m_info["Path"] = m_path;
   for (const auto& [prototype_id, prototype_data] : m_prototypes) {
     m_info["Prototype " + prototype_id] = prototype_id;
   }
@@ -99,31 +99,32 @@ const std::map<std::string, std::string, NumericComparator>& Prefab::getInfo() {
 }
 
 const std::map<std::string, std::string, NumericComparator>&
-Prefab::getTargetedPrototypeInfo(std::string_view prototypeID) {
-  if (not m_prototypeInfo.empty() and
-      m_prototypeInfo.contains(prototypeID.data())) {
-    return m_prototypeInfo.at(prototypeID.data());
+Prefab::get_targeted_prototype_info(std::string_view prototype_id) {
+  if (not m_prototype_info.empty() and
+      m_prototype_info.contains(prototype_id.data())) {
+    return m_prototype_info.at(prototype_id.data());
   }
 
   std::map<std::string, std::string, NumericComparator> m_info{};
-  m_info["Name"] = prototypeID.data();
-  for (uint32_t i = 0; i < m_prototypes.at(prototypeID.data()).inherits.size();
+  m_info["Name"] = prototype_id.data();
+  for (uint32_t i = 0; i < m_prototypes.at(prototype_id.data()).inherits.size();
        ++i) {
     m_info["Inherits " + std::to_string(i)] =
-      *std::next(m_prototypes.at(prototypeID.data()).inherits.begin(), i);
+      *std::next(m_prototypes.at(prototype_id.data()).inherits.begin(), i);
   }
-  for (uint32_t i = 0; i < m_prototypes.at(prototypeID.data()).ctags.size(); ++i) {
+  for (uint32_t i = 0; i < m_prototypes.at(prototype_id.data()).ctags.size();
+       ++i) {
     m_info["CTag " + std::to_string(i)] =
-      *std::next(m_prototypes.at(prototypeID.data()).ctags.begin(), i);
+      *std::next(m_prototypes.at(prototype_id.data()).ctags.begin(), i);
   }
   uint32_t i = 0;
   for (const auto& [componentID, _] :
-       m_prototypes.at(prototypeID.data()).components) {
+       m_prototypes.at(prototype_id.data()).components) {
     m_info["Component " + std::to_string(i++)] = componentID;
   }
-  m_prototypeInfo[prototypeID.data()] = m_info;
+  m_prototype_info[prototype_id.data()] = m_info;
 
-  return m_prototypeInfo.at(prototypeID.data());
+  return m_prototype_info.at(prototype_id.data());
 }
 
 bool Prefab::operator==(const Asset& other) const {
@@ -131,6 +132,6 @@ bool Prefab::operator==(const Asset& other) const {
     ENGINE_ASSERT(false, "Cannot compare prefab with other asset type!");
   }
   const Prefab& otherPrefab = static_cast<const Prefab&>(other);
-  return m_filepath == otherPrefab.m_filepath;
+  return m_path == otherPrefab.m_path;
 }
 }

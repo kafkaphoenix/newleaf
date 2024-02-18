@@ -4,7 +4,7 @@
 
 #include "assets/asset.h"
 #include "pch.h"
-#include "utils/numericComparator.h"
+#include "utils/numeric_comparator.h"
 
 namespace potatoengine::assets {
 
@@ -14,13 +14,13 @@ class Shader : public Asset {
     virtual ~Shader() override final;
 
     virtual const std::map<std::string, std::string, NumericComparator>&
-    getInfo() override final;
+    to_map() override final;
 
     virtual bool operator==(const Asset& other) const override final;
     operator GLuint() const { return m_id; }
 
   private:
-    std::string m_filepath;
+    std::string m_path;
     uint32_t m_id{};
     GLenum m_type{};
 

@@ -4,7 +4,7 @@
 
 #include "assets/asset.h"
 #include "pch.h"
-#include "utils/numericComparator.h"
+#include "utils/numeric_comparator.h"
 
 namespace potatoengine::assets {
 class Texture : public Asset {
@@ -19,20 +19,20 @@ class Texture : public Asset {
             std::optional<bool> gammaCorrection = std::nullopt);
     virtual ~Texture() override final;
 
-    void bindSlot(uint32_t slot);
-    void rebindSlot();
-    void unbindSlot();
+    void bind_slot(uint32_t slot);
+    void rebind_slot();
+    void unbind_slot();
 
-    uint32_t getWidth() const { return m_width; }
-    uint32_t getHeight() const { return m_height; }
-    uint32_t getID() const { return m_id; }
-    std::string_view getFilepath() const {
-      return (m_filepaths.size() == 1) ? m_filepaths[0] : m_directory;
+    uint32_t get_width() const { return m_width; }
+    uint32_t get_height() const { return m_height; }
+    uint32_t get_id() const { return m_id; }
+    std::string_view get_path() const {
+      return (m_paths.size() == 1) ? m_paths[0] : m_directory;
     }
-    std::string_view getType() const { return m_type; }
+    std::string_view get_type() const { return m_type; }
     virtual const std::map<std::string, std::string, NumericComparator>&
-    getInfo() override final;
-    bool isCubemap() const { return m_isCubemap; }
+    to_map() override final;
+    bool is_cubemap() const { return m_is_cubemap; }
 
     virtual bool operator==(const Asset& other) const override final;
 
@@ -47,17 +47,17 @@ class Texture : public Asset {
                                            std::optional<bool> wrap);
 
   private:
-    std::vector<std::string> m_filepaths;
+    std::vector<std::string> m_paths;
     std::string m_directory;
     std::string m_type;
     uint32_t m_width{}, m_height{};
     uint32_t m_id{};
-    GLenum m_glFormat{}, m_format{};
+    GLenum m_opengl_format{}, m_format{};
     uint32_t m_slot{};
-    bool m_isCubemap{};
-    bool m_flipVertically{true};
-    uint32_t m_mipmapLevel{};
-    bool m_gammaCorrection{};
+    bool m_is_cubemap{};
+    bool m_flip_vertically{true};
+    uint32_t m_mipmap_level{};
+    bool m_gamma_correction{};
 
     std::map<std::string, std::string, NumericComparator> m_info;
 

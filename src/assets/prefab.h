@@ -4,7 +4,7 @@
 
 #include "assets/asset.h"
 #include "pch.h"
-#include "utils/numericComparator.h"
+#include "utils/numeric_comparator.h"
 
 using json = nlohmann::json;
 
@@ -21,32 +21,32 @@ class Prefab : public Asset {
            std::vector<std::string>&& targetedPrototypes);
 
     virtual const std::map<std::string, std::string, NumericComparator>&
-    getInfo() override final;
+    to_map() override final;
     const std::map<std::string, std::string, NumericComparator>&
-    getTargetedPrototypeInfo(std::string_view prototypeID);
+    get_targeted_prototype_info(std::string_view prototype_id);
 
     const std::vector<std::string>&
-    getInherits(std::string_view prototypeID) const {
-      return m_prototypes.at(prototypeID.data()).inherits;
+    get_inherits(std::string_view prototype_id) const {
+      return m_prototypes.at(prototype_id.data()).inherits;
     }
 
     const std::vector<std::string>&
-    getCTags(std::string_view prototypeID) const {
-      return m_prototypes.at(prototypeID.data()).ctags;
+    get_ctags(std::string_view prototype_id) const {
+      return m_prototypes.at(prototype_id.data()).ctags;
     }
 
     const std::unordered_map<std::string, json>&
-    getComponents(std::string_view prototypeID) const {
-      return m_prototypes.at(prototypeID.data()).components;
+    get_components(std::string_view prototype_id) const {
+      return m_prototypes.at(prototype_id.data()).components;
     }
 
-    const std::vector<std::string>& getTargetedPrototypes() const {
-      return m_targetedPrototypes;
+    const std::vector<std::string>& get_targeted_prototypes() const {
+      return m_targeted_prototypes;
     }
 
-    std::string_view getName() const { return m_name; }
+    std::string_view get_name() const { return m_name; }
 
-    const std::unordered_map<std::string, Prototype>& getPrototypes() const {
+    const std::unordered_map<std::string, Prototype>& get_prototypes() const {
       return m_prototypes;
     }
 
@@ -54,20 +54,20 @@ class Prefab : public Asset {
 
   private:
     std::string m_name;
-    std::string m_filepath;
-    std::vector<std::string> m_targetedPrototypes;
+    std::string m_path;
+    std::vector<std::string> m_targeted_prototypes;
     std::unordered_map<std::string, Prototype> m_prototypes;
 
     std::map<std::string, std::string, NumericComparator> m_info;
     std::map<std::string, std::map<std::string, std::string, NumericComparator>,
              NumericComparator>
-      m_prototypeInfo;
+      m_prototype_info;
 
     void read(const json& j, std::vector<std::string>& inherits,
               std::vector<std::string>& ctags,
               std::unordered_map<std::string, json>& components);
 
-    void process_prototype(const std::string& name, const json& prototypeData,
+    void process_prototype(const std::string& name, const json& prototype_data,
                            const json& data);
 };
 }

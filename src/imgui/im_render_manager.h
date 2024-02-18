@@ -2,26 +2,26 @@
 
 #include <imgui.h>
 
-#include "core/settingsManager.h"
+#include "core/settings_manager.h"
+#include "imgui/im_utils.h"
 #include "pch.h"
-#include "render/renderManager.h"
-#include "imgui/imutils.h"
-#include "utils/mapJsonSerializer.h"
+#include "render/render_manager.h"
+#include "utils/map_json_serializer.h"
 
 namespace potatoengine {
 
-std::string selectedRenderManagerTabKey;
-std::string selectedRenderManagerTabType;
+std::string selected_render_manager_tabkey;
+std::string selected_render_manager_tabtype;
 char render_objects_text_filter[128]{}; // TODO: move to class
-bool filterFBOS{};
-bool filterShaderPrograms{};
-bool filterShaderInfo{};
+bool filter_fbos{};
+bool filter_shader_programs{};
+bool filter_shader_info{};
 
 inline void
-drawRenderManager(const std::unique_ptr<RenderManager>& render_manager,
-                  const std::unique_ptr<SettingsManager>& settings_manager) {
-  const auto& fbos = render_manager->getFramebuffers();
-  const auto& sp = render_manager->getShaderPrograms();
+draw_render_manager(const std::unique_ptr<RenderManager>& render_manager,
+                    const std::unique_ptr<SettingsManager>& settings_manager) {
+  const auto& fbos = render_manager->get_framebuffers();
+  const auto& sp = render_manager->get_shader_programs();
 
   int collapsed = collapser();
 
@@ -34,11 +34,11 @@ drawRenderManager(const std::unique_ptr<RenderManager>& render_manager,
   if (ImGui::Button("Clear Filter")) {
     render_objects_text_filter[0] = '\0';
   }
-  ImGui::Checkbox("FBOS", &filterFBOS);
+  ImGui::Checkbox("FBOS", &filter_fbos);
   ImGui::SameLine();
-  ImGui::Checkbox("Shader programs", &filterShaderPrograms);
+  ImGui::Checkbox("Shader programs", &filter_shader_programs);
   ImGui::SameLine();
-  ImGui::Checkbox("Shader info", &filterShaderInfo);
+  ImGui::Checkbox("Shader info", &filter_shader_info);
 
   ImGui::Separator();
   ImGui::Columns(2);
@@ -47,18 +47,18 @@ drawRenderManager(const std::unique_ptr<RenderManager>& render_manager,
     ImGui::SetNextItemOpen(collapsed not_eq 0);
   }
 
-  if (ImGui::CollapsingHeader("FBOS")) {
+  if (ImGui::CollapsingHeader("Framebuffers")) {
     if (fbos.empty()) {
-      ImGui::Text("No FBOS");
+      ImGui::Text("No framebuffers");
     }
     for (const auto& [key, value] : fbos) {
-      if (filterFBOS and render_objects_text_filter[0] not_eq '\0' and
+      if (filter_fbos and render_objects_text_filter[0] not_eq '\0' and
           strstr(key.c_str(), render_objects_text_filter) == nullptr) {
         continue;
       }
       if (ImGui::Selectable(key.c_str())) {
-        selectedRenderManagerTabKey = key;
-        selectedRenderManagerTabType = "FBO";
+        selected_render_manager_tabkey = key;
+        selected_render_manager_tabtype = "Framebuffers";
       }
     }
   }
@@ -69,46 +69,47 @@ drawRenderManager(const std::unique_ptr<RenderManager>& render_manager,
 
   if (ImGui::CollapsingHeader("Shader programs")) {
     if (sp.empty()) {
-      ImGui::Text("No Shader programs");
+      ImGui::Text("No shader programs");
     }
     for (const auto& [key, value] : sp) {
-      if (filterShaderPrograms and render_objects_text_filter[0] not_eq '\0' and
+      if (filter_shader_programs and
+          render_objects_text_filter[0] not_eq '\0' and
           strstr(key.c_str(), render_objects_text_filter) == nullptr) {
         continue;
       }
       if (ImGui::Selectable(key.c_str())) {
-        selectedRenderManagerTabKey = key;
-        selectedRenderManagerTabType = "Shader Program";
+        selected_render_manager_tabkey = key;
+        selected_render_manager_tabtype = "Shader Program";
       }
     }
   }
 
-  if (collapsed == 0 or settings_manager->reloadScene) {
-    selectedRenderManagerTabKey.clear();
-    selectedRenderManagerTabType.clear();
+  if (collapsed == 0 or settings_manager->reload_scene) {
+    selected_render_manager_tabkey.clear();
+    selected_render_manager_tabtype.clear();
   }
 
   ImGui::NextColumn();
-  if (not selectedRenderManagerTabKey.empty()) {
-    if (selectedRenderManagerTabType == "Shader Program") {
-      const auto& shaderProgram = sp.at(selectedRenderManagerTabKey);
-      const auto& shaderProgramInfo = shaderProgram->getInfo();
+  if (not selected_render_manager_tabkey.empty()) {
+    if (selected_render_manager_tabtype == "Shader Program") {
+      const auto& shaderProgram = sp.at(selected_render_manager_tabkey);
+      const auto& shaderProgramInfo = shaderProgram->to_map();
       for (const auto& [key, value] : shaderProgramInfo) {
-        if (filterShaderInfo and render_objects_text_filter[0] not_eq '\0' and
+        if (filter_shader_info and render_objects_text_filter[0] not_eq '\0' and
             strstr(key.c_str(), render_objects_text_filter) == nullptr) {
           continue;
         }
         ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
       }
-    } else if (selectedRenderManagerTabType == "FBO") {
-      const auto& value = fbos.at(selectedRenderManagerTabKey);
-      const auto& fboInfo = value->getInfo();
+    } else if (selected_render_manager_tabtype == "Framebuffers") {
+      const auto& value = fbos.at(selected_render_manager_tabkey);
+      const auto& fboInfo = value->to_map();
       for (const auto& [key, value] : fboInfo) {
         if (key == "Color texture" or key == "Depth texture") {
-          const auto& textureInfo = JsonToMap(value);
-          if (ImGui::TreeNode((selectedRenderManagerTabType +
-                               selectedRenderManagerTabKey + key +
-                               settings_manager->activeScene)
+          const auto& textureInfo = json_to_map(value);
+          if (ImGui::TreeNode((selected_render_manager_tabtype +
+                               selected_render_manager_tabkey + key +
+                               settings_manager->active_scene)
                                 .c_str(),
                               key.c_str())) {
             for (const auto& [key, value] : textureInfo) {

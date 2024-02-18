@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cctype>
 #include <chrono>
 #include <filesystem>
 #include <format>
@@ -19,7 +20,7 @@
 #include <vector>
 
 #include "config.h" // makefile generated flags
-#include "core/logManager.h"
+#include "core/log_manager.h"
 #include "utils/exception.h"
 
 #define BIND_EVENT(f)                                                          \

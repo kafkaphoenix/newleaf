@@ -4,7 +4,7 @@
 
 #include "assets/asset.h"
 #include "pch.h"
-#include "utils/numericComparator.h"
+#include "utils/numeric_comparator.h"
 
 using json = nlohmann::json;
 
@@ -14,56 +14,30 @@ class Scene : public Asset {
     Scene(std::filesystem::path&& fp);
 
     virtual const std::map<std::string, std::string, NumericComparator>&
-    getInfo() override final;
+    to_map() override final;
 
-    const std::unordered_map<std::string, json>& getShaders() const {
+    const std::unordered_map<std::string, json>& get_shader_programs() const {
       return m_shaders;
     }
-    const std::unordered_map<std::string, json>& getTextures() const {
+    const std::unordered_map<std::string, json>& get_textures() const {
       return m_textures;
     }
-    const std::unordered_map<std::string, json>& getModels() const {
+    const std::unordered_map<std::string, json>& get_models() const {
       return m_models;
     }
-    const std::unordered_map<std::string, json>& getPrefabs() const {
+    const std::unordered_map<std::string, json>& get_prefabs() const {
       return m_prefabs;
-    }
-    const std::unordered_map<std::string, json>& getScenes() const {
-      return m_scenes;
-    }
-
-    const std::unordered_map<std::string, json>& getNormalEntities() const {
-      return m_normalEntities;
-    }
-    const std::unordered_map<std::string, json>& getLightEntities() const {
-      return m_lightEntities;
-    }
-    const std::unordered_map<std::string, json>& getCameraEntities() const {
-      return m_cameraEntities;
-    }
-    const std::unordered_map<std::string, json>& getSystemEntities() const {
-      return m_systemEntities;
-    }
-    const std::unordered_map<std::string, json>& getFBOEntities() const {
-      return m_fboEntities;
     }
 
     virtual bool operator==(const Asset& other) const override final;
 
   private:
-    std::string m_filepath;
+    std::string m_path;
 
     std::unordered_map<std::string, json> m_shaders;
     std::unordered_map<std::string, json> m_textures;
     std::unordered_map<std::string, json> m_models;
     std::unordered_map<std::string, json> m_prefabs;
-    std::unordered_map<std::string, json> m_scenes;
-
-    std::unordered_map<std::string, json> m_normalEntities;
-    std::unordered_map<std::string, json> m_lightEntities;
-    std::unordered_map<std::string, json> m_cameraEntities;
-    std::unordered_map<std::string, json> m_systemEntities;
-    std::unordered_map<std::string, json> m_fboEntities;
 
     std::map<std::string, std::string, NumericComparator> m_info;
 

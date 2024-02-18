@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils/numericComparator.h"
+#include "utils/numeric_comparator.h"
 
 namespace potatoengine {
 
@@ -15,7 +15,7 @@ struct CTextureAtlas {
       ENGINE_BACKTRACE("\t\trows: {0}\n\t\t\t\t\t\tindex: {1}", rows, index);
     }
 
-    std::map<std::string, std::string, NumericComparator> getInfo() const {
+    std::map<std::string, std::string, NumericComparator> to_map() const {
       std::map<std::string, std::string, NumericComparator> info;
       info["rows"] = std::to_string(rows);
       info["index"] = std::to_string(index);

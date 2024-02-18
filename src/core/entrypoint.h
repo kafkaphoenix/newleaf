@@ -5,31 +5,31 @@
 
 namespace engine = potatoengine;
 
-extern engine::Application* engine::CreateApp(engine::CLArgs&& args);
+extern engine::Application* engine::Create(engine::CLArgs&& args);
 
 int main(int argc, char** argv) {
   try {
-    engine::LogManager::Init();
+    engine::LogManager::init();
 
     std::vector<const char*> args(argv, argv + argc);
     engine::CLArgs clargs{std::span<const char*>{args}};
-    engine::Application* app = engine::CreateApp(std::move(clargs));
+    engine::Application* app = engine::Create(std::move(clargs));
 
     app->run();
 
     delete app;
   } catch (const engine::EngineException& e) {
     ENGINE_CRITICAL(e.what());
-    engine::LogManager::DumpBacktrace();
+    engine::LogManager::dump_backtrace();
     std::exit(EXIT_FAILURE);
   } catch (const engine::AppException& e) {
     APP_CRITICAL(e.what());
-    engine::LogManager::DumpBacktrace();
+    engine::LogManager::dump_backtrace();
     std::exit(EXIT_FAILURE);
   } catch (const std::exception& e) {
-    APP_CRITICAL(e.what()); // We do not know the source of the exception, so we
-                            // assume it is from the app
-    engine::LogManager::DumpBacktrace();
+    // unknow source, we assume from the app
+    APP_CRITICAL(e.what());
+    engine::LogManager::dump_backtrace();
     std::exit(EXIT_FAILURE);
   }
 }

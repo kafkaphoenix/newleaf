@@ -27,7 +27,7 @@ file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 )
 
-add_subdirectory(vendor)
+add_subdirectory(third_party)
 
 if (ENABLE_DEBUG)
     set(DEBUG ON)
@@ -46,7 +46,7 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE "STBI_FAILURE_USERMSG")
-target_include_directories(${PROJECT_NAME} PRIVATE vendor/stb)
+target_include_directories(${PROJECT_NAME} PRIVATE third_party/stb)
 target_include_directories(${PROJECT_NAME} PRIVATE ${glfw_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${glm_SOURCE_DIR})
 target_compile_definitions(${PROJECT_NAME} PRIVATE "GLFW_INCLUDE_NONE")

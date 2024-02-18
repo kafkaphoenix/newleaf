@@ -2,23 +2,22 @@
 
 #include <imgui.h>
 
-#include "core/settingsManager.h"
-#include "core/statesManager.h"
+#include "core/settings_manager.h"
+#include "core/states_manager.h"
+#include "imgui/im_utils.h"
 #include "pch.h"
-#include "imgui/imutils.h"
-#include "utils/mapJsonSerializer.h"
-#include "utils/numericComparator.h"
+#include "utils/map_json_serializer.h"
+#include "utils/numeric_comparator.h"
 
 namespace potatoengine {
 
 char states_text_filter[128]{}; // TODO: move to class
-bool filterStates{};
-bool filterLayers{};
-std::map<std::string, std::string> selectedLayerMetrics;
+bool filter_states{};
+bool filter_layers{};
 
 inline void
-drawStatesManager(const std::unique_ptr<SettingsManager>& settings_manager,
-                  const std::unique_ptr<StatesManager>& states_manager) {
+draw_states_manager(const std::unique_ptr<SettingsManager>& settings_manager,
+                    const std::unique_ptr<StatesManager>& states_manager) {
   int collapsed = collapser();
 
   ImGui::InputText("##filter", states_text_filter,
@@ -30,9 +29,9 @@ drawStatesManager(const std::unique_ptr<SettingsManager>& settings_manager,
   if (ImGui::Button("Clear Filter")) {
     states_text_filter[0] = '\0';
   }
-  ImGui::Checkbox("States", &filterStates);
+  ImGui::Checkbox("States", &filter_states);
   ImGui::SameLine();
-  ImGui::Checkbox("Layers", &filterLayers);
+  ImGui::Checkbox("Layers", &filter_layers);
 
   ImGui::Separator();
 
@@ -40,20 +39,20 @@ drawStatesManager(const std::unique_ptr<SettingsManager>& settings_manager,
     ImGui::SetNextItemOpen(collapsed not_eq 0);
   }
 
-  if (states_manager->getCurrentState() == nullptr) {
+  if (states_manager->get_current_state() == nullptr) {
     ImGui::Text("No states");
   }
 
-  for (const auto& [state, layers] : states_manager->getMetrics()) {
-    if (filterStates and states_text_filter[0] not_eq '\0' and
+  for (const auto& [state, layers] : states_manager->get_metrics()) {
+    if (filter_states and states_text_filter[0] not_eq '\0' and
         strstr(state.c_str(), states_text_filter) == nullptr) {
       continue;
     }
     if (ImGui::CollapsingHeader(state.c_str())) {
       std::map<std::string, std::string, NumericComparator> layersMap =
-        JsonToMap(layers);
+        json_to_map(layers);
       for (const auto& [name, enabled] : layersMap) {
-        if (filterLayers and states_text_filter[0] not_eq '\0' and
+        if (filter_layers and states_text_filter[0] not_eq '\0' and
             strstr(name.c_str(), states_text_filter) == nullptr) {
           continue;
         }

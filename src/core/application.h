@@ -1,15 +1,15 @@
 #pragma once
 
-#include "assets/assetsManager.h"
-#include "core/windowsManager.h"
-#include "core/settingsManager.h"
+#include "assets/assets_manager.h"
+#include "core/settings_manager.h"
 #include "core/state.h"
-#include "core/statesManager.h"
+#include "core/states_manager.h"
+#include "core/windows_manager.h"
 #include "events/event.h"
+#include "imgui/imgui_layer.h"
 #include "pch.h"
-#include "render/renderManager.h"
-#include "scene/sceneManager.h"
-#include "imgui/imguiLayer.h"
+#include "render/render_manager.h"
+#include "scene/scene_manager.h"
 
 int main(int argc, char** argv);
 
@@ -18,7 +18,7 @@ namespace potatoengine {
 struct CLArgs {
     std::span<const char*> args;
 
-    const char* operator[](int idx) const { return args[idx]; }
+    const char* operator[](int index) const { return args[index]; }
 };
 
 class Application {
@@ -27,40 +27,37 @@ class Application {
                 CLArgs&& args);
     virtual ~Application();
 
-    void onEvent(events::Event& e);
+    void on_event(events::Event& e);
 
-    // TODO add getActiveWindow when multi-window support is added and i
-    // have a window manager
-    const std::unique_ptr<WindowsManager>& getWindowsManager() const {
+    const std::unique_ptr<WindowsManager>& get_window_manager() const {
       return m_windows_manager;
     }
-    const std::unique_ptr<SceneManager>& getSceneManager() const {
+    const std::unique_ptr<SceneManager>& get_scene_manager() const {
       return m_scene_manager;
     }
-    const std::unique_ptr<assets::AssetsManager>& getAssetsManager() const {
+    const std::unique_ptr<assets::AssetsManager>& get_assets_manager() const {
       return m_assets_manager;
     }
-    // TODO rename both classes and methods to managers
-    const std::unique_ptr<RenderManager>& getRenderManager() const {
+    const std::unique_ptr<RenderManager>& get_render_manager() const {
       return m_render_manager;
     }
-    const std::unique_ptr<SettingsManager>& getSettingsManager() const {
+    const std::unique_ptr<SettingsManager>& get_settings_manager() const {
       return m_settings_manager;
     }
-    const std::unique_ptr<StatesManager>& getStatesManager() const {
+    const std::unique_ptr<StatesManager>& get_states_manager() const {
       return m_states_manager;
     }
 
     void close() { m_running = false; }
     void minimize(bool minimize) { m_minimized = minimize; }
-    void togglePauseGame(bool pause);
-    void setRestoreGamePaused(bool restore) { m_restoreGamePaused = restore; }
+    void pause(bool pause);
+    void restore_pause(bool restore) { m_restore_pause = restore; }
     void debug(bool debugging) { m_debugging = debugging; }
 
-    bool isPaused() const { return m_minimized; }
-    bool isGamePaused() const { return m_gamePaused; }
-    bool isRestoreGamePaused() const { return m_restoreGamePaused; }
-    bool isDebugging() const { return m_debugging; }
+    bool is_minimized() const { return m_minimized; }
+    bool is_paused() const { return m_paused; }
+    bool should_restore_pause() const { return m_restore_pause; }
+    bool is_debugging() const { return m_debugging; }
 
     static Application& Get() { return *s_instance; }
 
@@ -79,8 +76,8 @@ class Application {
     std::string m_name;
     bool m_running{true};
     bool m_minimized{};
-    bool m_gamePaused{};
-    bool m_restoreGamePaused{};
+    bool m_paused{};
+    bool m_restore_pause{};
     bool m_debugging{};
     float m_lastFrame{};
     float m_accumulator{};
@@ -92,5 +89,5 @@ class Application {
 };
 
 // to be defined in user app
-Application* CreateApp(CLArgs&& args);
+Application* Create(CLArgs&& args);
 }

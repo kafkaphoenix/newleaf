@@ -2,9 +2,9 @@
 
 #include <nlohmann/json.hpp>
 
-#include "core/settingsManager.h"
+#include "core/settings_manager.h"
 #include "pch.h"
-#include "utils/getDefaultRoamingPath.h"
+#include "utils/get_default_roaming_path.h"
 
 using json = nlohmann::json;
 
@@ -27,14 +27,14 @@ save_settings(const std::unique_ptr<SettingsManager>& settings_manager,
 }
 
 inline std::unique_ptr<SettingsManager>
-load_settings(std::string_view projectName) {
+load_settings(std::string_view app_name) {
   std::unique_ptr<SettingsManager> settings_manager =
     std::make_unique<SettingsManager>();
-  auto path = get_default_roaming_path(projectName) / "settings.json";
+  auto path = get_default_roaming_path(app_name) / "settings.json";
 
   if (!std::filesystem::exists(path)) {
-    settings_manager->appName = projectName.data();
-    settings_manager->logFilePath = std::format("logs/{}.log", projectName);
+    settings_manager->app_name = app_name.data();
+    settings_manager->logfile_path = std::format("logs/{}.log", app_name);
     save_settings(settings_manager, path);
   } else {
     std::ifstream file(path);
