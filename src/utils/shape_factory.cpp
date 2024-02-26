@@ -2,7 +2,7 @@
 
 #include <numbers>
 
-namespace potatoengine {
+namespace nl {
 
 std::shared_ptr<VAO>
 ShapeFactory::Create(const std::vector<ShapeVertex>& vertices,

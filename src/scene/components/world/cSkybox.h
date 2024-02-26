@@ -7,7 +7,7 @@
 
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine {
+namespace nl {
 
 struct CSkybox {
     bool enable_fog{};

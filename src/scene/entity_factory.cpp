@@ -12,7 +12,7 @@
 using json = nlohmann::json;
 using namespace entt::literals;
 
-namespace potatoengine {
+namespace nl {
 
 glm::vec2 json_to_vec2(const json& j) {
   glm::vec2 v{};

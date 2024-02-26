@@ -10,7 +10,7 @@
 #include "render/vao.h"
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine {
+namespace nl {
 
 class RenderManager {
   public:

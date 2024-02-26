@@ -17,7 +17,7 @@
 using json = nlohmann::json;
 using namespace entt::literals;
 
-namespace potatoengine {
+namespace nl {
 
 SceneFactory::SceneFactory() : m_entity_factory() {}
 

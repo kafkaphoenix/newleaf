@@ -6,15 +6,15 @@
 
 using json = nlohmann::json;
 
-namespace potatoengine {
+namespace nl {
 
 struct SettingsManager {
-    std::string app_name = "potatoengine";
+    std::string app_name = "newleaf";
     std::string root = "..";
-    std::string logfile_path = "logs/potatoengine.log";
+    std::string logfile_path = "logs/newleaf.log";
     std::string backtrace_logfile_path = "logs/backtrace.log";
 
-    std::string window_icon_path = "assets/textures/icon.png";
+    std::string window_icon_path = "";
     int window_w = 1280;
     int window_h = 720;
     int depth_bits = 24;
@@ -53,25 +53,11 @@ struct SettingsManager {
     std::array<float, 4> clear_color = {0.45f, 0.55f, 0.6f, 1.f};
     float clear_depth = 1.f;
 
-    std::string active_scene{"Empty"};
-    std::string active_scene_path{"assets/scenes/empty_scene.json"};
+    std::string active_scene{""};
+    std::string active_scene_path{""};
     bool reload_scene = false;
     bool reload_prototypes = false;
 
-    std::vector<const char*> scenes{
-      "Sponza", "Dabrovic Sponza", "Lowpoly City", "Skycrapers", "Trailer park",
-      "Cubes",  "Plane terrain",   "Primitives",   "Empty",      "Flappy Bird"};
-    std::vector<const char*> scenes_paths{
-      "assets/scenes/sponza_scene.json",
-      "assets/scenes/dabrovic_sponza_scene.json",
-      "assets/scenes/lowpoly_city_scene.json",
-      "assets/scenes/skycrapers_scene.json",
-      "assets/scenes/trailer_park_scene.json",
-      "assets/scenes/cubes_scene.json",
-      "assets/scenes/plane_terrain_scene.json",
-      "assets/scenes/primitives_scene.json",
-      "assets/scenes/empty_scene.json",
-      "assets/scenes/flappy_bird_scene.json"};
     std::vector<const char*> cursor_modes{"Normal", "Hidden", "Disabled"};
     std::vector<const char*> log_levels{"Trace",   "Debug", "Info",
                                         "Warning", "Error", "Critical"};

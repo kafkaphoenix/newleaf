@@ -8,7 +8,7 @@
 
 using json = nlohmann::json;
 
-namespace potatoengine::serializers {
+namespace nl::serializers {
 
 inline void
 save_settings(const std::unique_ptr<SettingsManager>& settings_manager,

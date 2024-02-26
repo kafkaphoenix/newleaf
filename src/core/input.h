@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-namespace potatoengine {
+namespace nl {
 
 class Input {
   public:

@@ -6,7 +6,7 @@
 #include "core/application.h"
 #include "render/buffer.h"
 
-namespace potatoengine::assets {
+namespace nl::assets {
 
 Model::Model(std::filesystem::path&& fp, std::optional<bool> gammaCorrection)
   : m_path(std::move(fp.string())),
@@ -142,7 +142,7 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
 
 std::vector<std::shared_ptr<Texture>>
 Model::load_material_textures(aiMaterial* mat, aiTextureType t,
-                            std::string type) {
+                              std::string type) {
   std::vector<std::shared_ptr<Texture>> textures;
   textures.reserve(mat->GetTextureCount(t));
   for (uint32_t i = 0; i < mat->GetTextureCount(t); ++i) {

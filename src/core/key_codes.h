@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-namespace potatoengine {
+namespace nl {
 
 using KeyCode = uint32_t;
 namespace Key {

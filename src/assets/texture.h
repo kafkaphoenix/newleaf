@@ -6,7 +6,7 @@
 #include "pch.h"
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine::assets {
+namespace nl::assets {
 class Texture : public Asset {
   public:
     Texture() = default; // TODO revisit is for std::vector in Model class

@@ -6,7 +6,7 @@
 #include "pch.h"
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine {
+namespace nl {
 
 struct ActiveUniform {
     uint32_t type;

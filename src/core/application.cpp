@@ -3,7 +3,7 @@
 #include "core/time.h"
 #include "imgui/imgui_layer.h"
 
-namespace potatoengine {
+namespace nl {
 
 Application::Application(std::unique_ptr<SettingsManager>&& s, CLArgs&& args)
   : m_clargs(std::move(args)) {

@@ -2,7 +2,7 @@
 
 #include "render/vao.h"
 
-namespace potatoengine {
+namespace nl {
 
 class ShapeFactory {
   public:

@@ -6,7 +6,7 @@
 
 #include "core/backtrace_logsink.h"
 
-namespace potatoengine {
+namespace nl {
 
 class LogManager {
   public:
@@ -85,33 +85,28 @@ class LogManager {
 
 }
 
-namespace engine = potatoengine;
-
 #define ENGINE_TRACE(...)                                                      \
-  ::engine::LogManager::get_engine_logger()->trace(__VA_ARGS__)
+  ::nl::LogManager::get_engine_logger()->trace(__VA_ARGS__)
 #define ENGINE_DEBUG(...)                                                      \
-  ::engine::LogManager::get_engine_logger()->debug(__VA_ARGS__)
+  ::nl::LogManager::get_engine_logger()->debug(__VA_ARGS__)
 #define ENGINE_INFO(...)                                                       \
-  ::engine::LogManager::get_engine_logger()->info(__VA_ARGS__)
+  ::nl::LogManager::get_engine_logger()->info(__VA_ARGS__)
 #define ENGINE_WARN(...)                                                       \
-  ::engine::LogManager::get_engine_logger()->warn(__VA_ARGS__)
+  ::nl::LogManager::get_engine_logger()->warn(__VA_ARGS__)
 #define ENGINE_ERROR(...)                                                      \
-  ::engine::LogManager::get_engine_logger()->error(__VA_ARGS__)
+  ::nl::LogManager::get_engine_logger()->error(__VA_ARGS__)
 #define ENGINE_CRITICAL(...)                                                   \
-  ::engine::LogManager::get_engine_logger()->critical(__VA_ARGS__)
+  ::nl::LogManager::get_engine_logger()->critical(__VA_ARGS__)
 
-#define APP_TRACE(...)                                                         \
-  ::engine::LogManager::get_app_logger()->trace(__VA_ARGS__)
-#define APP_DEBUG(...)                                                         \
-  ::engine::LogManager::get_app_logger()->debug(__VA_ARGS__)
-#define APP_INFO(...) ::engine::LogManager::get_app_logger()->info(__VA_ARGS__)
-#define APP_WARN(...) ::engine::LogManager::get_app_logger()->warn(__VA_ARGS__)
-#define APP_ERROR(...)                                                         \
-  ::engine::LogManager::get_app_logger()->error(__VA_ARGS__)
+#define APP_TRACE(...) ::nl::LogManager::get_app_logger()->trace(__VA_ARGS__)
+#define APP_DEBUG(...) ::nl::LogManager::get_app_logger()->debug(__VA_ARGS__)
+#define APP_INFO(...) ::nl::LogManager::get_app_logger()->info(__VA_ARGS__)
+#define APP_WARN(...) ::nl::LogManager::get_app_logger()->warn(__VA_ARGS__)
+#define APP_ERROR(...) ::nl::LogManager::get_app_logger()->error(__VA_ARGS__)
 #define APP_CRITICAL(...)                                                      \
-  ::engine::LogManager::get_app_logger()->critical(__VA_ARGS__)
+  ::nl::LogManager::get_app_logger()->critical(__VA_ARGS__)
 
 #define ENGINE_BACKTRACE(...)                                                  \
-  ::engine::LogManager::get_engine_backtrace_logger()->debug(__VA_ARGS__)
+  ::nl::LogManager::get_engine_backtrace_logger()->debug(__VA_ARGS__)
 #define APP_BACKTRACE(...)                                                     \
-  ::engine::LogManager::get_app_backtrace_logger()->debug(__VA_ARGS__)
+  ::nl::LogManager::get_app_backtrace_logger()->debug(__VA_ARGS__)

@@ -7,7 +7,7 @@
 
 #include "imgui/imgui_logsink.h"
 
-namespace potatoengine {
+namespace nl {
 
 void LogManager::init() {
   std::vector<spdlog::sink_ptr> logSinks;

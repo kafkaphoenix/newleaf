@@ -2,7 +2,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-namespace potatoengine {
+namespace nl {
 ShaderProgram::ShaderProgram(std::string&& name)
   : m_id(glCreateProgram()), m_name(std::move(name)) {}
 

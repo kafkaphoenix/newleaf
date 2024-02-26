@@ -2,7 +2,7 @@
 
 #include "pch.h"
 
-namespace potatoengine {
+namespace nl {
 
 inline std::filesystem::path
 get_default_roaming_path(std::string_view app_name) {

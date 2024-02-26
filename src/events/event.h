@@ -2,7 +2,7 @@
 
 #include "pch.h"
 
-namespace potatoengine::events {
+namespace nl::events {
 
 enum class EventType {
   None = 0,

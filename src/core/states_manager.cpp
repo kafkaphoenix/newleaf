@@ -1,7 +1,7 @@
 #include "core/states_manager.h"
 #include "utils/map_json_serializer.h"
 
-namespace potatoengine {
+namespace nl {
 
 StatesManager::~StatesManager() {
   ENGINE_WARN("Deleting states manager");

@@ -7,7 +7,7 @@
 #include "events/mouse_event.h"
 #include "events/window_event.h"
 
-namespace potatoengine {
+namespace nl {
 
 WindowsManager::WindowsManager(
   const std::unique_ptr<SettingsManager>& settings_manager) {

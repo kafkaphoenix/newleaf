@@ -9,7 +9,7 @@
 #include "scene/system.h"
 #include "utils/uuid.h"
 
-namespace potatoengine {
+namespace nl {
 class SceneManager {
   public:
     SceneManager();

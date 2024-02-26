@@ -12,7 +12,7 @@
 #include "render/render_manager.h"
 #include "scene/scene_manager.h"
 
-namespace potatoengine {
+namespace nl {
 
 inline void
 draw_debugger(const std::unique_ptr<SettingsManager>& settings_manager,
@@ -27,8 +27,7 @@ draw_debugger(const std::unique_ptr<SettingsManager>& settings_manager,
 
   ImGui::SetNextWindowSize(ImVec2(500, 600), ImGuiCond_FirstUseEver);
   if (ImGui::Begin("Debugger", nullptr, window_flags)) {
-    draw_menubar(assets_manager, render_manager, scene_manager,
-                 settings_manager);
+    draw_menubar(assets_manager, render_manager, scene_manager);
     draw_managersbar(assets_manager, render_manager, scene_manager,
                      settings_manager, states_manager);
   }

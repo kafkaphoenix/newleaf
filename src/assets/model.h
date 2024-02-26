@@ -9,7 +9,7 @@
 #include "scene/components/graphics/cMesh.h"
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine::assets {
+namespace nl::assets {
 
 class Model : public Asset {
   public:

@@ -5,7 +5,7 @@
 #include "core/application.h"
 #include "utils/map_json_serializer.h"
 
-namespace potatoengine {
+namespace nl {
 
 FBO::FBO(uint32_t w, uint32_t h, uint32_t t) : m_depth_buffer_type(t) {
   const auto& settings_manager = Application::Get().get_settings_manager();
@@ -57,22 +57,22 @@ void FBO::attach_depth_texture() {
   // slower than renderbuffer but can be sampled in shaders
   m_depth_texture = assets::Texture::Create(
     m_width, m_height, GL_DEPTH_COMPONENT24, assets::Texture::DONT_WRAP);
-  glNamedFramebufferTexture(m_id, GL_DEPTH_ATTACHMENT, m_depth_texture->get_id(),
-                            0);
+  glNamedFramebufferTexture(m_id, GL_DEPTH_ATTACHMENT,
+                            m_depth_texture->get_id(), 0);
 }
 
 void FBO::attach_depth_render_buffer() {
   glCreateRenderbuffers(1, &m_depth_render_buffer);
-  glNamedRenderbufferStorage(m_depth_render_buffer, GL_DEPTH_COMPONENT24, m_width,
-                             m_height);
+  glNamedRenderbufferStorage(m_depth_render_buffer, GL_DEPTH_COMPONENT24,
+                             m_width, m_height);
   glNamedFramebufferRenderbuffer(m_id, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
                                  m_depth_render_buffer);
 }
 
 void FBO::attach_stencil_render_buffer() {
   glCreateRenderbuffers(1, &m_stencil_render_buffer);
-  glNamedRenderbufferStorage(m_stencil_render_buffer, GL_STENCIL_INDEX8, m_width,
-                             m_height);
+  glNamedRenderbufferStorage(m_stencil_render_buffer, GL_STENCIL_INDEX8,
+                             m_width, m_height);
   glNamedFramebufferRenderbuffer(m_id, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
                                  m_stencil_render_buffer);
 }
@@ -82,7 +82,8 @@ void FBO::attach_depth_stencil_render_buffer() {
   glNamedRenderbufferStorage(m_depth_stencil_render_buffer, GL_DEPTH24_STENCIL8,
                              m_width, m_height);
   glNamedFramebufferRenderbuffer(m_id, GL_DEPTH_STENCIL_ATTACHMENT,
-                                 GL_RENDERBUFFER, m_depth_stencil_render_buffer);
+                                 GL_RENDERBUFFER,
+                                 m_depth_stencil_render_buffer);
 }
 
 uint32_t FBO::get_buffer_id() const {

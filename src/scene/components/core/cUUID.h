@@ -3,7 +3,7 @@
 #include "pch.h"
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine {
+namespace nl {
 
 struct CUUID {
     uint32_t uuid{};

@@ -10,7 +10,7 @@
 #include "imgui/im_utils.h"
 #include "pch.h"
 
-namespace potatoengine {
+namespace nl {
 
 ImGuiLayer::ImGuiLayer() : Layer("ImGui_layer") {}
 

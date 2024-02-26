@@ -13,7 +13,7 @@
 
 int main(int argc, char** argv);
 
-namespace potatoengine {
+namespace nl {
 
 struct CLArgs {
     std::span<const char*> args;

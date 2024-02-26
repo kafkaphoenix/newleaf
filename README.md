@@ -1,10 +1,9 @@
-# potatoengine
+# newleaf
 
-C++ OpenGL engine for 3d and 2d game development
+C++ game engine for 3D and 2D development
 
 ## Engine Features
 
-- Self contained engine, everything can be accessed just importing a header `engineAPI.h`
 - Scene manager: Entity Component System engine oriented
 - Render manager: OpenGL 4.5 API abstraction
 - Window manager: Multi window/overlay support
@@ -19,11 +18,11 @@ C++ OpenGL engine for 3d and 2d game development
 
 ## Demos
 
-- Engine use cases can be found in the [demos repo](https://github.com/kafkaphoenix/potatoengine_demos)
+- Engine use cases can be found in the [demos repo](https://github.com/kafkaphoenix/newleaf_demos)
 
 ## How to use the engine in a personal project
 
-- TODO
+- TODO define
 
 ## Planned features
 

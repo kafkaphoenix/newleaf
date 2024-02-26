@@ -4,7 +4,7 @@
 
 #include "pch.h"
 
-namespace potatoengine {
+namespace nl {
 
 class OpenGLContext {
   public:

@@ -2,7 +2,7 @@
 
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine {
+namespace nl {
 
 struct CTextureAtlas {
     uint32_t rows{};

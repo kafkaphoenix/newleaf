@@ -4,7 +4,7 @@
 
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine {
+namespace nl {
 
 struct CTag {
     std::string tag;

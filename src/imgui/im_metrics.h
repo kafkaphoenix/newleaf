@@ -8,7 +8,7 @@
 #include "render/render_manager.h"
 #include "scene/scene_manager.h"
 
-namespace potatoengine {
+namespace nl {
 
 bool show_tool_metrics = false;
 

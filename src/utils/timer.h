@@ -2,7 +2,7 @@
 
 #include "pch.h"
 
-namespace potatoengine {
+namespace nl {
 
 class Timer {
   public:

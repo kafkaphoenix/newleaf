@@ -3,7 +3,7 @@
 #include "render/buffer.h"
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine {
+namespace nl {
 
 class VAO {
   public:

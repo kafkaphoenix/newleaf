@@ -5,7 +5,7 @@
 #include "events/event.h"
 #include "pch.h"
 
-namespace potatoengine {
+namespace nl {
 
 class State {
   public:

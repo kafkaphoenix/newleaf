@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 
-namespace potatoengine {
+namespace nl {
 
 static std::random_device rd;
 static std::mt19937_64 gen(rd());

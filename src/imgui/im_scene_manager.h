@@ -12,7 +12,7 @@
 
 using namespace entt::literals;
 
-namespace potatoengine {
+namespace nl {
 
 std::string selected_scene_manager_tabkey;
 char scene_objects_text_filter[128]{}; // TODO: move to class

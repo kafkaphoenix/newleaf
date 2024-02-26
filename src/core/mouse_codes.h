@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 
-namespace potatoengine::Mouse {
-  
+namespace nl::Mouse {
+
 enum : uint32_t {
   // From glfw3.h
   Button0 = 0,

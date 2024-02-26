@@ -9,7 +9,7 @@
 #include "utils/map_json_serializer.h"
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine {
+namespace nl {
 
 char states_text_filter[128]{}; // TODO: move to class
 bool filter_states{};

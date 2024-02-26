@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-namespace potatoengine {
+namespace nl {
 
 void APIENTRY message_callback(GLenum source, GLenum type, uint32_t id,
                                GLenum severity, GLsizei, GLchar const* msg,

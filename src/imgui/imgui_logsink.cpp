@@ -1,13 +1,13 @@
 #include "imgui/imgui_logsink.h"
 
-#include <string_view>
 #include <chrono>
 #include <format>
-#include <mutex>
 #include <memory>
+#include <mutex>
+#include <string_view>
 
 extern template class spdlog::sinks::base_sink<std::mutex>;
-namespace potatoengine {
+namespace nl {
 void ImGuiLogsink::clear() {
   std::unique_lock<std::shared_timed_mutex> lock(m_records_mutex);
   m_records.clear();

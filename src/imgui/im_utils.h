@@ -4,7 +4,7 @@
 
 #include "pch.h"
 
-namespace potatoengine {
+namespace nl {
 
 inline void help_mark(std::string_view help_text) {
   ImGui::TextDisabled("(?)");

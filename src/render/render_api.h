@@ -5,7 +5,7 @@
 #include "pch.h"
 #include "render/vao.h"
 
-namespace potatoengine {
+namespace nl {
 class RenderAPI {
   public:
     static void init();

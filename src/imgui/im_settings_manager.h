@@ -10,7 +10,7 @@
 #include "pch.h"
 #include "render/render_manager.h"
 
-namespace potatoengine {
+namespace nl {
 
 std::string selected_settings_manager_tabkey;
 
@@ -275,26 +275,6 @@ draw_settings_manager(const std::unique_ptr<SettingsManager>& settings_manager,
     } else if (selected_settings_manager_tabkey == "Scene") {
       ImGui::Text("Name: %s", settings_manager->active_scene.c_str());
       ImGui::Text("Path: %s ", settings_manager->active_scene_path.c_str());
-      if (ImGui::BeginCombo("Active scene",
-                            settings_manager->active_scene.c_str())) {
-        for (uint32_t n = 0; n < settings_manager->scenes.size(); n++) {
-          bool is_selected =
-            (settings_manager->active_scene == settings_manager->scenes[n]);
-          if (ImGui::Selectable(settings_manager->scenes[n], is_selected)) {
-            if (settings_manager->active_scene not_eq
-                settings_manager->scenes[n]) {
-              settings_manager->reload_scene = true;
-              settings_manager->active_scene = settings_manager->scenes[n];
-              settings_manager->active_scene_path =
-                settings_manager->scenes_paths[n];
-            }
-          }
-          if (is_selected) {
-            ImGui::SetItemDefaultFocus();
-          }
-        }
-        ImGui::EndCombo();
-      }
       ImGui::Checkbox("Reload scene", &settings_manager->reload_scene);
     }
   }

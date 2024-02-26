@@ -6,7 +6,7 @@
 
 #include "pch.h"
 
-namespace potatoengine::assets {
+namespace nl::assets {
 
 Texture::Texture(uint32_t width, uint32_t height, GLenum glFormat,
                  std::optional<bool> wrap)

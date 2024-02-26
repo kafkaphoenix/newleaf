@@ -7,7 +7,7 @@
 #include "pch.h"
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine {
+namespace nl {
 
 class EntityFactory {
   public:

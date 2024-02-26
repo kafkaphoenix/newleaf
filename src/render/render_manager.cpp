@@ -4,7 +4,7 @@
 #include "imgui/im_scene.h"
 #include "render/render_api.h"
 
-namespace potatoengine {
+namespace nl {
 
 void RenderManager::init() const { RenderAPI::init(); }
 

@@ -9,7 +9,7 @@
 #include "scene/entity_factory.h"
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine {
+namespace nl {
 
 class SceneFactory {
   public:

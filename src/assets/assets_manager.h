@@ -4,7 +4,7 @@
 #include "pch.h"
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine::assets {
+namespace nl::assets {
 class AssetsManager {
   public:
     template <typename Type, typename... Args>

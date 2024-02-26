@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-namespace potatoengine {
+namespace nl {
 class ImGuiLogsink : public spdlog::sinks::base_sink<std::mutex> {
   public:
     void draw(bool* show_tool_logger);

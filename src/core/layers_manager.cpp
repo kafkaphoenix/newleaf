@@ -1,6 +1,6 @@
 #include "core/layers_manager.h"
 
-namespace potatoengine {
+namespace nl {
 
 LayersManager::~LayersManager() {
   ENGINE_WARN("Deleting layers manager");

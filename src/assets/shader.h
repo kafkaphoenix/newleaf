@@ -6,7 +6,7 @@
 #include "pch.h"
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine::assets {
+namespace nl::assets {
 
 class Shader : public Asset {
   public:

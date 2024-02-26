@@ -2,7 +2,7 @@
 
 #include "utils/timer.h"
 
-namespace potatoengine::assets {
+namespace nl::assets {
 
 void Prefab::process_prototype(const std::string& name,
                                const json& prototype_data, const json& data) {

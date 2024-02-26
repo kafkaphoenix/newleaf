@@ -2,13 +2,13 @@
 
 #include <entt/entt.hpp>
 
-namespace potatoengine {
+namespace nl {
 
 template <typename Component, typename... Args>
 inline Component& assign(entt::entity e, Args... args) {
   auto& registry = Application::Get().get_scene_manager()->get_registry();
-  ENGINE_ASSERT(not registry.all_of<Component>(e), "Entity already has component {}",
-                typeid(Component).name());
+  ENGINE_ASSERT(not registry.all_of<Component>(e),
+                "Entity already has component {}", typeid(Component).name());
   return registry.emplace<Component>(e, std::forward<Args>(args)...);
 }
 

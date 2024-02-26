@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-namespace potatoengine {
+namespace nl {
 
 VAO::VAO() { glCreateVertexArrays(1, &m_id); }
 

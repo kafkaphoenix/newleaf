@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.21)
 
 
-project(potatoengine
-VERSION 1.0
-HOMEPAGE_URL "https://github.com/kafkaphoenix/potatoengine"
-DESCRIPTION "C++ OpenGL engine for 3d and 2d game development"
+project(newleaf
+VERSION 0.1
+HOMEPAGE_URL "https://github.com/kafkaphoenix/newleaf"
+DESCRIPTION "C++ game engine for 3D and 2D development"
 LANGUAGES CXX
 )
 

@@ -5,7 +5,7 @@
 #include "core/application.h"
 #include "pch.h"
 
-namespace potatoengine {
+namespace nl {
 
 inline void render_scene(uint32_t fboTextureID, std::string_view title,
                          glm::vec2 size, glm::vec2 position,

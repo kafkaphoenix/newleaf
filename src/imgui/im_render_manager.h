@@ -8,7 +8,7 @@
 #include "render/render_manager.h"
 #include "utils/map_json_serializer.h"
 
-namespace potatoengine {
+namespace nl {
 
 std::string selected_render_manager_tabkey;
 std::string selected_render_manager_tabtype;

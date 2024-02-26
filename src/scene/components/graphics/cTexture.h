@@ -11,7 +11,7 @@
 #include "utils/map_json_serializer.h"
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine {
+namespace nl {
 
 struct CTexture {
     enum class DrawMode {
@@ -139,8 +139,7 @@ struct CTexture {
 }
 
 template <>
-inline void engine::SceneManager::on_component_added(entt::entity e,
-                                                     CTexture& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e, CTexture& c) {
   c.setDrawMode();
   c.setTextures();
 

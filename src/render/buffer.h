@@ -5,7 +5,7 @@
 
 #include "pch.h"
 
-namespace potatoengine {
+namespace nl {
 #define MAX_BONE_INFLUENCE 4 // TODO use
 
 struct Vertex { // TODO move

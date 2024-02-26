@@ -17,7 +17,7 @@
 
 using namespace entt::literals;
 
-namespace potatoengine {
+namespace nl {
 
 struct CMesh {
     std::vector<std::shared_ptr<assets::Texture>> textures;
@@ -30,13 +30,13 @@ struct CMesh {
     CMesh() = default;
     explicit CMesh(std::vector<Vertex>&& v, std::vector<uint32_t>&& i,
                    std::vector<std::shared_ptr<assets::Texture>>&& t,
-                   std::string&& vt = "basic")
+                   std::string&& vt)
       : vertices(std::move(v)), indices(std::move(i)), textures(std::move(t)),
         vertex_type(std::move(vt)) {}
 
     void setup_mesh() {
       vao = VAO::Create();
-      if (vertex_type == "basic") {
+      if (vertex_type == "camera") {
         vao->attach_vertex(VBO::Create(vertices), VAO::VertexType::VERTEX);
       } else if (vertex_type == "shape") { // TODO this is not used
         vao->attach_vertex(VBO::Create(vertices),
@@ -51,7 +51,7 @@ struct CMesh {
     }
 
     void update_mesh() {
-      if (vertex_type == "basic") {
+      if (vertex_type == "camera") {
         vao->update_vertex(VBO::Create(vertices), 0, VAO::VertexType::VERTEX);
       } else if (vertex_type == "shape") {
         vao->update_vertex(VBO::Create(vertices), 0,
@@ -111,7 +111,7 @@ struct CMesh {
             cTexture->draw_mode == CTexture::DrawMode::TEXTURE_ATLAS_BLEND or
             cTexture->draw_mode ==
               CTexture::DrawMode::TEXTURE_ATLAS_BLEND_COLOR) {
-          if (sp->get_name() == "basic" or
+          if (sp->get_name() == "camera" or
               sp->get_name() ==
                 "shape") { // terrain shader get texture atlas data from vertex
             sp->set_float("useTextureAtlas", 1.f);
@@ -135,7 +135,7 @@ struct CMesh {
         }
         if (static_cast<float>(entt::monostate<"useSkyBlending"_hs>{}) ==
               1.f and
-            sp->get_name() == "basic") {
+            sp->get_name() == "camera") {
           sp->set_float(
             "useSkyBlending",
             static_cast<float>(entt::monostate<"useSkyBlending"_hs>{}));

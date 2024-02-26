@@ -15,7 +15,7 @@
 
 using namespace entt::literals;
 
-namespace potatoengine {
+namespace nl {
 
 CUUID& cast_cuuid(void* other) { return *static_cast<CUUID*>(other); }
 

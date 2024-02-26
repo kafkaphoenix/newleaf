@@ -3,33 +3,31 @@
 #include "core/application.h"
 #include "utils/exception.h"
 
-namespace engine = potatoengine;
-
-extern engine::Application* engine::Create(engine::CLArgs&& args);
+extern nl::Application* nl::Create(nl::CLArgs&& args);
 
 int main(int argc, char** argv) {
   try {
-    engine::LogManager::init();
+    nl::LogManager::init();
 
     std::vector<const char*> args(argv, argv + argc);
-    engine::CLArgs clargs{std::span<const char*>{args}};
-    engine::Application* app = engine::Create(std::move(clargs));
+    nl::CLArgs clargs{std::span<const char*>{args}};
+    nl::Application* app = nl::Create(std::move(clargs));
 
     app->run();
 
     delete app;
-  } catch (const engine::EngineException& e) {
+  } catch (const nl::EngineException& e) {
     ENGINE_CRITICAL(e.what());
-    engine::LogManager::dump_backtrace();
+    nl::LogManager::dump_backtrace();
     std::exit(EXIT_FAILURE);
-  } catch (const engine::AppException& e) {
+  } catch (const nl::AppException& e) {
     APP_CRITICAL(e.what());
-    engine::LogManager::dump_backtrace();
+    nl::LogManager::dump_backtrace();
     std::exit(EXIT_FAILURE);
   } catch (const std::exception& e) {
     // unknow source, we assume from the app
     APP_CRITICAL(e.what());
-    engine::LogManager::dump_backtrace();
+    nl::LogManager::dump_backtrace();
     std::exit(EXIT_FAILURE);
   }
 }

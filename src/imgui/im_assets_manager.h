@@ -10,7 +10,7 @@
 #include "imgui/im_utils.h"
 #include "pch.h"
 
-namespace potatoengine {
+namespace nl {
 
 std::string selected_asset_manager_tab_key;
 std::string selected_asset_tab_type;

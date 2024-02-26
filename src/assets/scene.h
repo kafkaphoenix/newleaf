@@ -8,7 +8,7 @@
 
 using json = nlohmann::json;
 
-namespace potatoengine::assets {
+namespace nl::assets {
 class Scene : public Asset {
   public:
     Scene(std::filesystem::path&& fp);

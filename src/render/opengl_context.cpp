@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-namespace potatoengine {
+namespace nl {
 
 OpenGLContext::OpenGLContext(GLFWwindow* w) : m_window(w) {
   ENGINE_ASSERT(w, "Window is null!");

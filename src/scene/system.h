@@ -6,7 +6,7 @@
 #include "core/time.h"
 #include "events/event.h"
 
-namespace potatoengine::systems {
+namespace nl::systems {
 
 class System {
   public:

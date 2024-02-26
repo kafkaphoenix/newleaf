@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace potatoengine {
+namespace nl {
 
 class CustomException : public std::runtime_error {
   public:
@@ -39,6 +39,6 @@ class AppException : public CustomException {
 }
 
 #define throw_engine_exception(arg)                                            \
-  throw potatoengine::EngineException(std::format(arg), __FILE__, __LINE__)
+  throw nl::EngineException(std::format(arg), __FILE__, __LINE__)
 #define throw_app_exception(arg)                                               \
-  throw potatoengine::AppException(std::format(arg), __FILE__, __LINE__)
+  throw nl::AppException(std::format(arg), __FILE__, __LINE__)

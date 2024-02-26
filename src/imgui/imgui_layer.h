@@ -2,7 +2,7 @@
 
 #include "core/layer.h"
 
-namespace potatoengine {
+namespace nl {
 
 class ImGuiLayer : public Layer {
   public:

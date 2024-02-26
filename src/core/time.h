@@ -1,6 +1,6 @@
 #pragma once
 
-namespace potatoengine {
+namespace nl {
 
 class Time {
   public:

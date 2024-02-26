@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace potatoengine {
+namespace nl {
 
 class BacktraceLogsink : public spdlog::sinks::base_sink<std::mutex> {
   public:

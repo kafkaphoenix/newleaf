@@ -6,7 +6,7 @@
 
 using namespace entt::literals;
 
-namespace potatoengine {
+namespace nl {
 
 SceneManager::SceneManager() : m_scene_factory() {
   ENGINE_TRACE("Initializing scene manager...");

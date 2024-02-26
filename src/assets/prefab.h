@@ -14,7 +14,7 @@ struct Prototype {
     std::unordered_map<std::string, json> components;
 };
 
-namespace potatoengine::assets {
+namespace nl::assets {
 class Prefab : public Asset {
   public:
     Prefab(std::filesystem::path&& fp,

@@ -2,7 +2,7 @@
 
 #include "utils/numeric_comparator.h"
 
-namespace potatoengine::assets {
+namespace nl::assets {
 
 class Asset {
   public:

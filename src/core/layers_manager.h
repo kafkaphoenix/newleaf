@@ -3,7 +3,7 @@
 #include "core/layer.h"
 #include "pch.h"
 
-namespace potatoengine {
+namespace nl {
 
 class LayersManager {
   public:

@@ -2,7 +2,7 @@
 
 #include "pch.h"
 
-namespace potatoengine {
+namespace nl {
 
 struct NumericComparator {
     bool operator()(const std::string& lhs, const std::string& rhs) const {

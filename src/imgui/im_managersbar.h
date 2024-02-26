@@ -14,7 +14,7 @@
 #include "render/render_manager.h"
 #include "scene/scene_manager.h"
 
-namespace potatoengine {
+namespace nl {
 
 inline void
 draw_managersbar(const std::unique_ptr<assets::AssetsManager>& assets_manager,

@@ -9,7 +9,7 @@
 #include <string_view>
 
 extern template class spdlog::sinks::base_sink<std::mutex>;
-namespace potatoengine {
+namespace nl {
 
 BacktraceLogsink::BacktraceLogsink(std::string&& path)
   : m_path(std::move(path)) {}

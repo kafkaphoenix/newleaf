@@ -2,7 +2,7 @@
 
 #include "utils/timer.h"
 
-namespace potatoengine::assets {
+namespace nl::assets {
 Scene::Scene(std::filesystem::path&& fp) : m_path(std::move(fp.string())) {
   std::ifstream f(fp);
   ENGINE_ASSERT(f.is_open(), "Failed to open scene file!");

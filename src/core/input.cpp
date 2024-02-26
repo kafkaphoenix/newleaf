@@ -5,7 +5,7 @@
 #include "core/application.h"
 #include "pch.h"
 
-namespace potatoengine {
+namespace nl {
 
 bool Input::is_key_pressed(uint32_t k) {
   GLFWwindow* w = Application::Get().get_window_manager()->get_native_window();

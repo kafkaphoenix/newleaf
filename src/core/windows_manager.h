@@ -8,7 +8,7 @@
 #include "pch.h"
 #include "render/opengl_context.h"
 
-namespace potatoengine {
+namespace nl {
 
 using EventCallbackFn = std::function<void(events::Event&)>;
 

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace potatoengine {
+namespace nl {
 
 struct CDeleted {
     bool deleted{};
