@@ -3,8 +3,7 @@
 #include "pch.h"
 
 namespace potatoengine::assets {
-Shader::Shader(std::filesystem::path&& fp)
-  : m_filepath(std::move(fp.string())) {
+Shader::Shader(std::filesystem::path&& fp) : m_path(std::move(fp.string())) {
   std::ifstream f(fp);
   ENGINE_ASSERT(f.is_open(), "Failed to open shader file!");
   ENGINE_ASSERT(f.peek() not_eq std::ifstream::traits_type::eof(),
@@ -24,30 +23,29 @@ Shader::Shader(std::filesystem::path&& fp)
   if (status not_eq GL_TRUE) [[unlikely]] {
     int infoLogLength = 0;
     glGetShaderiv(m_id, GL_INFO_LOG_LENGTH, &infoLogLength);
-    ENGINE_ASSERT(infoLogLength > 0, "Shader {} compilation failed!",
-                  m_filepath);
+    ENGINE_ASSERT(infoLogLength > 0, "Shader {} compilation failed!", m_path);
     std::vector<GLchar> shaderInfoLog(infoLogLength);
     glGetShaderInfoLog(m_id, infoLogLength, &infoLogLength,
                        shaderInfoLog.data());
     glDeleteShader(m_id);
-    ENGINE_ASSERT(false, "Shader {} compilation failed: \n{}", m_filepath,
+    ENGINE_ASSERT(false, "Shader {} compilation failed: \n{}", m_path,
                   std::string(shaderInfoLog.data()));
   }
 }
 
 Shader::~Shader() {
-  ENGINE_WARN("Deleting shader {}", m_filepath);
+  ENGINE_WARN("Deleting shader {}", m_path);
   glDeleteShader(m_id);
 }
 
-const std::map<std::string, std::string, NumericComparator>& Shader::getInfo() {
+const std::map<std::string, std::string, NumericComparator>& Shader::to_map() {
   if (not m_info.empty()) {
     return m_info;
   }
 
   m_info["Type"] = "Shader";
-  m_info["Filepath"] = m_filepath;
-  m_info["ID"] = std::to_string(m_id);
+  m_info["Path"] = m_path;
+  m_info["id"] = std::to_string(m_id);
   if (m_type == GL_VERTEX_SHADER) {
     m_info["Shader type"] = "Vertex";
   } else if (m_type == GL_FRAGMENT_SHADER) {
@@ -72,7 +70,7 @@ bool Shader::operator==(const Asset& other) const {
     ENGINE_ASSERT(false, "Cannot compare shader with other asset type!");
   }
   const Shader& otherShader = static_cast<const Shader&>(other);
-  return m_filepath == otherShader.m_filepath and
-         m_type == otherShader.m_type and m_id == otherShader.m_id;
+  return m_path == otherShader.m_path and m_type == otherShader.m_type and
+         m_id == otherShader.m_id;
 }
 }

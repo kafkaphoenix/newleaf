@@ -2,25 +2,25 @@
 
 #include <imgui.h>
 
-#include "assets/assetsManager.h"
+#include "assets/assets_manager.h"
 #include "assets/model.h"
 #include "assets/prefab.h"
 #include "assets/texture.h"
-#include "core/settingsManager.h"
+#include "core/settings_manager.h"
+#include "imgui/im_utils.h"
 #include "pch.h"
-#include "imgui/imutils.h"
 
 namespace potatoengine {
 
-std::string selectedAssetManagerTabKey;
-std::string selectedAssetTabType;
-std::string selectedFilepath;
+std::string selected_asset_manager_tab_key;
+std::string selected_asset_tab_type;
+std::string selected_path;
 char assets_text_filter[128]{}; // TODO: move to class
 
-inline void
-drawAssetsManager(const std::unique_ptr<assets::AssetsManager>& assets_manager,
-                  const std::unique_ptr<SettingsManager>& settings_manager) {
-  const auto& assets = assets_manager->getAssets();
+inline void draw_assets_manager(
+  const std::unique_ptr<assets::AssetsManager>& assets_manager,
+  const std::unique_ptr<SettingsManager>& settings_manager) {
+  const auto& assets = assets_manager->get_assets();
 
   if (assets.empty()) {
     ImGui::Text("No assets loaded");
@@ -54,32 +54,34 @@ drawAssetsManager(const std::unique_ptr<assets::AssetsManager>& assets_manager,
           continue;
         }
         if (ImGui::Selectable(name.c_str())) {
-          selectedAssetManagerTabKey = name;
-          selectedAssetTabType = type;
+          selected_asset_manager_tab_key = name;
+          selected_asset_tab_type = type;
         }
       }
     }
   }
 
-  if (collapsed == 0 or settings_manager->reloadScene) {
-    selectedAssetManagerTabKey.clear();
-    selectedAssetTabType.clear();
-    selectedFilepath.clear();
+  if (collapsed == 0 or settings_manager->reload_scene) {
+    selected_asset_manager_tab_key.clear();
+    selected_asset_tab_type.clear();
+    selected_path.clear();
   }
 
   ImGui::NextColumn();
-  if (not selectedAssetManagerTabKey.empty()) {
+  if (not selected_asset_manager_tab_key.empty()) {
     const auto& asset =
-      assets.at(selectedAssetTabType).at(selectedAssetManagerTabKey);
-    const auto& assetInfo = asset->getInfo();
+      assets.at(selected_asset_tab_type).at(selected_asset_manager_tab_key);
+    const auto& assetInfo = asset->to_map();
 
     for (const auto& [key, value] : assetInfo) {
-      if (key.starts_with("Prototype ") and selectedAssetTabType == "Prefab") {
+      if (key.starts_with("Prototype ") and
+          selected_asset_tab_type == "Prefab") {
         const auto& prefab =
-          assets_manager->get<assets::Prefab>(selectedAssetManagerTabKey);
-        const auto& prototypeInfo = prefab->getTargetedPrototypeInfo(value);
-        if (ImGui::TreeNode((selectedAssetTabType + selectedAssetManagerTabKey +
-                             key + settings_manager->activeScene)
+          assets_manager->get<assets::Prefab>(selected_asset_manager_tab_key);
+        const auto& prototypeInfo = prefab->get_targeted_prototype_info(value);
+        if (ImGui::TreeNode((selected_asset_tab_type +
+                             selected_asset_manager_tab_key + key +
+                             settings_manager->active_scene)
                               .c_str(),
                             key.c_str())) {
           for (const auto& [key, value] : prototypeInfo) {
@@ -88,12 +90,13 @@ drawAssetsManager(const std::unique_ptr<assets::AssetsManager>& assets_manager,
           ImGui::TreePop();
         }
       } else if (key.starts_with("Loaded Texture ") and
-                 selectedAssetTabType == "Model") {
+                 selected_asset_tab_type == "Model") {
         const auto& model =
-          assets_manager->get<assets::Model>(selectedAssetManagerTabKey);
-        const auto& textureInfo = model->getLoadedTextureInfo(value);
-        if (ImGui::TreeNode((selectedAssetTabType + selectedAssetManagerTabKey +
-                             key + settings_manager->activeScene)
+          assets_manager->get<assets::Model>(selected_asset_manager_tab_key);
+        const auto& textureInfo = model->get_loaded_texture_info(value);
+        if (ImGui::TreeNode((selected_asset_tab_type +
+                             selected_asset_manager_tab_key + key +
+                             settings_manager->active_scene)
                               .c_str(),
                             key.c_str())) {
           for (const auto& [key, value] : textureInfo) {
@@ -101,18 +104,18 @@ drawAssetsManager(const std::unique_ptr<assets::AssetsManager>& assets_manager,
           }
           ImGui::TreePop();
         }
-      } else if (key.starts_with("Filepath ") and
-                 selectedAssetTabType == "Texture") {
+      } else if (key.starts_with("Path ") and
+                 selected_asset_tab_type == "Texture") {
         const auto& texture =
-          assets_manager->get<assets::Texture>(selectedAssetManagerTabKey);
-        if (texture->isCubemap()) {
+          assets_manager->get<assets::Texture>(selected_asset_manager_tab_key);
+        if (texture->is_cubemap()) {
           ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
         } else {
           ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
           if (ImGui::IsItemHovered()) {
-            selectedFilepath = value;
+            selected_path = value;
           } else {
-            selectedFilepath.clear();
+            selected_path.clear();
           }
         }
       } else {
@@ -120,12 +123,12 @@ drawAssetsManager(const std::unique_ptr<assets::AssetsManager>& assets_manager,
       }
     }
 
-    if (not selectedFilepath.empty()) {
+    if (not selected_path.empty()) {
       const auto& texture =
-        assets_manager->get<assets::Texture>(selectedAssetManagerTabKey);
-      if (not texture->isCubemap()) {
-        uint32_t maxWidth = texture->getWidth();
-        uint32_t maxHeight = texture->getHeight();
+        assets_manager->get<assets::Texture>(selected_asset_manager_tab_key);
+      if (not texture->is_cubemap()) {
+        uint32_t maxWidth = texture->get_width();
+        uint32_t maxHeight = texture->get_height();
         if (maxWidth <= 64 and maxHeight <= 64) {
           maxWidth *= 2;
           maxHeight *= 2;
@@ -139,7 +142,7 @@ drawAssetsManager(const std::unique_ptr<assets::AssetsManager>& assets_manager,
           maxHeight /= 2;
           maxWidth /= 2;
         }
-        ImGui::Image((void*)texture->getID(), ImVec2(maxWidth, maxHeight),
+        ImGui::Image((void*)texture->get_id(), ImVec2(maxWidth, maxHeight),
                      ImVec2(0, 1), ImVec2(1, 0));
       }
     }

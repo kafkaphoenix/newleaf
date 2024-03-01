@@ -1,7 +1,7 @@
 #pragma once
 
 #include <format>
-#include <sstream>
+#include <iosfwd>
 #include <stdexcept>
 #include <string>
 

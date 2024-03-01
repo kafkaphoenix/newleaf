@@ -3,7 +3,7 @@
 #include "utils/timer.h"
 
 namespace potatoengine::assets {
-Scene::Scene(std::filesystem::path&& fp) : m_filepath(std::move(fp.string())) {
+Scene::Scene(std::filesystem::path&& fp) : m_path(std::move(fp.string())) {
   std::ifstream f(fp);
   ENGINE_ASSERT(f.is_open(), "Failed to open scene file!");
   ENGINE_ASSERT(f.peek() not_eq std::ifstream::traits_type::eof(),
@@ -37,62 +37,20 @@ void Scene::read(const json& data) {
         m_prefabs[key] = value;
       }
     }
-    if (data.at("assets").contains("scenes")) {
-      for (const auto& [key, value] : data.at("assets").at("scenes").items()) {
-        m_scenes[key] = value;
-      }
-    }
-  }
-  if (data.contains("entities")) {
-    if (data.at("entities").contains("normals")) {
-      for (const auto& [key, value] :
-           data.at("entities").at("normals").items()) {
-        m_normalEntities[key] = value;
-      }
-    }
-    if (data.at("entities").contains("lights")) {
-      for (const auto& [key, value] :
-           data.at("entities").at("lights").items()) {
-        m_lightEntities[key] = value;
-      }
-    }
-    if (data.at("entities").contains("cameras")) {
-      for (const auto& [key, value] :
-           data.at("entities").at("cameras").items()) {
-        m_cameraEntities[key] = value;
-      }
-    }
-    if (data.at("entities").contains("systems")) {
-      for (const auto& [key, value] :
-           data.at("entities").at("systems").items()) {
-        m_systemEntities[key] = value;
-      }
-    }
-    if (data.at("entities").contains("fbos")) {
-      for (const auto& [key, value] : data.at("entities").at("fbos").items()) {
-        m_fboEntities[key] = value;
-      }
-    }
   }
 }
 
-const std::map<std::string, std::string, NumericComparator>& Scene::getInfo() {
+const std::map<std::string, std::string, NumericComparator>& Scene::to_map() {
   if (not m_info.empty()) {
     return m_info;
   }
 
   m_info["Type"] = "Scene";
-  m_info["Filepath"] = m_filepath;
+  m_info["Path"] = m_path;
   m_info["Shaders"] = std::to_string(m_shaders.size());
   m_info["Textures"] = std::to_string(m_textures.size());
   m_info["Models"] = std::to_string(m_models.size());
   m_info["Prefabs"] = std::to_string(m_prefabs.size());
-  m_info["Scenes"] = std::to_string(m_scenes.size());
-  m_info["Normal entities"] = std::to_string(m_normalEntities.size());
-  m_info["Light entities"] = std::to_string(m_lightEntities.size());
-  m_info["Camera entities"] = std::to_string(m_cameraEntities.size());
-  m_info["System entities"] = std::to_string(m_systemEntities.size());
-  m_info["FBO entities"] = std::to_string(m_fboEntities.size());
 
   return m_info;
 }
@@ -102,6 +60,6 @@ bool Scene::operator==(const Asset& other) const {
     ENGINE_ASSERT(false, "Cannot compare scene with other asset type!");
   }
   const Scene& otherScene = static_cast<const Scene&>(other);
-  return m_filepath == otherScene.m_filepath;
+  return m_path == otherScene.m_path;
 }
 }

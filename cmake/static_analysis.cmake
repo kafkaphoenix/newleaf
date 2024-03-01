@@ -6,11 +6,11 @@ option(ENABLE_CPPCHECK "Enable static analysis with cppcheck" ON)
 find_program(CLANG_TIDY NAMES "clang-tidy")
 
 if(CLANG_TIDY AND ENABLE_CLANG_TIDY AND NOT GCC) # GCC doesn't support clang-tidy with precompiled headers
-    file(COPY ${CMAKE_CURRENT_LIST_DIR}/../vendor/.clang-tidy DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    file(COPY ${CMAKE_CURRENT_LIST_DIR}/../third_party/.clang-tidy DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
     add_custom_target(
         run_clang_tidy
-        COMMAND ${CLANG_TIDY} ${CMAKE_SOURCE_DIR}/src/* ${CMAKE_SOURCE_DIR}/demos/* -p ${CMAKE_BINARY_DIR}/compile_commands.json
+        COMMAND ${CLANG_TIDY} ${CMAKE_SOURCE_DIR}/src/* -p ${CMAKE_BINARY_DIR}/compile_commands.json
         COMMENT "running clang-tidy static analysis"
     )
 
@@ -22,7 +22,6 @@ find_program(CPPCHECK NAMES "cppcheck")
 if(CPPCHECK AND ENABLE_CPPCHECK)
     set(CPPCHECK_SOURCES
         ${CMAKE_SOURCE_DIR}/src
-        ${CMAKE_SOURCE_DIR}/demos
     )
 
     set(CPPCHECK_OPTIONS
@@ -33,9 +32,9 @@ if(CPPCHECK AND ENABLE_CPPCHECK)
         "--enable=style,performance,portability"
         "--inline-suppr"
         "-I${CMAKE_SOURCE_DIR}\\build\\*"
-        "-i${CMAKE_SOURCE_DIR}\\vendor\\*"
-        "--suppress=*:*\\potatoengine\\vendor\\*:*"
-        "--suppress=*:*\\potatoengine\\build\\*:*"
+        "-i${CMAKE_SOURCE_DIR}\\third_party\\*"
+        "--suppress=*:*\\${PROJECT_NAME}\\third_party\\*:*"
+        "--suppress=*:*\\${PROJECT_NAME}\\build\\*:*"
     )
 
     add_custom_target(

@@ -21,7 +21,7 @@ void VAO::unbind() {
   m_binded = false;
 }
 
-void VAO::attachVertex(std::shared_ptr<VBO>&& vbo, VertexType type) {
+void VAO::attach_vertex(std::shared_ptr<VBO>&& vbo, VertexType type) {
   size_t vertexSize = 0;
   if (type == VertexType::VERTEX) {
     vertexSize = sizeof(Vertex);
@@ -31,133 +31,134 @@ void VAO::attachVertex(std::shared_ptr<VBO>&& vbo, VertexType type) {
     vertexSize = sizeof(TerrainVertex);
   }
 
-  glVertexArrayVertexBuffer(m_id, 0, vbo->getID(), 0, vertexSize);
+  glVertexArrayVertexBuffer(m_id, 0, vbo->get_id(), 0, vertexSize);
   m_vbos.emplace_back(std::move(vbo));
 
   if (type == VertexType::VERTEX) {
-    attachVertexAttributes();
+    attach_vertex_attributes();
   } else if (type == VertexType::SHAPE_VERTEX) {
-    attachShapeVertexAttributes();
+    attach_shape_vertex_attributes();
   } else if (type == VertexType::TERRAIN_VERTEX) {
-    attachTerrainVertexAttributes();
+    attach_terrain_vertex_attributes();
   }
   m_dirty = true;
 }
 
-void VAO::attachVertexAttributes() {
+void VAO::attach_vertex_attributes() {
   glEnableVertexArrayAttrib(m_id, 0);
   glVertexArrayAttribFormat(m_id, 0, 3, GL_FLOAT, GL_FALSE,
                             offsetof(Vertex, position));
-  glVertexArrayAttribBinding(m_id, 0, m_vboIDX);
+  glVertexArrayAttribBinding(m_id, 0, m_vbo_index);
 
   glEnableVertexArrayAttrib(m_id, 1);
   glVertexArrayAttribFormat(m_id, 1, 3, GL_FLOAT, GL_FALSE,
                             offsetof(Vertex, normal));
-  glVertexArrayAttribBinding(m_id, 1, m_vboIDX);
+  glVertexArrayAttribBinding(m_id, 1, m_vbo_index);
 
   glEnableVertexArrayAttrib(m_id, 2);
   glVertexArrayAttribFormat(m_id, 2, 2, GL_FLOAT, GL_FALSE,
-                            offsetof(Vertex, textureCoords));
-  glVertexArrayAttribBinding(m_id, 2, m_vboIDX);
+                            offsetof(Vertex, texture_coords));
+  glVertexArrayAttribBinding(m_id, 2, m_vbo_index);
 
   glEnableVertexArrayAttrib(m_id, 3);
   glVertexArrayAttribFormat(m_id, 3, 3, GL_FLOAT, GL_FALSE,
                             offsetof(Vertex, tangent));
-  glVertexArrayAttribBinding(m_id, 3, m_vboIDX);
+  glVertexArrayAttribBinding(m_id, 3, m_vbo_index);
 
   glEnableVertexArrayAttrib(m_id, 4);
   glVertexArrayAttribFormat(m_id, 4, 3, GL_FLOAT, GL_FALSE,
                             offsetof(Vertex, bitangent));
-  glVertexArrayAttribBinding(m_id, 4, m_vboIDX);
+  glVertexArrayAttribBinding(m_id, 4, m_vbo_index);
 
   glEnableVertexArrayAttrib(m_id, 5);
   glVertexArrayAttribFormat(m_id, 5, 4, GL_INT, GL_FALSE,
-                            offsetof(Vertex, boneIDs));
-  glVertexArrayAttribBinding(m_id, 5, m_vboIDX);
+                            offsetof(Vertex, bone_ids));
+  glVertexArrayAttribBinding(m_id, 5, m_vbo_index);
 
   glEnableVertexArrayAttrib(m_id, 6);
   glVertexArrayAttribFormat(m_id, 6, 4, GL_FLOAT, GL_FALSE,
-                            offsetof(Vertex, boneWeights));
-  glVertexArrayAttribBinding(m_id, 6, m_vboIDX);
+                            offsetof(Vertex, bone_weights));
+  glVertexArrayAttribBinding(m_id, 6, m_vbo_index);
 
   glEnableVertexArrayAttrib(m_id, 7);
   glVertexArrayAttribFormat(m_id, 7, 4, GL_FLOAT, GL_FALSE,
                             offsetof(Vertex, color));
-  glVertexArrayAttribBinding(m_id, 7, m_vboIDX);
+  glVertexArrayAttribBinding(m_id, 7, m_vbo_index);
 
-  ++m_vboIDX;
+  ++m_vbo_index;
 }
 
-void VAO::attachShapeVertexAttributes() {
+void VAO::attach_shape_vertex_attributes() {
   glEnableVertexArrayAttrib(m_id, 0);
   glVertexArrayAttribFormat(m_id, 0, 3, GL_FLOAT, GL_FALSE,
                             offsetof(ShapeVertex, position));
-  glVertexArrayAttribBinding(m_id, 0, m_vboIDX);
+  glVertexArrayAttribBinding(m_id, 0, m_vbo_index);
 
   glEnableVertexArrayAttrib(m_id, 1);
   glVertexArrayAttribFormat(m_id, 1, 2, GL_FLOAT, GL_FALSE,
-                            offsetof(ShapeVertex, textureCoords));
-  glVertexArrayAttribBinding(m_id, 1, m_vboIDX);
+                            offsetof(ShapeVertex, texture_coords));
+  glVertexArrayAttribBinding(m_id, 1, m_vbo_index);
 
-  ++m_vboIDX;
+  ++m_vbo_index;
 }
 
-void VAO::attachTerrainVertexAttributes() {
+void VAO::attach_terrain_vertex_attributes() {
   glEnableVertexArrayAttrib(m_id, 0);
   glVertexArrayAttribFormat(m_id, 0, 3, GL_FLOAT, GL_FALSE,
                             offsetof(TerrainVertex, position));
-  glVertexArrayAttribBinding(m_id, 0, m_vboIDX);
+  glVertexArrayAttribBinding(m_id, 0, m_vbo_index);
 
   glEnableVertexArrayAttrib(m_id, 1);
   glVertexArrayAttribFormat(m_id, 1, 3, GL_FLOAT, GL_FALSE,
                             offsetof(TerrainVertex, normal));
-  glVertexArrayAttribBinding(m_id, 1, m_vboIDX);
+  glVertexArrayAttribBinding(m_id, 1, m_vbo_index);
 
   glEnableVertexArrayAttrib(m_id, 2);
   glVertexArrayAttribFormat(m_id, 2, 2, GL_FLOAT, GL_FALSE,
-                            offsetof(TerrainVertex, textureCoords));
-  glVertexArrayAttribBinding(m_id, 2, m_vboIDX);
+                            offsetof(TerrainVertex, texture_coords));
+  glVertexArrayAttribBinding(m_id, 2, m_vbo_index);
 
   glEnableVertexArrayAttrib(m_id, 3);
   glVertexArrayAttribFormat(m_id, 3, 3, GL_FLOAT, GL_FALSE,
                             offsetof(TerrainVertex, color));
-  glVertexArrayAttribBinding(m_id, 3, m_vboIDX);
+  glVertexArrayAttribBinding(m_id, 3, m_vbo_index);
 
-  ++m_vboIDX;
+  ++m_vbo_index;
 }
 
-void VAO::updateVertex(std::shared_ptr<VBO>&& vbo, uint32_t idx,
-                       VertexType type) {
-  // TODO: update only the vbo at idx ? should not be binded here
+void VAO::update_vertex(std::shared_ptr<VBO>&& vbo, uint32_t index,
+                        VertexType type) {
+  // TODO: update only the vbo at index ? should not be binded here
   m_dirty = true;
 }
 
-void VAO::clearVBOs() { // TODO: move to on detach on component? Do i need it?
-                        // should not be binded here
+void VAO::clear_vbos() { // TODO: move to on detach on component? Do i need it?
+                         // should not be binded here
   m_vbos.clear();
-  m_vboIDX = 0;
+  m_vbo_index = 0;
   m_dirty = true;
 }
 
-void VAO::setIndex(
+void VAO::set_index(
   std::unique_ptr<IBO>&& ibo) { // TODO: should not be binded here
-  glVertexArrayElementBuffer(m_id, ibo->getID());
+  glVertexArrayElementBuffer(m_id, ibo->get_id());
   m_ibo = std::move(ibo);
   m_dirty = true;
 }
 
-const std::map<std::string, std::string, NumericComparator>& VAO::getInfo() {
+const std::map<std::string, std::string, NumericComparator>& VAO::to_map() {
   if (not m_dirty) {
     return m_info;
   }
 
   m_info.clear();
-  m_info["ID"] = std::to_string(m_id);
-  m_info["VBO index"] = std::to_string(m_vboIDX);
+  m_info["id"] = std::to_string(m_id);
+  m_info["VBO index"] = std::to_string(m_vbo_index);
   for (size_t i = 0; i < m_vbos.size(); ++i) {
-    m_info["VBO " + std::to_string(i) + " ID"] = std::to_string(m_vbos[i]->getID());
+    m_info["VBO " + std::to_string(i) + " id"] =
+      std::to_string(m_vbos[i]->get_id());
   }
-  m_info["IBO ID"] = std::to_string(m_ibo->getID());
+  m_info["IBO id"] = std::to_string(m_ibo->get_id());
   m_dirty = false;
 
   return m_info;

@@ -8,18 +8,18 @@ namespace potatoengine {
 
 class Layer {
   public:
-    Layer(std::string&& name = "TemplateLayer") : m_name(std::move(name)) {}
+    Layer(std::string&& name = "template_layer") : m_name(std::move(name)) {}
     virtual ~Layer() = default;
 
-    virtual void onAttach() {}
-    virtual void onDetach() {}
-    virtual void onUpdate(const Time&) {}
-    virtual void onImguiUpdate() {}
-    virtual void onEvent(events::Event&) {}
+    virtual void on_attach() {}
+    virtual void on_detach() {}
+    virtual void on_update(const Time&) {}
+    virtual void on_imgui_update() {}
+    virtual void on_event(events::Event&) {}
 
-    std::string_view getName() const { return m_name; }
-    bool isEnabled() const { return m_enabled; }
-    void setEnabled(bool enabled) { m_enabled = enabled; }
+    std::string_view get_name() const { return m_name; }
+    bool is_enabled() const { return m_enabled; }
+    void enable(bool enabled) { m_enabled = enabled; }
 
   protected:
     std::string m_name;

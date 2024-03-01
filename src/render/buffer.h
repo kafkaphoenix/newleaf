@@ -11,23 +11,23 @@ namespace potatoengine {
 struct Vertex { // TODO move
     glm::vec3 position{};
     glm::vec3 normal{};
-    glm::vec2 textureCoords{};
+    glm::vec2 texture_coords{};
     glm::vec3 tangent{};
     glm::vec3 bitangent{};
-    int boneIDs[MAX_BONE_INFLUENCE]{};
-    float boneWeights[MAX_BONE_INFLUENCE]{};
+    int bone_ids[MAX_BONE_INFLUENCE]{};
+    float bone_weights[MAX_BONE_INFLUENCE]{};
     glm::vec4 color{glm::vec4(0.9725f, 0.f, 0.9725f, 1.f)};
 };
 
 struct ShapeVertex {
     glm::vec3 position{};
-    glm::vec2 textureCoords{};
+    glm::vec2 texture_coords{};
 };
 
 struct TerrainVertex {
     glm::vec3 position{};
     glm::vec3 normal{};
-    glm::vec2 textureCoords{};
+    glm::vec2 texture_coords{};
     glm::vec3 color{};
 };
 
@@ -40,9 +40,9 @@ class VBO {
 
     void reload(const std::vector<Vertex>& vertices);
 
-    uint32_t getCount() const { return m_count; }
-    uint32_t getID() const { return m_id; }
-    bool isImmutable() const { return m_immutable; }
+    uint32_t get_count() const { return m_count; }
+    uint32_t get_id() const { return m_id; }
+    bool is_immutable() const { return m_immutable; }
 
     static std::unique_ptr<VBO> Create(const std::vector<Vertex>& vertices);
     static std::unique_ptr<VBO>
@@ -63,9 +63,9 @@ class IBO {
 
     void reload(const std::vector<uint32_t>& indices);
 
-    uint32_t getCount() const { return m_count; }
-    uint32_t getID() const { return m_id; }
-    bool isImmutable() const { return m_immutable; }
+    uint32_t get_count() const { return m_count; }
+    uint32_t get_id() const { return m_id; }
+    bool is_immutable() const { return m_immutable; }
 
     static std::unique_ptr<IBO> Create(const std::vector<uint32_t>& indices);
 

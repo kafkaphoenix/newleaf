@@ -1,31 +1,26 @@
 #pragma once
 
-#include <algorithm>
-#include <any>
-#include <array>
 #include <cctype>
 #include <chrono>
 #include <filesystem>
 #include <format>
 #include <fstream>
 #include <functional>
-#include <iostream>
+#include <iosfwd>
 #include <iterator>
 #include <map>
 #include <memory>
 #include <random>
 #include <ranges>
 #include <span>
-#include <sstream>
 #include <string>
-#include <tuple>
+#include <string_view>
 #include <unordered_map>
 #include <utility>
-#include <variant>
 #include <vector>
 
 #include "config.h" // makefile generated flags
-#include "core/logManager.h"
+#include "core/log_manager.h"
 #include "utils/exception.h"
 
 #define BIND_EVENT(f)                                                          \

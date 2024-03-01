@@ -38,24 +38,26 @@ enum EventCategory {
 };
 
 #define EVENT_CLASS_TYPE(type)                                                 \
-  static EventType GetStaticType() { return EventType::type; }                 \
-  virtual EventType getEventType() const override { return GetStaticType(); }  \
-  virtual const char* getName() const override { return #type; }
+  static EventType get_static_type() { return EventType::type; }               \
+  virtual EventType get_event_type() const override {                          \
+    return get_static_type();                                                  \
+  }                                                                            \
+  virtual const char* get_name() const override { return #type; }
 
 #define EVENT_CLASS_CATEGORY(category)                                         \
-  virtual int getCategoryFlags() const override { return category; }
+  virtual int get_category_flags() const override { return category; }
 
 class Event {
   public:
     virtual ~Event() = default;
-    bool isHandled{}; // cannnot be returned by a method
+    bool is_handled{}; // cannnot be returned by a method
 
-    virtual EventType getEventType() const = 0;
-    virtual const char* getName() const = 0;
-    virtual int getCategoryFlags() const = 0;
+    virtual EventType get_event_type() const = 0;
+    virtual const char* get_name() const = 0;
+    virtual int get_category_flags() const = 0;
 
-    bool isInCategory(EventCategory category) const {
-      return getCategoryFlags() & category;
+    bool is_in_category(EventCategory category) const {
+      return get_category_flags() & category;
     }
 };
 
@@ -64,8 +66,8 @@ class EventDispatcher {
     EventDispatcher(Event& e) : m_event(e) {}
 
     template <typename Type, typename Func> bool dispatch(const Func& func) {
-      if (m_event.getEventType() == Type::GetStaticType()) {
-        m_event.isHandled |= func(static_cast<Type&>(m_event));
+      if (m_event.get_event_type() == Type::get_static_type()) {
+        m_event.is_handled |= func(static_cast<Type&>(m_event));
         return true;
       }
       return false;

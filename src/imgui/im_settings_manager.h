@@ -4,93 +4,93 @@
 #include <imgui_stdlib.h>
 
 #include "core/application.h"
-#include "core/logManager.h"
-#include "core/settingsManager.h"
+#include "core/log_manager.h"
+#include "core/settings_manager.h"
+#include "imgui/im_utils.h"
 #include "pch.h"
-#include "render/renderManager.h"
-#include "imgui/imutils.h"
+#include "render/render_manager.h"
 
 namespace potatoengine {
 
-std::string selectedSettingsManagerTabKey;
+std::string selected_settings_manager_tabkey;
 
 inline void
-drawSettingsManager(const std::unique_ptr<SettingsManager>& settings_manager,
-                    const std::unique_ptr<RenderManager>& render_manager) {
+draw_settings_manager(const std::unique_ptr<SettingsManager>& settings_manager,
+                      const std::unique_ptr<RenderManager>& render_manager) {
   ImGui::Columns(2);
 
   ImGui::SeparatorText("Engine");
   if (ImGui::Selectable("Window")) {
-    selectedSettingsManagerTabKey = "Window";
+    selected_settings_manager_tabkey = "Window";
   }
   if (ImGui::Selectable("Debug")) {
-    selectedSettingsManagerTabKey = "Debug";
+    selected_settings_manager_tabkey = "Debug";
   }
   if (ImGui::Selectable("Logger")) {
-    selectedSettingsManagerTabKey = "Logger";
+    selected_settings_manager_tabkey = "Logger";
   }
   if (ImGui::Selectable("Render")) {
-    selectedSettingsManagerTabKey = "Render";
+    selected_settings_manager_tabkey = "Render";
   }
   if (ImGui::Selectable("Scene")) {
-    selectedSettingsManagerTabKey = "Scene";
+    selected_settings_manager_tabkey = "Scene";
   }
 
   auto& app = Application::Get();
-  bool isGamePaused = app.isGamePaused();
+  bool is_paused = app.is_paused();
 
   ImGui::NextColumn();
-  if (not selectedSettingsManagerTabKey.empty()) {
+  if (not selected_settings_manager_tabkey.empty()) {
     ImGui::SeparatorText("Edit");
-    if (selectedSettingsManagerTabKey == "Window") {
-      const auto& windows_manager = Application::Get().getWindowsManager();
+    if (selected_settings_manager_tabkey == "Window") {
+      const auto& windows_manager = Application::Get().get_window_manager();
       ImGui::Checkbox("Fullscreen", &settings_manager->fullscreen);
-      windows_manager->toggleFullscreen(settings_manager->fullscreen);
+      windows_manager->toggle_fullscreen(settings_manager->fullscreen);
 
-      if (render_manager->getFramebuffersCount() == 0) {
+      if (render_manager->get_framebuffers_count() == 0) {
         ImGui::BeginDisabled();
       }
       ImGui::Checkbox("Window inside Imgui",
-                      &settings_manager->windowInsideImgui);
-      if (render_manager->getFramebuffersCount() == 0) {
+                      &settings_manager->is_imgui_window);
+      if (render_manager->get_framebuffers_count() == 0) {
         ImGui::EndDisabled();
       }
       ImGui::SameLine();
-      helpMark("Only works with a framebuffer");
-      windows_manager->toggleWindowInsideImgui(
-        settings_manager->windowInsideImgui);
-      if (render_manager->getFramebuffersCount() == 0) {
+      help_mark("Only works with a framebuffer");
+      windows_manager->toggle_window_inside_imgui(
+        settings_manager->is_imgui_window);
+      if (render_manager->get_framebuffers_count() == 0) {
         ImGui::BeginDisabled();
       }
-      ImGui::Checkbox("Keep ratio", &settings_manager->fitToWindow);
-      if (render_manager->getFramebuffersCount() == 0) {
+      ImGui::Checkbox("Keep ratio", &settings_manager->fit_to_window);
+      if (render_manager->get_framebuffers_count() == 0) {
         ImGui::EndDisabled();
       }
       ImGui::SameLine();
-      helpMark("Only works with a framebuffer");
-      windows_manager->toggleFitToWindow(settings_manager->fitToWindow);
+      help_mark("Only works with a framebuffer");
+      windows_manager->toggle_fit_to_window(settings_manager->fit_to_window);
 
       bool isFullscreen = settings_manager->fullscreen;
       if (isFullscreen) {
         ImGui::BeginDisabled();
       }
-      ImGui::InputInt("Window width", &settings_manager->windowWidth);
+      ImGui::InputInt("Window width", &settings_manager->window_w);
       if (isFullscreen) {
         ImGui::EndDisabled();
       }
       ImGui::SameLine();
-      helpMark("Only works in windowed mode");
+      help_mark("Only works in windowed mode");
       if (isFullscreen) {
         ImGui::BeginDisabled();
       }
-      ImGui::InputInt("Window height", &settings_manager->windowHeight);
+      ImGui::InputInt("Window height", &settings_manager->window_h);
       if (isFullscreen) {
         ImGui::EndDisabled();
       }
       ImGui::SameLine();
-      helpMark("Only works in windowed mode");
-      windows_manager->resize(settings_manager->windowWidth,
-                              settings_manager->windowHeight);
+      help_mark("Only works in windowed mode");
+      windows_manager->resize(settings_manager->window_w,
+                              settings_manager->window_h);
       if (isFullscreen) {
         ImGui::BeginDisabled();
       }
@@ -99,68 +99,71 @@ drawSettingsManager(const std::unique_ptr<SettingsManager>& settings_manager,
         ImGui::EndDisabled();
       }
       ImGui::SameLine();
-      helpMark("Only works in windowed mode");
-      windows_manager->toggleResizable(settings_manager->resizable);
+      help_mark("Only works in windowed mode");
+      windows_manager->toggle_resizable(settings_manager->resizable);
 
       if (not isFullscreen) {
         ImGui::BeginDisabled();
       }
-      ImGui::InputInt("Refresh rate", &settings_manager->refreshRate);
+      ImGui::InputInt("Refresh rate", &settings_manager->refresh_rate);
       if (not isFullscreen) {
         ImGui::EndDisabled();
       }
       ImGui::SameLine();
-      helpMark("Only works in fullscreen");
-      windows_manager->setRefreshRate(settings_manager->refreshRate);
+      help_mark("Only works in fullscreen");
+      windows_manager->set_refresh_rate(settings_manager->refresh_rate);
 
-      ImGui::InputInt("Depth bits", &settings_manager->depthBits);
+      ImGui::InputInt("Depth bits", &settings_manager->depth_bits);
       ImGui::SameLine();
-      helpMark("Requires restart");
-      ImGui::Checkbox("VSync", &settings_manager->vSync);
-      windows_manager->toggleVSync(settings_manager->vSync);
-      ImGui::InputInt("Primary monitor", &settings_manager->primaryMonitor);
-      windows_manager->setWindowMonitor(settings_manager->primaryMonitor);
+      help_mark("Requires restart");
+      ImGui::Checkbox("vsync", &settings_manager->vsync);
+      windows_manager->toggle_vsync(settings_manager->vsync);
+      ImGui::InputInt("Primary monitor", &settings_manager->primary_monitor);
+      windows_manager->set_window_monitor(settings_manager->primary_monitor);
 
       ImGui::SeparatorText("Info");
       ImGui::Text(std::format("OpenGL version {}.{}",
-                              settings_manager->openglMajorVersion,
-                              settings_manager->openglMinorVersion)
+                              settings_manager->opengl_major,
+                              settings_manager->opengl_minor)
                     .c_str());
-      const auto& windowData = windows_manager->getWindowData();
+      const auto& windowData = windows_manager->get_window_data();
       ImGui::Text(std::format("Window position x:{}, y:{}",
-                              windowData.positionX, windowData.positionY)
+                              windowData.position_x, windowData.position_y)
                     .c_str());
       ImGui::Text(std::format("Mouse position x:{}, y:{}",
-                              windowData.debugMouseX, windowData.debugMouseY)
+                              windowData.debug_mouse_x,
+                              windowData.debug_mouse_y)
                     .c_str());
 
-    } else if (selectedSettingsManagerTabKey ==
-               "Debug") {
-      ImGui::Checkbox("Game paused", &isGamePaused);
-      app.togglePauseGame(isGamePaused);
-      ImGui::Checkbox("Debug enabled", &settings_manager->debugEnabled); // TODO use for something
-      ImGui::Checkbox("Display FPS", &settings_manager->displayFPS); // TODO use for something
+    } else if (selected_settings_manager_tabkey == "Debug") {
+      ImGui::Checkbox("Game paused", &is_paused);
+      app.pause(is_paused);
+      ImGui::Checkbox(
+        "Debug enabled",
+        &settings_manager->enable_debug); // TODO use for something
+      ImGui::Checkbox("Display FPS",
+                      &settings_manager->display_fps); // TODO use for something
       ImGui::Checkbox("Display collision boxes",
-                      &settings_manager->displayCollisionBoxes);
-    } else if (selectedSettingsManagerTabKey == "Logger") {
+                      &settings_manager->display_collision_boxes);
+    } else if (selected_settings_manager_tabkey == "Logger") {
       ImGui::Checkbox("Enable engine logger",
-                      &settings_manager->enableEngineLogger);
-      LogManager::ToggleEngineLogger(settings_manager->enableEngineLogger);
-      if (ImGui::BeginCombo("Engine log level",
-                            settings_manager->engineLogLevel == 0   ? "Trace"
-                            : settings_manager->engineLogLevel == 1 ? "Debug"
-                            : settings_manager->engineLogLevel == 2 ? "Info"
-                            : settings_manager->engineLogLevel == 3 ? "Warning"
-                            : settings_manager->engineLogLevel == 4 ? "Error"
-                            : settings_manager->engineLogLevel == 5
-                              ? "Critical"
-                              : "Unknown")) {
-        for (uint32_t n = 0; n < settings_manager->logLevels.size(); n++) {
-          bool is_selected = (settings_manager->engineLogLevel == n);
-          if (ImGui::Selectable(settings_manager->logLevels[n], is_selected)) {
-            if (settings_manager->engineLogLevel not_eq n) {
-              settings_manager->engineLogLevel = n;
-              LogManager::SetEngineLoggerLevel(
+                      &settings_manager->enable_engine_logger);
+      LogManager::toggle_engine_logger(settings_manager->enable_engine_logger);
+      if (ImGui::BeginCombo(
+            "Engine log level",
+            settings_manager->engine_log_level == 0   ? "Trace"
+            : settings_manager->engine_log_level == 1 ? "Debug"
+            : settings_manager->engine_log_level == 2 ? "Info"
+            : settings_manager->engine_log_level == 3 ? "Warning"
+            : settings_manager->engine_log_level == 4 ? "Error"
+            : settings_manager->engine_log_level == 5 ? "Critical"
+                                                      : "Unknown")) {
+        for (uint32_t n = 0; n < settings_manager->log_levels.size(); n++) {
+          bool is_selected = (settings_manager->engine_log_level == n);
+          if (ImGui::Selectable(settings_manager->log_levels[n], is_selected)) {
+            if (settings_manager->engine_log_level not_eq n) {
+              settings_manager->engine_log_level = n;
+              LogManager::set_engine_logger_level(
                 static_cast<spdlog::level::level_enum>(n));
             }
           }
@@ -172,19 +175,19 @@ drawSettingsManager(const std::unique_ptr<SettingsManager>& settings_manager,
       }
       if (ImGui::BeginCombo(
             "Engine log flush level",
-            settings_manager->engineFlushLevel == 0   ? "Trace"
-            : settings_manager->engineFlushLevel == 1 ? "Debug"
-            : settings_manager->engineFlushLevel == 2 ? "Info"
-            : settings_manager->engineFlushLevel == 3 ? "Warning"
-            : settings_manager->engineFlushLevel == 4 ? "Error"
-            : settings_manager->engineFlushLevel == 5 ? "Critical"
-                                                      : "Unknown")) {
-        for (uint32_t n = 0; n < settings_manager->logLevels.size(); n++) {
-          bool is_selected = (settings_manager->engineFlushLevel == n);
-          if (ImGui::Selectable(settings_manager->logLevels[n], is_selected)) {
-            if (settings_manager->engineFlushLevel not_eq n) {
-              settings_manager->engineFlushLevel = n;
-              LogManager::SetEngineLoggerFlushLevel(
+            settings_manager->engine_flush_level == 0   ? "Trace"
+            : settings_manager->engine_flush_level == 1 ? "Debug"
+            : settings_manager->engine_flush_level == 2 ? "Info"
+            : settings_manager->engine_flush_level == 3 ? "Warning"
+            : settings_manager->engine_flush_level == 4 ? "Error"
+            : settings_manager->engine_flush_level == 5 ? "Critical"
+                                                        : "Unknown")) {
+        for (uint32_t n = 0; n < settings_manager->log_levels.size(); n++) {
+          bool is_selected = (settings_manager->engine_flush_level == n);
+          if (ImGui::Selectable(settings_manager->log_levels[n], is_selected)) {
+            if (settings_manager->engine_flush_level not_eq n) {
+              settings_manager->engine_flush_level = n;
+              LogManager::set_engine_logger_flush_level(
                 static_cast<spdlog::level::level_enum>(n));
             }
           }
@@ -194,22 +197,24 @@ drawSettingsManager(const std::unique_ptr<SettingsManager>& settings_manager,
         }
         ImGui::EndCombo();
       }
-      ImGui::Checkbox("Enable app logger", &settings_manager->enableAppLogger);
-      LogManager::ToggleAppLogger(settings_manager->enableAppLogger);
+      ImGui::Checkbox("Enable app logger",
+                      &settings_manager->enable_app_logger);
+      LogManager::toggle_app_logger(settings_manager->enable_app_logger);
       if (ImGui::BeginCombo("App log level",
-                            settings_manager->appLogLevel == 0   ? "Trace"
-                            : settings_manager->appLogLevel == 1 ? "Debug"
-                            : settings_manager->appLogLevel == 2 ? "Info"
-                            : settings_manager->appLogLevel == 3 ? "Warning"
-                            : settings_manager->appLogLevel == 4 ? "Error"
-                            : settings_manager->appLogLevel == 5 ? "Critical"
-                                                                 : "Unknown")) {
-        for (uint32_t n = 0; n < settings_manager->logLevels.size(); n++) {
-          bool is_selected = (settings_manager->appLogLevel == n);
-          if (ImGui::Selectable(settings_manager->logLevels[n], is_selected)) {
-            if (settings_manager->appLogLevel not_eq n) {
-              settings_manager->appLogLevel = n;
-              LogManager::SetAppLoggerLevel(
+                            settings_manager->app_log_level == 0   ? "Trace"
+                            : settings_manager->app_log_level == 1 ? "Debug"
+                            : settings_manager->app_log_level == 2 ? "Info"
+                            : settings_manager->app_log_level == 3 ? "Warning"
+                            : settings_manager->app_log_level == 4 ? "Error"
+                            : settings_manager->app_log_level == 5
+                              ? "Critical"
+                              : "Unknown")) {
+        for (uint32_t n = 0; n < settings_manager->log_levels.size(); n++) {
+          bool is_selected = (settings_manager->app_log_level == n);
+          if (ImGui::Selectable(settings_manager->log_levels[n], is_selected)) {
+            if (settings_manager->app_log_level not_eq n) {
+              settings_manager->app_log_level = n;
+              LogManager::set_app_logger_level(
                 static_cast<spdlog::level::level_enum>(n));
             }
           }
@@ -220,20 +225,20 @@ drawSettingsManager(const std::unique_ptr<SettingsManager>& settings_manager,
         ImGui::EndCombo();
       }
       if (ImGui::BeginCombo("App log flush level",
-                            settings_manager->appFlushLevel == 0   ? "Trace"
-                            : settings_manager->appFlushLevel == 1 ? "Debug"
-                            : settings_manager->appFlushLevel == 2 ? "Info"
-                            : settings_manager->appFlushLevel == 3 ? "Warning"
-                            : settings_manager->appFlushLevel == 4 ? "Error"
-                            : settings_manager->appFlushLevel == 5
+                            settings_manager->app_flush_level == 0   ? "Trace"
+                            : settings_manager->app_flush_level == 1 ? "Debug"
+                            : settings_manager->app_flush_level == 2 ? "Info"
+                            : settings_manager->app_flush_level == 3 ? "Warning"
+                            : settings_manager->app_flush_level == 4 ? "Error"
+                            : settings_manager->app_flush_level == 5
                               ? "Critical"
                               : "Unknown")) {
-        for (uint32_t n = 0; n < settings_manager->logLevels.size(); n++) {
-          bool is_selected = (settings_manager->appFlushLevel == n);
-          if (ImGui::Selectable(settings_manager->logLevels[n], is_selected)) {
-            if (settings_manager->appFlushLevel not_eq n) {
-              settings_manager->appFlushLevel = n;
-              LogManager::SetAppLoggerFlushLevel(
+        for (uint32_t n = 0; n < settings_manager->log_levels.size(); n++) {
+          bool is_selected = (settings_manager->app_flush_level == n);
+          if (ImGui::Selectable(settings_manager->log_levels[n], is_selected)) {
+            if (settings_manager->app_flush_level not_eq n) {
+              settings_manager->app_flush_level = n;
+              LogManager::set_app_logger_flush_level(
                 static_cast<spdlog::level::level_enum>(n));
             }
           }
@@ -244,44 +249,44 @@ drawSettingsManager(const std::unique_ptr<SettingsManager>& settings_manager,
         ImGui::EndCombo();
       }
       ImGui::Checkbox("Enable engine backtrace logger",
-                      &settings_manager->enableEngineBacktraceLogger);
-      LogManager::ToggleEngineBacktraceLogger(
-        settings_manager->enableEngineBacktraceLogger);
+                      &settings_manager->enable_engine_backtrace_logger);
+      LogManager::toggle_engine_backtrace_logger(
+        settings_manager->enable_engine_backtrace_logger);
       ImGui::Checkbox("Enable app backtrace logger",
-                      &settings_manager->enableAppBacktraceLogger);
-      LogManager::ToggleAppBacktraceLogger(
-        settings_manager->enableAppBacktraceLogger);
+                      &settings_manager->enable_app_backtrace_logger);
+      LogManager::toggle_app_backtrace_logger(
+        settings_manager->enable_app_backtrace_logger);
       if (ImGui::Button("Clear all backtrace logger")) {
-        LogManager::ClearAllBacktraceLogger();
+        LogManager::clear_all_backtrace_logger();
       }
       if (ImGui::Button("Clear engine backtrace logger")) {
-        LogManager::ClearEngineBacktraceLogger();
+        LogManager::clear_engine_backtrace_logger();
       }
       if (ImGui::Button("Clear app backtrace logger")) {
-        LogManager::ClearAppBacktraceLogger();
+        LogManager::clear_app_backtrace_logger();
       }
       if (ImGui::Button("Dump backtrace")) {
-        LogManager::DumpBacktrace();
+        LogManager::dump_backtrace();
       }
-    } else if (selectedSettingsManagerTabKey == "Render") {
-      ImGui::ColorEdit4("Clear color", settings_manager->clearColor.data());
-      ImGui::SliderFloat("Clear depth", &settings_manager->clearDepth, 0.f,
+    } else if (selected_settings_manager_tabkey == "Render") {
+      ImGui::ColorEdit4("Clear color", settings_manager->clear_color.data());
+      ImGui::SliderFloat("Clear depth", &settings_manager->clear_depth, 0.f,
                          1.f);
-    } else if (selectedSettingsManagerTabKey == "Scene") {
-      ImGui::Text("Name: %s", settings_manager->activeScene.c_str());
-      ImGui::Text("Filepath: %s ", settings_manager->activeScenePath.c_str());
+    } else if (selected_settings_manager_tabkey == "Scene") {
+      ImGui::Text("Name: %s", settings_manager->active_scene.c_str());
+      ImGui::Text("Path: %s ", settings_manager->active_scene_path.c_str());
       if (ImGui::BeginCombo("Active scene",
-                            settings_manager->activeScene.c_str())) {
+                            settings_manager->active_scene.c_str())) {
         for (uint32_t n = 0; n < settings_manager->scenes.size(); n++) {
           bool is_selected =
-            (settings_manager->activeScene == settings_manager->scenes[n]);
+            (settings_manager->active_scene == settings_manager->scenes[n]);
           if (ImGui::Selectable(settings_manager->scenes[n], is_selected)) {
-            if (settings_manager->activeScene not_eq
+            if (settings_manager->active_scene not_eq
                 settings_manager->scenes[n]) {
-              settings_manager->reloadScene = true;
-              settings_manager->activeScene = settings_manager->scenes[n];
-              settings_manager->activeScenePath =
-                settings_manager->scenesPaths[n];
+              settings_manager->reload_scene = true;
+              settings_manager->active_scene = settings_manager->scenes[n];
+              settings_manager->active_scene_path =
+                settings_manager->scenes_paths[n];
             }
           }
           if (is_selected) {
@@ -290,7 +295,7 @@ drawSettingsManager(const std::unique_ptr<SettingsManager>& settings_manager,
         }
         ImGui::EndCombo();
       }
-      ImGui::Checkbox("Reload scene", &settings_manager->reloadScene);
+      ImGui::Checkbox("Reload scene", &settings_manager->reload_scene);
     }
   }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/layersManager.h"
+#include "core/layers_manager.h"
 #include "core/time.h"
 #include "events/event.h"
 #include "pch.h"
@@ -9,26 +9,26 @@ namespace potatoengine {
 
 class State {
   public:
-    State(std::string&& name = "TemplateState") : m_name(std::move(name)) {
-      m_layersManager = LayersManager::Create();
+    State(std::string&& name = "template_state") : m_name(std::move(name)) {
+      m_layers_manager = LayersManager::Create();
     }
     virtual ~State() = default;
 
-    virtual void onAttach() {}
-    virtual void onDetach() {}
-    virtual void onUpdate(const Time&) {}
-    virtual void onImguiUpdate() {}
-    virtual void onEvent(events::Event&) {}
+    virtual void on_attach() {}
+    virtual void on_detach() {}
+    virtual void on_update(const Time&) {}
+    virtual void on_imgui_update() {}
+    virtual void on_event(events::Event&) {}
 
-    std::string_view getName() const { return m_name; }
-    const std::unique_ptr<LayersManager>& getLayersManager() const {
-      return m_layersManager;
+    std::string_view get_name() const { return m_name; }
+    const std::unique_ptr<LayersManager>& get_layers_manager() const {
+      return m_layers_manager;
     }
-    void clearLayers() { m_layersManager->clear(); }
+    void clear_layers() { m_layers_manager->clear(); }
 
   protected:
     std::string m_name;
-    std::unique_ptr<LayersManager> m_layersManager;
+    std::unique_ptr<LayersManager> m_layers_manager;
 };
 
 }
