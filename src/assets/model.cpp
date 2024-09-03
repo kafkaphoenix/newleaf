@@ -137,7 +137,7 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   }
   m_materials.emplace_back(std::move(materialData));
 
-  return CMesh(std::move(vertices), std::move(indices), std::move(textures));
+  return CMesh(std::move(vertices), std::move(indices), std::move(textures), std::string("camera"));
 }
 
 std::vector<std::shared_ptr<Texture>>

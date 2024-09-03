@@ -23,8 +23,8 @@ struct SettingsManager {
     int primary_monitor = 0; // 0: primary, 1: secondary
     bool vsync = true;
     bool resizable = true;
-    uint32_t opengl_major = 4; // only 4.5 is supported
-    uint32_t opengl_minor = 5;
+    uint32_t opengl_major = 4; // only 4.6 is supported
+    uint32_t opengl_minor = 6;
     bool is_imgui_window = true; // it needs an opengl fbo to work
     bool fit_to_window = true;
 

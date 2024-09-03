@@ -4,35 +4,60 @@ C++ game engine for 3D and 2D development
 
 ## Engine Features
 
-- Scene manager: Entity Component System engine oriented
-- Render manager: OpenGL 4.5 API abstraction
-- Window manager: Multi window/overlay support
-- Assets manager: Caching and hot reloading of prefabs, shaders, textures, models and scenes
-- States manager: State machine with layers
-- Settings manager: Persist your settings
-- Debugger layer (Logger, Metrics, Dynamic settings, assets/entities/scene/states inspector)
+- Scene manager: Entity Component System oriented. Loading scenes and entity prototypes from json
+- Render manager: OpenGL 4.6 API abstraction. Model, Texture and Cubemaps loading capabilities. FBO
+- Window manager: GLFW abstraction
 - Event-driven (Mouse/Keyboard/Window/Application)
-- Loading scenes and entity prototypes from json
+- Settings manager: Customizable engine defined settings
+- Debugger layer: Logger, Metrics and a assets/entities/scene/states/settings inspector
+- Assets manager: Caching and hot reloading of prefabs, shaders, textures, models and scenes
+- States manager: State machine with layers and overlays
 - Perspective camera
-- Model, Texture and Cubemaps loader
+- Model, Texture and Cubemaps loading capabilities
+
+## How to use the engine in a personal project
+
+- Use the engine as a library (shared or static)
+```cmake
+include(FetchContent)
+FetchContent_Declare(
+    newleaf
+    GIT_REPOSITORY https://github.com/kafkaphoenix/newleaf.git
+    GIT_TAG        v0.1.0
+)
+
+FetchContent_GetProperties(newleaf)
+if(NOT newleaf_POPULATED)
+  FetchContent_Populate(newleaf)
+  set(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS} CACHE INTERNAL "" FORCE)
+  add_subdirectory(${newleaf_SOURCE_DIR} ${newleaf_BINARY_DIR})
+endif()
+```
 
 ## Demos
 
 - Engine use cases can be found in the [demos repo](https://github.com/kafkaphoenix/newleaf_demos)
 
-## How to use the engine in a personal project
-
-- TODO define
-
 ## Planned features
 
+- User defined settings
+- Shader compilation
+- Render commands batching
 - Expand camera class supporting more modes
-- Profiler
 - Serialization
-- Scripting language
-- Tests
-- Editor Mode
+- Per module tests using Catch2
+- Profiler
+- Font rendering
+- Audio
+- Physics
+- Networking
+- Vulkan support
 - Engine wiki documentation
+- Editor Mode
+- Multi window/overlay
+- Scripting language
+- Multiplatform
+- Multithreading
 
 ## Third party libraries
 
@@ -45,6 +70,4 @@ C++ game engine for 3D and 2D development
 - [nlohmann_json](https://github.com/nlohmann/json): json processing
 - [assimp](https://github.com/assimp/assimp): model loading
 - [spdlog](https://github.com/gabime/spdlog): structured logging
-- [FastNoiseLite](https://github.com/Auburn/FastNoiseLite): noise generation
-- [freetype](https://github.com/freetype/freetype): font rendering
-- [RmlUi](https://github.com/mikke89/RmlUi): ui framework
+- [Catch2](https://github.com/catchorg/Catch2): unit testing
