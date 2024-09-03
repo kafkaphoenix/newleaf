@@ -8,21 +8,25 @@
     "configurePresets": [
         {
             "name": "default",
-            "binaryDir": "${sourceDir}/build",
             "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build",
             "architecture": {
                 "strategy": "set",
-                "value": "win32"
+                "value": "x64"
             },
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_CXX_COMPILER": "C:/Program Files/Microsoft Visual Studio/2022/Preview/VC/Tools/MSVC/14.41.34120/bin/Hostx86/x86/cl.exe"
+                "CMAKE_CXX_COMPILER": "C:/Program Files/Microsoft Visual Studio/2022/Preview/VC/Tools/MSVC/14.41.34120/bin/Hostx64/x64/cl.exe"
             }
         },
         {
             "name": "ninja-clang",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build",
+            "architecture": {
+                "strategy": "set",
+                "value": "x64"
+            },
             "cacheVariables": {
                 "ENABLE_DEBUG": "ON",
                 "ENABLE_CLANG_TIDY": "ON",
@@ -37,6 +41,10 @@
             "name": "ninja-gcc",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build",
+            "architecture": {
+                "strategy": "set",
+                "value": "x64"
+            },
             "cacheVariables": {
                 "ENABLE_DEBUG": "ON",
                 "ENABLE_CLANG_TIDY": "ON",

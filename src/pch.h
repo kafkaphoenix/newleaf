@@ -19,7 +19,6 @@
 #include <utility>
 #include <vector>
 
-#include "config.h" // makefile generated flags
 #include "core/log_manager.h"
 #include "utils/exception.h"
 

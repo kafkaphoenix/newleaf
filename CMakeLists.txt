@@ -18,14 +18,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 option(ENABLE_DEBUG "Enable debugging info" OFF)
 option(BUILD_SHARED_LIBS "Build engine as a shared library" OFF)
 
-if (ENABLE_DEBUG)
-    set(DEBUG ON)
-else()
-    set(DEBUG OFF)
-endif()
-
-configure_file(config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h @ONLY)
-
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
 if(BUILD_SHARED_LIBS)
@@ -36,6 +28,10 @@ else()
 endif()
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
+if(ENABLE_DEBUG)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG=1)
+endif()
+
 target_include_directories(${PROJECT_NAME} PUBLIC
 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR/${PROJECT_NAME}}>
@@ -43,7 +39,7 @@ $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR/${PROJECT_NAME}}>
 
 add_subdirectory(third_party)
 
-target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h)
+target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/pch.h)
 
 include(GNUInstallDirs)
 install(TARGETS ${PROJECT_NAME}
