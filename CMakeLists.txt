@@ -18,7 +18,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 option(ENABLE_DEBUG "Enable debugging info" OFF)
 option(BUILD_SHARED_LIBS "Build engine as a shared library" OFF)
 
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/*.cpp)
 
 if(BUILD_SHARED_LIBS)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON) # required when using MSVC
@@ -39,7 +39,7 @@ $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR/${PROJECT_NAME}}>
 
 add_subdirectory(third_party)
 
-target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/pch.h)
+target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/pch.h)
 
 include(GNUInstallDirs)
 install(TARGETS ${PROJECT_NAME}

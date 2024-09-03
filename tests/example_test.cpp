@@ -1,6 +1,7 @@
+#include <newleaf/core/application.h>
 #include <catch2/catch_test_macros.hpp>
-#include "core/application.h"
+#include <span>
 
-TEST_CASE("example::method") {
-    // TODO: implement test
+TEST_CASE("Create", "[application]") {
+  // TODO
 }
