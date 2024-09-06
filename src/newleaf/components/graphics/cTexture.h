@@ -11,13 +11,13 @@
 #include <string>
 #include <vector>
 
-#include "../../../assets/texture.h"
-#include "../../../core/application.h"
-#include "../../../core/log_manager.h"
-#include "../../../utils/map_json_serializer.h"
-#include "../../../utils/numeric_comparator.h"
+#include "../../assets/texture.h"
+#include "../../core/application.h"
+#include "../../core/log_manager.h"
+#include "../../utils/map_json_serializer.h"
+#include "../../utils/numeric_comparator.h"
 
-namespace nl {
+namespace nl::components {
 
 struct CTexture {
     enum class DrawMode {
@@ -98,7 +98,7 @@ struct CTexture {
       return map_to_json(textures.at(index)->to_map());
     }
 
-    void setDrawMode() { // TODO maybe send assets manager to this function?
+    void set_draw_mode() { // TODO maybe send assets manager to this function?
       if (_draw_mode == "color") {
         draw_mode = DrawMode::COLOR;
       } else if (_draw_mode == "texture") {
@@ -123,7 +123,7 @@ struct CTexture {
       }
     }
 
-    void setTextures() {
+    void set_textures() {
       if (paths.size() == 0) {
         return;
       }
@@ -135,19 +135,19 @@ struct CTexture {
       }
     }
 
-    void reloadTextures(std::vector<std::string>&& fps) {
+    void reload_textures(std::vector<std::string>&& fps) {
       ENGINE_ASSERT(fps != paths, "Texture paths are the same");
       paths = std::move(fps);
       textures.clear();
-      setTextures();
+      set_textures();
     }
 };
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e, CTexture& c) {
-  c.setDrawMode();
-  c.setTextures();
+inline void nl::SceneManager::on_component_added(entt::entity e, components::CTexture& c) {
+  c.set_draw_mode();
+  c.set_textures();
 
-  m_registry.replace<CTexture>(e, c);
+  m_registry.replace<components::CTexture>(e, c);
 }

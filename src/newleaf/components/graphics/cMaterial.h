@@ -6,10 +6,10 @@
 #include <map>
 #include <string>
 
-#include "../../../core/log_manager.h"
-#include "../../../utils/numeric_comparator.h"
+#include "../../core/log_manager.h"
+#include "../../utils/numeric_comparator.h"
 
-namespace nl {
+namespace nl::components {
 struct CMaterial {
     glm::vec3 ambient{glm::vec3(1.f)};
     glm::vec3 diffuse{glm::vec3(1.f)};

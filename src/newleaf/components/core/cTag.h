@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../../../core/log_manager.h"
-#include "../../../utils/numeric_comparator.h"
+#include "../../core/log_manager.h"
+#include "../../utils/numeric_comparator.h"
 
 #include <map>
 #include <string>
 
-namespace nl {
+namespace nl::components {
 
 struct CTag {
     std::string tag;

@@ -1,9 +1,9 @@
 #include "scene_manager.h"
 
+#include "../components/core/cName.h"
+#include "../components/core/cUUID.h"
+#include "../components/meta.h"
 #include "../core/log_manager.h"
-#include "components/core/cName.h"
-#include "components/core/cUUID.h"
-#include "utils.h"
 
 using namespace entt::literals;
 
@@ -12,7 +12,7 @@ namespace nl {
 SceneManager::SceneManager() : m_scene_factory() {
   ENGINE_TRACE("Initializing scene manager...");
   ENGINE_TRACE("Registering engine components...");
-  register_components();
+  components::register_components();
   ENGINE_TRACE("Scene manager created!");
 }
 
@@ -61,7 +61,8 @@ void SceneManager::on_update(const Time& ts) {
 entt::registry& SceneManager::get_registry() { return m_registry; }
 
 entt::entity SceneManager::get_entity(std::string_view name) {
-  for (const auto& [e, cName, _] : m_registry.view<CName, CUUID>().each()) {
+  for (const auto& [e, cName, _] :
+       m_registry.view<components::CName, components::CUUID>().each()) {
     if (cName.name == name) {
       return e;
     }
@@ -70,7 +71,7 @@ entt::entity SceneManager::get_entity(std::string_view name) {
 }
 
 entt::entity SceneManager::get_entity(UUID& uuid) {
-  for (const auto& [e, cUUID] : m_registry.view<CUUID>().each()) {
+  for (const auto& [e, cUUID] : m_registry.view<components::CUUID>().each()) {
     if (cUUID.uuid == uuid) {
       return e;
     }
@@ -133,7 +134,7 @@ void SceneManager::create_scene(std::string scene_name,
   auto& app = Application::Get();
   m_scene_factory.create_scene(scene_name, scene_path, app.get_assets_manager(),
                                app.get_render_manager(), m_registry);
-  PrintScene(m_registry);
+  print_scene();
 }
 
 void SceneManager::reload_scene(bool reload_prototypes) {
@@ -149,6 +150,45 @@ void SceneManager::clear_scene() {
   m_systems.clear();
   m_named_systems.clear();
   m_dirty_systems = false;
+}
+
+void SceneManager::print_scene() {
+  auto entities = m_registry.view<components::CUUID>();
+  entt::meta_type cType;
+  entt::meta_any cData;
+  entt::meta_func printFunc;
+  std::string_view cName;
+  if (entities.empty()) {
+    ENGINE_BACKTRACE("===================Entities===================");
+    ENGINE_BACKTRACE("No entities in scene");
+    ENGINE_BACKTRACE("=============================================");
+    return;
+  }
+
+  ENGINE_BACKTRACE("===================Entities===================");
+  ENGINE_BACKTRACE("Entities in scene: {}", entities.size());
+  for (const auto& e : entities) {
+    ENGINE_BACKTRACE("Entity UUID: {}", entt::to_integral(e));
+    for (const auto& [id, storage] : m_registry.storage()) {
+      if (storage.contains(e)) {
+        cType = entt::resolve(storage.type());
+        cData = cType.construct(storage.value(e));
+        printFunc = cType.func("print"_hs);
+        if (printFunc) {
+          cName = storage.type().name();
+          cName = cName.substr(cName.find_last_of(':') + 1);
+          ENGINE_BACKTRACE("\t{}", cName);
+          printFunc.invoke(cData);
+        } else {
+          cName = storage.type().name();
+          cName = cName.substr(cName.find_last_of(':') + 1);
+          ENGINE_ERROR("{} has no print function", cName);
+          ENGINE_BACKTRACE("\t{} has no print function", cName);
+        }
+      }
+    }
+  }
+  ENGINE_BACKTRACE("=============================================");
 }
 
 std::string SceneManager::get_active_scene() const {

@@ -7,13 +7,13 @@
 #include "../assets/scene.h"
 #include "../assets/shader.h"
 #include "../assets/texture.h"
+#include "../components/core/cDeleted.h"
+#include "../components/core/cName.h"
+#include "../components/core/cTag.h"
+#include "../components/core/cUUID.h"
 #include "../core/log_manager.h"
 #include "../core/uuid.h"
 #include "../utils/timer.h"
-#include "components/core/cDeleted.h"
-#include "components/core/cName.h"
-#include "components/core/cTag.h"
-#include "components/core/cUUID.h"
 
 using json = nlohmann::json;
 using namespace entt::literals;
@@ -54,12 +54,12 @@ entt::entity SceneFactory::clone_entity(const entt::entity& e, uint32_t uuid,
     }
   }
 
-  registry.emplace<CUUID>(cloned, uuid);
+  registry.emplace<components::CUUID>(cloned, uuid);
   if (name.has_value()) {
-    registry.emplace<CName>(cloned, std::move(name.value()));
+    registry.emplace<components::CName>(cloned, std::move(name.value()));
   }
   if (tag.has_value()) {
-    registry.emplace<CTag>(cloned, std::move(tag.value()));
+    registry.emplace<components::CTag>(cloned, std::move(tag.value()));
   }
   m_dirty_metrics = true;
   m_dirty_named_entities = true;
@@ -116,7 +116,7 @@ void SceneFactory::reload_scene(
                                          registry, assets_manager);
     }
   } else {
-    auto to_destroy = registry.view<CUUID>();
+    auto to_destroy = registry.view<components::CUUID>();
     registry.destroy(to_destroy.begin(), to_destroy.end());
   }
 
@@ -200,7 +200,7 @@ void SceneFactory::create_prototypes(
 }
 
 void SceneFactory::delete_entity(entt::entity& e, entt::registry& registry) {
-  registry.emplace<CDeleted>(e);
+  registry.emplace<components::CDeleted>(e);
   m_dirty_metrics = true;
   m_dirty_named_entities = true;
 }
@@ -239,8 +239,9 @@ SceneFactory::get_named_entities(entt::registry& registry) {
   }
 
   m_named_entities.clear();
-  registry.view<CName, CUUID>().each(
-    [&](entt::entity e, const CName& cName, const CUUID& cUUID) {
+  registry.view<components::CName, components::CUUID>().each(
+    [&](entt::entity e, const components::CName& cName,
+        const components::CUUID& cUUID) {
       m_named_entities.emplace(cName.name, e);
     });
   m_dirty_named_entities = false;

@@ -2,23 +2,39 @@
 
 #include <entt/entt.hpp>
 
-#include "../core/application.h"
 #include "../core/log_manager.h"
-#include "components/core/cName.h"
-#include "components/core/cTag.h"
-#include "components/core/cUUID.h"
-#include "components/graphics/cMaterial.h"
-#include "components/graphics/cMesh.h"
-#include "components/graphics/cTexture.h"
-#include "components/graphics/cTextureAtlas.h"
-#include "components/world/cSkybox.h"
-#include "meta.h"
-
-#include <string_view>
+#include "core/cName.h"
+#include "core/cTag.h"
+#include "core/cUUID.h"
+#include "graphics/cMaterial.h"
+#include "graphics/cMesh.h"
+#include "graphics/cTexture.h"
+#include "graphics/cTextureAtlas.h"
+#include "world/cSkybox.h"
 
 using namespace entt::literals;
 
-namespace nl {
+namespace nl::components {
+
+template <typename Component, typename... Args>
+inline Component& assign(entt::entity e, Args... args) {
+  auto& registry = Application::Get().get_scene_manager()->get_registry();
+  ENGINE_ASSERT(not registry.all_of<Component>(e),
+                "Entity already has component {}", typeid(Component).name());
+  return registry.emplace<Component>(e, std::forward<Args>(args)...);
+}
+
+template <typename Component>
+inline Component& on_component_added(entt::entity e, Component& c) {
+  Application::Get().get_scene_manager()->on_component_added<Component>(e, c);
+  return c;
+}
+
+template <typename Component>
+inline Component& on_component_cloned(entt::entity e, Component& c) {
+  Application::Get().get_scene_manager()->on_component_cloned<Component>(e, c);
+  return c;
+}
 
 CUUID& cast_cuuid(void* other) { return *static_cast<CUUID*>(other); }
 
@@ -127,44 +143,5 @@ void register_components() {
     .func<&CSkybox::print>("print"_hs)
     .func<&CSkybox::to_map>("to_map"_hs)
     .func<&assign<CSkybox>, entt::as_ref_t>("assign"_hs);
-}
-
-void PrintScene(entt::registry& registry) {
-  auto entities = registry.view<CUUID>();
-  entt::meta_type cType;
-  entt::meta_any cData;
-  entt::meta_func printFunc;
-  std::string_view cName;
-  if (entities.empty()) {
-    ENGINE_BACKTRACE("===================Entities===================");
-    ENGINE_BACKTRACE("No entities in scene");
-    ENGINE_BACKTRACE("=============================================");
-    return;
-  }
-
-  ENGINE_BACKTRACE("===================Entities===================");
-  ENGINE_BACKTRACE("Entities in scene: {}", entities.size());
-  for (const auto& e : entities) {
-    ENGINE_BACKTRACE("Entity UUID: {}", entt::to_integral(e));
-    for (const auto& [id, storage] : registry.storage()) {
-      if (storage.contains(e)) {
-        cType = entt::resolve(storage.type());
-        cData = cType.construct(storage.value(e));
-        printFunc = cType.func("print"_hs);
-        if (printFunc) {
-          cName = storage.type().name();
-          cName = cName.substr(cName.find_last_of(':') + 1);
-          ENGINE_BACKTRACE("\t{}", cName);
-          printFunc.invoke(cData);
-        } else {
-          cName = storage.type().name();
-          cName = cName.substr(cName.find_last_of(':') + 1);
-          ENGINE_ERROR("{} has no print function", cName);
-          ENGINE_BACKTRACE("\t{} has no print function", cName);
-        }
-      }
-    }
-  }
-  ENGINE_BACKTRACE("=============================================");
 }
 }

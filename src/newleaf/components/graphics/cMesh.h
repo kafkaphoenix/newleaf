@@ -9,13 +9,13 @@
 #include <string_view>
 #include <vector>
 
-#include "../../../assets/texture.h"
-#include "../../../core/log_manager.h"
-#include "../../../render/buffer.h"
-#include "../../../render/shader_program.h"
-#include "../../../render/vao.h"
-#include "../../../utils/map_json_serializer.h"
-#include "../../../utils/numeric_comparator.h"
+#include "../../assets/texture.h"
+#include "../../core/log_manager.h"
+#include "../../render/buffer.h"
+#include "../../render/shader_program.h"
+#include "../../render/vao.h"
+#include "../../utils/map_json_serializer.h"
+#include "../../utils/numeric_comparator.h"
 #include "../world/cSkybox.h"
 #include "cMaterial.h"
 #include "cTexture.h"
@@ -23,7 +23,7 @@
 
 using namespace entt::literals;
 
-namespace nl {
+namespace nl::components {
 
 struct CMesh {
     std::vector<std::shared_ptr<assets::Texture>> textures;

@@ -7,10 +7,10 @@
 #include <map>
 #include <string>
 
-#include "../../../core/log_manager.h"
-#include "../../../utils/numeric_comparator.h"
+#include "../../core/log_manager.h"
+#include "../../utils/numeric_comparator.h"
 
-namespace nl {
+namespace nl::components {
 
 struct CSkybox {
     bool enable_fog{};

@@ -50,6 +50,7 @@ class SceneManager {
     void create_scene(std::string scene_name, std::string scene_path);
     void reload_scene(bool reload_prototypes);
     void clear_scene();
+    void print_scene();
     std::string get_active_scene() const;
     const std::map<std::string, entt::entity, NumericComparator>&
     get_named_entities();

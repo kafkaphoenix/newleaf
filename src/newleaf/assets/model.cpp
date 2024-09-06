@@ -43,7 +43,7 @@ void Model::process_node(aiNode* node, const aiScene* scene) {
   }
 }
 
-CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
+components::CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   std::vector<Vertex> vertices{};
   std::vector<uint32_t> indices{};
   std::vector<std::shared_ptr<Texture>> textures;
@@ -105,7 +105,7 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   }
 
   aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-  CMaterial materialData = load_material(material);
+  components::CMaterial materialData = load_material(material);
 
   // N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER.
   // diffuse: textureDiffuseN
@@ -138,7 +138,7 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   }
   m_materials.emplace_back(std::move(materialData));
 
-  return CMesh(std::move(vertices), std::move(indices), std::move(textures),
+  return components::CMesh(std::move(vertices), std::move(indices), std::move(textures),
                std::string("camera"));
 }
 
@@ -172,7 +172,7 @@ Model::load_material_textures(aiMaterial* mat, aiTextureType t,
   return textures;
 }
 
-CMaterial Model::load_material(aiMaterial* mat) {
+components::CMaterial Model::load_material(aiMaterial* mat) {
   // map_Ns        SHININESS    roughness
   // map_Ka        AMBIENT      ambient occlusion
   // map_Kd        DIFFUSE      albedo diffuse
@@ -184,7 +184,7 @@ CMaterial Model::load_material(aiMaterial* mat) {
   // map_Bump      HEIGHT       height
   // map_Kn        NORMALS      normal
   // map_disp      DISPLACEMENT
-  CMaterial material{};
+  components::CMaterial material{};
   aiColor3D color(0.f, 0.f, 0.f);
   float shininess{};
 

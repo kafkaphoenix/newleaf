@@ -8,7 +8,7 @@
 #include <nlohmann/json.hpp>
 
 #include "../core/log_manager.h"
-#include "components/core/cDeleted.h"
+#include "../components/core/cDeleted.h"
 
 using json = nlohmann::json;
 using namespace entt::literals;
@@ -207,7 +207,7 @@ void EntityFactory::remove_prototypes(
     ENGINE_ASSERT(
       m_prefabs.at(prefab_name.data()).contains(prototype_id.data()),
       "Unknown prototype {} for prefab {}", prototype_id, prefab_name);
-    registry.emplace<CDeleted>(
+    registry.emplace<components::CDeleted>(
       m_prefabs.at(prefab_name.data()).at(prototype_id.data()));
     m_prefabs.at(prefab_name.data()).erase(prototype_id.data());
   }
