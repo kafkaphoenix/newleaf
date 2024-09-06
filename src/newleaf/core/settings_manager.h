@@ -2,9 +2,11 @@
 
 #include <nlohmann/json.hpp>
 
-#include "../pch.h"
-
 using json = nlohmann::json;
+
+#include <array>
+#include <string>
+#include <vector>
 
 namespace nl {
 

@@ -1,9 +1,12 @@
 #pragma once
 
-#include "../core/layers_manager.h"
-#include "../core/time.h"
 #include "../events/event.h"
-#include "../pch.h"
+#include "layers_manager.h"
+#include "time.h"
+
+#include <memory>
+#include <string>
+#include <string_view>
 
 namespace nl {
 

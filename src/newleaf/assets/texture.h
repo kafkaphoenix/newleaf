@@ -2,9 +2,16 @@
 
 #include <glad/glad.h>
 
-#include "../assets/asset.h"
-#include "../pch.h"
+#include <filesystem>
+#include <map>
+#include <memory>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <vector>
+
 #include "../utils/numeric_comparator.h"
+#include "asset.h"
 
 namespace nl::assets {
 class Texture : public Asset {

@@ -1,9 +1,13 @@
 
 #pragma once
 
-#include "../utils/numeric_comparator.h"
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <map>
+#include <string>
+
+#include "../../../core/log_manager.h"
+#include "../../../utils/numeric_comparator.h"
 
 namespace nl {
 struct CMaterial {

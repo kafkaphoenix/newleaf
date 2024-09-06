@@ -1,7 +1,11 @@
 #pragma once
 
-#include "../core/application.h"
-#include "../utils/exception.h"
+#include <span>
+#include <vector>
+
+#include "exception.h"
+#include "application.h"
+#include "log_manager.h"
 
 extern nl::Application* nl::Create(nl::CLArgs&& args);
 

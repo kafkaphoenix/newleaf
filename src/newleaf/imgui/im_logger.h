@@ -3,8 +3,7 @@
 #include <imgui.h>
 
 #include "../core/log_manager.h"
-#include "../imgui/imgui_logsink.h"
-#include "../pch.h"
+#include "imgui_logsink.h"
 
 namespace nl {
 

@@ -1,7 +1,12 @@
 #pragma once
 
-#include "../render/buffer.h"
+#include "buffer.h"
 #include "../utils/numeric_comparator.h"
+
+#include <map>
+#include <memory>
+#include <vector>
+#include <string>
 
 namespace nl {
 

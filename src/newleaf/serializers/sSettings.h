@@ -2,9 +2,15 @@
 
 #include <nlohmann/json.hpp>
 
+#include "../core/log_manager.h"
 #include "../core/settings_manager.h"
-#include "../pch.h"
 #include "../utils/get_default_roaming_path.h"
+
+#include <filesystem>
+#include <format>
+#include <fstream>
+#include <memory>
+#include <string_view>
 
 using json = nlohmann::json;
 

@@ -6,6 +6,9 @@
 #include "../core/time.h"
 #include "../events/event.h"
 
+#include <memory>
+#include <string>
+
 namespace nl::systems {
 
 class System {

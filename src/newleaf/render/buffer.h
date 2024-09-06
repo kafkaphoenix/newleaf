@@ -2,8 +2,8 @@
 
 #define GLM_FORCE_CTOR_INIT
 #include <glm/glm.hpp>
-
-#include "../pch.h"
+#include <memory>
+#include <vector>
 
 namespace nl {
 #define MAX_BONE_INFLUENCE 4 // TODO use

@@ -1,19 +1,25 @@
 #pragma once
 
 #include <entt/entt.hpp>
+#include <format>
 #include <glm/glm.hpp>
+#include <map>
+#include <memory>
+#include <string>
+#include <string_view>
+#include <vector>
 
-#include "../assets/texture.h"
-#include "../pch.h"
-#include "../render/buffer.h"
-#include "../render/shader_program.h"
-#include "../render/vao.h"
-#include "../scene/components/graphics/cMaterial.h"
-#include "../scene/components/graphics/cTexture.h"
-#include "../scene/components/graphics/cTextureAtlas.h"
-#include "../scene/components/world/cSkybox.h"
-#include "../utils/map_json_serializer.h"
-#include "../utils/numeric_comparator.h"
+#include "../../../assets/texture.h"
+#include "../../../core/log_manager.h"
+#include "../../../render/buffer.h"
+#include "../../../render/shader_program.h"
+#include "../../../render/vao.h"
+#include "../../../utils/map_json_serializer.h"
+#include "../../../utils/numeric_comparator.h"
+#include "../world/cSkybox.h"
+#include "cMaterial.h"
+#include "cTexture.h"
+#include "cTextureAtlas.h"
 
 using namespace entt::literals;
 

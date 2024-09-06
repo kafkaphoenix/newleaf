@@ -1,9 +1,8 @@
-#include "../core/input.h"
+#include "input.h"
 
 #include <GLFW/glfw3.h>
 
-#include "../core/application.h"
-#include "../pch.h"
+#include "application.h"
 
 namespace nl {
 

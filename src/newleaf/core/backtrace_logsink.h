@@ -8,6 +8,8 @@
 #include <shared_mutex> // read-write lock (many readers allowed, but writing must be exclusive)
 #include <string>
 #include <vector>
+#include <mutex>
+#include <string_view>
 
 namespace nl {
 

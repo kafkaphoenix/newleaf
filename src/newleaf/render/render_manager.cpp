@@ -1,8 +1,9 @@
-#include "../render/render_manager.h"
+#include "render_manager.h"
 
 #include "../assets/texture.h"
+#include "../core/log_manager.h"
 #include "../imgui/im_scene.h"
-#include "../render/render_api.h"
+#include "render_api.h"
 
 namespace nl {
 

@@ -1,4 +1,4 @@
-#include "../scene/entity_factory.h"
+#include "entity_factory.h"
 
 #include <entt/core/hashed_string.hpp>
 #include <entt/meta/meta.hpp>
@@ -7,7 +7,8 @@
 #include <glm/gtc/quaternion.hpp>
 #include <nlohmann/json.hpp>
 
-#include "../scene/components/core/cDeleted.h"
+#include "../core/log_manager.h"
+#include "components/core/cDeleted.h"
 
 using json = nlohmann::json;
 using namespace entt::literals;

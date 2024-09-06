@@ -2,6 +2,8 @@
 
 #include <glad/glad.h>
 
+#include "../core/log_manager.h"
+
 namespace nl {
 
 VAO::VAO() { glCreateVertexArrays(1, &m_id); }

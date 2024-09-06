@@ -6,11 +6,12 @@
 #include "../core/application.h"
 #include "../core/settings_manager.h"
 #include "../core/states_manager.h"
-#include "../imgui/im_managersbar.h"
-#include "../imgui/im_menubar.h"
-#include "../pch.h"
 #include "../render/render_manager.h"
 #include "../scene/scene_manager.h"
+#include "im_managersbar.h"
+#include "im_menubar.h"
+
+#include <memory>
 
 namespace nl {
 

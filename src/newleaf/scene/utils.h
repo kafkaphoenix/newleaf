@@ -3,15 +3,18 @@
 #include <entt/entt.hpp>
 
 #include "../core/application.h"
-#include "../scene/components/core/cName.h"
-#include "../scene/components/core/cTag.h"
-#include "../scene/components/core/cUUID.h"
-#include "../scene/components/graphics/cMaterial.h"
-#include "../scene/components/graphics/cMesh.h"
-#include "../scene/components/graphics/cTexture.h"
-#include "../scene/components/graphics/cTextureAtlas.h"
-#include "../scene/components/world/cSkybox.h"
-#include "../scene/meta.h"
+#include "../core/log_manager.h"
+#include "components/core/cName.h"
+#include "components/core/cTag.h"
+#include "components/core/cUUID.h"
+#include "components/graphics/cMaterial.h"
+#include "components/graphics/cMesh.h"
+#include "components/graphics/cTexture.h"
+#include "components/graphics/cTextureAtlas.h"
+#include "components/world/cSkybox.h"
+#include "meta.h"
+
+#include <string_view>
 
 using namespace entt::literals;
 

@@ -4,12 +4,13 @@
 
 #include "../assets/assets_manager.h"
 #include "../core/settings_manager.h"
-#include "../imgui/im_about.h"
-#include "../imgui/im_logger.h"
-#include "../imgui/im_metrics.h"
-#include "../pch.h"
 #include "../render/render_manager.h"
 #include "../scene/scene_manager.h"
+#include "im_about.h"
+#include "im_logger.h"
+#include "im_metrics.h"
+
+#include <memory>
 
 namespace nl {
 

@@ -2,6 +2,8 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include "../core/log_manager.h"
+
 namespace nl {
 ShaderProgram::ShaderProgram(std::string&& name)
   : m_id(glCreateProgram()), m_name(std::move(name)) {}

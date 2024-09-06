@@ -1,8 +1,13 @@
 #pragma once
 
-#include "../assets/asset.h"
-#include "../pch.h"
+#include "../core/log_manager.h"
 #include "../utils/numeric_comparator.h"
+#include "asset.h"
+#include <map>
+#include <memory>
+#include <string>
+#include <string_view>
+#include <unordered_map>
 
 namespace nl::assets {
 class AssetsManager {

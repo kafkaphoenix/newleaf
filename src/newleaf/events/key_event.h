@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../core/key_codes.h"
-#include "../events/event.h"
+#include "event.h"
 
 namespace nl::events {
 

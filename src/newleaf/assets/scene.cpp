@@ -1,5 +1,8 @@
-#include "../assets/scene.h"
+#include "scene.h"
 
+#include <fstream>
+
+#include "../core/log_manager.h"
 #include "../utils/timer.h"
 
 namespace nl::assets {

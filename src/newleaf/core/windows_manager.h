@@ -3,10 +3,13 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-#include "../core/settings_manager.h"
 #include "../events/event.h"
-#include "../pch.h"
 #include "../render/opengl_context.h"
+#include "settings_manager.h"
+
+#include <functional>
+#include <memory>
+#include <string>
 
 namespace nl {
 

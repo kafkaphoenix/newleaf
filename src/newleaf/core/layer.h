@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../core/time.h"
+#include "time.h"
 #include "../events/event.h"
-#include "../pch.h"
+#include <string>
+#include <string_view>
 
 namespace nl {
 

@@ -1,4 +1,7 @@
-#include "../core/states_manager.h"
+#include "states_manager.h"
+
+#include <ranges>
+
 #include "../utils/map_json_serializer.h"
 
 namespace nl {

@@ -7,8 +7,10 @@
 #include "../assets/prefab.h"
 #include "../assets/texture.h"
 #include "../core/settings_manager.h"
-#include "../imgui/im_utils.h"
-#include "../pch.h"
+#include "im_utils.h"
+
+#include <memory>
+#include <string>
 
 namespace nl {
 

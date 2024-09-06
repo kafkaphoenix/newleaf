@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../pch.h"
+#include <string>
+#include <cctype>
+#include <sstream>
 
 namespace nl {
 

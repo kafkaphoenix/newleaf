@@ -1,8 +1,9 @@
-#include "../render/framebuffer.h"
+#include "framebuffer.h"
 
 #include <glad/glad.h>
 
 #include "../core/application.h"
+#include "../core/log_manager.h"
 #include "../utils/map_json_serializer.h"
 
 namespace nl {

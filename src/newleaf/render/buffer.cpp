@@ -1,6 +1,7 @@
-#include "../render/buffer.h"
+#include "buffer.h"
 
 #include <glad/glad.h>
+#include "../core/log_manager.h"
 
 namespace nl {
 

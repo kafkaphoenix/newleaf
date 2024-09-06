@@ -2,12 +2,18 @@
 
 #include <assimp/scene.h>
 
-#include "asset.h"
-#include "../assets/texture.h"
-#include "../pch.h"
 #include "../scene/components/graphics/cMaterial.h"
 #include "../scene/components/graphics/cMesh.h"
 #include "../utils/numeric_comparator.h"
+#include "asset.h"
+#include "texture.h"
+
+#include <filesystem>
+#include <map>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <vector>
 
 namespace nl::assets {
 

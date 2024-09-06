@@ -1,6 +1,12 @@
-#include "../render/render_api.h"
+#include "render_api.h"
 
 #include <glad/glad.h>
+
+#include <format>
+#include <string>
+#include <string_view>
+
+#include "../core/log_manager.h"
 
 namespace nl {
 

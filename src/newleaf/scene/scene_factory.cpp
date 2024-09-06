@@ -1,4 +1,4 @@
-#include "../scene/scene_factory.h"
+#include "scene_factory.h"
 
 #include <nlohmann/json.hpp>
 
@@ -7,12 +7,13 @@
 #include "../assets/scene.h"
 #include "../assets/shader.h"
 #include "../assets/texture.h"
-#include "../scene/components/core/cDeleted.h"
-#include "../scene/components/core/cName.h"
-#include "../scene/components/core/cTag.h"
-#include "../scene/components/core/cUUID.h"
+#include "../core/log_manager.h"
+#include "../core/uuid.h"
 #include "../utils/timer.h"
-#include "../utils/uuid.h"
+#include "components/core/cDeleted.h"
+#include "components/core/cName.h"
+#include "components/core/cTag.h"
+#include "components/core/cUUID.h"
 
 using json = nlohmann::json;
 using namespace entt::literals;

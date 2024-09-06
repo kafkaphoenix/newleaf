@@ -1,9 +1,11 @@
 #pragma once
 
-#include "../pch.h"
-#include "../utils/numeric_comparator.h"
+#include "numeric_comparator.h"
 
 #include <nlohmann/json.hpp>
+
+#include <map>
+#include <string>
 
 using json = nlohmann::json;
 

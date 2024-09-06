@@ -1,8 +1,14 @@
 #pragma once
 
-#include "../core/state.h"
-#include "../pch.h"
 #include "../utils/numeric_comparator.h"
+#include "log_manager.h"
+#include "state.h"
+
+#include <map>
+#include <memory>
+#include <string>
+#include <string_view>
+#include <vector>
 
 namespace nl {
 

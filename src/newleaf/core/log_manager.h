@@ -4,7 +4,9 @@
 #include <spdlog/spdlog.h>
 #pragma warning(pop)
 
-#include "../core/backtrace_logsink.h"
+#include "backtrace_logsink.h"
+#include <memory>
+#include <string_view>
 
 namespace nl {
 
@@ -110,3 +112,23 @@ class LogManager {
   ::nl::LogManager::get_engine_backtrace_logger()->debug(__VA_ARGS__)
 #define APP_BACKTRACE(...)                                                     \
   ::nl::LogManager::get_app_backtrace_logger()->debug(__VA_ARGS__)
+
+#ifdef DEBUG
+#define ENGINE_ASSERT(x, ...)                                                  \
+  if (!(x)) {                                                                  \
+    throw_engine_exception(__VA_ARGS__);                                       \
+  }
+#define APP_ASSERT(x, ...)                                                     \
+  if (!(x)) {                                                                  \
+    throw_app_exception(__VA_ARGS__);                                          \
+  }
+#else
+#define ENGINE_ASSERT(x, ...)                                                  \
+  if (!(x)) {                                                                  \
+    ENGINE_CRITICAL(__VA_ARGS__);                                              \
+  }
+#define APP_ASSERT(x, ...)                                                     \
+  if (!(x)) {                                                                  \
+    APP_CRITICAL(__VA_ARGS__);                                                 \
+  }
+#endif

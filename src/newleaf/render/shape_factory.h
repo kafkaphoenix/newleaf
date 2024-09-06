@@ -1,6 +1,9 @@
 #pragma once
 
-#include "../render/vao.h"
+#include <memory>
+#include <vector>
+
+#include "vao.h"
 
 namespace nl {
 

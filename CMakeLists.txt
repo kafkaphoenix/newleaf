@@ -21,12 +21,15 @@ option(BUILD_SHARED_LIBS "Build engine as a shared library" OFF)
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/*.cpp)
 
 if(BUILD_SHARED_LIBS)
-    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON) # required when using MSVC
-    add_library(${PROJECT_NAME} SHARED ${SOURCES})
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON) # required when using MSVC
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
 else()
-    add_library(${PROJECT_NAME} STATIC ${SOURCES})
+add_library(${PROJECT_NAME} STATIC ${SOURCES})
 endif()
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/warnings.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/static_analysis.cmake)
 
 if(ENABLE_DEBUG)
     target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG=1)
@@ -38,8 +41,6 @@ $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR/${PROJECT_NAME}}>
 )
 
 add_subdirectory(third_party)
-
-target_precompile_headers(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/pch.h)
 
 include(GNUInstallDirs)
 install(TARGETS ${PROJECT_NAME}
@@ -73,8 +74,6 @@ install(FILES
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
 
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/warnings.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/static_analysis.cmake)
 
 if (BUILD_TESTS)
     enable_testing()

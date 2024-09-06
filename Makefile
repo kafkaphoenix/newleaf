@@ -32,8 +32,8 @@ debug-gcc: ## Generate debug build for GCC
 	cmake --preset debug-gcc
 	cmake --build build
 
-.PHONY: clean
-clean: ## Clean build directory
+.PHONY: clear
+clear: ## Clear build directory
 	rm -rf build
 
 .PHONY: tests

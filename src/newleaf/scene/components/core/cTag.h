@@ -1,8 +1,10 @@
 #pragma once
 
-#include "../pch.h"
+#include "../../../core/log_manager.h"
+#include "../../../utils/numeric_comparator.h"
 
-#include "../utils/numeric_comparator.h"
+#include <map>
+#include <string>
 
 namespace nl {
 

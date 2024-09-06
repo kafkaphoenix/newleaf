@@ -2,9 +2,15 @@
 
 #include <nlohmann/json.hpp>
 
-#include "../assets/asset.h"
-#include "../pch.h"
+#include <filesystem>
+#include <map>
+#include <string>
+#include <string_view>
+#include <unordered_map>
+#include <vector>
+
 #include "../utils/numeric_comparator.h"
+#include "asset.h"
 
 using json = nlohmann::json;
 

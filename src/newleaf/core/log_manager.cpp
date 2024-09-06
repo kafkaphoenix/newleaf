@@ -1,4 +1,4 @@
-#include "../core/log_manager.h"
+#include "log_manager.h"
 
 #pragma warning(push, 0)
 #include <spdlog/sinks/basic_file_sink.h>
@@ -6,6 +6,7 @@
 #pragma warning(pop)
 
 #include "../imgui/imgui_logsink.h"
+#include <vector>
 
 namespace nl {
 

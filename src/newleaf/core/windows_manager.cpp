@@ -1,11 +1,12 @@
-#include "../core/windows_manager.h"
+#include "windows_manager.h"
 
 #include <stb_image.h>
 
-#include "../core/application.h"
 #include "../events/key_event.h"
 #include "../events/mouse_event.h"
 #include "../events/window_event.h"
+#include "application.h"
+#include "log_manager.h"
 
 namespace nl {
 

@@ -1,8 +1,9 @@
-#include "../scene/scene_manager.h"
+#include "scene_manager.h"
 
-#include "../scene/components/core/cName.h"
-#include "../scene/components/core/cUUID.h"
-#include "../scene/utils.h"
+#include "../core/log_manager.h"
+#include "components/core/cName.h"
+#include "components/core/cUUID.h"
+#include "utils.h"
 
 using namespace entt::literals;
 

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../pch.h"
-
 namespace nl::events {
 
 enum class EventType {
@@ -78,3 +76,10 @@ class EventDispatcher {
 };
 
 }
+
+#define BIND_EVENT(f)                                                          \
+  [this](auto&&... args) { return f(std::forward<decltype(args)>(args)...); }
+#define BIND_STATIC_EVENT(f, ...)                                              \
+  [&](auto&&... args) {                                                        \
+    return f(std::forward<decltype(args)>(args)..., ##__VA_ARGS__);            \
+  }

@@ -1,12 +1,10 @@
-#include "../core/backtrace_logsink.h"
+#include "backtrace_logsink.h"
 
 #include <chrono>
 #include <filesystem>
 #include <format>
-#include <iosfwd>
-#include <memory>
-#include <mutex>
-#include <string_view>
+#include <iostream>
+#include <fstream>
 
 extern template class spdlog::sinks::base_sink<std::mutex>;
 namespace nl {

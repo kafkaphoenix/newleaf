@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../core/log_manager.h"
 #include <entt/entt.hpp>
 
 namespace nl {

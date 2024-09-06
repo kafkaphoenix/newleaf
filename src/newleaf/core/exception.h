@@ -1,7 +1,5 @@
 #pragma once
 
-#include <format>
-#include <iosfwd>
 #include <stdexcept>
 #include <string>
 
@@ -9,16 +7,11 @@ namespace nl {
 
 class CustomException : public std::runtime_error {
   public:
-    CustomException(const std::string& arg, const char* file, int line)
-      : std::runtime_error(arg) {
-      std::ostringstream o;
-      o << file << ":" << line << ": " << arg;
-      m_msg = o.str();
-    }
+    CustomException(const std::string& arg, const char* file, int line);
 
-    ~CustomException() throw() {}
+    const char* what() const override;
 
-    const char* what() const throw() { return m_msg.c_str(); }
+    ~CustomException();
 
   private:
     std::string m_msg;
@@ -26,14 +19,12 @@ class CustomException : public std::runtime_error {
 
 class EngineException : public CustomException {
   public:
-    EngineException(const std::string& arg, const char* file, int line)
-      : CustomException(arg, file, line) {}
+    EngineException(const std::string& arg, const char* file, int line);
 };
 
 class AppException : public CustomException {
   public:
-    AppException(const std::string& arg, const char* file, int line)
-      : CustomException(arg, file, line) {}
+    AppException(const std::string& arg, const char* file, int line);
 };
 
 }

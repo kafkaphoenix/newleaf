@@ -4,10 +4,15 @@
 
 #include "../assets/assets_manager.h"
 #include "../assets/scene.h"
-#include "../pch.h"
 #include "../render/render_manager.h"
-#include "../scene/entity_factory.h"
+#include "entity_factory.h"
 #include "../utils/numeric_comparator.h"
+
+#include <map>
+#include <memory>
+#include <optional>
+#include <string>
+#include <string_view>
 
 namespace nl {
 

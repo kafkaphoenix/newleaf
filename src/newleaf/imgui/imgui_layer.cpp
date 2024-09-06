@@ -1,4 +1,4 @@
-#include "../imgui/imgui_layer.h"
+#include "imgui_layer.h"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -6,9 +6,11 @@
 #include <imgui_stdlib.h>
 
 #include "../core/application.h"
-#include "../imgui/im_debugger.h"
-#include "../imgui/im_utils.h"
-#include "../pch.h"
+#include "../core/log_manager.h"
+#include "im_debugger.h"
+#include "im_utils.h"
+
+#include <format>
 
 namespace nl {
 

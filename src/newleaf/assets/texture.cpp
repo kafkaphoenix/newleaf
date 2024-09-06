@@ -2,9 +2,13 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_IMAGE_WRITE_IMPLEMENTATION
+#include <filesystem>
+#include <optional>
 #include <stb_image.h>
+#include <string>
+#include <string_view>
 
-#include "../pch.h"
+#include "../core/log_manager.h"
 
 namespace nl::assets {
 

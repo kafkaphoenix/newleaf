@@ -1,15 +1,18 @@
 #pragma once
 
+#include <memory>
+#include <span>
+#include <string>
+
 #include "../assets/assets_manager.h"
-#include "../core/settings_manager.h"
-#include "../core/state.h"
-#include "../core/states_manager.h"
-#include "../core/windows_manager.h"
 #include "../events/event.h"
 #include "../imgui/imgui_layer.h"
-#include "../pch.h"
 #include "../render/render_manager.h"
 #include "../scene/scene_manager.h"
+#include "settings_manager.h"
+#include "state.h"
+#include "states_manager.h"
+#include "windows_manager.h"
 
 int main(int argc, char** argv);
 

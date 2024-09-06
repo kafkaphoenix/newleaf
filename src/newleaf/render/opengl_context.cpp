@@ -1,6 +1,7 @@
-#include "../render/opengl_context.h"
+#include "opengl_context.h"
 
 #include <glad/glad.h>
+#include "../core/log_manager.h"
 
 namespace nl {
 

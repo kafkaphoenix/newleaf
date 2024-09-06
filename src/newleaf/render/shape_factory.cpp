@@ -1,6 +1,8 @@
-#include "../utils/shape_factory.h"
+#include "shape_factory.h"
 
 #include <numbers>
+
+#include "../core/log_manager.h"
 
 namespace nl {
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../events/event.h"
+#include "event.h"
 
 namespace nl::events {
 

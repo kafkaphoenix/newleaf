@@ -1,7 +1,9 @@
-#include "../core/application.h"
+#include "application.h"
 
-#include "../core/time.h"
+#include "time.h"
+#include "../events/event.h"
 #include "../imgui/imgui_layer.h"
+#include "log_manager.h"
 
 namespace nl {
 

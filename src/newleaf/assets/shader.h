@@ -1,10 +1,12 @@
 #pragma once
 
+#include <filesystem>
 #include <glad/glad.h>
+#include <map>
+#include <string>
 
-#include "../assets/asset.h"
-#include "../pch.h"
 #include "../utils/numeric_comparator.h"
+#include "asset.h"
 
 namespace nl::assets {
 

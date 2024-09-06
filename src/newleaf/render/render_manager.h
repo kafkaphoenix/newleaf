@@ -2,13 +2,17 @@
 
 #define GLM_FORCE_CTOR_INIT
 #include <glm/glm.hpp>
+#include <map>
+#include <memory>
+#include <string>
+#include <string_view>
+#include <unordered_map>
 
 #include "../assets/assets_manager.h"
-#include "../pch.h"
-#include "../render/framebuffer.h"
-#include "../render/shader_program.h"
-#include "../render/vao.h"
 #include "../utils/numeric_comparator.h"
+#include "framebuffer.h"
+#include "shader_program.h"
+#include "vao.h"
 
 namespace nl {
 

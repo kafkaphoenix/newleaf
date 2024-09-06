@@ -1,13 +1,21 @@
 #pragma once
 
 #include <entt/entt.hpp>
+#include <map>
+#include <memory>
+#include <optional>
+#include <set>
+#include <string>
+#include <string_view>
+#include <vector>
 
 #include "../assets/assets_manager.h"
 #include "../core/time.h"
+#include "../core/uuid.h"
 #include "../events/event.h"
-#include "../scene/scene_factory.h"
-#include "../scene/system.h"
-#include "../utils/uuid.h"
+#include "../utils/numeric_comparator.h"
+#include "scene_factory.h"
+#include "system.h"
 
 namespace nl {
 class SceneManager {

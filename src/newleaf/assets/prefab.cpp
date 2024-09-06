@@ -1,5 +1,8 @@
-#include "../assets/prefab.h"
+#include "prefab.h"
 
+#include <fstream>
+
+#include "../core/log_manager.h"
 #include "../utils/timer.h"
 
 namespace nl::assets {

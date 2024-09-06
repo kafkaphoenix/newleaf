@@ -1,9 +1,8 @@
 #pragma once
 
-#include <glm/glm.hpp>
-
-#include "../pch.h"
-#include "../render/vao.h"
+#include "vao.h"
+#include <array>
+#include <memory>
 
 namespace nl {
 class RenderAPI {

@@ -1,7 +1,11 @@
 #pragma once
 
-#include "../core/layer.h"
-#include "../pch.h"
+#include "layer.h"
+
+#include <memory>
+#include <string>
+#include <string_view>
+#include <vector>
 
 namespace nl {
 

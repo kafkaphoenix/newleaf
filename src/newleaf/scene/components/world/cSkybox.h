@@ -4,8 +4,11 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <map>
+#include <string>
 
-#include "../utils/numeric_comparator.h"
+#include "../../../core/log_manager.h"
+#include "../../../utils/numeric_comparator.h"
 
 namespace nl {
 
