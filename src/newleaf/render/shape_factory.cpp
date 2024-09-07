@@ -29,7 +29,7 @@ std::shared_ptr<VAO> ShapeFactory::create_rectangle(float width, float height,
                                                     bool repeat_texture) {
   uint32_t overflow = 1;
   if (repeat_texture) {
-    ENGINE_ASSERT(width == height, "Cannot repeat texture on non-square shape");
+    ENGINE_ASSERT(width == height, "cannot repeat texture on non-square shape");
     overflow = width;
   }
 
@@ -49,7 +49,7 @@ std::shared_ptr<VAO> ShapeFactory::create_cube(float width, float height,
                                                bool repeat_texture) {
   uint32_t overflow = 1;
   if (repeat_texture) {
-    ENGINE_ASSERT(width == height, "Cannot repeat texture on non-square shape");
+    ENGINE_ASSERT(width == height, "cannot repeat texture on non-square shape");
     overflow = width;
   }
 

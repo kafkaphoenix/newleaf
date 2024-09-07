@@ -14,10 +14,10 @@
 
 namespace nl {
 
-ImGuiLayer::ImGuiLayer() : Layer("ImGui_layer") {}
+ImGuiLayer::ImGuiLayer() : Layer("ImGui layer") {}
 
 void ImGuiLayer::on_attach() {
-  ENGINE_TRACE("Initializing ImGui layer");
+  ENGINE_TRACE("initializing ImGui layer");
   auto& app = Application::Get();
   const auto& settings_manager = app.get_settings_manager();
   std::string glsl_version =
@@ -29,6 +29,7 @@ void ImGuiLayer::on_attach() {
   (void)io;
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
   io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+  io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
   io.ConfigWindowsMoveFromTitleBarOnly = true;
 
   ImGui::StyleColorsDark();
@@ -68,7 +69,7 @@ void ImGuiLayer::on_imgui_update() {
 }
 
 void ImGuiLayer::on_detach() {
-  ENGINE_WARN("Shutting down imgui api");
+  ENGINE_WARN("shutting down imgui api");
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();

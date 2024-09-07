@@ -49,7 +49,7 @@ void VBO::reload(const std::vector<Vertex>& vertices) {
 }
 
 VBO::~VBO() {
-  ENGINE_WARN("Deleting VBO {}", m_id);
+  ENGINE_WARN("deleting vbo {}", m_id);
   glDeleteBuffers(1, &m_id);
 }
 
@@ -92,7 +92,7 @@ void IBO::reload(const std::vector<uint32_t>& indices) {
 }
 
 IBO::~IBO() {
-  ENGINE_WARN("Deleting IBO {}", m_id);
+  ENGINE_WARN("deleting ibo {}", m_id);
   glDeleteBuffers(1, &m_id);
 }
 

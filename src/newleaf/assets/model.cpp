@@ -13,7 +13,7 @@ Model::Model(std::filesystem::path&& fp, std::optional<bool> gammaCorrection)
   : m_path(std::move(fp.string())),
     m_directory(std::move(fp.parent_path().string())) {
   ENGINE_ASSERT(not gammaCorrection.has_value(),
-                "Gamma correction not yet implemented");
+                "gamma correction not yet implemented");
 
   Assimp::Importer importer;
   const aiScene* scene = importer.ReadFile(
@@ -25,7 +25,7 @@ Model::Model(std::filesystem::path&& fp, std::optional<bool> gammaCorrection)
 
   ENGINE_ASSERT(scene and scene->mFlags not_eq AI_SCENE_FLAGS_INCOMPLETE and
                   scene->mRootNode,
-                "Failed to load model {}: {}", m_path,
+                "failed to load model {}: {}", m_path,
                 importer.GetErrorString());
 
   process_node(scene->mRootNode, scene);
@@ -119,10 +119,10 @@ components::CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
                     loadedTextures.end()); // Can't be emplace
   };
 
-  loadAndInsertTextures(aiTextureType_DIFFUSE, "textureDiffuse");
-  loadAndInsertTextures(aiTextureType_SPECULAR, "textureSpecular");
-  loadAndInsertTextures(aiTextureType_HEIGHT, "textureNormal");
-  loadAndInsertTextures(aiTextureType_AMBIENT, "textureHeight");
+  loadAndInsertTextures(aiTextureType_DIFFUSE, "texture_diffuse");
+  loadAndInsertTextures(aiTextureType_SPECULAR, "texture_specular");
+  loadAndInsertTextures(aiTextureType_HEIGHT, "texture_normal");
+  loadAndInsertTextures(aiTextureType_AMBIENT, "texture_height");
 
   // 0.6 is the default value for diffuse in assimp
   if (textures.empty() and materialData.diffuse == glm::vec3(0.6f)) {
@@ -131,9 +131,9 @@ components::CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
       textures.emplace_back(assets_manager->get<Texture>("default"));
     } else {
       textures.emplace_back(std::make_shared<Texture>(
-        "assets/textures/default.jpg", "textureDiffuse"));
+        "default.png", "texture_diffuse"));
       assets_manager->load<assets::Texture>(
-        "default", "assets/textures/default.jpg", "textureDiffuse");
+        "default", "default.png", "texture_diffuse");
     }
   }
   m_materials.emplace_back(std::move(materialData));
@@ -208,12 +208,12 @@ const std::map<std::string, std::string, NumericComparator>& Model::to_map() {
     return m_info;
   }
 
-  m_info["Type"] = "Model";
-  m_info["Path"] = m_path;
-  m_info["Meshes"] = std::to_string(m_meshes.size());
-  m_info["Materials"] = std::to_string(m_materials.size());
+  m_info["type"] = "Model";
+  m_info["path"] = m_path;
+  m_info["meshes"] = std::to_string(m_meshes.size());
+  m_info["materials"] = std::to_string(m_materials.size());
   for (uint32_t i = 0; i < m_loaded_textures.size(); ++i) {
-    m_info["Loaded Texture " + std::to_string(i)] = std::to_string(i);
+    m_info["loaded_texture_" + std::to_string(i)] = std::to_string(i);
   }
 
   return m_info;
@@ -234,7 +234,7 @@ Model::get_loaded_texture_info(std::string_view textureID) {
 
 bool Model::operator==(const Asset& other) const {
   if (typeid(other) not_eq typeid(Model)) {
-    ENGINE_ASSERT(false, "Cannot compare model with other asset type!");
+    ENGINE_ASSERT(false, "cannot compare model with other asset type!");
   }
   const Model& otherModel = static_cast<const Model&>(other);
   return m_path == otherModel.m_path;

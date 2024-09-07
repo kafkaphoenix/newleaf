@@ -9,7 +9,7 @@ namespace nl {
 
 void RenderManager::init() const { RenderAPI::init(); }
 
-void RenderManager::shutdown() { ENGINE_WARN("Shutting down render manager"); }
+void RenderManager::shutdown() { ENGINE_WARN("shutting down render manager"); }
 
 void RenderManager::on_window_resized(uint32_t w, uint32_t h) const {
   RenderAPI::set_viewport(0, 0, w, h);
@@ -19,7 +19,7 @@ void RenderManager::begin_scene(glm::mat4 view, glm::mat4 projection,
                                 glm::vec3 cameraPosition) {
   m_view = view;
   m_projection = projection;
-  m_cameraPosition = cameraPosition;
+  m_camera_position = cameraPosition;
 }
 
 void RenderManager::end_scene() {}
@@ -35,7 +35,7 @@ void RenderManager::add_shader_program(
   newShaderProgram->link();
   newShaderProgram->detach(*vs);
   newShaderProgram->detach(*fs);
-  ENGINE_TRACE("Shader {} linked!", name);
+  ENGINE_TRACE("shader {} linked!", name);
   m_shader_programs.emplace(std::move(name), std::move(newShaderProgram));
 }
 
@@ -50,15 +50,15 @@ void RenderManager::delete_framebuffer(std::string_view name) {
 
 void RenderManager::render_framebuffer(const std::shared_ptr<VAO>& vao,
                                        std::string_view fbo) {
-  auto& sp = getShaderProgram("fbo");
+  auto& sp = get_shader_program("fbo");
 
   sp->use();
-  sp->set_int("screenTexture", 100);
+  sp->set_int("screen_texture", 100);
   m_framebuffers.at(fbo.data())->get_color_texture()->bind_slot(100);
 
   RenderAPI::draw_indexed(vao);
 
-  m_drawCalls++;
+  m_draw_calls++;
   m_triangles += vao->get_ebo()->get_count() / 3;
   for (const auto& vbo : vao->get_vbos()) {
     m_vertices += vbo->get_count();
@@ -76,7 +76,7 @@ void RenderManager::render_inside_imgui(const std::shared_ptr<VAO>& vao,
   render_scene(fbo_->get_color_texture()->get_id(), title, size, position,
                fit_to_window);
 
-  m_drawCalls++;
+  m_draw_calls++;
   m_triangles += vao->get_ebo()->get_count() / 3;
   for (const auto& vbo : vao->get_vbos()) {
     m_vertices += vbo->get_count();
@@ -87,17 +87,17 @@ void RenderManager::render_inside_imgui(const std::shared_ptr<VAO>& vao,
 void RenderManager::render(const std::shared_ptr<VAO>& vao,
                            const glm::mat4& transform,
                            std::string_view shaderProgram) {
-  auto& sp = getShaderProgram(shaderProgram);
+  auto& sp = get_shader_program(shaderProgram);
 
   sp->use();
   sp->set_mat4("projection", m_projection);
   sp->set_mat4("view", m_view);
-  sp->set_vec3("cameraPosition", m_cameraPosition);
+  sp->set_vec3("camera_position", m_camera_position);
   sp->set_mat4("model", transform);
 
   RenderAPI::draw_indexed(vao);
 
-  m_drawCalls++;
+  m_draw_calls++;
   m_triangles += vao->get_ebo()->get_count() / 3;
   for (const auto& vbo : vao->get_vbos()) {
     m_vertices += vbo->get_count();
@@ -120,26 +120,26 @@ std::unique_ptr<RenderManager> RenderManager::Create() {
 }
 
 const std::unique_ptr<ShaderProgram>&
-RenderManager::getShaderProgram(std::string_view name) {
+RenderManager::get_shader_program(std::string_view name) {
   ENGINE_ASSERT(m_shader_programs.contains(name.data()),
-                "Shader program {} not found!", name);
+                "shader program {} not found!", name);
   return m_shader_programs.at(name.data());
 }
 
 const std::map<std::string, std::string, NumericComparator>&
 RenderManager::get_metrics() {
-  m_metrics["Framebuffers"] = std::to_string(m_framebuffers.size());
-  m_metrics["Shader programs"] = std::to_string(m_shader_programs.size());
-  m_metrics["Draw calls"] = std::to_string(m_drawCalls);
-  m_metrics["Triangles"] = std::to_string(m_triangles);
-  m_metrics["Vertices"] = std::to_string(m_vertices);
-  m_metrics["Indices"] = std::to_string(m_indices);
+  m_metrics["framebuffers"] = std::to_string(m_framebuffers.size());
+  m_metrics["shader_programs"] = std::to_string(m_shader_programs.size());
+  m_metrics["draw_calls"] = std::to_string(m_draw_calls);
+  m_metrics["triangles"] = std::to_string(m_triangles);
+  m_metrics["vertices"] = std::to_string(m_vertices);
+  m_metrics["indices"] = std::to_string(m_indices);
 
   return m_metrics;
 }
 
 void RenderManager::reset_metrics() {
-  m_drawCalls = 0;
+  m_draw_calls = 0;
   m_triangles = 0;
   m_vertices = 0;
   m_indices = 0;

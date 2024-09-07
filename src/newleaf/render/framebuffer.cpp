@@ -36,12 +36,12 @@ FBO::FBO(uint32_t w, uint32_t h, uint32_t t) : m_depth_buffer_type(t) {
     attach_stencil_render_buffer();
   }
   uint32_t status = glCheckNamedFramebufferStatus(m_id, GL_FRAMEBUFFER);
-  ENGINE_ASSERT(status == GL_FRAMEBUFFER_COMPLETE, "Framebuffer error: {}",
+  ENGINE_ASSERT(status == GL_FRAMEBUFFER_COMPLETE, "framebuffer error: {}",
                 status);
 }
 
 FBO::~FBO() {
-  ENGINE_WARN("Deleting framebuffer {}", m_id);
+  ENGINE_WARN("deleting framebuffer {}", m_id);
   glDeleteFramebuffers(1, &m_id);
   glDeleteRenderbuffers(1, &m_depth_render_buffer);
   glDeleteRenderbuffers(1, &m_stencil_render_buffer);
@@ -97,23 +97,23 @@ uint32_t FBO::get_buffer_id() const {
   } else if (m_depth_buffer_type == DEPTH_STENCIL_RENDERBUFFER) {
     return m_depth_stencil_render_buffer;
   } else {
-    ENGINE_ERROR("No buffer attached to framebuffer {}", m_id);
+    ENGINE_ERROR("no buffer attached to framebuffer {}", m_id);
     return 0;
   }
 }
 
 std::string_view FBO::get_buffer_type() const {
   if (m_depth_buffer_type == DEPTH_TEXTURE) {
-    return "Depth Texture";
+    return "depth texture";
   } else if (m_depth_buffer_type == DEPTH_RENDERBUFFER) {
-    return "Depth Renderbuffer";
+    return "depth renderbuffer";
   } else if (m_depth_buffer_type == STENCIL_RENDERBUFFER) {
-    return "Stencil Renderbuffer";
+    return "stencil renderbuffer";
   } else if (m_depth_buffer_type == DEPTH_STENCIL_RENDERBUFFER) {
-    return "Depth Stencil Renderbuffer";
+    return "depth stencil renderbuffer";
   } else {
-    ENGINE_ERROR("No buffer attached to framebuffer {}", m_id);
-    return "None";
+    ENGINE_ERROR("no buffer attached to framebuffer {}", m_id);
+    return "none";
   }
 }
 
@@ -122,17 +122,17 @@ const std::map<std::string, std::string, NumericComparator>& FBO::to_map() {
     return m_info;
   }
 
-  m_info["Type"] = "FBO";
+  m_info["type"] = "fbo";
   m_info["id"] = std::to_string(m_id);
-  m_info["Width"] = std::to_string(m_width);
-  m_info["Height"] = std::to_string(m_height);
-  m_info["Buffer id"] = std::to_string(get_buffer_id());
-  m_info["Buffer type"] = get_buffer_type();
+  m_info["width"] = std::to_string(m_width);
+  m_info["height"] = std::to_string(m_height);
+  m_info["buffer_id"] = std::to_string(get_buffer_id());
+  m_info["buffer_type"] = get_buffer_type();
   if (m_color_texture) {
-    m_info["Color texture"] = map_to_json(m_color_texture->to_map());
+    m_info["color_texture"] = map_to_json(m_color_texture->to_map());
   }
   if (m_depth_texture) {
-    m_info["Depth texture"] = map_to_json(m_depth_texture->to_map());
+    m_info["depth_texture"] = map_to_json(m_depth_texture->to_map());
   }
 
   return m_info;

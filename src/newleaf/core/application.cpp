@@ -28,7 +28,7 @@ Application::Application(std::unique_ptr<SettingsManager>&& s, CLArgs&& args)
 }
 
 Application::~Application() {
-  ENGINE_WARN("Deleting application");
+  ENGINE_WARN("deleting application");
   m_render_manager->shutdown();
   m_imgui_layer->on_detach();
 }

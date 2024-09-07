@@ -28,16 +28,16 @@ inline void draw_leaf_info(
   const std::map<std::string, std::string, NumericComparator>& info,
   const std::string& sceneName) {
   for (const auto& [k, v] : info) {
-    if (k.starts_with("mesh ") or k.starts_with("texture ") or
-        k.starts_with("material ") or k.starts_with("transform ") or
-        (k.starts_with("vao ") and v != "undefined")) {
+    if (k.starts_with("mesh_") or k.starts_with("texture_") or
+        k.starts_with("material_") or k.starts_with("transform_") or
+        (k.starts_with("vao_") and v != "undefined")) {
       if (ImGui::TreeNode((k + sceneName).c_str(), k.c_str())) {
         auto childInfoData = json_to_map(v);
         for (const auto& [key, value] : childInfoData) {
-          if (key.starts_with("texture ") or
-              (key.starts_with("vao ") and value != "undefined")) {
+          if (key.starts_with("texture_") or
+              (key.starts_with("vao_") and value != "undefined")) {
             if (ImGui::TreeNode((key + sceneName).c_str(), key.c_str())) {
-              // CBody, CShape, CChunk have a CMesh that has a VAO and CTexture
+              // CBody, CShape, CChunk have a CMesh that has a vao and CTexture
               auto rechildInfoData = json_to_map(value);
               for (const auto& [key, value] : rechildInfoData) {
                 ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
@@ -193,7 +193,7 @@ draw_scene_manager(const std::unique_ptr<SceneManager>& scene_manager,
                   draw_leaf_info(info, settings_manager->active_scene);
                 }
               } else {
-                ENGINE_ERROR("Failed to get to_map for component {0}", cName);
+                ENGINE_ERROR("failed to get to_map for component {0}", cName);
                 ImGui::Text("No to_map method defined");
               }
               ImGui::TreePop();
@@ -203,7 +203,7 @@ draw_scene_manager(const std::unique_ptr<SceneManager>& scene_manager,
                                  settings_manager->active_scene)
                                   .c_str(),
                                 cName.c_str())) {
-              ENGINE_ERROR("Failed to get to_map for component {0}", cName);
+              ENGINE_ERROR("failed to get to_map for component {0}", cName);
               ImGui::Text("No to_map method defined");
               ImGui::TreePop();
             }

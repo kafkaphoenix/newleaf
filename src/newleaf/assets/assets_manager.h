@@ -18,7 +18,7 @@ class AssetsManager {
       type = type.substr(type.find_last_of(':') + 1);
       auto& asset_map = m_assets[type.data()];
       ENGINE_ASSERT(not asset_map.contains(id.data()),
-                    "Asset {} already exists for type {}!", id, type);
+                    "asset {} already exists for type {}!", id, type);
       asset_map.emplace(id,
                         std::make_shared<Type>(std::forward<Args>(args)...));
       m_dirty = true;
@@ -34,7 +34,7 @@ class AssetsManager {
     template <typename Type> std::shared_ptr<Type> get(std::string_view id) {
       std::string_view type = typeid(Type).name();
       type = type.substr(type.find_last_of(':') + 1);
-      ENGINE_ASSERT(contains<Type>(id), "Asset {} not found for type {}!", id,
+      ENGINE_ASSERT(contains<Type>(id), "asset {} not found for type {}!", id,
                     type);
       return std::static_pointer_cast<Type>(
         m_assets.at(type.data()).at(id.data())); // I know the type is correct
@@ -44,7 +44,7 @@ class AssetsManager {
     std::shared_ptr<Type> reload(std::string_view id, Args&&... args) {
       std::string_view type = typeid(Type).name();
       type = type.substr(type.find_last_of(':') + 1);
-      ENGINE_ASSERT(contains<Type>(id), "Asset {} not found for type {}!", id,
+      ENGINE_ASSERT(contains<Type>(id), "asset {} not found for type {}!", id,
                     type);
       auto& maybeAsset = m_assets.at(type.data()).at(id.data());
       std::shared_ptr<Asset> asset =
@@ -52,7 +52,7 @@ class AssetsManager {
       maybeAsset = std::move(asset);
 
       m_dirty = true;
-      ENGINE_TRACE("Reloaded asset {}", id);
+      ENGINE_TRACE("reloaded asset {}", id);
       return std::static_pointer_cast<Type>(
         maybeAsset); // I know the type is correct
     }

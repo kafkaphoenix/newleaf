@@ -6,7 +6,7 @@
 namespace nl {
 
 OpenGLContext::OpenGLContext(GLFWwindow* w) : m_window(w) {
-  ENGINE_ASSERT(w, "Window is null!");
+  ENGINE_ASSERT(w, "window is null!");
 }
 
 void OpenGLContext::init() {
@@ -14,7 +14,7 @@ void OpenGLContext::init() {
 
   ENGINE_ASSERT(gladLoadGLLoader(
                   reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) not_eq 0,
-                "Failed to initialize Glad!");
+                "failed to initialize glad!");
 }
 
 void OpenGLContext::set_context(GLFWwindow* w) {

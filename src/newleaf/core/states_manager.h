@@ -23,7 +23,7 @@ class StatesManager {
     void enable_overlay(std::string_view name);
     void disable_overlay(std::string_view name);
     const std::unique_ptr<State>& get_current_state() {
-      ENGINE_ASSERT(m_index > 0, "No states to get current state from");
+      ENGINE_ASSERT(m_index > 0, "no states to get current state from");
       return m_states[m_index - 1];
     }
     uint32_t get_state_index() { return m_index; }

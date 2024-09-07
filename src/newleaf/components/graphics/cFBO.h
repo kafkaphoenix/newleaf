@@ -67,7 +67,7 @@ struct CFBO {
       } else if (_attachment == "depth_stencil_renderbuffer") {
         attachment = FBO::DEPTH_STENCIL_RENDERBUFFER;
       } else {
-        ENGINE_ASSERT(false, "Unknown fbo attachment: {}", _attachment);
+        ENGINE_ASSERT(false, "unknown fbo attachment: {}", _attachment);
       }
     }
 
@@ -89,7 +89,7 @@ struct CFBO {
       } else if (_mode == "emboss") {
         mode = Mode::Emboss;
       } else {
-        ENGINE_ASSERT(false, "Unknown fbo mode {}", _mode);
+        ENGINE_ASSERT(false, "unknown fbo mode {}", _mode);
       }
     }
 

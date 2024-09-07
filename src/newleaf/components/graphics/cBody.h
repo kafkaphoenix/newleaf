@@ -5,13 +5,13 @@
 #include <string>
 #include <vector>
 
+#include "../../assets/model.h"
+#include "../../core/application.h"
 #include "../../core/log_manager.h"
 #include "../../utils/map_json_serializer.h"
 #include "../../utils/numeric_comparator.h"
-#include "assets/model.h"
 #include "cMaterial.h"
 #include "cMesh.h"
-#include "core/application.h"
 
 namespace nl::components {
 
@@ -27,7 +27,7 @@ struct CBody {
       : path(std::move(fp)), meshes(std::move(m)), materials(std::move(ma)) {}
 
     void print() const {
-      ENGINE_BACKTRACE("\t\tfilepath: {0}\n\t\t\t\t\t\tmeshes: "
+      ENGINE_BACKTRACE("\t\tpath: {0}\n\t\t\t\t\t\tmeshes: "
                        "{1}\n\t\t\t\t\t\tmaterials: {2}",
                        path, meshes.size(), materials.size());
     }
@@ -36,10 +36,10 @@ struct CBody {
       std::map<std::string, std::string, NumericComparator> info;
       info["path"] = path;
       for (uint32_t i = 0; i < meshes.size(); ++i) {
-        info["mesh " + std::to_string(i)] = get_mesh_info(i);
+        info["mesh_" + std::to_string(i)] = get_mesh_info(i);
       }
       for (uint32_t i = 0; i < materials.size(); ++i) {
-        info["material " + std::to_string(i)] = get_material_info(i);
+        info["material_" + std::to_string(i)] = get_material_info(i);
       }
 
       return info;
@@ -74,7 +74,8 @@ struct CBody {
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e, components::CBody& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e,
+                                                 components::CBody& c) {
   c.set_mesh();
 
   m_registry.replace<components::CBody>(e, c);

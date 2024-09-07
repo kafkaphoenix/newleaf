@@ -27,14 +27,14 @@ Texture::Texture(uint32_t width, uint32_t height, GLenum glFormat,
   m_mipmap_level = 1;
   m_flip_vertically = false;
   m_paths.emplace_back("fbo texture");
-  m_type = "textureDifusse";
+  m_type = "texture_difusse";
   // https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexStorage2D.xhtml
   if (m_opengl_format == GL_RGBA8) {
     m_format = GL_RGBA;
   } else if (m_opengl_format == GL_DEPTH_COMPONENT24) {
     m_format = GL_DEPTH_COMPONENT;
   } else {
-    ENGINE_ASSERT(false, "Texture format not supported: {}", m_opengl_format);
+    ENGINE_ASSERT(false, "texture format not supported: {}", m_opengl_format);
   }
 }
 
@@ -44,12 +44,12 @@ Texture::Texture(std::filesystem::path&& fp, std::optional<std::string>&& type,
                  std::optional<bool> gammaCorrection)
   : m_directory(std::filesystem::is_directory(fp) ? std::move(fp.string())
                                                   : ""),
-    m_is_cubemap(std::filesystem::is_directory(fp)),
+    m_cubemap(std::filesystem::is_directory(fp)),
     m_type(std::move(type.value_or(""))),
     m_flip_vertically(flipVertically.value_or(true)),
     m_mipmap_level(mipmap_level.value_or(4)),
     m_gamma_correction(gammaCorrection.value_or(false)) {
-  if (m_is_cubemap) {
+  if (m_cubemap) {
     std::string fileExt =
       std::filesystem::exists(fp / "front.jpg") ? ".jpg" : ".png";
     m_paths.reserve(6);
@@ -72,7 +72,7 @@ void Texture::loadTexture() {
   int width, height, channels;
   stbi_set_flip_vertically_on_load(m_flip_vertically);
   uint32_t face{};
-  if (m_is_cubemap) {
+  if (m_cubemap) {
     glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -91,7 +91,7 @@ void Texture::loadTexture() {
     stbi_uc* data = stbi_load(path.data(), &width, &height, &channels, 0);
     if (not data) [[unlikely]] {
       stbi_image_free(data);
-      ENGINE_ASSERT(false, "Failed to load texture: {} {}", path,
+      ENGINE_ASSERT(false, "failed to load texture: {} {}", path,
                     stbi_failure_reason());
     }
     m_width = width;
@@ -117,11 +117,11 @@ void Texture::loadTexture() {
       m_format = GL_RED;
     } else [[unlikely]] {
       stbi_image_free(data);
-      ENGINE_ASSERT(false, "Texture format not supported: {} {} channels", path,
+      ENGINE_ASSERT(false, "texture format not supported: {} {} channels", path,
                     channels);
     }
 
-    if (m_is_cubemap) {
+    if (m_cubemap) {
       glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, m_format, m_width,
                    m_height, 0, m_format, GL_UNSIGNED_BYTE, data);
       ++face;
@@ -138,12 +138,12 @@ void Texture::loadTexture() {
 
 Texture::~Texture() {
   std::string_view source = (m_paths.size() == 1) ? m_paths[0] : m_directory;
-  ENGINE_WARN("Deleting texture {}: {}", m_id, source);
+  ENGINE_WARN("deleting texture {}: {}", m_id, source);
   glDeleteTextures(1, &m_id);
 }
 
 void Texture::bind_slot(uint32_t slot) {
-  ENGINE_ASSERT(slot > 0, "Texture slot {} is not allowed!", slot);
+  ENGINE_ASSERT(slot > 0, "texture slot {} is not allowed!", slot);
   m_slot = slot;
   glBindTextureUnit(slot, m_id);
 }
@@ -160,53 +160,53 @@ const std::map<std::string, std::string, NumericComparator>& Texture::to_map() {
     return m_info;
   }
 
-  m_info["Type"] = "Texture";
+  m_info["type"] = "texture";
   m_info["id"] = std::to_string(m_id);
   for (int i = 0; i < m_paths.size(); ++i) {
-    m_info["Path " + std::to_string(i)] = m_paths[i];
+    m_info["path_" + std::to_string(i)] = m_paths[i];
   }
-  m_info["Width"] = std::to_string(m_width);
-  m_info["Height"] = std::to_string(m_height);
-  m_info["Texture type"] = m_type;
+  m_info["width"] = std::to_string(m_width);
+  m_info["height"] = std::to_string(m_height);
+  m_info["texture_type"] = m_type;
   if (m_opengl_format == GL_RGBA8) {
-    m_info["OpenGL format"] = "RGBA8";
+    m_info["openGL_format"] = "rgba8";
   } else if (m_opengl_format == GL_RGB8) {
-    m_info["OpenGL format"] = "RGB8";
+    m_info["openGL_format"] = "rgb8";
   } else if (m_opengl_format == GL_RG8) {
-    m_info["OpenGL format"] = "RG8";
+    m_info["openGL_format"] = "rg8";
   } else if (m_opengl_format == GL_R8) {
-    m_info["OpenGL format"] = "R8";
+    m_info["openGL_format"] = "r8";
   } else if (m_opengl_format == GL_DEPTH_COMPONENT24) {
-    m_info["OpenGL format"] = "DEPTH_COMPONENT24";
+    m_info["openGL_format"] = "depth_component24";
   } else {
-    m_info["OpenGL format"] = "Unknown";
+    m_info["openGL_format"] = "unknown";
   }
   if (m_format == GL_RGBA) {
-    m_info["Format"] = "RGBA";
+    m_info["format"] = "rgba";
   } else if (m_format == GL_RGB) {
-    m_info["Format"] = "RGB";
+    m_info["format"] = "rgb";
   } else if (m_format == GL_RG) {
-    m_info["Format"] = "RG";
+    m_info["format"] = "rg";
   } else if (m_format == GL_RED) {
-    m_info["Format"] = "RED";
+    m_info["format"] = "red";
   } else if (m_format == GL_DEPTH_COMPONENT) {
-    m_info["Format"] = "DEPTH_COMPONENT";
+    m_info["format"] = "depth_component";
   } else {
-    m_info["Format"] = "Unknown";
+    m_info["format"] = "unknown";
   }
-  m_info["Slot"] =
+  m_info["slot"] =
     std::to_string(m_slot); // will be 0 if not bound except for fbo texture
-  m_info["Is cubemap"] = m_is_cubemap ? "true" : "false";
-  m_info["Flip vertically"] = m_flip_vertically ? "true" : "false";
-  m_info["Mipmap level"] = std::to_string(m_mipmap_level);
-  m_info["Gamma correction"] = m_gamma_correction ? "true" : "false";
+  m_info["cubemap"] = m_cubemap ? "true" : "false";
+  m_info["flip_vertically"] = m_flip_vertically ? "true" : "false";
+  m_info["mipmap_level"] = std::to_string(m_mipmap_level);
+  m_info["gamma_correction"] = m_gamma_correction ? "true" : "false";
 
   return m_info;
 }
 
 bool Texture::operator==(const Asset& other) const {
   if (typeid(*this) != typeid(other)) {
-    ENGINE_ASSERT(false, "Cannot compare texture with other asset type!");
+    ENGINE_ASSERT(false, "cannot compare texture with other asset type!");
   }
   const Texture& otherTexture = static_cast<const Texture&>(other);
   for (const std::string& path : m_paths) {

@@ -51,7 +51,7 @@ struct CCollider {
         type = Type::Rectangle;
         mesh.vao = ShapeFactory::create_rectangle(size.x, size.y, false);
       } else {
-        ENGINE_ASSERT(false, "Unknown collider type {}", _type);
+        ENGINE_ASSERT(false, "unknown collider type {}", _type);
       }
     }
 };

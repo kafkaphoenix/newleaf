@@ -9,7 +9,7 @@ namespace nl {
 VAO::VAO() { glCreateVertexArrays(1, &m_id); }
 
 VAO::~VAO() {
-  ENGINE_WARN("Deleting VAO {}", m_id);
+  ENGINE_WARN("deleting vao {}", m_id);
   glDeleteVertexArrays(1, &m_id);
 }
 
@@ -155,12 +155,12 @@ const std::map<std::string, std::string, NumericComparator>& VAO::to_map() {
 
   m_info.clear();
   m_info["id"] = std::to_string(m_id);
-  m_info["VBO index"] = std::to_string(m_vbo_index);
+  m_info["vbo_index"] = std::to_string(m_vbo_index);
   for (size_t i = 0; i < m_vbos.size(); ++i) {
-    m_info["VBO " + std::to_string(i) + " id"] =
+    m_info["vbo_" + std::to_string(i) + " id"] =
       std::to_string(m_vbos[i]->get_id());
   }
-  m_info["IBO id"] = std::to_string(m_ibo->get_id());
+  m_info["ibo_id"] = std::to_string(m_ibo->get_id());
   m_dirty = false;
 
   return m_info;

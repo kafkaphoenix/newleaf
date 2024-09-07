@@ -1,19 +1,19 @@
 # newleaf
 
-C++ game engine for 3D and 2D development
+C++ game engine for 3d and 2d development
 
 ## Engine Features
 
-- Scene manager: Entity Component System oriented. Loading scenes and entity prototypes from json
-- Render manager: OpenGL 4.6 API abstraction. Model, Texture and Cubemaps loading capabilities. FBO
-- Window manager: GLFW abstraction
-- Event-driven (Mouse/Keyboard/Window/Application)
-- Settings manager: Customizable engine defined settings
-- Debugger layer: Logger, Metrics and a assets/entities/scene/states/settings inspector
-- Assets manager: Caching and hot reloading of prefabs, shaders, textures, models and scenes
-- States manager: State machine with layers and overlays
+- Scene manager: entity component system oriented. Loading scenes and entity prototypes from json
+- Render manager: openGL 4.6 api abstraction. Model, texture and cubemaps loading capabilities. FBO
+- Window manager: glfw abstraction
+- Event-driven (mouse/keyboard/window/application)
+- Settings manager: customizable engine defined settings
+- Debugger layer: logger, metrics and an assets/entities/scene/states/settings inspector
+- Assets manager: caching and hot reloading of prefabs, shaders, textures, models and scenes
+- States manager: state machine with layers and overlays
 - Perspective camera
-- Model, Texture and Cubemaps loading capabilities
+- Model, texture and cubemaps loading capabilities
 
 ## How to use the engine in a personal project
 
@@ -36,7 +36,7 @@ endif()
 
 ## Demos
 
-- Engine use cases can be found in the [demos repo](https://github.com/kafkaphoenix/newleaf_demos)
+- Engine use cases can be found in the [newleaf demos repository](https://github.com/kafkaphoenix/newleaf_demos)
 
 ## Planned features
 
@@ -45,7 +45,7 @@ endif()
 - Render commands batching
 - Expand camera class supporting more modes
 - Serialization
-- Per module tests using Catch2
+- Per module tests using catch2
 - Profiler
 - Font rendering
 - Audio

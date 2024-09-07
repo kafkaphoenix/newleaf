@@ -8,9 +8,9 @@
 namespace nl::assets {
 Scene::Scene(std::filesystem::path&& fp) : m_path(std::move(fp.string())) {
   std::ifstream f(fp);
-  ENGINE_ASSERT(f.is_open(), "Failed to open scene file!");
+  ENGINE_ASSERT(f.is_open(), "failed to open scene file!");
   ENGINE_ASSERT(f.peek() not_eq std::ifstream::traits_type::eof(),
-                "Scene file is empty!");
+                "scene file is empty!");
   json data = json::parse(f);
   f.close();
 
@@ -48,19 +48,19 @@ const std::map<std::string, std::string, NumericComparator>& Scene::to_map() {
     return m_info;
   }
 
-  m_info["Type"] = "Scene";
-  m_info["Path"] = m_path;
-  m_info["Shaders"] = std::to_string(m_shaders.size());
-  m_info["Textures"] = std::to_string(m_textures.size());
-  m_info["Models"] = std::to_string(m_models.size());
-  m_info["Prefabs"] = std::to_string(m_prefabs.size());
+  m_info["type"] = "scene";
+  m_info["path"] = m_path;
+  m_info["shaders"] = std::to_string(m_shaders.size());
+  m_info["textures"] = std::to_string(m_textures.size());
+  m_info["models"] = std::to_string(m_models.size());
+  m_info["prefabs"] = std::to_string(m_prefabs.size());
 
   return m_info;
 }
 
 bool Scene::operator==(const Asset& other) const {
   if (typeid(*this) not_eq typeid(other)) {
-    ENGINE_ASSERT(false, "Cannot compare scene with other asset type!");
+    ENGINE_ASSERT(false, "cannot compare scene with other asset type!");
   }
   const Scene& otherScene = static_cast<const Scene&>(other);
   return m_path == otherScene.m_path;

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.21)
 project(newleaf
 VERSION 0.1.0
 HOMEPAGE_URL "https://github.com/kafkaphoenix/newleaf"
-DESCRIPTION "C++ game engine for 3D and 2D development"
+DESCRIPTION "C++ game engine for 3d and 2d development"
 LANGUAGES CXX
 )
 
@@ -15,8 +15,8 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-option(ENABLE_DEBUG "Enable debugging info" OFF)
-option(BUILD_SHARED_LIBS "Build engine as a shared library" OFF)
+option(ENABLE_DEBUG "enable debugging info" OFF)
+option(BUILD_SHARED_LIBS "build engine as a shared library" OFF)
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/*.cpp)
 

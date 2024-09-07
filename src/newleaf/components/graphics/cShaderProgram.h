@@ -11,21 +11,21 @@ namespace nl::components {
 
 struct CShaderProgram {
     std::string name;
-    bool isVisible{true};
+    bool visible{true};
 
     CShaderProgram() = default;
     explicit CShaderProgram(std::string&& n, bool iv)
-      : name(std::move(n)), isVisible(iv) {}
+      : name(std::move(n)), visible(iv) {}
 
     void print() const {
-      ENGINE_BACKTRACE("\t\tname: {0}\n\t\t\t\t\t\tisVisible: {1}", name,
-                       isVisible);
+      ENGINE_BACKTRACE("\t\tname: {0}\n\t\t\t\t\t\tvisible: {1}", name,
+                       visible);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
       std::map<std::string, std::string, NumericComparator> info;
       info["name"] = name;
-      info["isVisible"] = isVisible ? "true" : "false";
+      info["visible"] = visible ? "true" : "false";
 
       return info;
     }

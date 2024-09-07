@@ -44,7 +44,7 @@ class RenderManager {
       return m_framebuffers;
     }
     const std::unique_ptr<ShaderProgram>&
-    getShaderProgram(std::string_view shaderProgram);
+    get_shader_program(std::string_view shaderProgram);
 
     void render(const std::shared_ptr<VAO>& vao, const glm::mat4& transform,
                 std::string_view shaderProgram);
@@ -66,12 +66,12 @@ class RenderManager {
   private:
     glm::mat4 m_view{};
     glm::mat4 m_projection{};
-    glm::vec3 m_cameraPosition{};
+    glm::vec3 m_camera_position{};
     std::unordered_map<std::string, std::unique_ptr<ShaderProgram>>
       m_shader_programs;
     std::unordered_map<std::string, std::unique_ptr<FBO>> m_framebuffers;
     std::map<std::string, std::string, NumericComparator> m_metrics;
-    uint32_t m_drawCalls{};
+    uint32_t m_draw_calls{};
     uint32_t m_triangles{};
     uint32_t m_vertices{};
     uint32_t m_indices{};

@@ -36,7 +36,7 @@ draw_render_manager(const std::unique_ptr<RenderManager>& render_manager,
   if (ImGui::Button("Clear Filter")) {
     render_objects_text_filter[0] = '\0';
   }
-  ImGui::Checkbox("FBOS", &filter_fbos);
+  ImGui::Checkbox("FBOs", &filter_fbos);
   ImGui::SameLine();
   ImGui::Checkbox("Shader programs", &filter_shader_programs);
   ImGui::SameLine();
@@ -107,7 +107,7 @@ draw_render_manager(const std::unique_ptr<RenderManager>& render_manager,
       const auto& value = fbos.at(selected_render_manager_tabkey);
       const auto& fboInfo = value->to_map();
       for (const auto& [key, value] : fboInfo) {
-        if (key == "Color texture" or key == "Depth texture") {
+        if (key == "color_texture" or key == "depth_texture") {
           const auto& textureInfo = json_to_map(value);
           if (ImGui::TreeNode((selected_render_manager_tabtype +
                                selected_render_manager_tabkey + key +

@@ -7,6 +7,7 @@ function(set_msvc_compile_options target)
         /utf-8
         /WX
         /Wall
+        /bigobj
         /wd4996 # For deprecated functions in MSVC
     )
     target_compile_options(${target} PRIVATE /external:I ${CMAKE_SOURCE_DIR}/build /W0) # Exclude from warnings

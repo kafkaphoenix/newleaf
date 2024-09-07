@@ -50,10 +50,10 @@ glm::quat json_to_quat(const json& j) {
 
 void processCTag(entt::entity& e, std::string_view cTag) {
   entt::meta_type cType = entt::resolve(entt::hashed_string{cTag.data()});
-  ENGINE_ASSERT(cType, "No component type found for component tag {}", cTag)
+  ENGINE_ASSERT(cType, "no component type found for component tag {}", cTag)
 
   entt::meta_func assignFunc = cType.func("assign"_hs);
-  ENGINE_ASSERT(assignFunc, "No assign function found for component tag {}",
+  ENGINE_ASSERT(assignFunc, "no assign function found for component tag {}",
                 cTag)
 
   entt::meta_any metaComponent = assignFunc.invoke({}, e);
@@ -66,10 +66,10 @@ void processCTag(entt::entity& e, std::string_view cTag) {
 void processComponent(entt::entity& e, const std::string& cPrefab,
                       const json& cValue) {
   entt::meta_type cType = entt::resolve(entt::hashed_string{cPrefab.data()});
-  ENGINE_ASSERT(cType, "No component type found for component {}", cPrefab)
+  ENGINE_ASSERT(cType, "no component type found for component {}", cPrefab)
 
   entt::meta_func assignFunc = cType.func("assign"_hs);
-  ENGINE_ASSERT(assignFunc, "No assign function found for component {}",
+  ENGINE_ASSERT(assignFunc, "no assign function found for component {}",
                 cPrefab)
 
   entt::meta_any metaComponent;
@@ -86,7 +86,7 @@ void processComponent(entt::entity& e, const std::string& cPrefab,
     metaComponent = assignFunc.invoke({}, e, json_to_vec3(cValue));
   } else if (cValue.is_object()) {
     metaComponent = assignFunc.invoke({}, e);
-    ENGINE_ASSERT(metaComponent, "No meta component found for component {}",
+    ENGINE_ASSERT(metaComponent, "no meta component found for component {}",
                   cPrefab)
 
     for (const auto& [cField, cFieldValue] : cValue.items()) {
@@ -107,7 +107,7 @@ void processComponent(entt::entity& e, const std::string& cPrefab,
         paths.reserve(cFieldValue.size());
         for (const auto& value : cFieldValue) {
           ENGINE_ASSERT(value.is_string(),
-                        "Unsupported type {} for component {} field {}",
+                        "unsupported type {} for component {} field {}",
                         value.type_name(), cPrefab, cField);
           paths.emplace_back(value.get<std::string>());
         }
@@ -149,16 +149,16 @@ void processComponent(entt::entity& e, const std::string& cPrefab,
           metaComponent.set(entt::hashed_string{cField.data()},
                             std::move(cFieldValue));
         } else {
-          ENGINE_ASSERT(false, "Unsupported type {} for component {} field {}",
+          ENGINE_ASSERT(false, "unsupported type {} for component {} field {}",
                         cFieldValue.type_name(), cPrefab, cField)
         }
       } else {
-        ENGINE_ASSERT(false, "Unsupported type {} for component {} field {}",
+        ENGINE_ASSERT(false, "unsupported type {} for component {} field {}",
                       cFieldValue.type_name(), cPrefab, cField)
       }
     }
   } else {
-    ENGINE_ASSERT(false, "Unsupported type {} for component {}",
+    ENGINE_ASSERT(false, "unsupported type {} for component {}",
                   cValue.type_name(), cPrefab)
   }
   entt::meta_func triggerEventFunc = cType.func("on_component_added"_hs);
@@ -176,7 +176,7 @@ void EntityFactory::create_prototypes(
   auto& prefabPrototypes = m_prefabs[prefab_name.data()];
   for (std::string_view prototype_id : prototype_ids) {
     ENGINE_ASSERT(not prefabPrototypes.contains(prototype_id.data()),
-                  "Prototype {} for prefab {} already exists", prototype_id,
+                  "prototype {} for prefab {} already exists", prototype_id,
                   prefab_name);
     entt::entity e = registry.create();
 
@@ -206,7 +206,7 @@ void EntityFactory::remove_prototypes(
   for (std::string_view prototype_id : prototype_ids) {
     ENGINE_ASSERT(
       m_prefabs.at(prefab_name.data()).contains(prototype_id.data()),
-      "Unknown prototype {} for prefab {}", prototype_id, prefab_name);
+      "unknown prototype {} for prefab {}", prototype_id, prefab_name);
     registry.emplace<components::CDeleted>(
       m_prefabs.at(prefab_name.data()).at(prototype_id.data()));
     m_prefabs.at(prefab_name.data()).erase(prototype_id.data());
@@ -217,13 +217,13 @@ void EntityFactory::remove_prototypes(
 EntityFactory::Prototypes
 EntityFactory::get_prototypes(std::string_view prefab_name,
                               const std::vector<std::string>& prototype_ids) {
-  ENGINE_ASSERT(m_prefabs.contains(prefab_name.data()), "Unknown prefab {}",
+  ENGINE_ASSERT(m_prefabs.contains(prefab_name.data()), "unknown prefab {}",
                 prefab_name);
   Prototypes prototypes;
   for (std::string_view prototype_id : prototype_ids) {
     ENGINE_ASSERT(
       m_prefabs.at(prefab_name.data()).contains(prototype_id.data()),
-      "Unknown prototype {} for prefab {}", prototype_id, prefab_name);
+      "unknown prototype {} for prefab {}", prototype_id, prefab_name);
     prototypes.insert(
       {prototype_id.data(),
        m_prefabs.at(prefab_name.data()).at(prototype_id.data())});
@@ -234,7 +234,7 @@ EntityFactory::get_prototypes(std::string_view prefab_name,
 bool EntityFactory::contains_prototypes(
   std::string_view prefab_name,
   const std::vector<std::string>& prototype_ids) const {
-  ENGINE_ASSERT(m_prefabs.contains(prefab_name.data()), "Unknown prefab {}",
+  ENGINE_ASSERT(m_prefabs.contains(prefab_name.data()), "unknown prefab {}",
                 prefab_name);
   for (std::string_view prototype_id : prototype_ids) {
     if (not m_prefabs.at(prefab_name.data()).contains(prototype_id.data())) {
@@ -252,7 +252,7 @@ EntityFactory::get_prototypes_count_by_prefab() {
 
   m_prototypes_count_by_prefab.clear();
   for (const auto& [prefab_name, prototypes] : m_prefabs) {
-    m_prototypes_count_by_prefab["Prefab " + prefab_name] =
+    m_prototypes_count_by_prefab["prefab_" + prefab_name] =
       std::to_string(prototypes.size());
   }
   m_dirty = false;

@@ -39,7 +39,7 @@ class Texture : public Asset {
     std::string_view get_type() const { return m_type; }
     virtual const std::map<std::string, std::string, NumericComparator>&
     to_map() override final;
-    bool is_cubemap() const { return m_is_cubemap; }
+    bool is_cubemap() const { return m_cubemap; }
 
     virtual bool operator==(const Asset& other) const override final;
 
@@ -61,7 +61,7 @@ class Texture : public Asset {
     uint32_t m_id{};
     GLenum m_opengl_format{}, m_format{};
     uint32_t m_slot{};
-    bool m_is_cubemap{};
+    bool m_cubemap{};
     bool m_flip_vertically{true};
     uint32_t m_mipmap_level{};
     bool m_gamma_correction{};

@@ -34,9 +34,9 @@ Prefab::Prefab(std::filesystem::path&& fp,
   // One prefab file can contain multiple prototypes and we target only a subset
   // of them
   std::ifstream f(fp);
-  ENGINE_ASSERT(f.is_open(), "Failed to open prefab file!");
+  ENGINE_ASSERT(f.is_open(), "failed to open prefab file!");
   ENGINE_ASSERT(f.peek() not_eq std::ifstream::traits_type::eof(),
-                "Prefab file is empty!");
+                "prefab file is empty!");
   json data = json::parse(f);
   f.close();
 
@@ -92,10 +92,10 @@ const std::map<std::string, std::string, NumericComparator>& Prefab::to_map() {
     return m_info;
   }
 
-  m_info["Type"] = "Prefab";
-  m_info["Path"] = m_path;
+  m_info["type"] = "prefab";
+  m_info["path"] = m_path;
   for (const auto& [prototype_id, prototype_data] : m_prototypes) {
-    m_info["Prototype " + prototype_id] = prototype_id;
+    m_info["prototype_" + prototype_id] = prototype_id;
   }
 
   return m_info;
@@ -109,21 +109,21 @@ Prefab::get_targeted_prototype_info(std::string_view prototype_id) {
   }
 
   std::map<std::string, std::string, NumericComparator> m_info{};
-  m_info["Name"] = prototype_id.data();
+  m_info["name"] = prototype_id.data();
   for (uint32_t i = 0; i < m_prototypes.at(prototype_id.data()).inherits.size();
        ++i) {
-    m_info["Inherits " + std::to_string(i)] =
+    m_info["inherits " + std::to_string(i)] =
       *std::next(m_prototypes.at(prototype_id.data()).inherits.begin(), i);
   }
   for (uint32_t i = 0; i < m_prototypes.at(prototype_id.data()).ctags.size();
        ++i) {
-    m_info["CTag " + std::to_string(i)] =
+    m_info["cTag " + std::to_string(i)] =
       *std::next(m_prototypes.at(prototype_id.data()).ctags.begin(), i);
   }
   uint32_t i = 0;
   for (const auto& [componentID, _] :
        m_prototypes.at(prototype_id.data()).components) {
-    m_info["Component " + std::to_string(i++)] = componentID;
+    m_info["component " + std::to_string(i++)] = componentID;
   }
   m_prototype_info[prototype_id.data()] = m_info;
 
@@ -132,7 +132,7 @@ Prefab::get_targeted_prototype_info(std::string_view prototype_id) {
 
 bool Prefab::operator==(const Asset& other) const {
   if (typeid(*this) not_eq typeid(other)) {
-    ENGINE_ASSERT(false, "Cannot compare prefab with other asset type!");
+    ENGINE_ASSERT(false, "cannot compare prefab with other asset type!");
   }
   const Prefab& otherPrefab = static_cast<const Prefab&>(other);
   return m_path == otherPrefab.m_path;

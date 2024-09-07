@@ -27,7 +27,7 @@ struct SettingsManager {
     bool resizable = true;
     uint32_t opengl_major = 4; // only 4.6 is supported
     uint32_t opengl_minor = 6;
-    bool is_imgui_window = true; // it needs an opengl fbo to work
+    bool imgui_window = true; // it needs an opengl fbo to work
     bool fit_to_window = true;
 
     std::string cursor_icon_path = "assets/textures/cursor.png";
@@ -60,14 +60,14 @@ struct SettingsManager {
     bool reload_scene = false;
     bool reload_prototypes = false;
 
-    std::vector<const char*> cursor_modes{"Normal", "Hidden", "Disabled"};
-    std::vector<const char*> log_levels{"Trace",   "Debug", "Info",
-                                        "Warning", "Error", "Critical"};
+    std::vector<const char*> cursor_modes{"normal", "hidden", "disabled"};
+    std::vector<const char*> log_levels{"trace",   "debug", "info",
+                                        "warning", "error", "critical"};
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
   SettingsManager, app_name, root, logfile_path, backtrace_logfile_path,
   window_icon_path, window_w, window_h, depth_bits, refresh_rate, fullscreen,
-  primary_monitor, vsync, resizable, is_imgui_window, fit_to_window,
+  primary_monitor, vsync, resizable, imgui_window, fit_to_window,
   cursor_icon_path, cursor_mode, enable_debug, display_fps,
   enable_engine_logger, enable_app_logger, engine_log_level, app_log_level,
   engine_flush_level, app_flush_level, enable_engine_backtrace_logger,

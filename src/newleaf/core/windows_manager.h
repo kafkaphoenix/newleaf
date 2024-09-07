@@ -15,7 +15,7 @@ namespace nl {
 
 using EventCallbackFn = std::function<void(events::Event&)>;
 
-enum class cursor_mode { Normal = 0, Hidden, Disabled };
+enum class cursor_mode { normal = 0, hidden, disabled };
 
 struct WindowData {
     int position_x;
@@ -24,8 +24,8 @@ struct WindowData {
     float mouse_y;
     float debug_mouse_x;
     float debug_mouse_y;
-    bool is_first_mouse{true};
-    bool should_update_camera_position{true};
+    bool first_mouse{true};
+    bool update_camera_position{true};
     bool minimized{};
     bool maximized{};
     bool focused{};
@@ -46,7 +46,7 @@ struct WindowData {
     bool resizable{};
     int refresh_rate;
     bool fullscreen{};
-    bool is_imgui_window{};
+    bool imgui_window{};
     bool fit_to_window{};
 };
 
@@ -70,7 +70,7 @@ class WindowsManager {
     void minimize(bool minimize);
     void maximize(bool maximize);
     void toggle_focus(bool focused);
-    void toggle_visibility(bool visible);
+    void toggle_visible(bool visible);
     void toggle_wireframe(bool wireframe);
     void set_event_callback(EventCallbackFn&& cb);
 
@@ -86,7 +86,7 @@ class WindowsManager {
     void toggle_vsync(bool enabled);
     void set_window_monitor(int monitor);
     void toggle_fullscreen(bool fullscreen);
-    void toggle_window_inside_imgui(bool is_imgui_window);
+    void toggle_window_inside_imgui(bool imgui_window);
     void toggle_fit_to_window(bool fit_to_window);
 
     static std::unique_ptr<WindowsManager>

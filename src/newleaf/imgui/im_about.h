@@ -2,8 +2,6 @@
 
 #include <imgui.h>
 
-#include "im_utils.h"
-
 namespace nl {
 
 bool show_tool_about = false;
@@ -13,11 +11,11 @@ inline void draw_about() {
     return;
 
   ImGui::SetNextWindowSize(ImVec2(400, 400), ImGuiCond_FirstUseEver);
-  if (ImGui::Begin("About newleaf", &show_tool_about)) {
+  if (ImGui::Begin("about newleaf", &show_tool_about)) {
     ImGui::Text("newleaf is open source and licensed under the MIT license");
-    ImGui::Text("Source code and documentation can be found on");
-    ImGui::SameLine();
-    url("Github", "https://github.com/kafkaphoenix/newleaf.git");
+    ImGui::Text("source code and documentation can be found on");
+    ImGui::TextLinkOpenURL("github",
+                           "https://github.com/kafkaphoenix/newleaf.git");
   }
   ImGui::End();
 }

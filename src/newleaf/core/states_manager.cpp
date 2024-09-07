@@ -7,7 +7,7 @@
 namespace nl {
 
 StatesManager::~StatesManager() {
-  ENGINE_WARN("Deleting states manager");
+  ENGINE_WARN("deleting states manager");
   for (auto& s : m_states) {
     s->on_detach();
   }
@@ -43,26 +43,26 @@ void StatesManager::pop_state(std::string_view name) {
 }
 
 void StatesManager::push_layer(std::unique_ptr<Layer>&& l) {
-  ENGINE_ASSERT(m_index > 0, "No states to push layer to");
+  ENGINE_ASSERT(m_index > 0, "no states to push layer to");
   m_states[m_index - 1]->get_layers_manager()->push_layer(std::move(l));
   m_dirty = true;
 }
 
 void StatesManager::push_overlay(std::unique_ptr<Layer>&& o, bool enabled) {
-  ENGINE_ASSERT(m_index > 0, "No states to push overlay to");
+  ENGINE_ASSERT(m_index > 0, "no states to push overlay to");
   m_states[m_index - 1]->get_layers_manager()->push_overlay(std::move(o),
                                                             enabled);
   m_dirty = true;
 }
 
 void StatesManager::enable_overlay(std::string_view name) {
-  ENGINE_ASSERT(m_index > 0, "No states to enable overlay in");
+  ENGINE_ASSERT(m_index > 0, "no states to enable overlay in");
   m_states[m_index - 1]->get_layers_manager()->enable_overlay(name);
   m_dirty = true;
 }
 
 void StatesManager::disable_overlay(std::string_view name) {
-  ENGINE_ASSERT(m_index > 0, "No states to disable overlay in");
+  ENGINE_ASSERT(m_index > 0, "no states to disable overlay in");
   m_states[m_index - 1]->get_layers_manager()->disable_overlay(name);
   m_dirty = true;
 }

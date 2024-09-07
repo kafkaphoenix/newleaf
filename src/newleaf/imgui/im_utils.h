@@ -3,7 +3,6 @@
 #include <imgui.h>
 
 #include <string_view>
-#include <format>
 
 namespace nl {
 
@@ -24,18 +23,6 @@ inline void underline(ImColor color, float thickness = 1.f) {
   ImVec2 max = ImGui::GetItemRectMax();
   min.y = max.y;
   ImGui::GetWindowDrawList()->AddLine(min, max, color, thickness);
-}
-
-inline void url(std::string_view url_name, std::string_view url_link) {
-  ImGui::TextColored(ImColor(0, 255, 255), "%s", url_name.data());
-  if (ImGui::IsItemHovered()) {
-    if (ImGui::IsItemClicked()) {
-      system(std::format("start {}", url_link.data()).data());
-    }
-    underline(ImColor(0, 255, 255));
-  } else {
-    underline(ImColor(255, 255, 255));
-  }
 }
 
 inline int collapser() {

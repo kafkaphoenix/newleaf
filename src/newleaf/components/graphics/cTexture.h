@@ -88,7 +88,7 @@ struct CTexture {
       info["draw_mode"] = _draw_mode;
 
       for (uint32_t i = 0; i < textures.size(); ++i) {
-        info["texture " + std::to_string(i)] = get_texture_info(i);
+        info["texture_" + std::to_string(i)] = get_texture_info(i);
       }
 
       return info;
@@ -103,23 +103,23 @@ struct CTexture {
         draw_mode = DrawMode::COLOR;
       } else if (_draw_mode == "texture") {
         draw_mode = DrawMode::TEXTURE;
-      } else if (_draw_mode == "textureAtlas") {
+      } else if (_draw_mode == "texture_atlas") {
         draw_mode = DrawMode::TEXTURE_ATLAS;
-      } else if (_draw_mode == "texturesBlend") { // blend two textures
+      } else if (_draw_mode == "textures_blend") { // blend two textures
         draw_mode = DrawMode::TEXTURES_BLEND;
       } else if (_draw_mode ==
-                 "textureAtlasBlend") { // blend two textures in the atlas //
+                 "texture_atlas_blend") { // blend two textures in the atlas //
                                         // TODO: this is not implemented
         draw_mode = DrawMode::TEXTURE_ATLAS_BLEND;
       } else if (_draw_mode ==
-                 "textureBlendColor") { // blend texture with a color
+                 "texture_blend_color") { // blend texture with a color
         draw_mode = DrawMode::TEXTURE_BLEND_COLOR;
       } else if (_draw_mode ==
-                 "textureAtlasBlendColor") { // blend texture in the atlas with
+                 "texture_atlas_blend_color") { // blend texture in the atlas with
                                              // a color
         draw_mode = DrawMode::TEXTURE_ATLAS_BLEND_COLOR;
       } else {
-        ENGINE_ASSERT(false, "Unknown draw mode {}", _draw_mode);
+        ENGINE_ASSERT(false, "unknown draw mode {}", _draw_mode);
       }
     }
 
@@ -136,7 +136,7 @@ struct CTexture {
     }
 
     void reload_textures(std::vector<std::string>&& fps) {
-      ENGINE_ASSERT(fps != paths, "Texture paths are the same");
+      ENGINE_ASSERT(fps != paths, "texture paths are the same");
       paths = std::move(fps);
       textures.clear();
       set_textures();

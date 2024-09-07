@@ -25,7 +25,7 @@ inline void draw_assets_manager(
   const auto& assets = assets_manager->get_assets();
 
   if (assets.empty()) {
-    ImGui::Text("No assets loaded");
+    ImGui::Text("no assets loaded");
     return;
   }
 
@@ -76,7 +76,7 @@ inline void draw_assets_manager(
     const auto& assetInfo = asset->to_map();
 
     for (const auto& [key, value] : assetInfo) {
-      if (key.starts_with("Prototype ") and
+      if (key.starts_with("prototype_") and
           selected_asset_tab_type == "Prefab") {
         const auto& prefab =
           assets_manager->get<assets::Prefab>(selected_asset_manager_tab_key);
@@ -91,7 +91,7 @@ inline void draw_assets_manager(
           }
           ImGui::TreePop();
         }
-      } else if (key.starts_with("Loaded Texture ") and
+      } else if (key.starts_with("loaded_texture_") and
                  selected_asset_tab_type == "Model") {
         const auto& model =
           assets_manager->get<assets::Model>(selected_asset_manager_tab_key);
@@ -106,7 +106,7 @@ inline void draw_assets_manager(
           }
           ImGui::TreePop();
         }
-      } else if (key.starts_with("Path ") and
+      } else if (key.starts_with("path_") and
                  selected_asset_tab_type == "Texture") {
         const auto& texture =
           assets_manager->get<assets::Texture>(selected_asset_manager_tab_key);

@@ -72,23 +72,23 @@ void SceneFactory::create_scene(
   const std::unique_ptr<RenderManager>& render_manager,
   entt::registry& registry) {
   Timer timer;
-  ENGINE_INFO("Creating scene...");
+  ENGINE_INFO("creating scene...");
 
   assets::Scene scene = assets::Scene(scene_path);
   create_shader_programs(scene, assets_manager, render_manager);
-  ENGINE_INFO("Shader programs creation TIME: {:.6f}s", timer.get_seconds());
+  ENGINE_INFO("shader programs creation time: {:.6f}s", timer.get_seconds());
   timer.reset();
   create_textures(scene, assets_manager);
-  ENGINE_INFO("Textures creation TIME: {:.6f}s", timer.get_seconds());
+  ENGINE_INFO("textures creation time: {:.6f}s", timer.get_seconds());
   timer.reset();
   create_models(scene, assets_manager);
-  ENGINE_INFO("Models creation TIME: {:.6f}s", timer.get_seconds());
+  ENGINE_INFO("models creation time: {:.6f}s", timer.get_seconds());
   timer.reset();
   create_prototypes(scene, assets_manager, render_manager, registry);
-  ENGINE_INFO("Entities creation TIME: {:.6f}s", timer.get_seconds());
+  ENGINE_INFO("entities creation time: {:.6f}s", timer.get_seconds());
   timer.reset();
   assets_manager->load<assets::Scene>(scene_id, std::move(scene));
-  ENGINE_INFO("Scene {} creation TIME: {:.6f}s", scene_id, timer.get_seconds());
+  ENGINE_INFO("scene {} creation time: {:.6f}s", scene_id, timer.get_seconds());
   m_active_scene = std::move(scene_id);
 
   m_dirty_metrics = true;
@@ -100,8 +100,8 @@ void SceneFactory::reload_scene(
   const std::unique_ptr<RenderManager>& render_manager,
   entt::registry& registry, bool reload_prototypes) {
   Timer timer;
-  ENGINE_ASSERT(not m_active_scene.empty(), "No scene is active!");
-  ENGINE_INFO("Reloading scene {}", m_active_scene);
+  ENGINE_ASSERT(not m_active_scene.empty(), "no scene is active!");
+  ENGINE_INFO("reloading scene {}", m_active_scene);
 
   const auto& scene = assets_manager->get<assets::Scene>(m_active_scene);
   if (reload_prototypes) {
@@ -109,7 +109,7 @@ void SceneFactory::reload_scene(
     m_entity_factory.clear_prototypes();
 
     for (const auto& [prefab_name, options] : scene->get_prefabs()) {
-      ENGINE_TRACE("Reloading scene prototypes...");
+      ENGINE_TRACE("reloading scene prototypes...");
       const auto& prefab = assets_manager->get<assets::Prefab>(prefab_name);
       m_entity_factory.create_prototypes(prefab_name,
                                          prefab->get_targeted_prototypes(),
@@ -120,7 +120,7 @@ void SceneFactory::reload_scene(
     registry.destroy(to_destroy.begin(), to_destroy.end());
   }
 
-  ENGINE_INFO("Scene {} reloading TIME: {:.6f}s", m_active_scene,
+  ENGINE_INFO("scene {} reloading time: {:.6f}s", m_active_scene,
               timer.get_seconds());
 
   m_dirty_metrics = true;
@@ -130,8 +130,8 @@ void SceneFactory::reload_scene(
 void SceneFactory::clear_scene(
   const std::unique_ptr<RenderManager>& render_manager,
   entt::registry& registry) {
-  ENGINE_ASSERT(not m_active_scene.empty(), "No scene is active!");
-  ENGINE_WARN("Clearing scene {}", m_active_scene);
+  ENGINE_ASSERT(not m_active_scene.empty(), "no scene is active!");
+  ENGINE_WARN("clearing scene {}", m_active_scene);
 
   registry.clear(); // soft delete / = {};  would delete them completely but
                     // does not invoke signals/mixin methods
@@ -190,7 +190,7 @@ void SceneFactory::create_prototypes(
     auto prefab = assets::Prefab(
       options.at("path").get<std::string>(),
       options.at("targeted_prototypes").get<std::vector<std::string>>());
-    ENGINE_TRACE("Creating prototypes from prefab {}...", prefab_name);
+    ENGINE_TRACE("creating prototypes from prefab {}...", prefab_name);
     std::vector<std::string> targetedPrototypes =
       prefab.get_targeted_prototypes();
     assets_manager->load<assets::Prefab>(prefab_name, std::move(prefab));
@@ -212,21 +212,21 @@ SceneFactory::get_metrics(entt::registry& registry) {
   }
 
   m_metrics.clear();
-  m_metrics["Active scene"] = m_active_scene;
+  m_metrics["active_scene"] = m_active_scene;
   int total = registry.storage<entt::entity>().in_use();
   int created = registry.storage<entt::entity>().size();
   int prototypes = 0;
   for (const auto& [key, prototypesMap] :
        m_entity_factory.get_all_prototypes()) {
     prototypes += prototypesMap.size();
-    m_metrics["Prototypes Alive from Prefab " + key] =
+    m_metrics["prototypes_alive_from_prefab_" + key] =
       std::to_string(prototypesMap.size());
   }
-  m_metrics["Prototypes Total Alive"] = std::to_string(prototypes);
-  m_metrics["Instances Total Alive"] = std::to_string(total - prototypes);
-  m_metrics["Entities Total Alive"] = std::to_string(total);
-  m_metrics["Entities Total Created"] = std::to_string(created);
-  m_metrics["Entities Total Released"] = std::to_string(created - total);
+  m_metrics["prototypes_total_alive"] = std::to_string(prototypes);
+  m_metrics["instances_total_alive"] = std::to_string(total - prototypes);
+  m_metrics["entities_total_alive"] = std::to_string(total);
+  m_metrics["entities_total_created"] = std::to_string(created);
+  m_metrics["entities_total_released"] = std::to_string(created - total);
   m_dirty_metrics = false;
 
   return m_metrics;

@@ -18,14 +18,14 @@ WindowsManager::WindowsManager(
   m_data.primary_monitor = settings_manager->primary_monitor;
   m_data.mouse_x = m_data.width / 2.0f;  // center of the screen
   m_data.mouse_y = m_data.height / 2.0f; // center of the screen
-  m_data.is_imgui_window = settings_manager->is_imgui_window;
+  m_data.imgui_window = settings_manager->imgui_window;
   m_data.fit_to_window = settings_manager->fit_to_window;
-  ENGINE_TRACE("Creating window {} with resolution {}x{}...",
+  ENGINE_TRACE("creating window {} with resolution {}x{}...",
                m_data.window_title, m_data.width, m_data.height);
   if (s_glfw_window_count == 0) {
-    ENGINE_ASSERT(glfwInit(), "Failed to initialize GLFW!");
+    ENGINE_ASSERT(glfwInit(), "failed to initialize glfw!");
     glfwSetErrorCallback([](int error, const char* description) {
-      ENGINE_ASSERT(false, "GLFW Error! {0}: {1}", error, description);
+      ENGINE_ASSERT(false, "glfw error! {0}: {1}", error, description);
     });
   }
 
@@ -38,14 +38,14 @@ WindowsManager::WindowsManager(
   glfwWindowHint(GLFW_REFRESH_RATE, settings_manager->refresh_rate);
   m_data.refresh_rate = settings_manager->refresh_rate;
 
-  ENGINE_TRACE("Loading OpengGL version {}.{}", settings_manager->opengl_major,
+  ENGINE_TRACE("loading openGL version {}.{}", settings_manager->opengl_major,
                settings_manager->opengl_minor);
 
   int monitorCount;
   GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
   if (settings_manager->primary_monitor < 0 or
       settings_manager->primary_monitor >= monitorCount) {
-    ENGINE_ERROR("Invalid monitor index!");
+    ENGINE_ERROR("invalid monitor index!");
     return;
   }
   const GLFWvidmode* mode =
@@ -175,10 +175,10 @@ WindowsManager::WindowsManager(
       WindowData& data =
         *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-      if (data.is_first_mouse) {
+      if (data.first_mouse) {
         data.debug_mouse_x = (float)xpos;
         data.debug_mouse_y = (float)ypos;
-        data.is_first_mouse = false;
+        data.first_mouse = false;
       }
 
       float xoffset = (float)xpos - data.debug_mouse_x;
@@ -189,7 +189,7 @@ WindowsManager::WindowsManager(
       data.debug_mouse_x = (float)xpos;
       data.debug_mouse_y = (float)ypos;
 
-      if (not data.should_update_camera_position) {
+      if (not data.update_camera_position) {
         return;
       }
 
@@ -205,7 +205,7 @@ WindowsManager::WindowsManager(
       WindowData& data =
         *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-      if (not data.should_update_camera_position) {
+      if (not data.update_camera_position) {
         return;
       }
 
@@ -261,7 +261,7 @@ WindowsManager::WindowsManager(
 }
 
 WindowsManager::~WindowsManager() {
-  ENGINE_WARN("Deleting window");
+  ENGINE_WARN("deleting window");
   shutdown();
 }
 
@@ -270,7 +270,7 @@ void WindowsManager::shutdown() {
   --s_glfw_window_count;
 
   if (s_glfw_window_count == 0) {
-    ENGINE_WARN("No more windows! Terminating GLFW");
+    ENGINE_WARN("no more windows! terminating glfw");
     glfwTerminate();
   }
 }
@@ -286,7 +286,7 @@ void WindowsManager::trigger_event(events::Event& e) {
 
 void WindowsManager::set_position(int x, int y) {
   if (Application::Get().get_settings_manager()->fullscreen) {
-    ENGINE_ERROR("Cannot set position of fullscreen window!");
+    ENGINE_ERROR("cannot set position of fullscreen window!");
     return;
   }
 
@@ -303,7 +303,7 @@ void WindowsManager::set_last_mouse_position(float x, float y) {
 }
 
 void WindowsManager::update_camera_position(bool enable) {
-  m_data.should_update_camera_position = enable;
+  m_data.update_camera_position = enable;
 }
 
 void WindowsManager::minimize(bool minimize) {
@@ -316,7 +316,7 @@ void WindowsManager::minimize(bool minimize) {
 
 void WindowsManager::maximize(bool maximize) {
   if (Application::Get().get_settings_manager()->fullscreen) {
-    ENGINE_ERROR("Cannot maximize fullscreen window!");
+    ENGINE_ERROR("cannot maximize fullscreen window!");
     return;
   }
 
@@ -329,17 +329,17 @@ void WindowsManager::maximize(bool maximize) {
 
 void WindowsManager::toggle_focus(bool focused) {
   if (Application::Get().get_settings_manager()->fullscreen) {
-    ENGINE_ERROR("Cannot set focus of fullscreen window!");
+    ENGINE_ERROR("cannot set focus of fullscreen window!");
     return;
   }
 
   if (not m_data.visible) {
-    ENGINE_ERROR("Cannot set focus of invisible window!");
+    ENGINE_ERROR("cannot set focus of invisible window!");
     return;
   }
 
   if (m_data.minimized) {
-    ENGINE_ERROR("Cannot set focus of minimized window!");
+    ENGINE_ERROR("cannot set focus of minimized window!");
     return;
   }
 
@@ -350,14 +350,14 @@ void WindowsManager::toggle_focus(bool focused) {
   }
 }
 
-void WindowsManager::toggle_visibility(bool visible) {
+void WindowsManager::toggle_visible(bool visible) {
   if (visible and m_data.visible) {
-    ENGINE_ERROR("Cannot show visible window!");
+    ENGINE_ERROR("cannot show visible window!");
     return;
   }
 
   if (not visible and not m_data.visible) {
-    ENGINE_ERROR("Cannot hide invisible window!");
+    ENGINE_ERROR("cannot hide invisible window!");
     return;
   }
 
@@ -382,7 +382,7 @@ void WindowsManager::set_event_callback(EventCallbackFn&& cb) {
 
 void WindowsManager::set_window_title(std::string title) {
   if (title.empty()) {
-    ENGINE_ERROR("WindowsManager title is empty!");
+    ENGINE_ERROR("window title is empty!");
     return;
   }
 
@@ -395,11 +395,11 @@ void WindowsManager::set_window_title(std::string title) {
 
 void WindowsManager::set_window_icon(std::string path) {
   if (path.empty()) {
-    ENGINE_ERROR("WindowsManager icon path is empty!");
+    ENGINE_ERROR("window icon path is empty!");
   }
 
   if (not std::filesystem::exists(path)) {
-    ENGINE_ERROR("WindowsManager icon path {} does not exist!", path);
+    ENGINE_ERROR("window icon path {} does not exist!", path);
     return;
   }
 
@@ -416,7 +416,7 @@ void WindowsManager::set_window_icon(std::string path) {
 
 void WindowsManager::restore_window_icon() {
   if (m_data.window_icon_path.empty()) {
-    ENGINE_ERROR("WindowsManager icon path is empty!");
+    ENGINE_ERROR("window icon path is empty!");
     return;
   }
 
@@ -425,12 +425,12 @@ void WindowsManager::restore_window_icon() {
 
 void WindowsManager::set_cursor_icon(std::string path) {
   if (path.empty()) {
-    ENGINE_ERROR("Cursor icon path is empty!");
+    ENGINE_ERROR("cursor icon path is empty!");
     return;
   }
 
   if (not std::filesystem::exists(path)) {
-    ENGINE_ERROR("Cursor icon path {} does not exist!", path);
+    ENGINE_ERROR("cursor icon path {} does not exist!", path);
     return;
   }
 
@@ -460,7 +460,7 @@ void WindowsManager::set_cursor_mode(cursor_mode cursor_mode, bool update) {
     } else if (mode == 2) {
       glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     } else {
-      ENGINE_ERROR("Invalid cursor mode!");
+      ENGINE_ERROR("invalid cursor mode!");
       return;
     }
     if (update) {
@@ -479,7 +479,7 @@ void WindowsManager::restore_cursor() {
   } else if (mode == 2) {
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   } else {
-    ENGINE_ERROR("Invalid cursor mode!");
+    ENGINE_ERROR("invalid cursor mode!");
     return;
   }
 
@@ -493,7 +493,7 @@ void WindowsManager::resize(int width, int height) {
   // m_data is updated in the callback
   // and settings in the event
   if (width < 0 or height < 0) {
-    ENGINE_ERROR("Invalid window size!");
+    ENGINE_ERROR("invalid window size!");
     return;
   }
   if (width not_eq m_data.width or height not_eq m_data.height) {
@@ -504,7 +504,7 @@ void WindowsManager::resize(int width, int height) {
 void WindowsManager::toggle_resizable(bool resizable) {
   if (resizable not_eq m_data.resizable) {
     if (m_data.fullscreen) {
-      ENGINE_ERROR("Cannot set resizable of fullscreen window!");
+      ENGINE_ERROR("cannot set resizable of fullscreen window!");
       return;
     }
 
@@ -517,12 +517,12 @@ void WindowsManager::toggle_resizable(bool resizable) {
 void WindowsManager::set_refresh_rate(int refresh_rate) {
   if (refresh_rate not_eq m_data.refresh_rate) {
     if (not m_data.fullscreen) {
-      ENGINE_ERROR("Cannot set refresh rate of windowed window!");
+      ENGINE_ERROR("cannot set refresh rate of windowed window!");
       return;
     }
 
     if (refresh_rate < 0) {
-      ENGINE_ERROR("Invalid refresh rate!");
+      ENGINE_ERROR("invalid refresh rate!");
       return;
     }
 
@@ -554,7 +554,7 @@ void WindowsManager::set_window_monitor(int monitor) {
     int monitorCount;
     GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
     if (monitor < 0 or monitor >= monitorCount) {
-      ENGINE_ERROR("Invalid monitor index!");
+      ENGINE_ERROR("invalid monitor index!");
       return;
     }
 
@@ -599,11 +599,10 @@ void WindowsManager::toggle_fullscreen(bool fullscreen) {
   }
 }
 
-void WindowsManager::toggle_window_inside_imgui(bool is_imgui_window) {
-  if (is_imgui_window not_eq m_data.is_imgui_window) {
-    m_data.is_imgui_window = is_imgui_window;
-    Application::Get().get_settings_manager()->is_imgui_window =
-      is_imgui_window;
+void WindowsManager::toggle_window_inside_imgui(bool imgui_window) {
+  if (imgui_window not_eq m_data.imgui_window) {
+    m_data.imgui_window = imgui_window;
+    Application::Get().get_settings_manager()->imgui_window = imgui_window;
   }
 }
 

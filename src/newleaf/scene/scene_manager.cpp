@@ -10,15 +10,15 @@ using namespace entt::literals;
 namespace nl {
 
 SceneManager::SceneManager() : m_scene_factory() {
-  ENGINE_TRACE("Initializing scene manager...");
-  ENGINE_TRACE("Registering engine components...");
+  ENGINE_TRACE("initializing scene manager...");
+  ENGINE_TRACE("registering engine components...");
   components::register_components();
-  ENGINE_TRACE("Scene manager created!");
+  ENGINE_TRACE("scene manager created!");
 }
 
 void SceneManager::register_system(std::string&& name,
                                    std::unique_ptr<systems::System>&& system) {
-  ENGINE_ASSERT(not contains_system(name), "System {} already registered",
+  ENGINE_ASSERT(not contains_system(name), "system {} already registered",
                 name);
   system->init(m_registry);
   m_systems.emplace(std::make_pair(std::move(name), std::move(system)));
@@ -34,7 +34,7 @@ void SceneManager::unregister_system(std::string_view name) {
       break;
     }
   }
-  ENGINE_ASSERT(deleted, "System {} not found", name);
+  ENGINE_ASSERT(deleted, "system {} not found", name);
   m_dirty_systems = true;
 }
 
@@ -67,7 +67,7 @@ entt::entity SceneManager::get_entity(std::string_view name) {
       return e;
     }
   }
-  ENGINE_ASSERT(false, "Entity with name {} not found", name);
+  ENGINE_ASSERT(false, "entity with name {} not found", name);
 }
 
 entt::entity SceneManager::get_entity(UUID& uuid) {
@@ -76,7 +76,7 @@ entt::entity SceneManager::get_entity(UUID& uuid) {
       return e;
     }
   }
-  ENGINE_ASSERT(false, "Entity with UUID {} not found", std::to_string(uuid));
+  ENGINE_ASSERT(false, "entity with UUID {} not found", std::to_string(uuid));
 }
 
 const std::vector<std::string>& SceneManager::get_named_systems() {
@@ -97,14 +97,14 @@ const std::vector<std::string>& SceneManager::get_named_systems() {
 template <typename Component>
 void SceneManager::on_component_added(entt::entity e, Component& c) {
   ENGINE_ASSERT(false,
-                "Unsupported on_component_added method for component type {}",
+                "unsupported on_component_added method for component type {}",
                 entt::type_id<Component>().name());
 }
 
 template <typename Component>
 void SceneManager::on_component_cloned(entt::entity e, Component& c) {
   ENGINE_ASSERT(false,
-                "Unsupported on_component_cloned method for component type {}",
+                "unsupported on_component_cloned method for component type {}",
                 entt::type_id<Component>().name());
 }
 
@@ -159,16 +159,16 @@ void SceneManager::print_scene() {
   entt::meta_func printFunc;
   std::string_view cName;
   if (entities.empty()) {
-    ENGINE_BACKTRACE("===================Entities===================");
-    ENGINE_BACKTRACE("No entities in scene");
+    ENGINE_BACKTRACE("===================entities===================");
+    ENGINE_BACKTRACE("no entities in scene");
     ENGINE_BACKTRACE("=============================================");
     return;
   }
 
-  ENGINE_BACKTRACE("===================Entities===================");
-  ENGINE_BACKTRACE("Entities in scene: {}", entities.size());
+  ENGINE_BACKTRACE("===================entities===================");
+  ENGINE_BACKTRACE("entities in scene: {}", entities.size());
   for (const auto& e : entities) {
-    ENGINE_BACKTRACE("Entity UUID: {}", entt::to_integral(e));
+    ENGINE_BACKTRACE("entity uuid: {}", entt::to_integral(e));
     for (const auto& [id, storage] : m_registry.storage()) {
       if (storage.contains(e)) {
         cType = entt::resolve(storage.type());

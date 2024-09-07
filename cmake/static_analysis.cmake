@@ -1,5 +1,5 @@
-option(ENABLE_CLANG_TIDY "Enable static analysis with clang-tidy" OFF)
-option(ENABLE_CPPCHECK "Enable static analysis with cppcheck" OFF)
+option(ENABLE_CLANG_TIDY "enable static analysis with clang-tidy" OFF)
+option(ENABLE_CPPCHECK "enable static analysis with cppcheck" OFF)
 
 # Linters (Needs compilation database sadly no MSVC support yet, change to GCC to use)
 # https://stackoverflow.com/questions/65544093/no-compile-commands-json-file-using-cmake-with-vs-code-on-windows

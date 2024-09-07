@@ -7,7 +7,7 @@
 namespace nl {
 
 LayersManager::~LayersManager() {
-  ENGINE_WARN("Deleting layers manager");
+  ENGINE_WARN("deleting layers manager");
   for (auto& l : m_layers) {
     if (l->is_enabled()) {
       l->on_detach();
@@ -39,7 +39,7 @@ void LayersManager::enable_overlay(std::string_view name) {
       (*it)->on_attach();
       (*it)->enable(true);
     } else {
-      ENGINE_WARN("Overlay {} is already enabled", name);
+      ENGINE_WARN("overlay {} is already enabled", name);
     }
   }
 }
@@ -53,7 +53,7 @@ void LayersManager::disable_overlay(std::string_view name) {
       (*it)->on_detach();
       (*it)->enable(false);
     } else {
-      ENGINE_WARN("Overlay {} is already disabled", name);
+      ENGINE_WARN("overlay {} is already disabled", name);
     }
   }
 }
