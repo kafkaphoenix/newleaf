@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../../core/log_manager.h"
+#include "../../logging/log_manager.h"
 #include "../../utils/numeric_comparator.h"
 
 #include <map>

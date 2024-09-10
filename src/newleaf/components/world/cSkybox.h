@@ -7,7 +7,7 @@
 #include <map>
 #include <string>
 
-#include "../../core/log_manager.h"
+#include "../../logging/log_manager.h"
 #include "../../utils/numeric_comparator.h"
 
 namespace nl::components {

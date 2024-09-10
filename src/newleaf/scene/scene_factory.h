@@ -4,9 +4,9 @@
 
 #include "../assets/assets_manager.h"
 #include "../assets/scene.h"
-#include "../render/render_manager.h"
-#include "entity_factory.h"
+#include "../graphics/render_manager.h"
 #include "../utils/numeric_comparator.h"
+#include "entity_factory.h"
 
 #include <map>
 #include <memory>

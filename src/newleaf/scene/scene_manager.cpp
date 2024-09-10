@@ -1,9 +1,10 @@
 #include "scene_manager.h"
 
-#include "../components/core/cName.h"
-#include "../components/core/cUUID.h"
 #include "../components/meta.h"
-#include "../core/log_manager.h"
+#include "../components/meta/cName.h"
+#include "../components/meta/cUUID.h"
+#include "../logging/log_manager.h"
+#include "../utils/assert.h"
 
 using namespace entt::literals;
 

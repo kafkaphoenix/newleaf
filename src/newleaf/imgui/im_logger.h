@@ -2,8 +2,8 @@
 
 #include <imgui.h>
 
-#include "../core/log_manager.h"
-#include "imgui_logsink.h"
+#include "../logging/log_manager.h"
+#include "../logging/imgui_logsink.h"
 
 namespace nl {
 

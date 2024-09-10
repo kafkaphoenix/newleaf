@@ -6,8 +6,9 @@
 #include <map>
 #include <string>
 
-#include "../../core/log_manager.h"
-#include "../../render/shape_factory.h"
+#include "../../graphics/shape_factory.h"
+#include "../../logging/log_manager.h"
+#include "../../utils/assert.h"
 #include "../../utils/numeric_comparator.h"
 #include "graphics/cMesh.h"
 
@@ -58,7 +59,8 @@ struct CCollider {
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e, components::CCollider& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e,
+                                                 components::CCollider& c) {
   c.set_type();
 
   m_registry.replace<components::CCollider>(e, c);

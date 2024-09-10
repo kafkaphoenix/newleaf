@@ -3,9 +3,9 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
-#include "../core/application.h"
-#include "../core/log_manager.h"
-#include "../render/buffer.h"
+#include "../application/application.h"
+#include "../graphics/buffer.h"
+#include "../utils/assert.h"
 
 namespace nl::assets {
 
@@ -130,16 +130,16 @@ components::CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
     if (assets_manager->contains<Texture>("default")) {
       textures.emplace_back(assets_manager->get<Texture>("default"));
     } else {
-      textures.emplace_back(std::make_shared<Texture>(
-        "default.png", "texture_diffuse"));
-      assets_manager->load<assets::Texture>(
-        "default", "default.png", "texture_diffuse");
+      textures.emplace_back(
+        std::make_shared<Texture>("default.png", "texture_diffuse"));
+      assets_manager->load<assets::Texture>("default", "default.png",
+                                            "texture_diffuse");
     }
   }
   m_materials.emplace_back(std::move(materialData));
 
-  return components::CMesh(std::move(vertices), std::move(indices), std::move(textures),
-               std::string("camera"));
+  return components::CMesh(std::move(vertices), std::move(indices),
+                           std::move(textures), std::string("camera"));
 }
 
 std::vector<std::shared_ptr<Texture>>

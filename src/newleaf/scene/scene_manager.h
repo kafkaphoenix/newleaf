@@ -10,12 +10,12 @@
 #include <vector>
 
 #include "../assets/assets_manager.h"
-#include "../core/time.h"
-#include "../core/uuid.h"
 #include "../events/event.h"
+#include "../systems/system.h"
 #include "../utils/numeric_comparator.h"
+#include "../utils/time.h"
+#include "../utils/uuid.h"
 #include "scene_factory.h"
-#include "system.h"
 
 namespace nl {
 class SceneManager {

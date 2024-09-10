@@ -10,10 +10,11 @@
 #include <vector>
 
 #include "../../assets/texture.h"
-#include "../../core/log_manager.h"
-#include "../../render/buffer.h"
-#include "../../render/shader_program.h"
-#include "../../render/vao.h"
+#include "../../graphics/buffer.h"
+#include "../../graphics/shader_program.h"
+#include "../../graphics/vao.h"
+#include "../../logging/log_manager.h"
+#include "../../utils/assert.h"
 #include "../../utils/map_json_serializer.h"
 #include "../../utils/numeric_comparator.h"
 #include "../world/cSkybox.h"
@@ -111,7 +112,7 @@ struct CMesh {
             "light_position",
             static_cast<glm::vec3>(entt::monostate<"light_position"_hs>{}));
           sp->set_vec3("light_color", static_cast<glm::vec3>(
-                                       entt::monostate<"light_color"_hs>{}));
+                                        entt::monostate<"light_color"_hs>{}));
         }
         if (cTexture->draw_mode == CTexture::DrawMode::TEXTURE_ATLAS or
             cTexture->draw_mode == CTexture::DrawMode::TEXTURE_ATLAS_BLEND or

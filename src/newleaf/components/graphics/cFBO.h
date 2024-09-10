@@ -6,9 +6,10 @@
 #include <memory>
 #include <string>
 
-#include "../../core/log_manager.h"
-#include "../../render/framebuffer.h"
-#include "../../render/shader_program.h"
+#include "../../graphics/framebuffer.h"
+#include "../../graphics/shader_program.h"
+#include "../../logging/log_manager.h"
+#include "../../utils/assert.h"
 #include "../../utils/numeric_comparator.h"
 
 namespace nl::components {
@@ -119,7 +120,8 @@ struct CFBO {
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e, components::CFBO& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e,
+                                                 components::CFBO& c) {
   c.set_mode();
   c.set_attachment();
 

@@ -2,7 +2,8 @@
 
 #include <fstream>
 
-#include "../core/log_manager.h"
+#include "../logging/log_manager.h"
+#include "../utils/assert.h"
 
 namespace nl::assets {
 Shader::Shader(std::filesystem::path&& fp) : m_path(std::move(fp.string())) {

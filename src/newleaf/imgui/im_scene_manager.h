@@ -5,9 +5,9 @@
 #include <memory>
 #include <string>
 
-#include "../core/log_manager.h"
-#include "../core/settings_manager.h"
+#include "../logging/log_manager.h"
 #include "../scene/scene_manager.h"
+#include "../settings/settings_manager.h"
 #include "../utils/map_json_serializer.h"
 #include "../utils/numeric_comparator.h"
 #include "im_utils.h"

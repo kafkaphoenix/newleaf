@@ -2,8 +2,8 @@
 
 #include <nlohmann/json.hpp>
 
-#include "../core/log_manager.h"
-#include "../core/settings_manager.h"
+#include "../settings/settings_manager.h"
+#include "../utils/assert.h"
 #include "../utils/get_default_roaming_path.h"
 
 #include <filesystem>

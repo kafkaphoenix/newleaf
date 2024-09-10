@@ -2,7 +2,8 @@
 
 #define GLM_FORCE_CTOR_INIT
 
-#include "../../core/log_manager.h"
+#include "../../logging/log_manager.h"
+#include "../../utils/assert.h"
 #include "../../utils/numeric_comparator.h"
 
 #include <entt/entt.hpp>
@@ -128,7 +129,8 @@ struct CCamera {
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e, components::CCamera& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e,
+                                                 components::CCamera& c) {
   c.set_camera_type();
   c.set_aspect_ratio();
   c.set_mode();

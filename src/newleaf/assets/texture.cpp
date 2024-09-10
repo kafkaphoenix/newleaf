@@ -8,7 +8,8 @@
 #include <string>
 #include <string_view>
 
-#include "../core/log_manager.h"
+#include "../logging/log_manager.h"
+#include "../utils/assert.h"
 
 namespace nl::assets {
 

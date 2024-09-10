@@ -7,8 +7,9 @@
 #include <glm/gtc/quaternion.hpp>
 #include <nlohmann/json.hpp>
 
-#include "../core/log_manager.h"
-#include "../components/core/cDeleted.h"
+#include "../components/meta/cDeleted.h"
+#include "../logging/log_manager.h"
+#include "../utils/assert.h"
 
 using json = nlohmann::json;
 using namespace entt::literals;

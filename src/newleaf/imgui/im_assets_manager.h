@@ -6,7 +6,7 @@
 #include "../assets/model.h"
 #include "../assets/prefab.h"
 #include "../assets/texture.h"
-#include "../core/settings_manager.h"
+#include "../settings/settings_manager.h"
 #include "im_utils.h"
 
 #include <memory>

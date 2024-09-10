@@ -5,8 +5,8 @@
 #include <memory>
 #include <string>
 
-#include "../core/settings_manager.h"
-#include "../core/states_manager.h"
+#include "../settings/settings_manager.h"
+#include "../state/states_manager.h"
 #include "../utils/map_json_serializer.h"
 #include "../utils/numeric_comparator.h"
 #include "im_utils.h"

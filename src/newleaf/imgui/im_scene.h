@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <imgui.h>
 
-#include "../core/application.h"
+#include "../application/application.h"
 
 #include <string_view>
 

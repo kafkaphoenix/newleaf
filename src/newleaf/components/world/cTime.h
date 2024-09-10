@@ -2,7 +2,8 @@
 
 #include <entt/entt.hpp>
 
-#include "../../core/log_manager.h"
+#include "../../logging/log_manager.h"
+#include "../../utils/assert.h"
 #include "../../utils/numeric_comparator.h"
 
 #include <map>

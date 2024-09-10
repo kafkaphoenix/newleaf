@@ -3,10 +3,10 @@
 #include <imgui.h>
 #include <imgui_stdlib.h>
 
-#include "../core/application.h"
-#include "../core/log_manager.h"
-#include "../core/settings_manager.h"
-#include "../render/render_manager.h"
+#include "../application/application.h"
+#include "../graphics/render_manager.h"
+#include "../logging/log_manager.h"
+#include "../settings/settings_manager.h"
 #include "im_utils.h"
 
 #include <format>

@@ -7,13 +7,14 @@
 #include "../assets/scene.h"
 #include "../assets/shader.h"
 #include "../assets/texture.h"
-#include "../components/core/cDeleted.h"
-#include "../components/core/cName.h"
-#include "../components/core/cTag.h"
-#include "../components/core/cUUID.h"
-#include "../core/log_manager.h"
-#include "../core/uuid.h"
+#include "../components/meta/cDeleted.h"
+#include "../components/meta/cName.h"
+#include "../components/meta/cTag.h"
+#include "../components/meta/cUUID.h"
+#include "../logging/log_manager.h"
+#include "../utils/assert.h"
 #include "../utils/timer.h"
+#include "../utils/uuid.h"
 
 using json = nlohmann::json;
 using namespace entt::literals;

@@ -7,8 +7,9 @@
 #include <string>
 #include <vector>
 
-#include "../../core/log_manager.h"
-#include "../../render/shape_factory.h"
+#include "../../graphics/shape_factory.h"
+#include "../../logging/log_manager.h"
+#include "../../utils/assert.h"
 #include "../../utils/map_json_serializer.h"
 #include "../../utils/numeric_comparator.h"
 #include "cMesh.h"
@@ -86,7 +87,8 @@ struct CShape {
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e, components::CShape& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e,
+                                                 components::CShape& c) {
   c.create_mesh();
 
   m_registry.replace<components::CShape>(e, c);

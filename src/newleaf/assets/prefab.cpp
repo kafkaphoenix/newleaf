@@ -2,7 +2,8 @@
 
 #include <fstream>
 
-#include "../core/log_manager.h"
+#include "../logging/log_manager.h"
+#include "../utils/assert.h"
 #include "../utils/timer.h"
 
 namespace nl::assets {

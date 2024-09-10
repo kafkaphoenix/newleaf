@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../core/key_codes.h"
+#include "../window/key_codes.h"
 #include "event.h"
 
 namespace nl::events {

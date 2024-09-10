@@ -11,9 +11,10 @@
 #include <string>
 #include <vector>
 
+#include "../../application/application.h"
 #include "../../assets/texture.h"
-#include "../../core/application.h"
-#include "../../core/log_manager.h"
+#include "../../logging/log_manager.h"
+#include "../../utils/assert.h"
 #include "../../utils/map_json_serializer.h"
 #include "../../utils/numeric_comparator.h"
 
@@ -109,14 +110,15 @@ struct CTexture {
         draw_mode = DrawMode::TEXTURES_BLEND;
       } else if (_draw_mode ==
                  "texture_atlas_blend") { // blend two textures in the atlas //
-                                        // TODO: this is not implemented
+                                          // TODO: this is not implemented
         draw_mode = DrawMode::TEXTURE_ATLAS_BLEND;
       } else if (_draw_mode ==
                  "texture_blend_color") { // blend texture with a color
         draw_mode = DrawMode::TEXTURE_BLEND_COLOR;
       } else if (_draw_mode ==
-                 "texture_atlas_blend_color") { // blend texture in the atlas with
-                                             // a color
+                 "texture_atlas_blend_color") { // blend texture in the atlas
+                                                // with
+                                                // a color
         draw_mode = DrawMode::TEXTURE_ATLAS_BLEND_COLOR;
       } else {
         ENGINE_ASSERT(false, "unknown draw mode {}", _draw_mode);
@@ -145,7 +147,8 @@ struct CTexture {
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e, components::CTexture& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e,
+                                                 components::CTexture& c) {
   c.set_draw_mode();
   c.set_textures();
 

@@ -3,10 +3,10 @@
 #include <imgui.h>
 
 #include "../assets/assets_manager.h"
-#include "../core/settings_manager.h"
-#include "../core/states_manager.h"
-#include "../render/render_manager.h"
+#include "../graphics/render_manager.h"
 #include "../scene/scene_manager.h"
+#include "../settings/settings_manager.h"
+#include "../state/states_manager.h"
 #include "im_assets_manager.h"
 #include "im_render_manager.h"
 #include "im_scene_manager.h"

@@ -2,13 +2,13 @@
 
 #include <entt/entt.hpp>
 
-#include "../core/log_manager.h"
+#include "../utils/assert.h"
 #include "camera/cActiveCamera.h"
 #include "camera/cCamera.h"
 #include "camera/cDistanceFromCamera.h"
-#include "core/cName.h"
-#include "core/cTag.h"
-#include "core/cUUID.h"
+#include "meta/cName.h"
+#include "meta/cTag.h"
+#include "meta/cUUID.h"
 #include "graphics/cBody.h"
 #include "graphics/cFBO.h"
 #include "graphics/cMaterial.h"
@@ -299,10 +299,11 @@ void register_components() {
     .data<&CCollider::size>("size"_hs)
     .func<&CCollider::print>("print"_hs)
     .func<&CCollider::to_map>("to_map"_hs)
-    .func<&on_component_added<CCollider>, entt::as_ref_t>("on_component_added"_hs)
+    .func<&on_component_added<CCollider>, entt::as_ref_t>(
+      "on_component_added"_hs)
     .func<&assign<CCollider>, entt::as_ref_t>("assign"_hs);
 
-    entt::meta<CGravity>()
+  entt::meta<CGravity>()
     .type("gravity"_hs)
     .ctor<&cast_cgravity, entt::as_ref_t>()
     .data<&CGravity::acceleration>("acceleration"_hs)
