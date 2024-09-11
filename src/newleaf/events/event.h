@@ -1,6 +1,6 @@
 #pragma once
 
-namespace nl::events {
+namespace nl {
 
 enum class EventType {
   None = 0,

@@ -18,7 +18,7 @@
 #include "../../utils/map_json_serializer.h"
 #include "../../utils/numeric_comparator.h"
 
-namespace nl::components {
+namespace nl {
 
 struct CTexture {
     enum class DrawMode {
@@ -32,7 +32,7 @@ struct CTexture {
     };
 
     std::vector<std::string> paths;
-    std::vector<std::shared_ptr<assets::Texture>> textures;
+    std::vector<std::shared_ptr<Texture>> textures;
     glm::vec4 color{};
     float blend_factor{};
     float reflectivity{};
@@ -133,7 +133,7 @@ struct CTexture {
 
       textures.reserve(paths.size());
       for (std::string_view path : paths) {
-        textures.emplace_back(assets_manager->get<assets::Texture>(path));
+        textures.emplace_back(assets_manager->get<Texture>(path));
       }
     }
 
@@ -147,10 +147,9 @@ struct CTexture {
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e,
-                                                 components::CTexture& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e, CTexture& c) {
   c.set_draw_mode();
   c.set_textures();
 
-  m_registry.replace<components::CTexture>(e, c);
+  m_registry.replace<CTexture>(e, c);
 }

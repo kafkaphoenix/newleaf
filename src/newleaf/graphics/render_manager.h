@@ -29,9 +29,9 @@ class RenderManager {
                      glm::vec3 cameraPosition);
     void end_scene();
 
-    void add_shader_program(
-      std::string&& name,
-      const std::unique_ptr<assets::AssetsManager>& assetsManager);
+    void
+    add_shader_program(std::string&& name,
+                       const std::unique_ptr<AssetsManager>& assetsManager);
     void add_framebuffer(std::string&& framebuffer, uint32_t width,
                          uint32_t height, uint32_t buffer_type);
     void delete_framebuffer(std::string_view framebuffer);

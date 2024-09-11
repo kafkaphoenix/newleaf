@@ -19,9 +19,9 @@ std::string selected_asset_tab_type;
 std::string selected_path;
 char assets_text_filter[128]{}; // TODO: move to class
 
-inline void draw_assets_manager(
-  const std::unique_ptr<assets::AssetsManager>& assets_manager,
-  const std::unique_ptr<SettingsManager>& settings_manager) {
+inline void
+draw_assets_manager(const std::unique_ptr<AssetsManager>& assets_manager,
+                    const std::unique_ptr<SettingsManager>& settings_manager) {
   const auto& assets = assets_manager->get_assets();
 
   if (assets.empty()) {
@@ -79,7 +79,7 @@ inline void draw_assets_manager(
       if (key.starts_with("prototype_") and
           selected_asset_tab_type == "Prefab") {
         const auto& prefab =
-          assets_manager->get<assets::Prefab>(selected_asset_manager_tab_key);
+          assets_manager->get<Prefab>(selected_asset_manager_tab_key);
         const auto& prototypeInfo = prefab->get_target_prototype_info(value);
         if (ImGui::TreeNode((selected_asset_tab_type +
                              selected_asset_manager_tab_key + key +
@@ -94,7 +94,7 @@ inline void draw_assets_manager(
       } else if (key.starts_with("loaded_texture_") and
                  selected_asset_tab_type == "Model") {
         const auto& model =
-          assets_manager->get<assets::Model>(selected_asset_manager_tab_key);
+          assets_manager->get<Model>(selected_asset_manager_tab_key);
         const auto& textureInfo = model->get_loaded_texture_info(value);
         if (ImGui::TreeNode((selected_asset_tab_type +
                              selected_asset_manager_tab_key + key +
@@ -109,7 +109,7 @@ inline void draw_assets_manager(
       } else if (key.starts_with("path_") and
                  selected_asset_tab_type == "Texture") {
         const auto& texture =
-          assets_manager->get<assets::Texture>(selected_asset_manager_tab_key);
+          assets_manager->get<Texture>(selected_asset_manager_tab_key);
         if (texture->is_cubemap()) {
           ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
         } else {
@@ -127,7 +127,7 @@ inline void draw_assets_manager(
 
     if (not selected_path.empty()) {
       const auto& texture =
-        assets_manager->get<assets::Texture>(selected_asset_manager_tab_key);
+        assets_manager->get<Texture>(selected_asset_manager_tab_key);
       if (not texture->is_cubemap()) {
         uint32_t maxWidth = texture->get_width();
         uint32_t maxHeight = texture->get_height();

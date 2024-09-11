@@ -14,7 +14,7 @@
 #include "cMaterial.h"
 #include "cMesh.h"
 
-namespace nl::components {
+namespace nl {
 
 struct CBody {
     std::string path;
@@ -60,8 +60,8 @@ struct CBody {
       // TODO support multiple models
       ENGINE_ASSERT(!path.empty(), "path for model is empty");
       const auto& assets_manager = Application::Get().get_assets_manager();
-      auto model = *assets_manager->get<assets::Model>(
-        path); // We need a copy of the model
+      auto model =
+        *assets_manager->get<Model>(path); // We need a copy of the model
       meshes = std::move(model.get_meshes());
       materials = std::move(model.get_materials());
     }
@@ -75,9 +75,8 @@ struct CBody {
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e,
-                                                 components::CBody& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e, CBody& c) {
   c.set_mesh();
 
-  m_registry.replace<components::CBody>(e, c);
+  m_registry.replace<CBody>(e, c);
 }

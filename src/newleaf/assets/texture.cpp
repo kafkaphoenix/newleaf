@@ -11,7 +11,7 @@
 #include "../logging/log_manager.h"
 #include "../utils/assert.h"
 
-namespace nl::assets {
+namespace nl {
 
 Texture::Texture(uint32_t width, uint32_t height, GLenum glFormat,
                  std::optional<bool> wrap)

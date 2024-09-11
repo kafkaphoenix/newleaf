@@ -6,7 +6,7 @@
 #include "../utils/assert.h"
 #include "../utils/timer.h"
 
-namespace nl::assets {
+namespace nl {
 Scene::Scene(std::filesystem::path&& fp) : m_path(std::move(fp.string())) {
   std::ifstream f(fp);
   ENGINE_ASSERT(f.is_open(), "failed to open scene file!");

@@ -10,7 +10,7 @@
 #include "../../logging/log_manager.h"
 #include "../../utils/numeric_comparator.h"
 
-namespace nl::components {
+namespace nl {
 
 struct CTransform {
     glm::vec3 position{};

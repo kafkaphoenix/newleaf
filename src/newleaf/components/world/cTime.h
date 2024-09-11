@@ -9,7 +9,7 @@
 #include <map>
 #include <string>
 
-namespace nl::components {
+namespace nl {
 
 struct CTime {
     float seconds{};
@@ -90,10 +90,9 @@ struct CTime {
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e,
-                                                 components::CTime& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e, CTime& c) {
   c.validate();
   c.set_time(c.starting_time);
 
-  m_registry.replace<components::CTime>(e, c);
+  m_registry.replace<CTime>(e, c);
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace nl::components {
+namespace nl {
 
 struct CDeleted {
     bool deleted{};

@@ -6,9 +6,6 @@
 #include "camera/cActiveCamera.h"
 #include "camera/cCamera.h"
 #include "camera/cDistanceFromCamera.h"
-#include "meta/cName.h"
-#include "meta/cTag.h"
-#include "meta/cUUID.h"
 #include "graphics/cBody.h"
 #include "graphics/cFBO.h"
 #include "graphics/cMaterial.h"
@@ -19,6 +16,9 @@
 #include "graphics/cTextureAtlas.h"
 #include "input/cActiveInput.h"
 #include "input/cInput.h"
+#include "meta/cName.h"
+#include "meta/cTag.h"
+#include "meta/cUUID.h"
 #include "physics/cCollider.h"
 #include "physics/cGravity.h"
 #include "physics/cRigidBody.h"
@@ -29,7 +29,7 @@
 
 using namespace entt::literals;
 
-namespace nl::components {
+namespace nl {
 
 template <typename Component, typename... Args>
 inline Component& assign(entt::entity e, Args... args) {

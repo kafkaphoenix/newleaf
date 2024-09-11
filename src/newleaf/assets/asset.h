@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 
-namespace nl::assets {
+namespace nl {
 
 class Asset {
   public:

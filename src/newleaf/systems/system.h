@@ -2,13 +2,13 @@
 
 #include <entt/entt.hpp>
 
-#include "../utils/time.h"
 #include "../events/event.h"
+#include "../utils/time.h"
 
 #include <memory>
 #include <string>
 
-namespace nl::systems {
+namespace nl {
 
 class System {
   public:

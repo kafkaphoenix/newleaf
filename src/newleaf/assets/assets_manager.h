@@ -9,7 +9,7 @@
 #include <string_view>
 #include <unordered_map>
 
-namespace nl::assets {
+namespace nl {
 class AssetsManager {
   public:
     template <typename Type, typename... Args>
@@ -24,7 +24,7 @@ class AssetsManager {
 
     void clear();
 
-    static std::unique_ptr<assets::AssetsManager> Create();
+    static std::unique_ptr<AssetsManager> Create();
 
     const std::unordered_map<
       std::string, std::unordered_map<std::string, std::shared_ptr<Asset>>>&

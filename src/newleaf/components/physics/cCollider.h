@@ -12,7 +12,7 @@
 #include "../../utils/numeric_comparator.h"
 #include "graphics/cMesh.h"
 
-namespace nl::components {
+namespace nl {
 
 struct CCollider {
     enum class Type { Box, Capsule, Mesh, Sphere, Rectangle };
@@ -59,9 +59,8 @@ struct CCollider {
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e,
-                                                 components::CCollider& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e, CCollider& c) {
   c.set_type();
 
-  m_registry.replace<components::CCollider>(e, c);
+  m_registry.replace<CCollider>(e, c);
 }

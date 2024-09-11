@@ -26,11 +26,10 @@ void RenderManager::begin_scene(glm::mat4 view, glm::mat4 projection,
 void RenderManager::end_scene() {}
 
 void RenderManager::add_shader_program(
-  std::string&& name,
-  const std::unique_ptr<assets::AssetsManager>& assets_manager) {
+  std::string&& name, const std::unique_ptr<AssetsManager>& assets_manager) {
   auto newShaderProgram = ShaderProgram::Create(std::string(name));
-  const auto& vs = assets_manager->get<assets::Shader>("v" + name);
-  const auto& fs = assets_manager->get<assets::Shader>("f" + name);
+  const auto& vs = assets_manager->get<Shader>("v" + name);
+  const auto& fs = assets_manager->get<Shader>("f" + name);
   newShaderProgram->attach(*vs);
   newShaderProgram->attach(*fs);
   newShaderProgram->link();

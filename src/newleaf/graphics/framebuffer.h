@@ -26,10 +26,10 @@ class FBO {
     void clear(const float color[4], const float depth);
 
     void resize(uint32_t width, uint32_t height);
-    const std::unique_ptr<assets::Texture>& get_color_texture() const {
+    const std::unique_ptr<Texture>& get_color_texture() const {
       return m_color_texture;
     }
-    const std::unique_ptr<assets::Texture>& get_depth_texture() const {
+    const std::unique_ptr<Texture>& get_depth_texture() const {
       return m_depth_texture;
     }
     uint32_t get_buffer_id() const;
@@ -49,8 +49,8 @@ class FBO {
     uint32_t m_width{};
     uint32_t m_height{};
     uint32_t m_depth_buffer_type{};
-    std::unique_ptr<assets::Texture> m_color_texture;
-    std::unique_ptr<assets::Texture> m_depth_texture;
+    std::unique_ptr<Texture> m_color_texture;
+    std::unique_ptr<Texture> m_depth_texture;
     uint32_t m_depth_render_buffer{};
     uint32_t m_stencil_render_buffer{};
     uint32_t m_depth_stencil_render_buffer{};

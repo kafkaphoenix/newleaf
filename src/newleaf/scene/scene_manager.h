@@ -21,8 +21,7 @@ namespace nl {
 class SceneManager {
   public:
     SceneManager();
-    void register_system(std::string&& name,
-                         std::unique_ptr<systems::System>&& system);
+    void register_system(std::string&& name, std::unique_ptr<System>&& system);
     void unregister_system(std::string_view name);
     bool contains_system(std::string_view name);
     void clear_system();
@@ -78,8 +77,7 @@ class SceneManager {
   private:
     entt::registry m_registry;
     SceneFactory m_scene_factory;
-    std::set<std::pair<std::string, std::unique_ptr<systems::System>>,
-             systems::SystemComparator>
+    std::set<std::pair<std::string, std::unique_ptr<System>>, SystemComparator>
       m_systems;
     std::vector<std::string> m_named_systems;
     bool m_dirty_systems{};

@@ -6,7 +6,7 @@
 #include "../utils/assert.h"
 #include "../utils/timer.h"
 
-namespace nl::assets {
+namespace nl {
 
 void Prefab::process_prototype(const std::string& name,
                                const json& prototype_data, const json& data) {

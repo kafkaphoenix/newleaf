@@ -96,7 +96,7 @@ WindowsManager::WindowsManager(
       }
 
       // for fullscreen it will update the resolution
-      events::WindowResizeEvent event(width, height);
+      WindowResizeEvent event(width, height);
       data.event_callback(event);
     });
 
@@ -108,7 +108,7 @@ WindowsManager::WindowsManager(
       if (not data.fullscreen) {
         data.position_x = xpos;
         data.position_y = ypos;
-        events::WindowMovedEvent event(xpos, ypos);
+        WindowMovedEvent event(xpos, ypos);
         data.event_callback(event);
       }
     });
@@ -116,7 +116,7 @@ WindowsManager::WindowsManager(
   glfwSetWindowCloseCallback(m_window, [](GLFWwindow* window) {
     WindowData& data =
       *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
-    events::WindowCloseEvent event;
+    WindowCloseEvent event;
     data.event_callback(event);
   });
 
@@ -127,17 +127,17 @@ WindowsManager::WindowsManager(
 
       switch (action) {
       case GLFW_PRESS: {
-        events::KeyPressedEvent event(key, false);
+        KeyPressedEvent event(key, false);
         data.event_callback(event);
         break;
       }
       case GLFW_RELEASE: {
-        events::KeyReleasedEvent event(key);
+        KeyReleasedEvent event(key);
         data.event_callback(event);
         break;
       }
       case GLFW_REPEAT: {
-        events::KeyPressedEvent event(key, true);
+        KeyPressedEvent event(key, true);
         data.event_callback(event);
         break;
       }
@@ -148,7 +148,7 @@ WindowsManager::WindowsManager(
     WindowData& data =
       *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-    events::KeyTypedEvent event(keycode);
+    KeyTypedEvent event(keycode);
     data.event_callback(event);
   });
 
@@ -159,12 +159,12 @@ WindowsManager::WindowsManager(
 
       switch (action) {
       case GLFW_PRESS: {
-        events::MouseButtonPressedEvent event(button);
+        MouseButtonPressedEvent event(button);
         data.event_callback(event);
         break;
       }
       case GLFW_RELEASE: {
-        events::MouseButtonReleasedEvent event(button);
+        MouseButtonReleasedEvent event(button);
         data.event_callback(event);
         break;
       }
@@ -197,7 +197,7 @@ WindowsManager::WindowsManager(
       data.mouse_x = data.debug_mouse_x;
       data.mouse_y = data.debug_mouse_y;
 
-      events::MouseMovedEvent event(xoffset, yoffset);
+      MouseMovedEvent event(xoffset, yoffset);
       data.event_callback(event);
     });
 
@@ -210,7 +210,7 @@ WindowsManager::WindowsManager(
         return;
       }
 
-      events::MouseScrolledEvent event((float)xoffset, (float)yoffset);
+      MouseScrolledEvent event((float)xoffset, (float)yoffset);
       data.event_callback(event);
     });
 
@@ -220,11 +220,11 @@ WindowsManager::WindowsManager(
 
     if (minimized == GLFW_TRUE) {
       data.minimized = true;
-      events::WindowMinimizedEvent event;
+      WindowMinimizedEvent event;
       data.event_callback(event);
     } else {
       data.minimized = false;
-      events::WindowRestoredEvent event;
+      WindowRestoredEvent event;
       data.event_callback(event);
     }
   });
@@ -236,11 +236,11 @@ WindowsManager::WindowsManager(
 
       if (maximized == GLFW_TRUE) {
         data.maximized = true;
-        events::WindowMaximizedEvent event;
+        WindowMaximizedEvent event;
         data.event_callback(event);
       } else {
         data.maximized = false;
-        events::WindowRestoredEvent event;
+        WindowRestoredEvent event;
         data.event_callback(event);
       }
     });
@@ -251,11 +251,11 @@ WindowsManager::WindowsManager(
 
     if (focused == GLFW_TRUE) {
       data.focused = true;
-      events::WindowFocusEvent event;
+      WindowFocusEvent event;
       data.event_callback(event);
     } else {
       data.focused = false;
-      events::WindowLostFocusEvent event;
+      WindowLostFocusEvent event;
       data.event_callback(event);
     }
   });
@@ -281,9 +281,7 @@ void WindowsManager::on_update() {
   glfwPollEvents();
 }
 
-void WindowsManager::trigger_event(events::Event& e) {
-  m_data.event_callback(e);
-}
+void WindowsManager::trigger_event(Event& e) { m_data.event_callback(e); }
 
 void WindowsManager::set_position(int x, int y) {
   if (Application::Get().get_settings_manager()->fullscreen) {

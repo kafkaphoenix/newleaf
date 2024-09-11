@@ -8,7 +8,7 @@
 #include "../utils/numeric_comparator.h"
 #include "asset.h"
 
-namespace nl::assets {
+namespace nl {
 
 class Shader : public Asset {
   public:

@@ -13,7 +13,7 @@ Application::Application(std::unique_ptr<SettingsManager>&& s, CLArgs&& args)
   m_name = m_settings_manager->app_name;
   std::filesystem::current_path(m_settings_manager->root);
   m_states_manager = StatesManager::Create();
-  m_assets_manager = assets::AssetsManager::Create();
+  m_assets_manager = AssetsManager::Create();
 
   m_windows_manager = WindowsManager::Create(m_settings_manager);
   m_windows_manager->set_event_callback(BIND_EVENT(on_event));
@@ -31,7 +31,7 @@ Application::~Application() {
   m_imgui_layer->on_detach();
 }
 
-void Application::on_event(events::Event& e) {
+void Application::on_event(Event& e) {
   m_states_manager->get_current_state()->on_event(e);
 }
 

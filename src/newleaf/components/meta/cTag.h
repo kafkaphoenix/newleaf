@@ -6,7 +6,7 @@
 #include <map>
 #include <string>
 
-namespace nl::components {
+namespace nl {
 
 struct CTag {
     std::string tag;

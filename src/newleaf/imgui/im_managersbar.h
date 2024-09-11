@@ -18,7 +18,7 @@
 namespace nl {
 
 inline void
-draw_managersbar(const std::unique_ptr<assets::AssetsManager>& assets_manager,
+draw_managersbar(const std::unique_ptr<AssetsManager>& assets_manager,
                  const std::unique_ptr<RenderManager>& render_manager,
                  const std::unique_ptr<SceneManager>& scene_manager,
                  const std::unique_ptr<SettingsManager>& settings_manager,

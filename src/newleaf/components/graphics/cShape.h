@@ -15,7 +15,7 @@
 #include "cMesh.h"
 #include "cShape.h"
 
-namespace nl::components {
+namespace nl {
 
 struct CShape {
     enum class Type { Triangle, Rectangle, Cube, Circle };
@@ -87,9 +87,8 @@ struct CShape {
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e,
-                                                 components::CShape& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e, CShape& c) {
   c.create_mesh();
 
-  m_registry.replace<components::CShape>(e, c);
+  m_registry.replace<CShape>(e, c);
 }

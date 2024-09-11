@@ -30,7 +30,7 @@ class Application {
                 CLArgs&& args);
     virtual ~Application();
 
-    void on_event(events::Event& e);
+    void on_event(Event& e);
 
     const std::unique_ptr<WindowsManager>& get_window_manager() const {
       return m_windows_manager;
@@ -38,7 +38,7 @@ class Application {
     const std::unique_ptr<SceneManager>& get_scene_manager() const {
       return m_scene_manager;
     }
-    const std::unique_ptr<assets::AssetsManager>& get_assets_manager() const {
+    const std::unique_ptr<AssetsManager>& get_assets_manager() const {
       return m_assets_manager;
     }
     const std::unique_ptr<RenderManager>& get_render_manager() const {
@@ -66,7 +66,7 @@ class Application {
 
   protected:
     std::unique_ptr<SceneManager> m_scene_manager;
-    std::unique_ptr<assets::AssetsManager> m_assets_manager;
+    std::unique_ptr<AssetsManager> m_assets_manager;
     std::unique_ptr<RenderManager> m_render_manager;
     std::unique_ptr<SettingsManager> m_settings_manager;
     std::unique_ptr<StatesManager> m_states_manager;

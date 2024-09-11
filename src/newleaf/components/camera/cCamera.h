@@ -12,7 +12,7 @@
 #include <map>
 #include <string>
 
-namespace nl::components {
+namespace nl {
 
 struct CCamera {
     enum class CameraType { Perspective, Orthographic };
@@ -129,12 +129,11 @@ struct CCamera {
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e,
-                                                 components::CCamera& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e, CCamera& c) {
   c.set_camera_type();
   c.set_aspect_ratio();
   c.set_mode();
   c.calculate_projection();
 
-  m_registry.replace<components::CCamera>(e, c);
+  m_registry.replace<CCamera>(e, c);
 }

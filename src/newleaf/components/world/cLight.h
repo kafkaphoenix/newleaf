@@ -12,7 +12,7 @@
 #include "../../utils/assert.h"
 #include "../../utils/numeric_comparator.h"
 
-namespace nl::components {
+namespace nl {
 
 struct CLight {
     enum class Type { // https://docs.unity3d.com/Manual/Lighting.html
@@ -76,9 +76,8 @@ struct CLight {
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e,
-                                                 components::CLight& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e, CLight& c) {
   c.set_light_type();
 
-  m_registry.replace<components::CLight>(e, c);
+  m_registry.replace<CLight>(e, c);
 }

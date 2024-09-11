@@ -11,7 +11,7 @@
 
 using json = nlohmann::json;
 
-namespace nl::assets {
+namespace nl {
 class Scene : public Asset {
   public:
     Scene(std::filesystem::path&& fp);

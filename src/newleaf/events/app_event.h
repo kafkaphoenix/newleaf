@@ -5,7 +5,7 @@
 #include <string>
 #include <string_view>
 
-namespace nl::events {
+namespace nl {
 
 class AppTickEvent : public Event {
   public:

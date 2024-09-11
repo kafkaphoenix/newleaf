@@ -49,16 +49,15 @@ FBO::~FBO() {
 }
 
 void FBO::attach_texture() {
-  m_color_texture =
-    assets::Texture::Create(m_width, m_height, GL_RGBA8, assets::Texture::WRAP);
+  m_color_texture = Texture::Create(m_width, m_height, GL_RGBA8, Texture::WRAP);
   glNamedFramebufferTexture(m_id, GL_COLOR_ATTACHMENT0,
                             m_color_texture->get_id(), 0);
 }
 
 void FBO::attach_depth_texture() {
   // slower than renderbuffer but can be sampled in shaders
-  m_depth_texture = assets::Texture::Create(
-    m_width, m_height, GL_DEPTH_COMPONENT24, assets::Texture::DONT_WRAP);
+  m_depth_texture = Texture::Create(m_width, m_height, GL_DEPTH_COMPONENT24,
+                                    Texture::DONT_WRAP);
   glNamedFramebufferTexture(m_id, GL_DEPTH_ATTACHMENT,
                             m_depth_texture->get_id(), 0);
 }

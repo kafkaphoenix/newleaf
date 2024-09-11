@@ -14,10 +14,9 @@
 
 namespace nl {
 
-inline void
-draw_menubar(const std::unique_ptr<assets::AssetsManager>& assets_manager,
-             const std::unique_ptr<RenderManager>& render_manager,
-             const std::unique_ptr<SceneManager>& scene_manager) {
+inline void draw_menubar(const std::unique_ptr<AssetsManager>& assets_manager,
+                         const std::unique_ptr<RenderManager>& render_manager,
+                         const std::unique_ptr<SceneManager>& scene_manager) {
   draw_metrics(assets_manager, render_manager, scene_manager);
   draw_logger();
   draw_about();

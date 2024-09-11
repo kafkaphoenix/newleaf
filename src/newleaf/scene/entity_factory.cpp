@@ -171,8 +171,8 @@ void processComponent(entt::entity& e, const std::string& cPrefab,
 void EntityFactory::create_prototypes(
   std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
   entt::registry& registry,
-  const std::unique_ptr<assets::AssetsManager>& assets_manager) {
-  const auto& prefab = assets_manager->get<assets::Prefab>(prefab_name);
+  const std::unique_ptr<AssetsManager>& assets_manager) {
+  const auto& prefab = assets_manager->get<Prefab>(prefab_name);
 
   auto& prefabPrototypes = m_prefabs[prefab_name.data()];
   for (std::string_view prototype_id : prototype_ids) {
@@ -196,7 +196,7 @@ void EntityFactory::create_prototypes(
 void EntityFactory::update_prototypes(
   std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
   entt::registry& registry,
-  const std::unique_ptr<assets::AssetsManager>& assetsManager) {
+  const std::unique_ptr<AssetsManager>& assetsManager) {
   remove_prototypes(prefab_name, prototype_ids, registry);
   create_prototypes(prefab_name, prototype_ids, registry, assetsManager);
 }
@@ -208,7 +208,7 @@ void EntityFactory::remove_prototypes(
     ENGINE_ASSERT(
       m_prefabs.at(prefab_name.data()).contains(prototype_id.data()),
       "unknown prototype {} for prefab {}", prototype_id, prefab_name);
-    registry.emplace<components::CDeleted>(
+    registry.emplace<CDeleted>(
       m_prefabs.at(prefab_name.data()).at(prototype_id.data()));
     m_prefabs.at(prefab_name.data()).erase(prototype_id.data());
   }

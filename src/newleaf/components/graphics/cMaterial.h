@@ -9,7 +9,7 @@
 #include "../../logging/log_manager.h"
 #include "../../utils/numeric_comparator.h"
 
-namespace nl::components {
+namespace nl {
 struct CMaterial {
     glm::vec3 ambient{glm::vec3(1.f)};
     glm::vec3 diffuse{glm::vec3(1.f)};

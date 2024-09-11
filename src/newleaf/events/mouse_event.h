@@ -2,7 +2,7 @@
 
 #include "event.h"
 
-namespace nl::events {
+namespace nl {
 
 class MouseMovedEvent : public Event {
   public:

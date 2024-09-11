@@ -13,7 +13,7 @@
 #include "../utils/numeric_comparator.h"
 #include "asset.h"
 
-namespace nl::assets {
+namespace nl {
 class Texture : public Asset {
   public:
     Texture() = default; // TODO revisit is for std::vector in Model class

@@ -20,7 +20,7 @@ struct Prototype {
     std::unordered_map<std::string, json> components;
 };
 
-namespace nl::assets {
+namespace nl {
 class Prefab : public Asset {
   public:
     Prefab(std::filesystem::path&& fp,

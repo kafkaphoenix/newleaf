@@ -3,7 +3,7 @@
 #include "../logging/log_manager.h"
 #include "../utils/assert.h"
 
-namespace nl::assets {
+namespace nl {
 
 template <typename Type, typename... Args>
 void AssetsManager::load(std::string_view id, Args&&... args) {
@@ -57,8 +57,8 @@ void AssetsManager::clear() {
   m_dirty = false;
 }
 
-static std::unique_ptr<assets::AssetsManager> Create() {
-  return std::make_unique<assets::AssetsManager>();
+static std::unique_ptr<AssetsManager> Create() {
+  return std::make_unique<AssetsManager>();
 }
 
 const std::unordered_map<

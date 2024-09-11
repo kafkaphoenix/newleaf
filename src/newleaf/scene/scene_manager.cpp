@@ -13,12 +13,12 @@ namespace nl {
 SceneManager::SceneManager() : m_scene_factory() {
   ENGINE_TRACE("initializing scene manager...");
   ENGINE_TRACE("registering engine components...");
-  components::register_components();
+  register_components();
   ENGINE_TRACE("scene manager created!");
 }
 
 void SceneManager::register_system(std::string&& name,
-                                   std::unique_ptr<systems::System>&& system) {
+                                   std::unique_ptr<System>&& system) {
   ENGINE_ASSERT(not contains_system(name), "system {} already registered",
                 name);
   system->init(m_registry);
@@ -62,8 +62,7 @@ void SceneManager::on_update(const Time& ts) {
 entt::registry& SceneManager::get_registry() { return m_registry; }
 
 entt::entity SceneManager::get_entity(std::string_view name) {
-  for (const auto& [e, cName, _] :
-       m_registry.view<components::CName, components::CUUID>().each()) {
+  for (const auto& [e, cName, _] : m_registry.view<CName, CUUID>().each()) {
     if (cName.name == name) {
       return e;
     }
@@ -72,7 +71,7 @@ entt::entity SceneManager::get_entity(std::string_view name) {
 }
 
 entt::entity SceneManager::get_entity(UUID& uuid) {
-  for (const auto& [e, cUUID] : m_registry.view<components::CUUID>().each()) {
+  for (const auto& [e, cUUID] : m_registry.view<CUUID>().each()) {
     if (cUUID.uuid == uuid) {
       return e;
     }
@@ -154,7 +153,7 @@ void SceneManager::clear_scene() {
 }
 
 void SceneManager::print_scene() {
-  auto entities = m_registry.view<components::CUUID>();
+  auto entities = m_registry.view<CUUID>();
   entt::meta_type cType;
   entt::meta_any cData;
   entt::meta_func printFunc;

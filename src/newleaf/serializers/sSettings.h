@@ -14,7 +14,7 @@
 
 using json = nlohmann::json;
 
-namespace nl::serializers {
+namespace nl {
 
 inline void
 save_settings(const std::unique_ptr<SettingsManager>& settings_manager,

@@ -24,10 +24,10 @@
 
 using namespace entt::literals;
 
-namespace nl::components {
+namespace nl {
 
 struct CMesh {
-    std::vector<std::shared_ptr<assets::Texture>> textures;
+    std::vector<std::shared_ptr<Texture>> textures;
     std::shared_ptr<VAO> vao;
     std::vector<Vertex> vertices; // TODO: remove this
     std::shared_ptr<VBO> vbo;
@@ -36,8 +36,7 @@ struct CMesh {
 
     CMesh() = default;
     explicit CMesh(std::vector<Vertex>&& v, std::vector<uint32_t>&& i,
-                   std::vector<std::shared_ptr<assets::Texture>>&& t,
-                   std::string&& vt)
+                   std::vector<std::shared_ptr<Texture>>&& t, std::string&& vt)
       : vertices(std::move(v)), indices(std::move(i)), textures(std::move(t)),
         vertex_type(std::move(vt)) {}
 

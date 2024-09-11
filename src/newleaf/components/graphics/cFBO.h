@@ -12,7 +12,7 @@
 #include "../../utils/assert.h"
 #include "../../utils/numeric_comparator.h"
 
-namespace nl::components {
+namespace nl {
 
 struct CFBO {
     enum class Mode {
@@ -120,10 +120,9 @@ struct CFBO {
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e,
-                                                 components::CFBO& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e, CFBO& c) {
   c.set_mode();
   c.set_attachment();
 
-  m_registry.replace<components::CFBO>(e, c);
+  m_registry.replace<CFBO>(e, c);
 }

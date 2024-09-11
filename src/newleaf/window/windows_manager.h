@@ -13,7 +13,7 @@
 
 namespace nl {
 
-using EventCallbackFn = std::function<void(events::Event&)>;
+using EventCallbackFn = std::function<void(Event&)>;
 
 enum class cursor_mode { normal = 0, hidden, disabled };
 
@@ -59,7 +59,7 @@ class WindowsManager {
 
     void shutdown();
     void on_update();
-    void trigger_event(events::Event& e);
+    void trigger_event(Event& e);
 
     GLFWwindow* get_native_window() const { return m_window; }
     const WindowData& get_window_data() const { return m_data; }

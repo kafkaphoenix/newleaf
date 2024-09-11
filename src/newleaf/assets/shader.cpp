@@ -5,7 +5,7 @@
 #include "../logging/log_manager.h"
 #include "../utils/assert.h"
 
-namespace nl::assets {
+namespace nl {
 Shader::Shader(std::filesystem::path&& fp) : m_path(std::move(fp.string())) {
   std::ifstream f(fp);
   ENGINE_ASSERT(f.is_open(), "failed to open shader file!");

@@ -7,7 +7,7 @@
 #include "../graphics/buffer.h"
 #include "../utils/assert.h"
 
-namespace nl::assets {
+namespace nl {
 
 Model::Model(std::filesystem::path&& fp, std::optional<bool> gammaCorrection)
   : m_path(std::move(fp.string())),
@@ -43,7 +43,7 @@ void Model::process_node(aiNode* node, const aiScene* scene) {
   }
 }
 
-components::CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
+CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   std::vector<Vertex> vertices{};
   std::vector<uint32_t> indices{};
   std::vector<std::shared_ptr<Texture>> textures;
@@ -105,7 +105,7 @@ components::CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   }
 
   aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-  components::CMaterial materialData = load_material(material);
+  CMaterial materialData = load_material(material);
 
   // N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER.
   // diffuse: textureDiffuseN
@@ -132,14 +132,14 @@ components::CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
     } else {
       textures.emplace_back(
         std::make_shared<Texture>("default.png", "texture_diffuse"));
-      assets_manager->load<assets::Texture>("default", "default.png",
-                                            "texture_diffuse");
+      assets_manager->load<Texture>("default", "default.png",
+                                    "texture_diffuse");
     }
   }
   m_materials.emplace_back(std::move(materialData));
 
-  return components::CMesh(std::move(vertices), std::move(indices),
-                           std::move(textures), std::string("camera"));
+  return CMesh(std::move(vertices), std::move(indices), std::move(textures),
+               std::string("camera"));
 }
 
 std::vector<std::shared_ptr<Texture>>
@@ -172,7 +172,7 @@ Model::load_material_textures(aiMaterial* mat, aiTextureType t,
   return textures;
 }
 
-components::CMaterial Model::load_material(aiMaterial* mat) {
+CMaterial Model::load_material(aiMaterial* mat) {
   // map_Ns        SHININESS    roughness
   // map_Ka        AMBIENT      ambient occlusion
   // map_Kd        DIFFUSE      albedo diffuse
@@ -184,7 +184,7 @@ components::CMaterial Model::load_material(aiMaterial* mat) {
   // map_Bump      HEIGHT       height
   // map_Kn        NORMALS      normal
   // map_disp      DISPLACEMENT
-  components::CMaterial material{};
+  CMaterial material{};
   aiColor3D color(0.f, 0.f, 0.f);
   float shininess{};
 

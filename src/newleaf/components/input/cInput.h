@@ -11,7 +11,7 @@
 #include "../../utils/assert.h"
 #include "../../utils/numeric_comparator.h"
 
-namespace nl::components {
+namespace nl {
 
 struct CInput {
     enum class Mode { _None, _3D, _2D };
@@ -63,9 +63,8 @@ struct CInput {
 }
 
 template <>
-inline void nl::SceneManager::on_component_added(entt::entity e,
-                                                 components::CInput& c) {
+inline void nl::SceneManager::on_component_added(entt::entity e, CInput& c) {
   c.set_mode();
 
-  m_registry.replace<components::CInput>(e, c);
+  m_registry.replace<CInput>(e, c);
 }
