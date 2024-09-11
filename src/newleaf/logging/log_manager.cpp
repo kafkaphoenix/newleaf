@@ -53,19 +53,19 @@ void LogManager::create_backtrace_logger(std::string_view path,
     std::make_shared<spdlog::logger>("app", backtraceSink);
 
   if (enable_engine_backtrace_logger) {
-    s_engine_backtrace_logger->set_level(spdlog::level::debug);
-    s_engine_backtrace_logger->flush_on(spdlog::level::debug);
+    s_engine_backtrace_logger->set_level(DEBUG);
+    s_engine_backtrace_logger->flush_on(DEBUG);
   } else {
-    s_engine_backtrace_logger->set_level(spdlog::level::off);
-    s_engine_backtrace_logger->flush_on(spdlog::level::off);
+    s_engine_backtrace_logger->set_level(OFF);
+    s_engine_backtrace_logger->flush_on(OFF);
   }
 
   if (enable_app_backtrace_logger) {
-    s_app_backtrace_logger->set_level(spdlog::level::debug);
-    s_app_backtrace_logger->flush_on(spdlog::level::debug);
+    s_app_backtrace_logger->set_level(DEBUG);
+    s_app_backtrace_logger->flush_on(DEBUG);
   } else {
-    s_app_backtrace_logger->set_level(spdlog::level::off);
-    s_app_backtrace_logger->flush_on(spdlog::level::off);
+    s_app_backtrace_logger->set_level(OFF);
+    s_app_backtrace_logger->flush_on(OFF);
   }
 }
 
@@ -119,8 +119,8 @@ void LogManager::toggle_engine_logger(bool enable) {
     s_engine_logger->set_level(s_engine_log_level);
     s_engine_logger->flush_on(s_engine_flush_level);
   } else if (not enable and is_engine_logger_enabled()) {
-    s_engine_logger->set_level(spdlog::level::off);
-    s_engine_logger->flush_on(spdlog::level::off);
+    s_engine_logger->set_level(OFF);
+    s_engine_logger->flush_on(OFF);
   }
 }
 
@@ -129,28 +129,28 @@ void LogManager::toggle_app_logger(bool enable) {
     s_app_logger->set_level(s_app_log_level);
     s_app_logger->flush_on(s_app_flush_level);
   } else if (not enable and is_app_logger_enabled()) {
-    s_app_logger->set_level(spdlog::level::off);
-    s_app_logger->flush_on(spdlog::level::off);
+    s_app_logger->set_level(OFF);
+    s_app_logger->flush_on(OFF);
   }
 }
 
 void LogManager::toggle_engine_backtrace_logger(bool enable) {
   if (enable and not is_engine_backtrace_logger_enabled()) {
-    s_engine_backtrace_logger->set_level(spdlog::level::debug);
-    s_engine_backtrace_logger->flush_on(spdlog::level::debug);
+    s_engine_backtrace_logger->set_level(DEBUG);
+    s_engine_backtrace_logger->flush_on(DEBUG);
   } else if (not enable and is_engine_backtrace_logger_enabled()) {
-    s_engine_backtrace_logger->set_level(spdlog::level::off);
-    s_engine_backtrace_logger->flush_on(spdlog::level::off);
+    s_engine_backtrace_logger->set_level(OFF);
+    s_engine_backtrace_logger->flush_on(OFF);
   }
 }
 
 void LogManager::toggle_app_backtrace_logger(bool enable) {
   if (enable and not is_app_backtrace_logger_enabled()) {
-    s_app_backtrace_logger->set_level(spdlog::level::debug);
-    s_app_backtrace_logger->flush_on(spdlog::level::debug);
+    s_app_backtrace_logger->set_level(DEBUG);
+    s_app_backtrace_logger->flush_on(DEBUG);
   } else if (not enable and is_app_backtrace_logger_enabled()) {
-    s_app_backtrace_logger->set_level(spdlog::level::off);
-    s_app_backtrace_logger->flush_on(spdlog::level::off);
+    s_app_backtrace_logger->set_level(OFF);
+    s_app_backtrace_logger->flush_on(OFF);
   }
 }
 

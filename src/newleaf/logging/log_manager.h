@@ -57,17 +57,25 @@ class LogManager {
         spdlog::level::to_string_view(s_app_logger->flush_level()));
     }
     static bool is_engine_logger_enabled() {
-      return s_engine_logger->level() != spdlog::level::off;
+      return s_engine_logger->level() != OFF;
     }
     static bool is_app_logger_enabled() {
-      return s_app_logger->level() != spdlog::level::off;
+      return s_app_logger->level() != OFF;
     }
     static bool is_engine_backtrace_logger_enabled() {
-      return s_engine_backtrace_logger->level() != spdlog::level::off;
+      return s_engine_backtrace_logger->level() != OFF;
     }
     static bool is_app_backtrace_logger_enabled() {
-      return s_app_backtrace_logger->level() != spdlog::level::off;
+      return s_app_backtrace_logger->level() != OFF;
     }
+
+    static constexpr spdlog::level::level_enum TRACE = spdlog::level::trace;
+    static constexpr spdlog::level::level_enum DEBUG = spdlog::level::debug;
+    static constexpr spdlog::level::level_enum INFO = spdlog::level::info;
+    static constexpr spdlog::level::level_enum WARN = spdlog::level::warn;
+    static constexpr spdlog::level::level_enum ERR = spdlog::level::err;
+    static constexpr spdlog::level::level_enum CRITICAL = spdlog::level::critical;
+    static constexpr spdlog::level::level_enum OFF = spdlog::level::off;
 
   private:
     inline static std::shared_ptr<spdlog::logger> s_engine_logger;
@@ -75,13 +83,13 @@ class LogManager {
     inline static std::shared_ptr<spdlog::logger> s_engine_backtrace_logger;
     inline static std::shared_ptr<spdlog::logger> s_app_backtrace_logger;
     inline static enum ::spdlog::level::level_enum s_engine_log_level =
-      spdlog::level::trace;
+      TRACE;
     inline static enum ::spdlog::level::level_enum s_app_log_level =
-      spdlog::level::trace;
+      TRACE;
     inline static enum ::spdlog::level::level_enum s_engine_flush_level =
-      spdlog::level::trace;
+      TRACE;
     inline static enum ::spdlog::level::level_enum s_app_flush_level =
-      spdlog::level::trace;
+      TRACE;
 };
 
 }

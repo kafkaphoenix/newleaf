@@ -3,8 +3,8 @@
 #include <chrono>
 #include <filesystem>
 #include <format>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 extern template class spdlog::sinks::base_sink<std::mutex>;
 namespace nl {
