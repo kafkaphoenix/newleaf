@@ -93,25 +93,24 @@ void LogManager::dump_backtrace() {
   sink->dump_to_file();
 }
 
-void LogManager::set_engine_logger_level(spdlog::level::level_enum level) {
-  s_engine_log_level = level;
+void LogManager::set_engine_logger_level(uint32_t level) {
+  s_engine_log_level = static_cast<spdlog::level::level_enum>(level);
   s_engine_logger->set_level(s_engine_log_level);
 }
 
-void LogManager::set_app_logger_level(spdlog::level::level_enum level) {
-  s_app_log_level = level;
+void LogManager::set_app_logger_level(uint32_t level) {
+  s_app_log_level = static_cast<spdlog::level::level_enum>(level);
   s_app_logger->set_level(s_app_log_level);
 }
 
-void LogManager::set_engine_logger_flush_level(
-  spdlog::level::level_enum level) {
-  s_engine_flush_level = level;
-  s_engine_logger->flush_on(level);
+void LogManager::set_engine_logger_flush_level(uint32_t level) {
+  s_engine_flush_level = static_cast<spdlog::level::level_enum>(level);
+  s_engine_logger->flush_on(s_engine_flush_level);
 }
 
-void LogManager::set_app_logger_flush_level(spdlog::level::level_enum level) {
-  s_app_flush_level = level;
-  s_app_logger->flush_on(level);
+void LogManager::set_app_logger_flush_level(uint32_t level) {
+  s_app_flush_level = static_cast<spdlog::level::level_enum>(level);
+  s_app_logger->flush_on(s_app_flush_level);
 }
 
 void LogManager::toggle_engine_logger(bool enable) {

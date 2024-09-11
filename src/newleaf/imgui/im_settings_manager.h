@@ -165,8 +165,7 @@ draw_settings_manager(const std::unique_ptr<SettingsManager>& settings_manager,
           if (ImGui::Selectable(settings_manager->log_levels[n], is_selected)) {
             if (settings_manager->engine_log_level not_eq n) {
               settings_manager->engine_log_level = n;
-              LogManager::set_engine_logger_level(
-                static_cast<spdlog::level::level_enum>(n));
+              LogManager::set_engine_logger_level(n);
             }
           }
           if (is_selected) {
@@ -189,8 +188,7 @@ draw_settings_manager(const std::unique_ptr<SettingsManager>& settings_manager,
           if (ImGui::Selectable(settings_manager->log_levels[n], is_selected)) {
             if (settings_manager->engine_flush_level not_eq n) {
               settings_manager->engine_flush_level = n;
-              LogManager::set_engine_logger_flush_level(
-                static_cast<spdlog::level::level_enum>(n));
+              LogManager::set_engine_logger_flush_level(n);
             }
           }
           if (is_selected) {
@@ -216,8 +214,7 @@ draw_settings_manager(const std::unique_ptr<SettingsManager>& settings_manager,
           if (ImGui::Selectable(settings_manager->log_levels[n], is_selected)) {
             if (settings_manager->app_log_level not_eq n) {
               settings_manager->app_log_level = n;
-              LogManager::set_app_logger_level(
-                static_cast<spdlog::level::level_enum>(n));
+              LogManager::set_app_logger_level(n);
             }
           }
           if (is_selected) {
@@ -240,8 +237,7 @@ draw_settings_manager(const std::unique_ptr<SettingsManager>& settings_manager,
           if (ImGui::Selectable(settings_manager->log_levels[n], is_selected)) {
             if (settings_manager->app_flush_level not_eq n) {
               settings_manager->app_flush_level = n;
-              LogManager::set_app_logger_flush_level(
-                static_cast<spdlog::level::level_enum>(n));
+              LogManager::set_app_logger_flush_level(n);
             }
           }
           if (is_selected) {

@@ -20,10 +20,10 @@ class LogManager {
     static void clear_engine_backtrace_logger();
     static void clear_app_backtrace_logger();
     static void dump_backtrace();
-    static void set_engine_logger_level(spdlog::level::level_enum level);
-    static void set_app_logger_level(spdlog::level::level_enum level);
-    static void set_engine_logger_flush_level(spdlog::level::level_enum level);
-    static void set_app_logger_flush_level(spdlog::level::level_enum level);
+    static void set_engine_logger_level(uint32_t level);
+    static void set_app_logger_level(uint32_t level);
+    static void set_engine_logger_flush_level(uint32_t level);
+    static void set_app_logger_flush_level(uint32_t level);
     static void toggle_engine_logger(bool enable);
     static void toggle_app_logger(bool enable);
     static void toggle_engine_backtrace_logger(bool enable);
