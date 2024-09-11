@@ -5,7 +5,7 @@
 
 #include "../utils/exception.h"
 #include "application.h"
-#include "logging/logger.h"
+#include "logging/log_manager.h"
 
 extern nl::Application* nl::Create(nl::CLArgs&& args);
 
