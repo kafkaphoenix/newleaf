@@ -15,7 +15,7 @@ namespace nl {
 
 using EventCallbackFn = std::function<void(Event&)>;
 
-enum class cursor_mode { normal = 0, hidden, disabled };
+enum class CursorMode { normal = 0, hidden, disabled };
 
 struct WindowData {
     int position_x;
@@ -42,7 +42,7 @@ struct WindowData {
     bool vsync{};
     std::string cursor_icon_path;
     GLFWcursor* cursor;
-    cursor_mode cursor_mode;
+    CursorMode cursor_mode;
     bool resizable{};
     int refresh_rate;
     bool fullscreen{};
@@ -78,7 +78,7 @@ class WindowsManager {
     void set_window_icon(std::string path);
     void restore_window_icon();
     void set_cursor_icon(std::string path);
-    void set_cursor_mode(cursor_mode mode, bool update);
+    void set_cursor_mode(CursorMode mode, bool update);
     void restore_cursor();
     void resize(int width, int height);
     void toggle_resizable(bool resizable);

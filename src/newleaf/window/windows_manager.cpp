@@ -79,7 +79,7 @@ WindowsManager::WindowsManager(
   }
 
   set_window_icon(settings_manager->window_icon_path);
-  set_cursor_mode(static_cast<cursor_mode>(settings_manager->cursor_mode),
+  set_cursor_mode(static_cast<CursorMode>(settings_manager->cursor_mode),
                   true);
   set_cursor_icon(settings_manager->cursor_icon_path);
   toggle_vsync(settings_manager->vsync);
@@ -449,7 +449,7 @@ void WindowsManager::set_cursor_icon(std::string path) {
   }
 }
 
-void WindowsManager::set_cursor_mode(cursor_mode cursor_mode, bool update) {
+void WindowsManager::set_cursor_mode(CursorMode cursor_mode, bool update) {
   if (cursor_mode not_eq m_data.cursor_mode) {
     int mode = static_cast<int>(cursor_mode);
     if (mode == 0) {
