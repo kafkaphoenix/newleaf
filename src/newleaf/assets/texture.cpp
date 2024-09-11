@@ -163,7 +163,7 @@ const std::map<std::string, std::string, NumericComparator>& Texture::to_map() {
 
   m_info["type"] = "texture";
   m_info["id"] = std::to_string(m_id);
-  for (int i = 0; i < m_paths.size(); ++i) {
+  for (uint32_t i = 0; i < m_paths.size(); ++i) {
     m_info["path_" + std::to_string(i)] = m_paths[i];
   }
   m_info["width"] = std::to_string(m_width);

@@ -86,7 +86,7 @@ std::vector<ActiveUniform> ShaderProgram::get_active_uniforms() {
   std::vector<GLchar> nameData(256);
 
   activeUniforms.reserve(numActiveUniforms);
-  for (int i = 0; i < numActiveUniforms; ++i) {
+  for (uint32_t i = 0; i < numActiveUniforms; ++i) {
     glGetProgramResourceiv(m_id, GL_UNIFORM, i, properties.size(),
                            &properties[0], values.size(), nullptr, &values[0]);
 

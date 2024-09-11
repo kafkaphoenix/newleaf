@@ -156,7 +156,7 @@ const std::map<std::string, std::string, NumericComparator>& VAO::to_map() {
   m_info.clear();
   m_info["id"] = std::to_string(m_id);
   m_info["vbo_index"] = std::to_string(m_vbo_index);
-  for (size_t i = 0; i < m_vbos.size(); ++i) {
+  for (uint32_t i = 0; i < m_vbos.size(); ++i) {
     m_info["vbo_" + std::to_string(i) + " id"] =
       std::to_string(m_vbos[i]->get_id());
   }
