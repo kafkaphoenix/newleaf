@@ -24,12 +24,12 @@ namespace nl::assets {
 class Prefab : public Asset {
   public:
     Prefab(std::filesystem::path&& fp,
-           std::vector<std::string>&& targetedPrototypes);
+           std::vector<std::string>&& targetPrototypes);
 
     virtual const std::map<std::string, std::string, NumericComparator>&
     to_map() override final;
     const std::map<std::string, std::string, NumericComparator>&
-    get_targeted_prototype_info(std::string_view prototype_id);
+    get_target_prototype_info(std::string_view prototype_id);
 
     const std::vector<std::string>&
     get_inherits(std::string_view prototype_id) const {
@@ -46,8 +46,8 @@ class Prefab : public Asset {
       return m_prototypes.at(prototype_id.data()).components;
     }
 
-    const std::vector<std::string>& get_targeted_prototypes() const {
-      return m_targeted_prototypes;
+    const std::vector<std::string>& get_target_prototypes() const {
+      return m_target_prototypes;
     }
 
     std::string_view get_name() const { return m_name; }
@@ -61,7 +61,7 @@ class Prefab : public Asset {
   private:
     std::string m_name;
     std::string m_path;
-    std::vector<std::string> m_targeted_prototypes;
+    std::vector<std::string> m_target_prototypes;
     std::unordered_map<std::string, Prototype> m_prototypes;
 
     std::map<std::string, std::string, NumericComparator> m_info;

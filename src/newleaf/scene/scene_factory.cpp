@@ -112,9 +112,8 @@ void SceneFactory::reload_scene(
     for (const auto& [prefab_name, options] : scene->get_prefabs()) {
       ENGINE_TRACE("reloading scene prototypes...");
       const auto& prefab = assets_manager->get<assets::Prefab>(prefab_name);
-      m_entity_factory.create_prototypes(prefab_name,
-                                         prefab->get_targeted_prototypes(),
-                                         registry, assets_manager);
+      m_entity_factory.create_prototypes(
+        prefab_name, prefab->get_target_prototypes(), registry, assets_manager);
     }
   } else {
     auto to_destroy = registry.view<components::CUUID>();
@@ -190,13 +189,12 @@ void SceneFactory::create_prototypes(
   for (const auto& [prefab_name, options] : scene.get_prefabs()) {
     auto prefab = assets::Prefab(
       options.at("path").get<std::string>(),
-      options.at("targeted_prototypes").get<std::vector<std::string>>());
+      options.at("target_prototypes").get<std::vector<std::string>>());
     ENGINE_TRACE("creating prototypes from prefab {}...", prefab_name);
-    std::vector<std::string> targetedPrototypes =
-      prefab.get_targeted_prototypes();
+    std::vector<std::string> targetPrototypes = prefab.get_target_prototypes();
     assets_manager->load<assets::Prefab>(prefab_name, std::move(prefab));
-    m_entity_factory.create_prototypes(prefab_name, targetedPrototypes,
-                                       registry, assets_manager);
+    m_entity_factory.create_prototypes(prefab_name, targetPrototypes, registry,
+                                       assets_manager);
   }
 }
 

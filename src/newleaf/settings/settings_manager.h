@@ -30,7 +30,7 @@ struct SettingsManager {
     bool imgui_window = true; // it needs an opengl fbo to work
     bool fit_to_window = true;
 
-    std::string cursor_icon_path = "assets/textures/cursor.png";
+    std::string cursor_icon_path = "cursor.png";
     uint32_t cursor_mode = 2; // 0: normal, 1: hidden, 2: disabled
 
     bool enable_debug = true; // TODO use for something

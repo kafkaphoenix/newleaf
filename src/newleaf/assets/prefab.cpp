@@ -29,9 +29,9 @@ void Prefab::process_prototype(const std::string& name,
 }
 
 Prefab::Prefab(std::filesystem::path&& fp,
-               std::vector<std::string>&& targetedPrototypes)
+               std::vector<std::string>&& targetPrototypes)
   : m_name(std::move(fp.filename().string())), m_path(std::move(fp.string())),
-    m_targeted_prototypes(std::move(targetedPrototypes)) {
+    m_target_prototypes(std::move(targetPrototypes)) {
   // One prefab file can contain multiple prototypes and we target only a subset
   // of them
   std::ifstream f(fp);
@@ -41,16 +41,16 @@ Prefab::Prefab(std::filesystem::path&& fp,
   json data = json::parse(f);
   f.close();
 
-  if (m_targeted_prototypes == std::vector<std::string>{"*"}) {
-    m_targeted_prototypes.clear();
+  if (m_target_prototypes == std::vector<std::string>{"*"}) {
+    m_target_prototypes.clear();
     for (const auto& [name, prototype_data] : data.items()) {
-      m_targeted_prototypes.emplace_back(name);
+      m_target_prototypes.emplace_back(name);
       process_prototype(name, prototype_data, data);
     }
   } else {
     for (const auto& [name, prototype_data] : data.items()) {
-      if (std::find(m_targeted_prototypes.begin(), m_targeted_prototypes.end(),
-                    name) == m_targeted_prototypes.end()) {
+      if (std::find(m_target_prototypes.begin(), m_target_prototypes.end(),
+                    name) == m_target_prototypes.end()) {
         continue;
       }
       process_prototype(name, prototype_data, data);
@@ -103,7 +103,7 @@ const std::map<std::string, std::string, NumericComparator>& Prefab::to_map() {
 }
 
 const std::map<std::string, std::string, NumericComparator>&
-Prefab::get_targeted_prototype_info(std::string_view prototype_id) {
+Prefab::get_target_prototype_info(std::string_view prototype_id) {
   if (not m_prototype_info.empty() and
       m_prototype_info.contains(prototype_id.data())) {
     return m_prototype_info.at(prototype_id.data());

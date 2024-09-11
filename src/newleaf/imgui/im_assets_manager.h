@@ -80,7 +80,7 @@ inline void draw_assets_manager(
           selected_asset_tab_type == "Prefab") {
         const auto& prefab =
           assets_manager->get<assets::Prefab>(selected_asset_manager_tab_key);
-        const auto& prototypeInfo = prefab->get_targeted_prototype_info(value);
+        const auto& prototypeInfo = prefab->get_target_prototype_info(value);
         if (ImGui::TreeNode((selected_asset_tab_type +
                              selected_asset_manager_tab_key + key +
                              settings_manager->active_scene)
