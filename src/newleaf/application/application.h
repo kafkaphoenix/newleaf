@@ -62,7 +62,7 @@ class Application {
     bool should_restore_pause() const { return m_restore_pause; }
     bool is_debugging() const { return m_debugging; }
 
-    static Application& Get() { return *s_instance; }
+    static Application& get() { return *s_instance; }
 
   protected:
     std::unique_ptr<SceneManager> m_scene_manager;
@@ -92,5 +92,5 @@ class Application {
 };
 
 // to be defined in user app
-Application* Create(CLArgs&& args);
+Application* create(CLArgs&& args);
 }

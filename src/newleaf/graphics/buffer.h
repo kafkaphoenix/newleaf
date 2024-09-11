@@ -44,7 +44,7 @@ class VBO {
     uint32_t get_id() const { return m_id; }
     bool is_immutable() const { return m_immutable; }
 
-    static std::unique_ptr<VBO> Create(const std::vector<Vertex>& vertices);
+    static std::unique_ptr<VBO> create(const std::vector<Vertex>& vertices);
     static std::unique_ptr<VBO>
     CreateShape(const std::vector<ShapeVertex>& vertices);
     static std::unique_ptr<VBO>
@@ -67,7 +67,7 @@ class IBO {
     uint32_t get_id() const { return m_id; }
     bool is_immutable() const { return m_immutable; }
 
-    static std::unique_ptr<IBO> Create(const std::vector<uint32_t>& indices);
+    static std::unique_ptr<IBO> create(const std::vector<uint32_t>& indices);
 
   private:
     uint32_t m_id{};

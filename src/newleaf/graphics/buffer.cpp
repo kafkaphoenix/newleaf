@@ -53,7 +53,7 @@ VBO::~VBO() {
   glDeleteBuffers(1, &m_id);
 }
 
-std::unique_ptr<VBO> VBO::Create(const std::vector<Vertex>& vertices) {
+std::unique_ptr<VBO> VBO::create(const std::vector<Vertex>& vertices) {
   return std::make_unique<VBO>(vertices);
 }
 
@@ -96,7 +96,7 @@ IBO::~IBO() {
   glDeleteBuffers(1, &m_id);
 }
 
-std::unique_ptr<IBO> IBO::Create(const std::vector<uint32_t>& indices) {
+std::unique_ptr<IBO> IBO::create(const std::vector<uint32_t>& indices) {
   return std::make_unique<IBO>(indices);
 }
 }

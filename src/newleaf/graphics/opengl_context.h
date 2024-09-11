@@ -14,7 +14,7 @@ class OpenGLContext {
     void set_context(GLFWwindow* w);
     void swap_buffers();
 
-    static std::unique_ptr<OpenGLContext> Create(GLFWwindow* w);
+    static std::unique_ptr<OpenGLContext> create(GLFWwindow* w);
 
   private:
     GLFWwindow* m_window{};

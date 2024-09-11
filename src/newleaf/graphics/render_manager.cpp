@@ -27,7 +27,7 @@ void RenderManager::end_scene() {}
 
 void RenderManager::add_shader_program(
   std::string&& name, const std::unique_ptr<AssetsManager>& assets_manager) {
-  auto newShaderProgram = ShaderProgram::Create(std::string(name));
+  auto newShaderProgram = ShaderProgram::create(std::string(name));
   const auto& vs = assets_manager->get<Shader>("v" + name);
   const auto& fs = assets_manager->get<Shader>("f" + name);
   newShaderProgram->attach(*vs);
@@ -41,7 +41,7 @@ void RenderManager::add_shader_program(
 
 void RenderManager::add_framebuffer(std::string&& name, uint32_t w, uint32_t h,
                                     uint32_t t) {
-  m_framebuffers.emplace(std::move(name), FBO::Create(w, h, t));
+  m_framebuffers.emplace(std::move(name), FBO::create(w, h, t));
 }
 
 void RenderManager::delete_framebuffer(std::string_view name) {
@@ -115,7 +115,7 @@ void RenderManager::clear() {
   m_shader_programs.clear();
 }
 
-std::unique_ptr<RenderManager> RenderManager::Create() {
+std::unique_ptr<RenderManager> RenderManager::create() {
   return std::make_unique<RenderManager>();
 }
 

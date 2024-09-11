@@ -42,7 +42,7 @@ class ShaderProgram {
     uint32_t get_id() const { return m_id; }
     operator GLuint() const;
 
-    static std::unique_ptr<ShaderProgram> Create(std::string&& name);
+    static std::unique_ptr<ShaderProgram> create(std::string&& name);
 
   private:
     uint32_t m_id{};

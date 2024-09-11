@@ -68,7 +68,7 @@ void LayersManager::clear() {
   m_index = 0;
 }
 
-std::unique_ptr<LayersManager> LayersManager::Create() {
+std::unique_ptr<LayersManager> LayersManager::create() {
   return std::make_unique<LayersManager>();
 }
 }

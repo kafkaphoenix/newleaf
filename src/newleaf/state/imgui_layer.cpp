@@ -18,7 +18,7 @@ ImGuiLayer::ImGuiLayer() : Layer("ImGui layer") {}
 
 void ImGuiLayer::on_attach() {
   ENGINE_TRACE("initializing ImGui layer");
-  auto& app = Application::Get();
+  auto& app = Application::get();
   const auto& settings_manager = app.get_settings_manager();
   std::string glsl_version =
     std::format("#version {}{}0", settings_manager->opengl_major,
@@ -55,7 +55,7 @@ void ImGuiLayer::end() {
 }
 
 void ImGuiLayer::on_imgui_update() {
-  auto& app = Application::Get();
+  auto& app = Application::get();
 
   if (app.is_debugging()) {
     const auto& settings_manager = app.get_settings_manager();

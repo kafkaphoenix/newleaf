@@ -39,14 +39,14 @@ draw_settings_manager(const std::unique_ptr<SettingsManager>& settings_manager,
     selected_settings_manager_tabkey = "Scene";
   }
 
-  auto& app = Application::Get();
+  auto& app = Application::get();
   bool paused = app.is_paused();
 
   ImGui::NextColumn();
   if (not selected_settings_manager_tabkey.empty()) {
     ImGui::SeparatorText("Edit");
     if (selected_settings_manager_tabkey == "Window") {
-      const auto& windows_manager = Application::Get().get_window_manager();
+      const auto& windows_manager = Application::get().get_window_manager();
       ImGui::Checkbox("Fullscreen", &settings_manager->fullscreen);
       windows_manager->toggle_fullscreen(settings_manager->fullscreen);
 

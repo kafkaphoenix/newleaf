@@ -10,7 +10,7 @@
 namespace nl {
 
 FBO::FBO(uint32_t w, uint32_t h, uint32_t t) : m_depth_buffer_type(t) {
-  const auto& settings_manager = Application::Get().get_settings_manager();
+  const auto& settings_manager = Application::get().get_settings_manager();
   uint32_t window_w;
   uint32_t window_h;
   if (settings_manager->fullscreen) {
@@ -49,14 +49,14 @@ FBO::~FBO() {
 }
 
 void FBO::attach_texture() {
-  m_color_texture = Texture::Create(m_width, m_height, GL_RGBA8, Texture::WRAP);
+  m_color_texture = Texture::create(m_width, m_height, GL_RGBA8, Texture::WRAP);
   glNamedFramebufferTexture(m_id, GL_COLOR_ATTACHMENT0,
                             m_color_texture->get_id(), 0);
 }
 
 void FBO::attach_depth_texture() {
   // slower than renderbuffer but can be sampled in shaders
-  m_depth_texture = Texture::Create(m_width, m_height, GL_DEPTH_COMPONENT24,
+  m_depth_texture = Texture::create(m_width, m_height, GL_DEPTH_COMPONENT24,
                                     Texture::DONT_WRAP);
   glNamedFramebufferTexture(m_id, GL_DEPTH_ATTACHMENT,
                             m_depth_texture->get_id(), 0);
@@ -139,7 +139,7 @@ const std::map<std::string, std::string, NumericComparator>& FBO::to_map() {
 }
 
 void FBO::bind_to_draw() {
-  const auto& render_manager = Application::Get().get_render_manager();
+  const auto& render_manager = Application::get().get_render_manager();
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_id);
   render_manager->on_window_resized(m_width, m_height);
 }
@@ -152,7 +152,7 @@ void FBO::bind_to_read() {
 
 void FBO::unbind() {
   glBindFramebuffer(GL_FRAMEBUFFER, 0); // default framebuffer
-  auto& app = Application::Get();
+  auto& app = Application::get();
   const auto& settings_manager = app.get_settings_manager();
   const auto& render_manager = app.get_render_manager();
   if (settings_manager->fullscreen) {
@@ -178,7 +178,7 @@ void FBO::resize(uint32_t width, uint32_t height) {
   bind_to_draw();
 }
 
-std::unique_ptr<FBO> FBO::Create(uint32_t width, uint32_t height,
+std::unique_ptr<FBO> FBO::create(uint32_t width, uint32_t height,
                                  uint32_t buffer_type) {
   return std::make_unique<FBO>(width, height, buffer_type);
 }

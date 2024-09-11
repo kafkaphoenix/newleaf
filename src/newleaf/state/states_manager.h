@@ -26,7 +26,7 @@ class StatesManager {
 
     const std::map<std::string, std::string, NumericComparator>& get_metrics();
 
-    static std::unique_ptr<StatesManager> Create();
+    static std::unique_ptr<StatesManager> create();
 
   private:
     std::vector<std::unique_ptr<State>> m_states;

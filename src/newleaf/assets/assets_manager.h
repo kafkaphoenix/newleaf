@@ -24,7 +24,7 @@ class AssetsManager {
 
     void clear();
 
-    static std::unique_ptr<AssetsManager> Create();
+    static std::unique_ptr<AssetsManager> create();
 
     const std::unordered_map<
       std::string, std::unordered_map<std::string, std::shared_ptr<Asset>>>&

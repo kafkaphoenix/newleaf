@@ -1,12 +1,12 @@
 #pragma once
 
-#include "buffer.h"
 #include "../utils/numeric_comparator.h"
+#include "buffer.h"
 
 #include <map>
 #include <memory>
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace nl {
 
@@ -35,7 +35,7 @@ class VAO {
     bool is_binded() const { return m_binded; }
     const std::map<std::string, std::string, NumericComparator>& to_map();
 
-    static std::shared_ptr<VAO> Create();
+    static std::shared_ptr<VAO> create();
 
   private:
     uint32_t m_id{};

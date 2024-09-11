@@ -41,11 +41,11 @@ struct CMesh {
         vertex_type(std::move(vt)) {}
 
     void setup_mesh() {
-      vao = VAO::Create();
+      vao = VAO::create();
       if (vertex_type == "camera") {
-        vao->attach_vertex(VBO::Create(vertices), VAO::VertexType::VERTEX);
+        vao->attach_vertex(VBO::create(vertices), VAO::VertexType::VERTEX);
       } else if (vertex_type == "shape") { // TODO this is not used
-        vao->attach_vertex(VBO::Create(vertices),
+        vao->attach_vertex(VBO::create(vertices),
                            VAO::VertexType::SHAPE_VERTEX);
       } else if (vertex_type == "terrain") { // TODO maybe a better way to do
                                              // this using vertices?
@@ -53,14 +53,14 @@ struct CMesh {
       } else {
         ENGINE_ASSERT(false, "unknown vertex type {}", vertex_type);
       }
-      vao->set_index(IBO::Create(indices));
+      vao->set_index(IBO::create(indices));
     }
 
     void update_mesh() {
       if (vertex_type == "camera") {
-        vao->update_vertex(VBO::Create(vertices), 0, VAO::VertexType::VERTEX);
+        vao->update_vertex(VBO::create(vertices), 0, VAO::VertexType::VERTEX);
       } else if (vertex_type == "shape") {
-        vao->update_vertex(VBO::Create(vertices), 0,
+        vao->update_vertex(VBO::create(vertices), 0,
                            VAO::VertexType::SHAPE_VERTEX);
       } else if (vertex_type == "terrain") {
         vao->update_vertex(std::move(vbo), 0, VAO::VertexType::TERRAIN_VERTEX);

@@ -8,11 +8,11 @@
 namespace nl {
 
 std::shared_ptr<VAO>
-ShapeFactory::Create(const std::vector<ShapeVertex>& vertices,
+ShapeFactory::create(const std::vector<ShapeVertex>& vertices,
                      const std::vector<uint32_t>& indices) {
-  std::shared_ptr<VAO> vao = VAO::Create();
+  std::shared_ptr<VAO> vao = VAO::create();
   vao->attach_vertex(VBO::CreateShape(vertices), VAO::VertexType::SHAPE_VERTEX);
-  vao->set_index(IBO::Create(indices));
+  vao->set_index(IBO::create(indices));
   return vao;
 }
 
@@ -23,7 +23,7 @@ std::shared_ptr<VAO> ShapeFactory::create_triangle(float size) {
 
   std::vector<uint32_t> indices = {0, 1, 2};
 
-  return Create(vertices, indices);
+  return create(vertices, indices);
 }
 
 std::shared_ptr<VAO> ShapeFactory::create_rectangle(float width, float height,
@@ -42,7 +42,7 @@ std::shared_ptr<VAO> ShapeFactory::create_rectangle(float width, float height,
 
   std::vector<uint32_t> indices = {0, 1, 2, 2, 3, 0};
 
-  return Create(vertices, indices);
+  return create(vertices, indices);
 }
 
 std::shared_ptr<VAO> ShapeFactory::create_cube(float width, float height,
@@ -91,7 +91,7 @@ std::shared_ptr<VAO> ShapeFactory::create_cube(float width, float height,
                                    16, 17, 18, 18, 19, 16, 20, 21, 22, 22, 23,
                                    20};
 
-  return Create(vertices, indices);
+  return create(vertices, indices);
 }
 
 std::shared_ptr<VAO> ShapeFactory::create_circle(float radius,
@@ -118,7 +118,7 @@ std::shared_ptr<VAO> ShapeFactory::create_circle(float radius,
     indices.push_back((i + 1) % segments + 1);
   }
 
-  return Create(vertices, indices);
+  return create(vertices, indices);
 }
 
 }

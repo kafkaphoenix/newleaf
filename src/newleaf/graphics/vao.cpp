@@ -166,5 +166,5 @@ const std::map<std::string, std::string, NumericComparator>& VAO::to_map() {
   return m_info;
 }
 
-std::shared_ptr<VAO> VAO::Create() { return std::make_shared<VAO>(); }
+std::shared_ptr<VAO> VAO::create() { return std::make_shared<VAO>(); }
 }

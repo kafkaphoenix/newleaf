@@ -57,7 +57,7 @@ void AssetsManager::clear() {
   m_dirty = false;
 }
 
-static std::unique_ptr<AssetsManager> Create() {
+static std::unique_ptr<AssetsManager> create() {
   return std::make_unique<AssetsManager>();
 }
 

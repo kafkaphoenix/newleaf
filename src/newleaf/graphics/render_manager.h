@@ -61,7 +61,7 @@ class RenderManager {
     void clear();
     void reset_metrics();
     const std::map<std::string, std::string, NumericComparator>& get_metrics();
-    static std::unique_ptr<RenderManager> Create();
+    static std::unique_ptr<RenderManager> create();
 
   private:
     glm::mat4 m_view{};

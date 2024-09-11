@@ -194,7 +194,7 @@ ShaderProgram::to_map() {
   return m_info;
 }
 
-std::unique_ptr<ShaderProgram> ShaderProgram::Create(std::string&& name) {
+std::unique_ptr<ShaderProgram> ShaderProgram::create(std::string&& name) {
   return std::make_unique<ShaderProgram>(std::move(name));
 }
 

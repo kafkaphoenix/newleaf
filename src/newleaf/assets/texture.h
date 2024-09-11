@@ -49,7 +49,7 @@ class Texture : public Asset {
     static constexpr bool WRAP = true;
     static constexpr bool DONT_WRAP = false;
 
-    static std::unique_ptr<Texture> Create(uint32_t width, uint32_t height,
+    static std::unique_ptr<Texture> create(uint32_t width, uint32_t height,
                                            GLenum glFormat,
                                            std::optional<bool> wrap);
 

@@ -126,7 +126,7 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
 
   // 0.6 is the default value for diffuse in assimp
   if (textures.empty() and materialData.diffuse == glm::vec3(0.6f)) {
-    const auto& assets_manager = Application::Get().get_assets_manager();
+    const auto& assets_manager = Application::get().get_assets_manager();
     if (assets_manager->contains<Texture>("default")) {
       textures.emplace_back(assets_manager->get<Texture>("default"));
     } else {

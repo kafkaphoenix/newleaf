@@ -90,7 +90,7 @@ class WindowsManager {
     void toggle_fit_to_window(bool fit_to_window);
 
     static std::unique_ptr<WindowsManager>
-    Create(const std::unique_ptr<SettingsManager>& settings_manager);
+    create(const std::unique_ptr<SettingsManager>& settings_manager);
 
   private:
     GLFWwindow* m_window{}; // TODO: this class should be a window manager, and

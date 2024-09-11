@@ -219,7 +219,7 @@ bool Texture::operator==(const Asset& other) const {
   return m_id == otherTexture.m_id;
 }
 
-std::unique_ptr<Texture> Texture::Create(uint32_t width, uint32_t height,
+std::unique_ptr<Texture> Texture::create(uint32_t width, uint32_t height,
                                          GLenum glFormat,
                                          std::optional<bool> wrap) {
   return std::make_unique<Texture>(width, height, glFormat, wrap);

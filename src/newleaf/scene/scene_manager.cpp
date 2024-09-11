@@ -108,7 +108,7 @@ void SceneManager::on_component_cloned(entt::entity e, Component& c) {
                 entt::type_id<Component>().name());
 }
 
-std::unique_ptr<SceneManager> SceneManager::Create() {
+std::unique_ptr<SceneManager> SceneManager::create() {
   return std::make_unique<SceneManager>();
 }
 
@@ -131,21 +131,21 @@ void SceneManager::delete_entity(entt::entity& e) {
 
 void SceneManager::create_scene(std::string scene_name,
                                 std::string scene_path) {
-  auto& app = Application::Get();
+  auto& app = Application::get();
   m_scene_factory.create_scene(scene_name, scene_path, app.get_assets_manager(),
                                app.get_render_manager(), m_registry);
   print_scene();
 }
 
 void SceneManager::reload_scene(bool reload_prototypes) {
-  auto& app = Application::Get();
+  auto& app = Application::get();
   m_scene_factory.reload_scene(app.get_assets_manager(),
                                app.get_render_manager(), m_registry,
                                reload_prototypes);
 }
 
 void SceneManager::clear_scene() {
-  m_scene_factory.clear_scene(Application::Get().get_render_manager(),
+  m_scene_factory.clear_scene(Application::get().get_render_manager(),
                               m_registry);
   m_systems.clear();
   m_named_systems.clear();
@@ -209,14 +209,14 @@ void SceneManager::create_prototypes(
   std::string_view prefab_name, const std::vector<std::string>& prototype_ids) {
   m_scene_factory.get_entity_factory().create_prototypes(
     prefab_name, prototype_ids, m_registry,
-    Application::Get().get_assets_manager());
+    Application::get().get_assets_manager());
 }
 
 void SceneManager::update_prototypes(
   std::string_view prefab_name, const std::vector<std::string>& prototype_ids) {
   m_scene_factory.get_entity_factory().update_prototypes(
     prefab_name, prototype_ids, m_registry,
-    Application::Get().get_assets_manager());
+    Application::get().get_assets_manager());
 }
 
 void SceneManager::remove_prototypes(

@@ -96,7 +96,7 @@ StatesManager::get_metrics() {
   return m_metrics;
 }
 
-std::unique_ptr<StatesManager> StatesManager::Create() {
+std::unique_ptr<StatesManager> StatesManager::create() {
   return std::make_unique<StatesManager>();
 }
 }

@@ -32,7 +32,7 @@ class LayersManager {
     auto rbegin() const { return m_layers.rbegin(); }
     auto rend() const { return m_layers.rend(); }
 
-    static std::unique_ptr<LayersManager> Create();
+    static std::unique_ptr<LayersManager> create();
 
   private:
     std::vector<std::unique_ptr<Layer>> m_layers;

@@ -129,7 +129,7 @@ struct CTexture {
       if (paths.size() == 0) {
         return;
       }
-      const auto& assets_manager = Application::Get().get_assets_manager();
+      const auto& assets_manager = Application::get().get_assets_manager();
 
       textures.reserve(paths.size());
       for (std::string_view path : paths) {

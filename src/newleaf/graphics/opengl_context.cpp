@@ -26,7 +26,7 @@ void OpenGLContext::set_context(GLFWwindow* w) {
 
 void OpenGLContext::swap_buffers() { glfwSwapBuffers(m_window); }
 
-std::unique_ptr<OpenGLContext> OpenGLContext::Create(GLFWwindow* w) {
+std::unique_ptr<OpenGLContext> OpenGLContext::create(GLFWwindow* w) {
   return std::make_unique<OpenGLContext>(w);
 }
 }

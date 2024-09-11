@@ -17,7 +17,7 @@ class ShapeFactory {
     static std::shared_ptr<VAO> create_circle(float radius, uint32_t segments);
 
   private:
-    static std::shared_ptr<VAO> Create(const std::vector<ShapeVertex>& vertices,
+    static std::shared_ptr<VAO> create(const std::vector<ShapeVertex>& vertices,
                                        const std::vector<uint32_t>& indices);
 };
 }

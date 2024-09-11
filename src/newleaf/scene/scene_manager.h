@@ -36,7 +36,7 @@ class SceneManager {
     template <typename Component>
     void on_component_cloned(entt::entity e, Component& c);
 
-    static std::unique_ptr<SceneManager> Create();
+    static std::unique_ptr<SceneManager> create();
 
     // scene factory methods
     entt::entity create_entity(std::string_view prefab_id,
