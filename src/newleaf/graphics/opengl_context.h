@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
-
 #include <memory>
+
+#include <GLFW/glfw3.h>
 
 namespace nl {
 

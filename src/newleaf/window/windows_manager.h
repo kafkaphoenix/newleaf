@@ -1,5 +1,9 @@
 #pragma once
 
+#include <functional>
+#include <memory>
+#include <string>
+
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
@@ -7,13 +11,9 @@
 #include "../graphics/opengl_context.h"
 #include "../settings/settings_manager.h"
 
-#include <functional>
-#include <memory>
-#include <string>
-
 namespace nl {
 
-using EventCallbackFn = std::function<void(Event&)>;
+using EventCallbackFn = std::function<void(Event&&)>;
 
 enum class CursorMode { normal = 0, hidden, disabled };
 
@@ -50,8 +50,6 @@ struct WindowData {
     bool fit_to_window{};
 };
 
-static uint32_t s_glfw_window_count{};
-
 class WindowsManager {
   public:
     WindowsManager(const std::unique_ptr<SettingsManager>& settings_manager);
@@ -63,6 +61,7 @@ class WindowsManager {
 
     GLFWwindow* get_native_window() const { return m_window; }
     const WindowData& get_window_data() const { return m_data; }
+    uint32_t get_window_count() { return m_window_count; }
 
     void set_position(int x, int y);
     void set_last_mouse_position(float x, float y);
@@ -93,6 +92,7 @@ class WindowsManager {
     create(const std::unique_ptr<SettingsManager>& settings_manager);
 
   private:
+    uint32_t m_window_count{};
     GLFWwindow* m_window{}; // TODO: this class should be a window manager, and
                             // this should be a vector of windows
     std::unique_ptr<OpenGLContext> m_context;

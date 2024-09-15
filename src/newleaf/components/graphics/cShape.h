@@ -1,11 +1,12 @@
 #pragma once
 
-#include <entt/entt.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
 #include <map>
 #include <string>
 #include <vector>
+
+#include <entt/entt.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include "../../graphics/shape_factory.h"
 #include "../../logging/log_manager.h"
@@ -18,7 +19,7 @@
 namespace nl {
 
 struct CShape {
-    enum class Type { Triangle, Rectangle, Cube, Circle };
+    enum class Type { triangle, rectangle, cube, circle };
 
     std::string _type;
     Type type;
@@ -61,21 +62,21 @@ struct CShape {
                     "cube depth must be greater than 0");
       CMesh mesh;
       if (_type == "triangle") {
-        type = CShape::Type::Triangle;
+        type = CShape::Type::triangle;
         mesh.vao = ShapeFactory::create_triangle(size.x);
         mesh.vertex_type = "shape";
       } else if (_type == "rectangle") {
-        type = CShape::Type::Rectangle;
+        type = CShape::Type::rectangle;
         mesh.vao =
           ShapeFactory::create_rectangle(size.x, size.y, repeat_texture);
         mesh.vertex_type = "shape";
       } else if (_type == "cube") {
-        type = CShape::Type::Cube;
+        type = CShape::Type::cube;
         mesh.vao =
           ShapeFactory::create_cube(size.x, size.y, size.z, repeat_texture);
         mesh.vertex_type = "shape";
       } else if (_type == "circle") {
-        type = CShape::Type::Circle;
+        type = CShape::Type::circle;
         mesh.vao = ShapeFactory::create_circle(size.x, size.y);
         mesh.vertex_type = "shape";
       } else {

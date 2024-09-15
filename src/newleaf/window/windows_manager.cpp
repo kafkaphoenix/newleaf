@@ -23,7 +23,7 @@ WindowsManager::WindowsManager(
   m_data.fit_to_window = settings_manager->fit_to_window;
   ENGINE_TRACE("creating window {} with resolution {}x{}...",
                m_data.window_title, m_data.width, m_data.height);
-  if (s_glfw_window_count == 0) {
+  if (m_window_count == 0) {
     ENGINE_ASSERT(glfwInit(), "failed to initialize glfw!");
     glfwSetErrorCallback([](int error, const char* description) {
       ENGINE_ASSERT(false, "glfw error! {0}: {1}", error, description);
@@ -68,7 +68,7 @@ WindowsManager::WindowsManager(
     set_position(xpos, ypos);
   }
 
-  ++s_glfw_window_count;
+  ++m_window_count;
 
   m_context = OpenGLContext::create(m_window);
   m_context->init(); // make context current window
@@ -95,8 +95,7 @@ WindowsManager::WindowsManager(
       }
 
       // for fullscreen it will update the resolution
-      WindowResizeEvent event(width, height);
-      data.event_callback(event);
+      data.event_callback(WindowResizeEvent(width, height));
     });
 
   glfwSetWindowPosCallback(
@@ -107,16 +106,14 @@ WindowsManager::WindowsManager(
       if (not data.fullscreen) {
         data.position_x = xpos;
         data.position_y = ypos;
-        WindowMovedEvent event(xpos, ypos);
-        data.event_callback(event);
+        data.event_callback(WindowMovedEvent(xpos, ypos));
       }
     });
 
   glfwSetWindowCloseCallback(m_window, [](GLFWwindow* window) {
     WindowData& data =
       *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
-    WindowCloseEvent event;
-    data.event_callback(event);
+    data.event_callback(WindowCloseEvent());
   });
 
   glfwSetKeyCallback(
@@ -126,49 +123,43 @@ WindowsManager::WindowsManager(
 
       switch (action) {
       case GLFW_PRESS: {
-        KeyPressedEvent event(key, false);
-        data.event_callback(event);
+        data.event_callback(KeyPressedEvent(static_cast<Key>(key), false));
         break;
       }
       case GLFW_RELEASE: {
-        KeyReleasedEvent event(key);
-        data.event_callback(event);
+        data.event_callback(KeyReleasedEvent(static_cast<Key>(key)));
         break;
       }
       case GLFW_REPEAT: {
-        KeyPressedEvent event(key, true);
-        data.event_callback(event);
+        data.event_callback(KeyPressedEvent(static_cast<Key>(key), true));
         break;
       }
       }
     });
 
-  glfwSetCharCallback(m_window, [](GLFWwindow* window, uint32_t key_code) {
+  glfwSetCharCallback(m_window, [](GLFWwindow* window, uint32_t key) {
     WindowData& data =
       *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-    KeyTypedEvent event(key_code);
-    data.event_callback(event);
+    data.event_callback(KeyTypedEvent(static_cast<Key>(key)));
   });
 
-  glfwSetMouseButtonCallback(
-    m_window, [](GLFWwindow* window, int button, int action, int) {
-      WindowData& data =
-        *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
+  glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button,
+                                          int action, int) {
+    WindowData& data =
+      *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-      switch (action) {
-      case GLFW_PRESS: {
-        MouseButtonPressedEvent event(button);
-        data.event_callback(event);
-        break;
-      }
-      case GLFW_RELEASE: {
-        MouseButtonReleasedEvent event(button);
-        data.event_callback(event);
-        break;
-      }
-      }
-    });
+    switch (action) {
+    case GLFW_PRESS: {
+      data.event_callback(MouseButtonPressedEvent(static_cast<Mouse>(button)));
+      break;
+    }
+    case GLFW_RELEASE: {
+      data.event_callback(MouseButtonReleasedEvent(static_cast<Mouse>(button)));
+      break;
+    }
+    }
+  });
 
   glfwSetCursorPosCallback(
     m_window, [](GLFWwindow* window, double xpos, double ypos) {
@@ -196,8 +187,7 @@ WindowsManager::WindowsManager(
       data.mouse_x = data.debug_mouse_x;
       data.mouse_y = data.debug_mouse_y;
 
-      MouseMovedEvent event(xoffset, yoffset);
-      data.event_callback(event);
+      data.event_callback(MouseMovedEvent(xoffset, yoffset));
     });
 
   glfwSetScrollCallback(
@@ -209,8 +199,7 @@ WindowsManager::WindowsManager(
         return;
       }
 
-      MouseScrolledEvent event((float)xoffset, (float)yoffset);
-      data.event_callback(event);
+      data.event_callback(MouseScrolledEvent((float)xoffset, (float)yoffset));
     });
 
   glfwSetWindowIconifyCallback(m_window, [](GLFWwindow* window, int minimized) {
@@ -219,12 +208,10 @@ WindowsManager::WindowsManager(
 
     if (minimized == GLFW_TRUE) {
       data.minimized = true;
-      WindowMinimizedEvent event;
-      data.event_callback(event);
+      data.event_callback(WindowMinimizedEvent());
     } else {
       data.minimized = false;
-      WindowRestoredEvent event;
-      data.event_callback(event);
+      data.event_callback(WindowRestoredEvent());
     }
   });
 
@@ -235,12 +222,10 @@ WindowsManager::WindowsManager(
 
       if (maximized == GLFW_TRUE) {
         data.maximized = true;
-        WindowMaximizedEvent event;
-        data.event_callback(event);
+        data.event_callback(WindowMaximizedEvent());
       } else {
         data.maximized = false;
-        WindowRestoredEvent event;
-        data.event_callback(event);
+        data.event_callback(WindowRestoredEvent());
       }
     });
 
@@ -250,12 +235,10 @@ WindowsManager::WindowsManager(
 
     if (focused == GLFW_TRUE) {
       data.focused = true;
-      WindowFocusEvent event;
-      data.event_callback(event);
+      data.event_callback(WindowFocusEvent());
     } else {
       data.focused = false;
-      WindowLostFocusEvent event;
-      data.event_callback(event);
+      data.event_callback(WindowLostFocusEvent());
     }
   });
 }
@@ -267,9 +250,9 @@ WindowsManager::~WindowsManager() {
 
 void WindowsManager::shutdown() {
   glfwDestroyWindow(m_window);
-  --s_glfw_window_count;
+  --m_window_count;
 
-  if (s_glfw_window_count == 0) {
+  if (m_window_count == 0) {
     ENGINE_WARN("no more windows! terminating glfw");
     glfwTerminate();
   }
@@ -280,7 +263,9 @@ void WindowsManager::on_update() {
   glfwPollEvents();
 }
 
-void WindowsManager::trigger_event(Event&& e) { m_data.event_callback(e); }
+void WindowsManager::trigger_event(Event&& e) {
+  m_data.event_callback(std::move(e));
+}
 
 void WindowsManager::set_position(int x, int y) {
   if (Application::get().get_settings_manager()->fullscreen) {

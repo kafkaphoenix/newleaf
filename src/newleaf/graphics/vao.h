@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../utils/numeric_comparator.h"
-#include "buffer.h"
-
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
+
+#include "../utils/numeric_comparator.h"
+#include "buffer.h"
 
 namespace nl {
 
@@ -18,7 +18,7 @@ class VAO {
     void bind();
     void unbind();
 
-    enum class VertexType { VERTEX, SHAPE_VERTEX, TERRAIN_VERTEX };
+    enum class VertexType { vertex, shape_vertex, terrain_vertex };
     void attach_vertex(std::shared_ptr<VBO>&& vbo, VertexType type);
     void attach_vertex_attributes();
     void attach_shape_vertex_attributes();

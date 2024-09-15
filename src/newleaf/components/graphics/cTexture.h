@@ -1,15 +1,15 @@
 #pragma once
 
-#define GLM_FORCE_CTOR_INIT
-
-#include <entt/entt.hpp>
 #include <format>
-#include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
+
+#include <entt/entt.hpp>
+#define GLM_FORCE_CTOR_INIT
+#include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include "../../application/application.h"
 #include "../../assets/texture.h"
@@ -22,13 +22,13 @@ namespace nl {
 
 struct CTexture {
     enum class DrawMode {
-      COLOR,
-      TEXTURE,
-      TEXTURE_ATLAS,
-      TEXTURES_BLEND,
-      TEXTURE_ATLAS_BLEND,
-      TEXTURE_BLEND_COLOR,
-      TEXTURE_ATLAS_BLEND_COLOR
+      color,
+      texture,
+      texture_atlas,
+      texture_blend,
+      texture_atlas_blend,
+      texture_blend_color,
+      texture_atlas_blend_color
     };
 
     std::vector<std::string> paths;
@@ -101,25 +101,25 @@ struct CTexture {
 
     void set_draw_mode() { // TODO maybe send assets manager to this function?
       if (_draw_mode == "color") {
-        draw_mode = DrawMode::COLOR;
+        draw_mode = DrawMode::color;
       } else if (_draw_mode == "texture") {
-        draw_mode = DrawMode::TEXTURE;
+        draw_mode = DrawMode::texture;
       } else if (_draw_mode == "texture_atlas") {
-        draw_mode = DrawMode::TEXTURE_ATLAS;
+        draw_mode = DrawMode::texture_atlas;
       } else if (_draw_mode == "textures_blend") { // blend two textures
-        draw_mode = DrawMode::TEXTURES_BLEND;
+        draw_mode = DrawMode::texture_blend;
       } else if (_draw_mode ==
                  "texture_atlas_blend") { // blend two textures in the atlas //
                                           // TODO: this is not implemented
-        draw_mode = DrawMode::TEXTURE_ATLAS_BLEND;
+        draw_mode = DrawMode::texture_atlas_blend;
       } else if (_draw_mode ==
                  "texture_blend_color") { // blend texture with a color
-        draw_mode = DrawMode::TEXTURE_BLEND_COLOR;
+        draw_mode = DrawMode::texture_blend_color;
       } else if (_draw_mode ==
                  "texture_atlas_blend_color") { // blend texture in the atlas
                                                 // with
                                                 // a color
-        draw_mode = DrawMode::TEXTURE_ATLAS_BLEND_COLOR;
+        draw_mode = DrawMode::texture_atlas_blend_color;
       } else {
         ENGINE_ASSERT(false, "unknown draw mode {}", _draw_mode);
       }

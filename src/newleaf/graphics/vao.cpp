@@ -25,22 +25,22 @@ void VAO::unbind() {
 
 void VAO::attach_vertex(std::shared_ptr<VBO>&& vbo, VertexType type) {
   size_t vertexSize = 0;
-  if (type == VertexType::VERTEX) {
+  if (type == VertexType::vertex) {
     vertexSize = sizeof(Vertex);
-  } else if (type == VertexType::SHAPE_VERTEX) {
+  } else if (type == VertexType::shape_vertex) {
     vertexSize = sizeof(ShapeVertex);
-  } else if (type == VertexType::TERRAIN_VERTEX) {
+  } else if (type == VertexType::terrain_vertex) {
     vertexSize = sizeof(TerrainVertex);
   }
 
   glVertexArrayVertexBuffer(m_id, 0, vbo->get_id(), 0, vertexSize);
   m_vbos.emplace_back(std::move(vbo));
 
-  if (type == VertexType::VERTEX) {
+  if (type == VertexType::vertex) {
     attach_vertex_attributes();
-  } else if (type == VertexType::SHAPE_VERTEX) {
+  } else if (type == VertexType::shape_vertex) {
     attach_shape_vertex_attributes();
-  } else if (type == VertexType::TERRAIN_VERTEX) {
+  } else if (type == VertexType::terrain_vertex) {
     attach_terrain_vertex_attributes();
   }
   m_dirty = true;

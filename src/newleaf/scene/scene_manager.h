@@ -1,6 +1,5 @@
 #pragma once
 
-#include <entt/entt.hpp>
 #include <map>
 #include <memory>
 #include <optional>
@@ -8,6 +7,8 @@
 #include <string>
 #include <string_view>
 #include <vector>
+
+#include <entt/entt.hpp>
 
 #include "../assets/assets_manager.h"
 #include "../events/event.h"

@@ -1,12 +1,12 @@
 #pragma once
 
-#define GLM_FORCE_CTOR_INIT
-
-#include <entt/entt.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
 #include <map>
 #include <string>
+
+#include <entt/entt.hpp>
+#define GLM_FORCE_CTOR_INIT
+#include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include "../../logging/log_manager.h"
 #include "../../utils/assert.h"
@@ -15,11 +15,11 @@
 namespace nl {
 
 struct CLight {
-    enum class Type { // https://docs.unity3d.com/Manual/Lighting.html
-      Point,
-      Spot,
-      Directional,
-      Area,
+    enum class Type {
+      point,
+      spot,
+      directional,
+      area,
     };
 
     std::string _type;
@@ -61,13 +61,13 @@ struct CLight {
 
     void set_light_type() {
       if (_type == "directional") {
-        type = Type::Directional;
+        type = Type::directional;
       } else if (_type == "point") {
-        type = Type::Point;
+        type = Type::point;
       } else if (_type == "spot") {
-        type = Type::Spot;
+        type = Type::spot;
       } else if (_type == "area") {
-        type = Type::Area;
+        type = Type::area;
       } else {
         ENGINE_ASSERT(false, "unknown light type {}", _type);
       }

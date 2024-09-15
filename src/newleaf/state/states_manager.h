@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../utils/numeric_comparator.h"
-#include "state.h"
-
 #include <map>
 #include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
+
+#include "../utils/numeric_comparator.h"
+#include "state.h"
 
 namespace nl {
 

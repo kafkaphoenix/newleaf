@@ -1,13 +1,7 @@
 #pragma once
 
-#include <stdint.h>
-
 namespace nl {
-
-using KeyCode = uint32_t;
-namespace key {
-
-enum : KeyCode {
+enum class Key : uint32_t {
   // From glfw3.h
   Space = 32,
   Apostrophe = 39, /* ' */
@@ -140,5 +134,4 @@ enum : KeyCode {
   RightSuper = 347,
   Menu = 348
 };
-}
 }

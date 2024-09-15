@@ -1,8 +1,9 @@
 #pragma once
 
-#include "vao.h"
 #include <array>
 #include <memory>
+
+#include "vao.h"
 
 namespace nl {
 class RenderAPI {

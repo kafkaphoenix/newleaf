@@ -1,9 +1,9 @@
 #include "opengl_context.h"
 
+#include <glad/glad.h>
+
 #include "../logging/log_manager.h"
 #include "../utils/assert.h"
-
-#include <glad/glad.h>
 
 namespace nl {
 

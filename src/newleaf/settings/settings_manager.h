@@ -1,12 +1,12 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
-
-using json = nlohmann::json;
-
 #include <array>
 #include <string>
 #include <vector>
+
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 namespace nl {
 

@@ -1,5 +1,7 @@
 #include "imgui_layer.h"
 
+#include <format>
+
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -9,8 +11,6 @@
 #include "../imgui/im_debugger.h"
 #include "../imgui/im_utils.h"
 #include "../logging/log_manager.h"
-
-#include <format>
 
 namespace nl {
 

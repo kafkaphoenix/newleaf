@@ -1,15 +1,15 @@
 #pragma once
 
+#include <mutex>
+#include <shared_mutex> // read-write lock (many readers allowed, but writing must be exclusive)
+#include <string>
+#include <string_view>
+#include <vector>
+
 #pragma warning(push, 0)
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/spdlog.h>
 #pragma warning(pop)
-
-#include <shared_mutex> // read-write lock (many readers allowed, but writing must be exclusive)
-#include <string>
-#include <vector>
-#include <mutex>
-#include <string_view>
 
 namespace nl {
 

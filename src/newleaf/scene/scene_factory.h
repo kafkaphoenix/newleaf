@@ -1,5 +1,11 @@
 #pragma once
 
+#include <map>
+#include <memory>
+#include <optional>
+#include <string>
+#include <string_view>
+
 #include <entt/entt.hpp>
 
 #include "../assets/assets_manager.h"
@@ -7,12 +13,6 @@
 #include "../graphics/render_manager.h"
 #include "../utils/numeric_comparator.h"
 #include "entity_factory.h"
-
-#include <map>
-#include <memory>
-#include <optional>
-#include <string>
-#include <string_view>
 
 namespace nl {
 

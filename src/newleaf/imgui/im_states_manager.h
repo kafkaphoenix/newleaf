@@ -1,9 +1,10 @@
 #pragma once
 
-#include <imgui.h>
 #include <map>
 #include <memory>
 #include <string>
+
+#include <imgui.h>
 
 #include "../settings/settings_manager.h"
 #include "../state/states_manager.h"

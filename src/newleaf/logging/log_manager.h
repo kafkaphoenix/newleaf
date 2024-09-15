@@ -1,11 +1,11 @@
 #pragma once
 
+#include <memory>
+#include <string_view>
+
 #pragma warning(push, 0)
 #include <spdlog/spdlog.h>
 #pragma warning(pop)
-
-#include <memory>
-#include <string_view>
 
 namespace nl {
 
@@ -29,44 +29,42 @@ class LogManager {
     static void toggle_engine_backtrace_logger(bool enable);
     static void toggle_app_backtrace_logger(bool enable);
     static std::shared_ptr<spdlog::logger>& get_engine_logger() {
-      return s_engine_logger;
+      return m_engine_logger;
     }
     static std::shared_ptr<spdlog::logger>& get_app_logger() {
-      return s_app_logger;
+      return m_app_logger;
     }
     static std::shared_ptr<spdlog::logger>& get_engine_backtrace_logger() {
-      return s_engine_backtrace_logger;
+      return m_engine_backtrace_logger;
     }
     static std::shared_ptr<spdlog::logger>& get_app_backtrace_logger() {
-      return s_app_backtrace_logger;
+      return m_app_backtrace_logger;
     }
     static std::string_view get_engine_logger_level() {
       return std::string_view(
-        spdlog::level::to_string_view(s_engine_logger->level()));
+        spdlog::level::to_string_view(m_engine_logger->level()));
     }
     static std::string_view get_app_logger_level() {
       return std::string_view(
-        spdlog::level::to_string_view(s_app_logger->level()));
+        spdlog::level::to_string_view(m_app_logger->level()));
     }
     static std::string_view get_engine_logger_flush_level() {
       return std::string_view(
-        spdlog::level::to_string_view(s_engine_logger->flush_level()));
+        spdlog::level::to_string_view(m_engine_logger->flush_level()));
     }
     static std::string_view get_app_logger_flush_level() {
       return std::string_view(
-        spdlog::level::to_string_view(s_app_logger->flush_level()));
+        spdlog::level::to_string_view(m_app_logger->flush_level()));
     }
     static bool is_engine_logger_enabled() {
-      return s_engine_logger->level() != OFF;
+      return m_engine_logger->level() != OFF;
     }
-    static bool is_app_logger_enabled() {
-      return s_app_logger->level() != OFF;
-    }
+    static bool is_app_logger_enabled() { return m_app_logger->level() != OFF; }
     static bool is_engine_backtrace_logger_enabled() {
-      return s_engine_backtrace_logger->level() != OFF;
+      return m_engine_backtrace_logger->level() != OFF;
     }
     static bool is_app_backtrace_logger_enabled() {
-      return s_app_backtrace_logger->level() != OFF;
+      return m_app_backtrace_logger->level() != OFF;
     }
 
     static constexpr spdlog::level::level_enum TRACE = spdlog::level::trace;
@@ -74,22 +72,19 @@ class LogManager {
     static constexpr spdlog::level::level_enum INFO = spdlog::level::info;
     static constexpr spdlog::level::level_enum WARN = spdlog::level::warn;
     static constexpr spdlog::level::level_enum ERR = spdlog::level::err;
-    static constexpr spdlog::level::level_enum CRITICAL = spdlog::level::critical;
+    static constexpr spdlog::level::level_enum CRITICAL =
+      spdlog::level::critical;
     static constexpr spdlog::level::level_enum OFF = spdlog::level::off;
 
   private:
-    inline static std::shared_ptr<spdlog::logger> s_engine_logger;
-    inline static std::shared_ptr<spdlog::logger> s_app_logger;
-    inline static std::shared_ptr<spdlog::logger> s_engine_backtrace_logger;
-    inline static std::shared_ptr<spdlog::logger> s_app_backtrace_logger;
-    inline static enum ::spdlog::level::level_enum s_engine_log_level =
-      TRACE;
-    inline static enum ::spdlog::level::level_enum s_app_log_level =
-      TRACE;
-    inline static enum ::spdlog::level::level_enum s_engine_flush_level =
-      TRACE;
-    inline static enum ::spdlog::level::level_enum s_app_flush_level =
-      TRACE;
+    inline static std::shared_ptr<spdlog::logger> m_engine_logger;
+    inline static std::shared_ptr<spdlog::logger> m_app_logger;
+    inline static std::shared_ptr<spdlog::logger> m_engine_backtrace_logger;
+    inline static std::shared_ptr<spdlog::logger> m_app_backtrace_logger;
+    inline static enum ::spdlog::level::level_enum m_engine_log_level = TRACE;
+    inline static enum ::spdlog::level::level_enum m_app_log_level = TRACE;
+    inline static enum ::spdlog::level::level_enum m_engine_flush_level = TRACE;
+    inline static enum ::spdlog::level::level_enum m_app_flush_level = TRACE;
 };
 
 }

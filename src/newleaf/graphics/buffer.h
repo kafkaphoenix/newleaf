@@ -1,9 +1,10 @@
 #pragma once
 
-#define GLM_FORCE_CTOR_INIT
-#include <glm/glm.hpp>
 #include <memory>
 #include <vector>
+
+#define GLM_FORCE_CTOR_INIT
+#include <glm/glm.hpp>
 
 namespace nl {
 #define MAX_BONE_INFLUENCE 4 // TODO use

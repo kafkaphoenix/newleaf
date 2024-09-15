@@ -1,9 +1,9 @@
 #pragma once
 
-#include "event.h"
-
 #include <string>
 #include <string_view>
+
+#include "event.h"
 
 namespace nl {
 

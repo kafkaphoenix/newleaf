@@ -1,14 +1,14 @@
 #pragma once
 
+#include <shared_mutex> // read-write lock (many readers allowed, but writing must be exclusive)
+#include <string>
+#include <vector>
+
 #include <imgui.h>
 #pragma warning(push, 0)
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/spdlog.h>
 #pragma warning(pop)
-
-#include <shared_mutex> // read-write lock (many readers allowed, but writing must be exclusive)
-#include <string>
-#include <vector>
 
 namespace nl {
 class ImGuiLogsink : public spdlog::sinks::base_sink<std::mutex> {

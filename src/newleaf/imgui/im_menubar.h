@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <imgui.h>
 
 #include "../assets/assets_manager.h"
@@ -9,8 +11,6 @@
 #include "im_about.h"
 #include "im_logger.h"
 #include "im_metrics.h"
-
-#include <memory>
 
 namespace nl {
 

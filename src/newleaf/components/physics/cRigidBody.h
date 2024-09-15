@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../../logging/log_manager.h"
-#include "../../utils/numeric_comparator.h"
-
 #include <map>
 #include <string>
+
+#include "../../logging/log_manager.h"
+#include "../../utils/numeric_comparator.h"
 
 namespace nl {
 

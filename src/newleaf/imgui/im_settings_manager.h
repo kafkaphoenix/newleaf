@@ -1,5 +1,9 @@
 #pragma once
 
+#include <format>
+#include <memory>
+#include <string>
+
 #include <imgui.h>
 #include <imgui_stdlib.h>
 
@@ -8,10 +12,6 @@
 #include "../logging/log_manager.h"
 #include "../settings/settings_manager.h"
 #include "im_utils.h"
-
-#include <format>
-#include <memory>
-#include <string>
 
 namespace nl {
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <imgui.h>
 
 #include "../assets/assets_manager.h"
@@ -12,8 +14,6 @@
 #include "im_scene_manager.h"
 #include "im_settings_manager.h"
 #include "im_states_manager.h"
-
-#include <memory>
 
 namespace nl {
 

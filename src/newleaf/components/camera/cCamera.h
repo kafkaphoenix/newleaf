@@ -1,28 +1,28 @@
 #pragma once
 
+#include <map>
+#include <string>
+
+#include <entt/entt.hpp>
 #define GLM_FORCE_CTOR_INIT
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include "../../logging/log_manager.h"
 #include "../../utils/assert.h"
 #include "../../utils/numeric_comparator.h"
 
-#include <entt/entt.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <map>
-#include <string>
-
 namespace nl {
 
 struct CCamera {
-    enum class CameraType { Perspective, Orthographic };
+    enum class CameraType { perspective, orthographic };
 
     enum class AspectRatio {
       _16_9,
       _4_3,
     };
 
-    enum class Mode { _None, _3D, _2D };
+    enum class Mode { none, _3d, _2d };
 
     std::string _type = "perspective";
     CameraType type;
@@ -76,9 +76,9 @@ struct CCamera {
 
     void set_camera_type() {
       if (_type == "perspective") {
-        type = CameraType::Perspective;
+        type = CameraType::perspective;
       } else if (_type == "orthographic") {
-        type = CameraType::Orthographic;
+        type = CameraType::orthographic;
       } else {
         ENGINE_ASSERT(false, "invalid camera type!");
       }
@@ -98,22 +98,22 @@ struct CCamera {
 
     void set_mode() {
       if (_mode == "3d") {
-        mode = Mode::_3D;
+        mode = Mode::_3d;
       } else if (_mode == "2d") {
-        mode = Mode::_2D;
+        mode = Mode::_2d;
       } else if (_mode == "none") {
-        mode = Mode::_None;
+        mode = Mode::none;
       } else {
         ENGINE_ASSERT(false, "invalid camera mode!");
       }
     }
 
     void calculate_projection() {
-      if (type == CameraType::Perspective) {
+      if (type == CameraType::perspective) {
         zoom_factor = std::clamp(zoom_factor, zoom_min, zoom_max);
         projection = glm::perspective(glm::radians(fov * 1.f / zoom_factor),
                                       aspect_ratio_value, near_clip, far_clip);
-      } else if (type == CameraType::Orthographic) {
+      } else if (type == CameraType::orthographic) {
         projection = glm::ortho(-aspect_ratio_value * zoom_factor,
                                 aspect_ratio_value * zoom_factor, -zoom_factor,
                                 zoom_factor, near_clip, far_clip);

@@ -1,13 +1,14 @@
 #pragma once
 
-#include <entt/entt.hpp>
 #include <format>
-#include <glm/glm.hpp>
 #include <map>
 #include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
+
+#include <entt/entt.hpp>
+#include <glm/glm.hpp>
 
 #include "../../assets/texture.h"
 #include "../../graphics/buffer.h"
@@ -43,13 +44,13 @@ struct CMesh {
     void setup_mesh() {
       vao = VAO::create();
       if (vertex_type == "camera") {
-        vao->attach_vertex(VBO::create(vertices), VAO::VertexType::VERTEX);
+        vao->attach_vertex(VBO::create(vertices), VAO::VertexType::vertex);
       } else if (vertex_type == "shape") { // TODO this is not used
         vao->attach_vertex(VBO::create(vertices),
-                           VAO::VertexType::SHAPE_VERTEX);
+                           VAO::VertexType::shape_vertex);
       } else if (vertex_type == "terrain") { // TODO maybe a better way to do
                                              // this using vertices?
-        vao->attach_vertex(std::move(vbo), VAO::VertexType::TERRAIN_VERTEX);
+        vao->attach_vertex(std::move(vbo), VAO::VertexType::terrain_vertex);
       } else {
         ENGINE_ASSERT(false, "unknown vertex type {}", vertex_type);
       }
@@ -58,12 +59,12 @@ struct CMesh {
 
     void update_mesh() {
       if (vertex_type == "camera") {
-        vao->update_vertex(VBO::create(vertices), 0, VAO::VertexType::VERTEX);
+        vao->update_vertex(VBO::create(vertices), 0, VAO::VertexType::vertex);
       } else if (vertex_type == "shape") {
         vao->update_vertex(VBO::create(vertices), 0,
-                           VAO::VertexType::SHAPE_VERTEX);
+                           VAO::VertexType::shape_vertex);
       } else if (vertex_type == "terrain") {
-        vao->update_vertex(std::move(vbo), 0, VAO::VertexType::TERRAIN_VERTEX);
+        vao->update_vertex(std::move(vbo), 0, VAO::VertexType::terrain_vertex);
       } else {
         ENGINE_ASSERT(false, "unknown vertex type {}", vertex_type);
       }
@@ -98,10 +99,10 @@ struct CMesh {
           texture->bind_slot(i);
           ++i;
         }
-        if (cTexture->draw_mode == CTexture::DrawMode::COLOR or
-            cTexture->draw_mode == CTexture::DrawMode::TEXTURE_BLEND_COLOR or
+        if (cTexture->draw_mode == CTexture::DrawMode::color or
+            cTexture->draw_mode == CTexture::DrawMode::texture_blend_color or
             cTexture->draw_mode ==
-              CTexture::DrawMode::TEXTURE_ATLAS_BLEND_COLOR) {
+              CTexture::DrawMode::texture_atlas_blend_color) {
           sp->set_float("use_color", 1.f);
           sp->set_vec4("color", cTexture->color);
         }
@@ -113,10 +114,10 @@ struct CMesh {
           sp->set_vec3("light_color", static_cast<glm::vec3>(
                                         entt::monostate<"light_color"_hs>{}));
         }
-        if (cTexture->draw_mode == CTexture::DrawMode::TEXTURE_ATLAS or
-            cTexture->draw_mode == CTexture::DrawMode::TEXTURE_ATLAS_BLEND or
+        if (cTexture->draw_mode == CTexture::DrawMode::texture_atlas or
+            cTexture->draw_mode == CTexture::DrawMode::texture_atlas_blend or
             cTexture->draw_mode ==
-              CTexture::DrawMode::TEXTURE_ATLAS_BLEND_COLOR) {
+              CTexture::DrawMode::texture_atlas_blend_color) {
           if (sp->get_name() == "camera" or
               sp->get_name() ==
                 "shape") { // terrain shader get texture atlas data from vertex
@@ -131,11 +132,11 @@ struct CMesh {
             sp->set_vec2("offset", glm::vec2(coll, roww));
           }
         }
-        if (cTexture->draw_mode == CTexture::DrawMode::TEXTURES_BLEND or
-            cTexture->draw_mode == CTexture::DrawMode::TEXTURE_ATLAS_BLEND or
-            cTexture->draw_mode == CTexture::DrawMode::TEXTURE_BLEND_COLOR or
+        if (cTexture->draw_mode == CTexture::DrawMode::texture_blend or
+            cTexture->draw_mode == CTexture::DrawMode::texture_atlas_blend or
+            cTexture->draw_mode == CTexture::DrawMode::texture_blend_color or
             cTexture->draw_mode ==
-              CTexture::DrawMode::TEXTURE_ATLAS_BLEND_COLOR) {
+              CTexture::DrawMode::texture_atlas_blend_color) {
           sp->set_float("use_blending", 1.f);
           sp->set_float("blend_factor", cTexture->blend_factor);
         }

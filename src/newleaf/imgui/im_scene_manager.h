@@ -1,9 +1,10 @@
 #pragma once
 
-#include <entt/entt.hpp>
-#include <imgui.h>
 #include <memory>
 #include <string>
+
+#include <entt/entt.hpp>
+#include <imgui.h>
 
 #include "../logging/log_manager.h"
 #include "../scene/scene_manager.h"

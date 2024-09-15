@@ -1,5 +1,8 @@
 #pragma once
 
+#include "../logging/log_manager.h"
+#include "exception.h"
+
 #ifdef DEBUG
 #define ENGINE_ASSERT(x, ...)                                                  \
   if (!(x)) {                                                                  \

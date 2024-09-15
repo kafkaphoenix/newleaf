@@ -1,11 +1,11 @@
 #pragma once
 
-#define GLM_FORCE_CTOR_INIT
-
-#include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
 #include <map>
 #include <string>
+
+#define GLM_FORCE_CTOR_INIT
+#include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include "../../logging/log_manager.h"
 #include "../../utils/numeric_comparator.h"

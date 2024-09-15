@@ -1,16 +1,16 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
-
-#include "../settings/settings_manager.h"
-#include "../utils/assert.h"
-#include "../utils/get_default_roaming_path.h"
-
 #include <filesystem>
 #include <format>
 #include <fstream>
 #include <memory>
 #include <string_view>
+
+#include <nlohmann/json.hpp>
+
+#include "../settings/settings_manager.h"
+#include "../utils/assert.h"
+#include "../utils/get_default_roaming_path.h"
 
 using json = nlohmann::json;
 

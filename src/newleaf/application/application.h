@@ -30,7 +30,7 @@ class Application {
                 CLArgs&& args);
     virtual ~Application();
 
-    void on_event(Event& e);
+    void on_event(Event&& e);
 
     const std::unique_ptr<WindowsManager>& get_window_manager() const {
       return m_windows_manager;
@@ -62,7 +62,7 @@ class Application {
     bool should_restore_pause() const { return m_restore_pause; }
     bool is_debugging() const { return m_debugging; }
 
-    static Application& get() { return *s_instance; }
+    static Application& get() { return *m_instance; }
 
   protected:
     std::unique_ptr<SceneManager> m_scene_manager;
@@ -87,7 +87,7 @@ class Application {
 
     CLArgs m_clargs;
 
-    inline static Application* s_instance;
+    inline static Application* m_instance;
     friend int ::main(int argc, char** argv);
 };
 

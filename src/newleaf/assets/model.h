@@ -1,5 +1,12 @@
 #pragma once
 
+#include <filesystem>
+#include <map>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <vector>
+
 #include <assimp/scene.h>
 
 #include "../components/graphics/cMaterial.h"
@@ -7,13 +14,6 @@
 #include "../utils/numeric_comparator.h"
 #include "asset.h"
 #include "texture.h"
-
-#include <filesystem>
-#include <map>
-#include <optional>
-#include <string>
-#include <string_view>
-#include <vector>
 
 namespace nl {
 

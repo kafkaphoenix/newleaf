@@ -1,11 +1,11 @@
 #pragma once
 
+#include <string_view>
+
 #include <glm/glm.hpp>
 #include <imgui.h>
 
 #include "../application/application.h"
-
-#include <string_view>
 
 namespace nl {
 

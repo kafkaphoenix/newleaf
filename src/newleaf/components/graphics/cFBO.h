@@ -1,10 +1,11 @@
 
 #pragma once
 
-#include <entt/entt.hpp>
 #include <map>
 #include <memory>
 #include <string>
+
+#include <entt/entt.hpp>
 
 #include "../../graphics/framebuffer.h"
 #include "../../graphics/shader_program.h"
@@ -16,14 +17,14 @@ namespace nl {
 
 struct CFBO {
     enum class Mode {
-      Normal,
-      Inverse,
-      Greyscale,
-      Blur,
-      Edge,
-      Sharpen,
-      NightVision,
-      Emboss
+      normal,
+      inverse,
+      grey_scale,
+      blur,
+      edge,
+      sharpen,
+      night_vision,
+      emboss
     };
 
     std::string fbo;
@@ -74,21 +75,21 @@ struct CFBO {
 
     void set_mode() {
       if (_mode == "normal") {
-        mode = Mode::Normal;
+        mode = Mode::normal;
       } else if (_mode == "inverse") {
-        mode = Mode::Inverse;
+        mode = Mode::inverse;
       } else if (_mode == "greyscale") {
-        mode = Mode::Greyscale;
+        mode = Mode::grey_scale;
       } else if (_mode == "blur") {
-        mode = Mode::Blur;
+        mode = Mode::blur;
       } else if (_mode == "edge") {
-        mode = Mode::Edge;
+        mode = Mode::edge;
       } else if (_mode == "sharpen") {
-        mode = Mode::Sharpen;
+        mode = Mode::sharpen;
       } else if (_mode == "night_vision") {
-        mode = Mode::NightVision;
+        mode = Mode::night_vision;
       } else if (_mode == "emboss") {
-        mode = Mode::Emboss;
+        mode = Mode::emboss;
       } else {
         ENGINE_ASSERT(false, "unknown fbo mode {}", _mode);
       }
@@ -97,21 +98,21 @@ struct CFBO {
     void setup_properties(const std::unique_ptr<ShaderProgram>& sp) {
       sp->reset_active_uniforms();
       sp->use();
-      if (mode == Mode::Normal) {
+      if (mode == Mode::normal) {
         sp->set_float("mode", 0.f);
-      } else if (mode == Mode::Inverse) {
+      } else if (mode == Mode::inverse) {
         sp->set_float("mode", 1.f);
-      } else if (mode == Mode::Greyscale) {
+      } else if (mode == Mode::grey_scale) {
         sp->set_float("mode", 2.f);
-      } else if (mode == Mode::Blur) {
+      } else if (mode == Mode::blur) {
         sp->set_float("mode", 3.f);
-      } else if (mode == Mode::Edge) {
+      } else if (mode == Mode::edge) {
         sp->set_float("mode", 4.f);
-      } else if (mode == Mode::Sharpen) {
+      } else if (mode == Mode::sharpen) {
         sp->set_float("mode", 5.f);
-      } else if (mode == Mode::NightVision) {
+      } else if (mode == Mode::night_vision) {
         sp->set_float("mode", 6.f);
-      } else if (mode == Mode::Emboss) {
+      } else if (mode == Mode::emboss) {
         sp->set_float("mode", 7.f);
       }
       sp->unuse();

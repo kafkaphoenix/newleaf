@@ -1,9 +1,10 @@
 #pragma once
 
-#include <entt/entt.hpp>
 #include <map>
 #include <string>
 #include <vector>
+
+#include <entt/entt.hpp>
 
 #include "../../application/application.h"
 #include "../../assets/model.h"

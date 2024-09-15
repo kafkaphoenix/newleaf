@@ -1,16 +1,16 @@
 #pragma once
 
-#include <entt/entt.hpp>
-
-#include "../assets/assets_manager.h"
-#include "../assets/prefab.h"
-#include "../utils/numeric_comparator.h"
-
 #include <map>
 #include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
+
+#include <entt/entt.hpp>
+
+#include "../assets/assets_manager.h"
+#include "../assets/prefab.h"
+#include "../utils/numeric_comparator.h"
 
 namespace nl {
 

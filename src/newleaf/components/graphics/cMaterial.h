@@ -1,10 +1,11 @@
 
 #pragma once
 
-#include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
 #include <map>
 #include <string>
+
+#include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include "../../logging/log_manager.h"
 #include "../../utils/numeric_comparator.h"

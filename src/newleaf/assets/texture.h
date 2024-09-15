@@ -1,7 +1,5 @@
 #pragma once
 
-#include <glad/glad.h>
-
 #include <filesystem>
 #include <map>
 #include <memory>
@@ -9,6 +7,8 @@
 #include <string>
 #include <string_view>
 #include <vector>
+
+#include <glad/glad.h>
 
 #include "../utils/numeric_comparator.h"
 #include "asset.h"

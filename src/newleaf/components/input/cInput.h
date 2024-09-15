@@ -1,11 +1,11 @@
 #pragma once
 
-#define GLM_FORCE_CTOR_INIT
-
-#include <entt/entt.hpp>
-#include <glm/glm.hpp>
 #include <map>
 #include <string>
+
+#include <entt/entt.hpp>
+#define GLM_FORCE_CTOR_INIT
+#include <glm/glm.hpp>
 
 #include "../../logging/log_manager.h"
 #include "../../utils/assert.h"
@@ -14,7 +14,7 @@
 namespace nl {
 
 struct CInput {
-    enum class Mode { _None, _3D, _2D };
+    enum class Mode { none, _3d, _2d };
 
     std::string _mode;
     Mode mode;
@@ -50,11 +50,11 @@ struct CInput {
 
     void set_mode() {
       if (_mode == "3d") {
-        mode = Mode::_3D;
+        mode = Mode::_3d;
       } else if (_mode == "2d") {
-        mode = Mode::_2D;
+        mode = Mode::_2d;
       } else if (_mode == "none") {
-        mode = Mode::_None;
+        mode = Mode::none;
       } else {
         ENGINE_ASSERT(false, "invalid input mode!");
       }

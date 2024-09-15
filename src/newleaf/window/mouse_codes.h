@@ -1,10 +1,7 @@
 #pragma once
 
-#include <stdint.h>
-
-namespace nl::mouse {
-
-enum : uint32_t {
+namespace nl {
+enum class Mouse : uint32_t {
   // From glfw3.h
   Button0 = 0,
   Button1 = 1,

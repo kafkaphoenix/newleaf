@@ -1,11 +1,11 @@
 #pragma once
 
-#include "numeric_comparator.h"
+#include <map>
+#include <string>
 
 #include <nlohmann/json.hpp>
 
-#include <map>
-#include <string>
+#include "numeric_comparator.h"
 
 using json = nlohmann::json;
 

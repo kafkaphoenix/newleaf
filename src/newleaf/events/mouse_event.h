@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../window/mouse_codes.h"
 #include "event.h"
 
 namespace nl {
@@ -34,27 +35,27 @@ class MouseScrolledEvent : public Event {
 
 class MouseButtonEvent : public Event {
   public:
-    uint32_t get_mouse_button() const { return m_button; }
+    Mouse get_mouse_button() const { return m_button; }
 
     EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput |
                          EventCategoryMouseButton)
 
   protected:
-    MouseButtonEvent(uint32_t b) : m_button(b) {}
+    MouseButtonEvent(Mouse b) : m_button(b) {}
 
-    uint32_t m_button{};
+    Mouse m_button{};
 };
 
 class MouseButtonPressedEvent : public MouseButtonEvent {
   public:
-    MouseButtonPressedEvent(uint32_t b) : MouseButtonEvent(b) {}
+    MouseButtonPressedEvent(Mouse b) : MouseButtonEvent(b) {}
 
     EVENT_CLASS_TYPE(MouseButtonPressed)
 };
 
 class MouseButtonReleasedEvent : public MouseButtonEvent {
   public:
-    MouseButtonReleasedEvent(uint32_t b) : MouseButtonEvent(b) {}
+    MouseButtonReleasedEvent(Mouse b) : MouseButtonEvent(b) {}
 
     EVENT_CLASS_TYPE(MouseButtonReleased)
 };

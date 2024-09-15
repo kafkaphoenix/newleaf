@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../assets/texture.h"
-#include "../utils/numeric_comparator.h"
-
 #include <map>
 #include <memory>
 #include <string>
 #include <string_view>
+
+#include "../assets/texture.h"
+#include "../utils/numeric_comparator.h"
 
 namespace nl {
 

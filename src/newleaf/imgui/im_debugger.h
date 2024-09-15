@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <imgui.h>
 
 #include "../application/application.h"
@@ -10,8 +12,6 @@
 #include "../state/states_manager.h"
 #include "im_managersbar.h"
 #include "im_menubar.h"
-
-#include <memory>
 
 namespace nl {
 

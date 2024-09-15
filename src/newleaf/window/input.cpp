@@ -6,14 +6,14 @@
 
 namespace nl {
 
-bool Input::is_key_pressed(uint32_t k) {
+bool Input::is_key_pressed(Key k) {
   GLFWwindow* w = Application::get().get_window_manager()->get_native_window();
-  return glfwGetKey(w, k) == GLFW_PRESS;
+  return glfwGetKey(w, static_cast<uint32_t>(k)) == GLFW_PRESS;
 }
 
-bool Input::is_mouse_button_pressed(uint32_t b) {
+bool Input::is_mouse_button_pressed(Mouse b) {
   GLFWwindow* w = Application::get().get_window_manager()->get_native_window();
-  return glfwGetMouseButton(w, b) == GLFW_PRESS;
+  return glfwGetMouseButton(w, static_cast<uint32_t>(b)) == GLFW_PRESS;
 }
 
 glm::vec2 Input::get_mouse_pos() {

@@ -1,13 +1,13 @@
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <entt/entt.hpp>
 
 #include "../../logging/log_manager.h"
 #include "../../utils/assert.h"
 #include "../../utils/numeric_comparator.h"
-
-#include <map>
-#include <string>
 
 namespace nl {
 

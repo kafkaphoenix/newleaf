@@ -1,5 +1,8 @@
 #pragma once
 
+#include <memory>
+#include <string>
+
 #include <imgui.h>
 
 #include "../assets/assets_manager.h"
@@ -8,9 +11,6 @@
 #include "../assets/texture.h"
 #include "../settings/settings_manager.h"
 #include "im_utils.h"
-
-#include <memory>
-#include <string>
 
 namespace nl {
 

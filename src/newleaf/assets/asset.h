@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../utils/numeric_comparator.h"
 #include <map>
 #include <string>
+
+#include "../utils/numeric_comparator.h"
 
 namespace nl {
 

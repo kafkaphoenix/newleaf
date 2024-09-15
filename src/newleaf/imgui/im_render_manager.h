@@ -1,14 +1,14 @@
 #pragma once
 
+#include <memory>
+#include <string>
+
 #include <imgui.h>
 
 #include "../graphics/render_manager.h"
 #include "../settings/settings_manager.h"
 #include "../utils/map_json_serializer.h"
 #include "im_utils.h"
-
-#include <memory>
-#include <string>
 
 namespace nl {
 

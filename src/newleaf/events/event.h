@@ -61,7 +61,7 @@ class Event {
 
 class EventDispatcher {
   public:
-    EventDispatcher(Event& e) : m_event(e) {}
+    EventDispatcher(Event&& e) : m_event(std::move(e)) {}
 
     template <typename Type, typename Func> bool dispatch(const Func& func) {
       if (m_event.get_event_type() == Type::get_static_type()) {
@@ -72,7 +72,7 @@ class EventDispatcher {
     }
 
   private:
-    Event& m_event;
+    Event&& m_event;
 };
 
 }

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../utils/numeric_comparator.h"
-#include "asset.h"
-
 #include <map>
 #include <memory>
 #include <string>
 #include <string_view>
 #include <unordered_map>
+
+#include "../utils/numeric_comparator.h"
+#include "asset.h"
 
 namespace nl {
 class AssetsManager {

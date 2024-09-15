@@ -1,12 +1,12 @@
 #pragma once
 
+#include <memory>
+#include <string>
+
 #include <entt/entt.hpp>
 
 #include "../events/event.h"
 #include "../utils/time.h"
-
-#include <memory>
-#include <string>
 
 namespace nl {
 

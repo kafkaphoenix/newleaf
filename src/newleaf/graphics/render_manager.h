@@ -1,12 +1,13 @@
 #pragma once
 
-#define GLM_FORCE_CTOR_INIT
-#include <glm/glm.hpp>
 #include <map>
 #include <memory>
 #include <string>
 #include <string_view>
 #include <unordered_map>
+
+#define GLM_FORCE_CTOR_INIT
+#include <glm/glm.hpp>
 
 #include "../assets/assets_manager.h"
 #include "../utils/numeric_comparator.h"
