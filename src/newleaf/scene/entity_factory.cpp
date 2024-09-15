@@ -197,11 +197,11 @@ void EntityFactory::update_prototypes(
   std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
   entt::registry& registry,
   const std::unique_ptr<AssetsManager>& assetsManager) {
-  remove_prototypes(prefab_name, prototype_ids, registry);
+  delete_prototypes(prefab_name, prototype_ids, registry);
   create_prototypes(prefab_name, prototype_ids, registry, assetsManager);
 }
 
-void EntityFactory::remove_prototypes(
+void EntityFactory::delete_prototypes(
   std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
   entt::registry& registry) {
   for (std::string_view prototype_id : prototype_ids) {

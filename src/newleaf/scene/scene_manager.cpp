@@ -219,9 +219,9 @@ void SceneManager::update_prototypes(
     Application::get().get_assets_manager());
 }
 
-void SceneManager::remove_prototypes(
+void SceneManager::delete_prototypes(
   std::string_view prefab_name, const std::vector<std::string>& prototype_ids) {
-  m_scene_factory.get_entity_factory().remove_prototypes(
+  m_scene_factory.get_entity_factory().delete_prototypes(
     prefab_name, prototype_ids, m_registry);
 }
 

@@ -29,7 +29,7 @@ namespace nl {
 struct CMesh {
     std::vector<std::shared_ptr<Texture>> textures;
     std::shared_ptr<VAO> vao;
-    std::vector<Vertex> vertices; // TODO: remove this
+    std::vector<Vertex> vertices; // TODO: delete this
     std::shared_ptr<VBO> vbo;
     std::vector<uint32_t> indices;
     std::string vertex_type;

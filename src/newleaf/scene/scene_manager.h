@@ -60,7 +60,7 @@ class SceneManager {
                            const std::vector<std::string>& prototype_ids);
     void update_prototypes(std::string_view prefab_name,
                            const std::vector<std::string>& prototype_ids);
-    void remove_prototypes(std::string_view prefab_name,
+    void delete_prototypes(std::string_view prefab_name,
                            const std::vector<std::string>& prototype_ids);
     EntityFactory::Prototypes
     get_prototypes(std::string_view prefab_name,
@@ -71,7 +71,7 @@ class SceneManager {
     get_all_prototypes();
     const std::map<std::string, std::string, NumericComparator>&
     get_prototypes_count_by_prefab();
-    // does not remove entt entities, just clears the map
+    // does not delete entt entities, just clears the map
     void clear_prototypes();
 
   private:
