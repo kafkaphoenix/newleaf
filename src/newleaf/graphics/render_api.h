@@ -15,7 +15,7 @@ class RenderAPI {
     static void toggle_wireframe(bool enabled);
     static void blend(bool enabled);
     static void toggle_depth_test(bool enabled);
-    static void set_depth_equal();
+    static void set_depth_lequal();
     static void set_depth_less();
     static void clear();
     static void clear_color();

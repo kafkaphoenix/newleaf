@@ -104,7 +104,7 @@ void RenderAPI::toggle_depth_test(bool enabled) {
   enabled ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 }
 
-void RenderAPI::set_depth_equal() {
+void RenderAPI::set_depth_lequal() {
   glDepthFunc(GL_LEQUAL); // depth test passes when values are equal to depth
                           // buffer content [for cubemaps]
 }
