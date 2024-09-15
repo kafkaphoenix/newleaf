@@ -79,8 +79,7 @@ WindowsManager::WindowsManager(
   }
 
   set_window_icon(settings_manager->window_icon_path);
-  set_cursor_mode(static_cast<CursorMode>(settings_manager->cursor_mode),
-                  true);
+  set_cursor_mode(static_cast<CursorMode>(settings_manager->cursor_mode), true);
   set_cursor_icon(settings_manager->cursor_icon_path);
   toggle_vsync(settings_manager->vsync);
   glfwSetWindowUserPointer(m_window, &m_data);
@@ -144,11 +143,11 @@ WindowsManager::WindowsManager(
       }
     });
 
-  glfwSetCharCallback(m_window, [](GLFWwindow* window, uint32_t keycode) {
+  glfwSetCharCallback(m_window, [](GLFWwindow* window, uint32_t key_code) {
     WindowData& data =
       *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-    KeyTypedEvent event(keycode);
+    KeyTypedEvent event(key_code);
     data.event_callback(event);
   });
 

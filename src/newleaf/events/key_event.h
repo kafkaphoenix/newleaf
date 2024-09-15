@@ -7,20 +7,20 @@ namespace nl {
 
 class KeyEvent : public Event {
   public:
-    KeyCode get_keycode() const { return m_keyCode; }
+    KeyCode get_key_code() const { return m_key_code; }
 
     EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 
   protected:
-    KeyEvent(const KeyCode keycode) : m_keyCode(keycode) {}
+    KeyEvent(const KeyCode key_code) : m_key_code(key_code) {}
 
-    KeyCode m_keyCode{};
+    KeyCode m_key_code{};
 };
 
 class KeyPressedEvent : public KeyEvent {
   public:
-    KeyPressedEvent(const KeyCode keycode, bool is_repeating)
-      : KeyEvent(keycode), m_repeating(is_repeating) {}
+    KeyPressedEvent(const KeyCode key_code, bool is_repeating)
+      : KeyEvent(key_code), m_repeating(is_repeating) {}
 
     bool is_repeating() const { return m_repeating; }
 
@@ -32,14 +32,14 @@ class KeyPressedEvent : public KeyEvent {
 
 class KeyReleasedEvent : public KeyEvent {
   public:
-    KeyReleasedEvent(const KeyCode keycode) : KeyEvent(keycode) {}
+    KeyReleasedEvent(const KeyCode key_code) : KeyEvent(key_code) {}
 
     EVENT_CLASS_TYPE(KeyReleased)
 };
 
 class KeyTypedEvent : public KeyEvent {
   public:
-    KeyTypedEvent(const KeyCode keycode) : KeyEvent(keycode) {}
+    KeyTypedEvent(const KeyCode key_code) : KeyEvent(key_code) {}
 
     EVENT_CLASS_TYPE(KeyTyped)
 };
