@@ -21,7 +21,7 @@ class State {
     virtual void on_detach() {}
     virtual void on_update(const Time&) {}
     virtual void on_imgui_update() {}
-    virtual void on_event(Event&&) {}
+    virtual void on_event(Event&) {}
 
     std::string_view get_name() const { return m_name; }
     const std::unique_ptr<LayersManager>& get_layers_manager() const {

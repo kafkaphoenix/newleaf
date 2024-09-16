@@ -17,7 +17,7 @@ class Layer {
     virtual void on_detach() {}
     virtual void on_update(const Time&) {}
     virtual void on_imgui_update() {}
-    virtual void on_event(Event&&) {}
+    virtual void on_event(Event&) {}
 
     std::string_view get_name() const { return m_name; }
     bool is_enabled() const { return m_enabled; }

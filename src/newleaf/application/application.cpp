@@ -31,8 +31,8 @@ Application::~Application() {
   m_imgui_layer->on_detach();
 }
 
-void Application::on_event(Event&& e) {
-  m_states_manager->get_current_state()->on_event(std::move(e));
+void Application::on_event(Event& e) {
+  m_states_manager->get_current_state()->on_event(e);
 }
 
 void Application::pause(bool pause) {

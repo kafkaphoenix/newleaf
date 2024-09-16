@@ -95,7 +95,8 @@ WindowsManager::WindowsManager(
       }
 
       // for fullscreen it will update the resolution
-      data.event_callback(WindowResizeEvent(width, height));
+      WindowResizeEvent e(width, height);
+      data.event_callback(e);
     });
 
   glfwSetWindowPosCallback(
@@ -106,14 +107,16 @@ WindowsManager::WindowsManager(
       if (not data.fullscreen) {
         data.position_x = xpos;
         data.position_y = ypos;
-        data.event_callback(WindowMovedEvent(xpos, ypos));
+        WindowMovedEvent e(xpos, ypos);
+        data.event_callback(e);
       }
     });
 
   glfwSetWindowCloseCallback(m_window, [](GLFWwindow* window) {
     WindowData& data =
       *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
-    data.event_callback(WindowCloseEvent());
+    WindowCloseEvent e;
+    data.event_callback(e);
   });
 
   glfwSetKeyCallback(
@@ -123,15 +126,18 @@ WindowsManager::WindowsManager(
 
       switch (action) {
       case GLFW_PRESS: {
-        data.event_callback(KeyPressedEvent(static_cast<Key>(key), false));
+        KeyPressedEvent e(static_cast<Key>(key), false);
+        data.event_callback(e);
         break;
       }
       case GLFW_RELEASE: {
-        data.event_callback(KeyReleasedEvent(static_cast<Key>(key)));
+        KeyReleasedEvent e(static_cast<Key>(key));
+        data.event_callback(e);
         break;
       }
       case GLFW_REPEAT: {
-        data.event_callback(KeyPressedEvent(static_cast<Key>(key), true));
+        KeyPressedEvent e(static_cast<Key>(key), true);
+        data.event_callback(e);
         break;
       }
       }
@@ -141,7 +147,8 @@ WindowsManager::WindowsManager(
     WindowData& data =
       *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-    data.event_callback(KeyTypedEvent(static_cast<Key>(key)));
+    KeyTypedEvent e(static_cast<Key>(key));
+    data.event_callback(e);
   });
 
   glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button,
@@ -151,11 +158,13 @@ WindowsManager::WindowsManager(
 
     switch (action) {
     case GLFW_PRESS: {
-      data.event_callback(MouseButtonPressedEvent(static_cast<Mouse>(button)));
+      MouseButtonPressedEvent e(static_cast<Mouse>(button));
+      data.event_callback(e);
       break;
     }
     case GLFW_RELEASE: {
-      data.event_callback(MouseButtonReleasedEvent(static_cast<Mouse>(button)));
+      MouseButtonReleasedEvent e(static_cast<Mouse>(button));
+      data.event_callback(e);
       break;
     }
     }
@@ -187,7 +196,8 @@ WindowsManager::WindowsManager(
       data.mouse_x = data.debug_mouse_x;
       data.mouse_y = data.debug_mouse_y;
 
-      data.event_callback(MouseMovedEvent(xoffset, yoffset));
+      MouseMovedEvent e(xoffset, yoffset);
+      data.event_callback(e);
     });
 
   glfwSetScrollCallback(
@@ -199,7 +209,8 @@ WindowsManager::WindowsManager(
         return;
       }
 
-      data.event_callback(MouseScrolledEvent((float)xoffset, (float)yoffset));
+      MouseScrolledEvent e((float)xoffset, (float)yoffset);
+      data.event_callback(e);
     });
 
   glfwSetWindowIconifyCallback(m_window, [](GLFWwindow* window, int minimized) {
@@ -208,10 +219,12 @@ WindowsManager::WindowsManager(
 
     if (minimized == GLFW_TRUE) {
       data.minimized = true;
-      data.event_callback(WindowMinimizedEvent());
+      WindowMinimizedEvent e;
+      data.event_callback(e);
     } else {
       data.minimized = false;
-      data.event_callback(WindowRestoredEvent());
+      WindowRestoredEvent e;
+      data.event_callback(e);
     }
   });
 
@@ -222,10 +235,12 @@ WindowsManager::WindowsManager(
 
       if (maximized == GLFW_TRUE) {
         data.maximized = true;
-        data.event_callback(WindowMaximizedEvent());
+        WindowMaximizedEvent e;
+        data.event_callback(e);
       } else {
         data.maximized = false;
-        data.event_callback(WindowRestoredEvent());
+        WindowRestoredEvent e;
+        data.event_callback(e);
       }
     });
 
@@ -235,10 +250,12 @@ WindowsManager::WindowsManager(
 
     if (focused == GLFW_TRUE) {
       data.focused = true;
-      data.event_callback(WindowFocusEvent());
+      WindowFocusEvent e;
+      data.event_callback(e);
     } else {
       data.focused = false;
-      data.event_callback(WindowLostFocusEvent());
+      WindowLostFocusEvent e;
+      data.event_callback(e);
     }
   });
 }
@@ -263,8 +280,8 @@ void WindowsManager::on_update() {
   glfwPollEvents();
 }
 
-void WindowsManager::trigger_event(Event&& e) {
-  m_data.event_callback(std::move(e));
+void WindowsManager::trigger_event(Event& e) {
+  m_data.event_callback(e);
 }
 
 void WindowsManager::set_position(int x, int y) {

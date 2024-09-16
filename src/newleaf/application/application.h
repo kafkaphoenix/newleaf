@@ -30,7 +30,7 @@ class Application {
                 CLArgs&& args);
     virtual ~Application();
 
-    void on_event(Event&& e);
+    void on_event(Event& e);
 
     const std::unique_ptr<WindowsManager>& get_window_manager() const {
       return m_windows_manager;
