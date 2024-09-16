@@ -280,7 +280,7 @@ void WindowsManager::on_update() {
   glfwPollEvents();
 }
 
-void WindowsManager::trigger_event(Event& e) {
+void WindowsManager::trigger_event(Event&& e) {
   m_data.event_callback(e);
 }
 
