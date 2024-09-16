@@ -107,11 +107,11 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
   CMaterial materialData = load_material(material);
 
-  // N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER.
-  // diffuse: textureDiffuseN
-  // specular: textureSpecularN
-  // normal: textureNormalN
-  // height: textureHeightN
+  // n is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER.
+  // diffuse: texture_diffuse_n
+  // specular: texture_specular_n
+  // normal: texture_normal_n
+  // height: texture_height_n
   auto loadAndInsertTextures = [&](aiTextureType t, std::string type) {
     std::vector<std::shared_ptr<Texture>> loadedTextures =
       load_material_textures(material, t, type);

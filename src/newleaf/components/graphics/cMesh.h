@@ -173,26 +173,26 @@ struct CMesh {
           sp->set_float("shininess", cMaterial->shininess);
         }
       } else {
-        uint32_t diffuseN = 1;
-        uint32_t specularN = 1;
-        uint32_t normalN = 1;
-        uint32_t heightN = 1;
+        uint32_t diffuse_n = 1;
+        uint32_t specular_n = 1;
+        uint32_t normal_n = 1;
+        uint32_t height_n = 1;
         uint32_t i = 1;
         for (auto& texture : textures) {
           std::string number;
           std::string_view type = texture->get_type();
           if (type == "texture_diffuse") {
-            number = std::to_string(diffuseN++);
+            number = std::to_string(diffuse_n++);
           } else if (type == "texture_specular") {
-            number = std::to_string(specularN++);
+            number = std::to_string(specular_n++);
           } else if (type == "texture_normal") {
-            number = std::to_string(normalN++);
+            number = std::to_string(normal_n++);
           } else if (type == "texture_height") {
-            number = std::to_string(heightN++);
+            number = std::to_string(height_n++);
           } else {
             ENGINE_ASSERT(false, "unknown texture type {}", type);
           }
-          sp->set_int(type.data() + number, i);
+          sp->set_int(type.data() + std::string("_") + number, i);
           texture->bind_slot(i);
           ++i;
         }
@@ -201,7 +201,7 @@ struct CMesh {
           sp->set_float("no_texture", 1.f);
           sp->set_vec3("material_color", cMaterial->diffuse);
         } else {
-          if (diffuseN == 1) {
+          if (diffuse_n == 1) {
             sp->set_float("use_normal", 1.f);
           }
         }
