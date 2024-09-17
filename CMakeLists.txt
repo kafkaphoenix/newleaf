@@ -79,3 +79,13 @@ if (BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
+
+option(NEWLEAF_BUILD_DOCS "Enable building with documentation." OFF)
+
+if(NEWLEAF_BUILD_DOCS)
+    find_package(Doxygen 1.12)
+
+    if(DOXYGEN_FOUND)
+        add_subdirectory(docs)
+    endif()
+endif()
