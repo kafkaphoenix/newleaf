@@ -58,7 +58,8 @@
             "name": "static",
             "inherits": "default",
             "cacheVariables": {
-              "CMAKE_BUILD_TYPE": "Release"
+              "CMAKE_BUILD_TYPE": "Release",
+              "NEWLEAF_BUILD_DOCS": "ON"
             }
         },
         {
@@ -66,7 +67,8 @@
             "inherits": "default",
             "cacheVariables": {
               "BUILD_SHARED_LIBS": "ON",
-              "CMAKE_BUILD_TYPE": "Release"
+              "CMAKE_BUILD_TYPE": "Release",
+              "NEWLEAF_BUILD_DOCS": "ON"
             }
         },
         {

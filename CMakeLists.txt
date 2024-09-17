@@ -87,5 +87,7 @@ if(NEWLEAF_BUILD_DOCS)
 
     if(DOXYGEN_FOUND)
         add_subdirectory(docs)
+    else()
+        message(WARNING "Doxygen not found, cannot build documentation.")
     endif()
 endif()
