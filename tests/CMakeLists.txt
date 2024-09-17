@@ -13,7 +13,7 @@ target_compile_definitions(${PROJECT_NAME}_tests PRIVATE "GLM_ENABLE_EXPERIMENTA
 target_compile_definitions(${PROJECT_NAME}_tests PRIVATE "STBI_FAILURE_USERMSG")
 
 if(ENABLE_DEBUG)
-    target_compile_definitions(${PROJECT_NAME}_tests PRIVATE DEBUG=1)
+    target_compile_definitions(${PROJECT_NAME}_tests PRIVATE ENABLE_DEBUG=1)
 endif()
 
 if (MSVC)

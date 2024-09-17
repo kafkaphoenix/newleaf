@@ -3,7 +3,7 @@
 #include "../logging/log_manager.h"
 #include "exception.h"
 
-#ifdef DEBUG
+#ifdef ENABLE_DEBUG
 #define ENGINE_ASSERT(x, ...)                                                  \
   if (!(x)) {                                                                  \
     throw_engine_exception(__VA_ARGS__);                                       \

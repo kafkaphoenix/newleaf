@@ -32,7 +32,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/warnings.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/static_analysis.cmake)
 
 if(ENABLE_DEBUG)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG=1)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE ENABLE_DEBUG=1)
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC

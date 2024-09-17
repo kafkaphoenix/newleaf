@@ -112,17 +112,17 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   // specular: texture_specular_n
   // normal: texture_normal_n
   // height: texture_height_n
-  auto loadAndInsertTextures = [&](aiTextureType t, std::string type) {
-    std::vector<std::shared_ptr<Texture>> loadedTextures =
+  auto load_and_insert_textures = [&](aiTextureType t, std::string type) {
+    std::vector<std::shared_ptr<Texture>> loaded_textures =
       load_material_textures(material, t, type);
-    textures.insert(textures.end(), loadedTextures.begin(),
-                    loadedTextures.end()); // Can't be emplace
+    textures.insert(textures.end(), loaded_textures.begin(),
+                    loaded_textures.end()); // Can't be emplace
   };
 
-  loadAndInsertTextures(aiTextureType_DIFFUSE, "texture_diffuse");
-  loadAndInsertTextures(aiTextureType_SPECULAR, "texture_specular");
-  loadAndInsertTextures(aiTextureType_HEIGHT, "texture_normal");
-  loadAndInsertTextures(aiTextureType_AMBIENT, "texture_height");
+  load_and_insert_textures(aiTextureType_DIFFUSE, "texture_diffuse");
+  load_and_insert_textures(aiTextureType_SPECULAR, "texture_specular");
+  load_and_insert_textures(aiTextureType_HEIGHT, "texture_normal");
+  load_and_insert_textures(aiTextureType_AMBIENT, "texture_height");
 
   // 0.6 is the default value for diffuse in assimp
   if (textures.empty() and materialData.diffuse == glm::vec3(0.6f)) {
@@ -153,14 +153,14 @@ Model::load_material_textures(aiMaterial* mat, aiTextureType t,
     std::string filename = source.C_Str();
     std::string path = m_directory + "/" + filename;
 
-    auto loadedTexture =
+    auto loaded_texture =
       std::find_if(m_loaded_textures.begin(), m_loaded_textures.end(),
                    [&](const std::shared_ptr<Texture>& texture) {
                      return texture->get_path() == path;
                    });
 
-    if (loadedTexture not_eq m_loaded_textures.end()) {
-      textures.emplace_back(std::make_shared<Texture>(*(*loadedTexture)));
+    if (loaded_texture not_eq m_loaded_textures.end()) {
+      textures.emplace_back(std::make_shared<Texture>(*(*loaded_texture)));
     } else {
       std::shared_ptr<Texture> newTexture =
         std::make_shared<Texture>(path, type);

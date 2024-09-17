@@ -47,7 +47,7 @@ struct SettingsManager {
     uint32_t app_log_level{};
     // 0: trace, 1: debug, 2: info, 3: warning, 4: error, 5: critical
     uint32_t app_flush_level{};
-#ifdef DEBUG
+#ifdef ENABLE_DEBUG
     bool enable_engine_backtrace_logger = true;
     bool enable_app_backtrace_logger = true;
 #else
