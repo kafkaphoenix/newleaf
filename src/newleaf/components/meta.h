@@ -4,6 +4,7 @@
 
 #include "../utils/assert.h"
 #include "newleaf/application/application.h"
+#include "newleaf/scene/scene_manager.h"
 
 namespace nl {
 
