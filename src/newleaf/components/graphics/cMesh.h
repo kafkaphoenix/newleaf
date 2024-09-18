@@ -172,7 +172,7 @@ struct CMesh {
           sp->set_vec3("specular", cMaterial->specular);
           sp->set_float("shininess", cMaterial->shininess);
         }
-      } else {
+      } else { // models
         uint32_t diffuse_n = 1;
         uint32_t specular_n = 1;
         uint32_t normal_n = 1;

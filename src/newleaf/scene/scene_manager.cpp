@@ -1,6 +1,6 @@
 #include "scene_manager.h"
 
-#include "../components/meta.h"
+#include "../application/application.h"
 #include "../components/meta/cName.h"
 #include "../components/meta/cUUID.h"
 #include "../logging/log_manager.h"
@@ -12,9 +12,6 @@ namespace nl {
 
 SceneManager::SceneManager() : m_scene_factory() {
   ENGINE_TRACE("initializing scene manager...");
-  ENGINE_TRACE("registering engine components...");
-  register_components();
-  ENGINE_TRACE("scene manager created!");
 }
 
 void SceneManager::register_system(std::string&& name,
@@ -48,7 +45,19 @@ bool SceneManager::contains_system(std::string_view name) {
   return false;
 }
 
-void SceneManager::clear_system() {
+void SceneManager::update_system_priority(std::string_view name,
+                                          int32_t priority) {
+  for (auto& [n, system] : m_systems) {
+    if (n == name) {
+      system->update_priority(priority);
+      m_dirty_systems = true;
+      return;
+    }
+  }
+  ENGINE_ASSERT(false, "system {} not found", name);
+}
+
+void SceneManager::clear_systems() {
   m_systems.clear();
   m_dirty_systems = false;
 }

@@ -7,6 +7,7 @@
 #include "../assets/scene.h"
 #include "../assets/shader.h"
 #include "../assets/texture.h"
+#include "../components/meta.h"
 #include "../components/meta/cDeleted.h"
 #include "../components/meta/cName.h"
 #include "../components/meta/cTag.h"
@@ -21,7 +22,10 @@ using namespace entt::literals;
 
 namespace nl {
 
-SceneFactory::SceneFactory() : m_entity_factory() {}
+SceneFactory::SceneFactory() : m_entity_factory() {
+  ENGINE_TRACE("registering engine components...");
+  register_components();
+}
 
 entt::entity SceneFactory::create_entity(std::string_view prefab_id,
                                          std::string&& prototype_id,

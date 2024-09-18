@@ -2,6 +2,7 @@
 
 #include <entt/entt.hpp>
 
+#include "../application/application.h"
 #include "../utils/assert.h"
 #include "camera/cActiveCamera.h"
 #include "camera/cCamera.h"

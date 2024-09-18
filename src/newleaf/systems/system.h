@@ -16,6 +16,7 @@ class System {
     virtual ~System() = default;
 
     int32_t get_priority() const { return m_priority; }
+    void update_priority(int32_t priority) { m_priority = priority; }
 
     virtual void init(entt::registry& registry) {};
     virtual void update(entt::registry& registry, const Time& ts) {};

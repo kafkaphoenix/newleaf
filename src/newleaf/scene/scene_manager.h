@@ -25,7 +25,8 @@ class SceneManager {
     void register_system(std::string&& name, std::unique_ptr<System>&& system);
     void unregister_system(std::string_view name);
     bool contains_system(std::string_view name);
-    void clear_system();
+    void update_system_priority(std::string_view name, int32_t priority);
+    void clear_systems();
     void on_update(const Time& ts);
     entt::registry& get_registry();
     entt::entity get_entity(std::string_view name);
