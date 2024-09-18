@@ -2,6 +2,8 @@
 
 #include <entt/entt.hpp>
 
+#include "newleaf/application/application.h"
+
 using namespace entt::literals;
 
 namespace nl {
