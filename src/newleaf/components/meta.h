@@ -2,6 +2,7 @@
 
 #include <entt/entt.hpp>
 
+#include "../utils/assert.h"
 #include "newleaf/application/application.h"
 
 using namespace entt::literals;
