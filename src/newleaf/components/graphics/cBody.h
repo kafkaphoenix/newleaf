@@ -9,6 +9,7 @@
 #include "../../application/application.h"
 #include "../../assets/model.h"
 #include "../../logging/log_manager.h"
+#include "../../scene/scene_manager.h"
 #include "../../utils/assert.h"
 #include "../../utils/map_json_serializer.h"
 #include "../../utils/numeric_comparator.h"

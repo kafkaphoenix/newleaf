@@ -43,7 +43,8 @@ void Application::on_event(Event& e) {
   m_states_manager->get_current_state()->on_event(e);
 }
 
-const std::unique_ptr<WindowsManager>& Application::get_window_manager() const {
+const std::unique_ptr<WindowsManager>&
+Application::get_windows_manager() const {
   return m_windows_manager;
 }
 

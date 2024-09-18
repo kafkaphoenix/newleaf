@@ -32,7 +32,7 @@ class Application {
 
     void on_event(Event& e);
 
-    const std::unique_ptr<WindowsManager>& get_window_manager() const;
+    const std::unique_ptr<WindowsManager>& get_windows_manager() const;
     const std::unique_ptr<SceneManager>& get_scene_manager() const;
     const std::unique_ptr<AssetsManager>& get_assets_manager() const;
     const std::unique_ptr<RenderManager>& get_render_manager() const;

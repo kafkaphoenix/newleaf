@@ -33,7 +33,7 @@ void ImGuiLayer::on_attach() {
   io.ConfigWindowsMoveFromTitleBarOnly = true;
 
   ImGui::StyleColorsDark();
-  ImGui_ImplGlfw_InitForOpenGL(app.get_window_manager()->get_native_window(),
+  ImGui_ImplGlfw_InitForOpenGL(app.get_windows_manager()->get_native_window(),
                                true);
   ImGui_ImplOpenGL3_Init(glsl_version.data());
 

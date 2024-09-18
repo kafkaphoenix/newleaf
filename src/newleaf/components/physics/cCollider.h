@@ -9,6 +9,7 @@
 
 #include "../../graphics/shape_factory.h"
 #include "../../logging/log_manager.h"
+#include "../../scene/scene_manager.h"
 #include "../../utils/assert.h"
 #include "../../utils/numeric_comparator.h"
 #include "../graphics/cMesh.h"
