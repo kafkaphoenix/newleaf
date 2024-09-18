@@ -4,8 +4,11 @@
 
 #include "../application/application.h"
 #include "../logging/log_manager.h"
+#include "../settings/settings_manager.h"
 #include "../utils/assert.h"
 #include "../utils/map_json_serializer.h"
+#include "../window/windows_manager.h"
+#include "render_manager.h"
 
 namespace nl {
 

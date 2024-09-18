@@ -5,8 +5,6 @@
 #include "../utils/assert.h"
 #include "newleaf/application/application.h"
 
-using namespace entt::literals;
-
 namespace nl {
 
 template <typename Component, typename... Args>

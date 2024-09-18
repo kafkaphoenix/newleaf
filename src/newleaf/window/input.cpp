@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include "../application/application.h"
+#include "windows_manager.h"
 
 namespace nl {
 

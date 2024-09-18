@@ -4,16 +4,6 @@
 #include <span>
 #include <string>
 
-#include "../assets/assets_manager.h"
-#include "../events/event.h"
-#include "../graphics/render_manager.h"
-#include "../scene/scene_manager.h"
-#include "../settings/settings_manager.h"
-#include "../state/imgui_layer.h"
-#include "../state/state.h"
-#include "../state/states_manager.h"
-#include "../window/windows_manager.h"
-
 int main(int argc, char** argv);
 
 namespace nl {
@@ -24,6 +14,16 @@ struct CLArgs {
     const char* operator[](int index) const { return args[index]; }
 };
 
+class AssetsManager;
+class RenderManager;
+class SceneManager;
+class SettingsManager;
+class StatesManager;
+class WindowsManager;
+class ImGuiLayer;
+class Event;
+class State;
+
 class Application {
   public:
     Application(std::unique_ptr<SettingsManager>&& settings_manager,
@@ -32,24 +32,12 @@ class Application {
 
     void on_event(Event& e);
 
-    const std::unique_ptr<WindowsManager>& get_window_manager() const {
-      return m_windows_manager;
-    }
-    const std::unique_ptr<SceneManager>& get_scene_manager() const {
-      return m_scene_manager;
-    }
-    const std::unique_ptr<AssetsManager>& get_assets_manager() const {
-      return m_assets_manager;
-    }
-    const std::unique_ptr<RenderManager>& get_render_manager() const {
-      return m_render_manager;
-    }
-    const std::unique_ptr<SettingsManager>& get_settings_manager() const {
-      return m_settings_manager;
-    }
-    const std::unique_ptr<StatesManager>& get_states_manager() const {
-      return m_states_manager;
-    }
+    const std::unique_ptr<WindowsManager>& get_window_manager() const;
+    const std::unique_ptr<SceneManager>& get_scene_manager() const;
+    const std::unique_ptr<AssetsManager>& get_assets_manager() const;
+    const std::unique_ptr<RenderManager>& get_render_manager() const;
+    const std::unique_ptr<SettingsManager>& get_settings_manager() const;
+    const std::unique_ptr<StatesManager>& get_states_manager() const;
 
     void close() { m_running = false; }
     void minimize(bool minimize) { m_minimized = minimize; }

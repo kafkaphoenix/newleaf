@@ -11,6 +11,7 @@
 #include "../graphics/render_manager.h"
 #include "../logging/log_manager.h"
 #include "../settings/settings_manager.h"
+#include "../window/windows_manager.h"
 #include "im_utils.h"
 
 namespace nl {

@@ -25,6 +25,8 @@
 #include "world/cSkybox.h"
 #include "world/cTime.h"
 
+using namespace entt::literals;
+
 namespace nl {
 
 void register_components() {

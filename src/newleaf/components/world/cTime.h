@@ -6,6 +6,7 @@
 #include <entt/entt.hpp>
 
 #include "../../logging/log_manager.h"
+#include "../../scene/scene_manager.h"
 #include "../../utils/assert.h"
 #include "../../utils/numeric_comparator.h"
 

@@ -4,6 +4,7 @@
 #include "../../components/meta/cUUID.h"
 #include "../../components/world/cTime.h"
 #include "../../events/app_event.h"
+#include "../../window/windows_manager.h"
 
 namespace nl {
 

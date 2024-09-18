@@ -23,6 +23,7 @@
 #include "../../components/world/cSkybox.h"
 #include "../../graphics/render_api.h"
 #include "../../logging/log_manager.h"
+#include "../../settings/settings_manager.h"
 
 namespace nl {
 
