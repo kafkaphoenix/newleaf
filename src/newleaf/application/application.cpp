@@ -70,11 +70,7 @@ const std::unique_ptr<StatesManager>& Application::get_states_manager() const {
 }
 
 void Application::pause(bool pause) {
-  if (pause and not m_paused) {
-    m_paused = true;
-  } else if (not pause and m_paused) {
-    m_paused = false;
-  }
+  m_paused = pause;
 }
 
 void Application::run() {
