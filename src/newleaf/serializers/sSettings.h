@@ -16,7 +16,7 @@ using json = nlohmann::json;
 
 namespace nl {
 
-inline void save_settings(SettingsManager& settings_manager,
+inline void save_settings(const SettingsManager& settings_manager,
                           std::filesystem::path path) {
   json data = settings_manager;
 
