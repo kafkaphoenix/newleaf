@@ -68,6 +68,6 @@ class Texture : public Asset {
 
     std::map<std::string, std::string, NumericComparator> m_info;
 
-    void loadTexture();
+    void load_texture();
 };
 }

@@ -67,10 +67,10 @@ Texture::Texture(std::filesystem::path&& fp, std::optional<std::string>&& type,
     m_paths.emplace_back(std::move(fp.string()));
   }
 
-  loadTexture();
+  load_texture();
 }
 
-void Texture::loadTexture() {
+void Texture::load_texture() {
   int width, height, channels;
   stbi_set_flip_vertically_on_load(m_flip_vertically);
   uint32_t face{};
