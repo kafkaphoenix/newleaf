@@ -19,11 +19,10 @@ bool filter_fbos{};
 bool filter_shader_programs{};
 bool filter_shader_info{};
 
-inline void
-draw_render_manager(const std::unique_ptr<RenderManager>& render_manager,
-                    const std::unique_ptr<SettingsManager>& settings_manager) {
-  const auto& fbos = render_manager->get_framebuffers();
-  const auto& sp = render_manager->get_shader_programs();
+inline void draw_render_manager(const RenderManager& render_manager,
+                                const SettingsManager& settings_manager) {
+  const auto& fbos = render_manager.get_framebuffers();
+  const auto& sp = render_manager.get_shader_programs();
 
   int collapsed = collapser();
 
@@ -86,7 +85,7 @@ draw_render_manager(const std::unique_ptr<RenderManager>& render_manager,
     }
   }
 
-  if (collapsed == 0 or settings_manager->reload_scene) {
+  if (collapsed == 0 or settings_manager.reload_scene) {
     selected_render_manager_tabkey.clear();
     selected_render_manager_tabtype.clear();
   }
@@ -94,8 +93,8 @@ draw_render_manager(const std::unique_ptr<RenderManager>& render_manager,
   ImGui::NextColumn();
   if (not selected_render_manager_tabkey.empty()) {
     if (selected_render_manager_tabtype == "Shader Program") {
-      const auto& shaderProgram = sp.at(selected_render_manager_tabkey);
-      const auto& shaderProgramInfo = shaderProgram->to_map();
+      const auto& shader_program = sp.at(selected_render_manager_tabkey);
+      const auto& shaderProgramInfo = shader_program->to_map();
       for (const auto& [key, value] : shaderProgramInfo) {
         if (filter_shader_info and render_objects_text_filter[0] not_eq '\0' and
             strstr(key.c_str(), render_objects_text_filter) == nullptr) {
@@ -111,7 +110,7 @@ draw_render_manager(const std::unique_ptr<RenderManager>& render_manager,
           const auto& textureInfo = json_to_map(value);
           if (ImGui::TreeNode((selected_render_manager_tabtype +
                                selected_render_manager_tabkey + key +
-                               settings_manager->active_scene)
+                               settings_manager.active_scene)
                                 .c_str(),
                               key.c_str())) {
             for (const auto& [key, value] : textureInfo) {

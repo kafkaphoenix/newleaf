@@ -23,7 +23,7 @@ Application::Application(std::unique_ptr<SettingsManager>&& s, CLArgs&& args)
   m_states_manager = StatesManager::create();
   m_assets_manager = AssetsManager::create();
 
-  m_windows_manager = WindowsManager::create(m_settings_manager);
+  m_windows_manager = WindowsManager::create(*m_settings_manager);
   m_windows_manager->set_event_callback(BIND_EVENT(on_event));
 
   m_render_manager = RenderManager::create();
@@ -40,38 +40,10 @@ Application::~Application() {
 }
 
 void Application::on_event(Event& e) {
-  m_states_manager->get_current_state()->on_event(e);
+  m_states_manager->get_current_state().on_event(e);
 }
 
-const std::unique_ptr<WindowsManager>&
-Application::get_windows_manager() const {
-  return m_windows_manager;
-}
-
-const std::unique_ptr<SceneManager>& Application::get_scene_manager() const {
-  return m_scene_manager;
-}
-
-const std::unique_ptr<AssetsManager>& Application::get_assets_manager() const {
-  return m_assets_manager;
-}
-
-const std::unique_ptr<RenderManager>& Application::get_render_manager() const {
-  return m_render_manager;
-}
-
-const std::unique_ptr<SettingsManager>&
-Application::get_settings_manager() const {
-  return m_settings_manager;
-}
-
-const std::unique_ptr<StatesManager>& Application::get_states_manager() const {
-  return m_states_manager;
-}
-
-void Application::pause(bool pause) {
-  m_paused = pause;
-}
+void Application::pause(bool pause) { m_paused = pause; }
 
 void Application::run() {
   while (m_running) {
@@ -84,12 +56,12 @@ void Application::run() {
       while (m_accumulator > ts) {
         // to be able to render inside an imgui window
         m_imgui_layer->begin();
-        const auto& current_state = m_states_manager->get_current_state();
-        current_state->on_update(ts);
+        auto& current_state = m_states_manager->get_current_state();
+        current_state.on_update(ts);
         m_scene_manager->on_update(ts);
 
         m_imgui_layer->on_imgui_update();
-        current_state->on_imgui_update();
+        current_state.on_imgui_update();
         m_imgui_layer->end();
 
         m_accumulator -= ts;

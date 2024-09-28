@@ -36,13 +36,9 @@ void SceneManager::unregister_system(std::string_view name) {
   m_dirty_systems = true;
 }
 
-bool SceneManager::contains_system(std::string_view name) {
-  for (const auto& [n, _] : m_systems) {
-    if (n == name) {
-      return true;
-    }
-  }
-  return false;
+bool SceneManager::contains_system(std::string_view name) const {
+  return std::any_of(m_systems.begin(), m_systems.end(),
+                     [&name](const auto& pair) { return pair.first == name; });
 }
 
 void SceneManager::update_system_priority(std::string_view name,
@@ -209,9 +205,9 @@ SceneManager::get_named_entities() {
   return m_scene_factory.get_named_entities(m_registry);
 }
 
-const std::map<std::string, std::string, NumericComparator>&
-SceneManager::get_metrics() {
-  return m_scene_factory.get_metrics(m_registry);
+std::map<std::string, std::string, NumericComparator>&
+SceneManager::compute_metrics() {
+  return m_scene_factory.compute_metrics(m_registry);
 }
 
 void SceneManager::create_prototypes(
@@ -242,7 +238,8 @@ SceneManager::get_prototypes(std::string_view prefab_name,
 }
 
 bool SceneManager::contains_prototypes(
-  std::string_view prefab_name, const std::vector<std::string>& prototype_ids) {
+  std::string_view prefab_name,
+  const std::vector<std::string>& prototype_ids) const {
   return m_scene_factory.get_entity_factory().contains_prototypes(
     prefab_name, prototype_ids);
 }

@@ -135,7 +135,7 @@ struct CTexture {
 
       textures.reserve(paths.size());
       for (std::string_view path : paths) {
-        textures.emplace_back(assets_manager->get<Texture>(path));
+        textures.emplace_back(assets_manager.get<Texture>(path));
       }
     }
 

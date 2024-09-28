@@ -32,12 +32,19 @@ class Application {
 
     void on_event(Event& e);
 
-    const std::unique_ptr<WindowsManager>& get_windows_manager() const;
-    const std::unique_ptr<SceneManager>& get_scene_manager() const;
-    const std::unique_ptr<AssetsManager>& get_assets_manager() const;
-    const std::unique_ptr<RenderManager>& get_render_manager() const;
-    const std::unique_ptr<SettingsManager>& get_settings_manager() const;
-    const std::unique_ptr<StatesManager>& get_states_manager() const;
+    const WindowsManager& get_windows_manager() const { return *m_windows_manager; }
+    const SceneManager& get_scene_manager() const { return *m_scene_manager; }
+    const AssetsManager& get_assets_manager() const { return *m_assets_manager; }
+    const RenderManager& get_render_manager() const { return *m_render_manager; }
+    const SettingsManager& get_settings_manager() const { return *m_settings_manager; }
+    const StatesManager& get_states_manager() const { return *m_states_manager; }
+
+    WindowsManager& get_windows_manager() { return *m_windows_manager; }
+    SceneManager& get_scene_manager() { return *m_scene_manager; }
+    AssetsManager& get_assets_manager() { return *m_assets_manager; }
+    RenderManager& get_render_manager() { return *m_render_manager; }
+    SettingsManager& get_settings_manager() { return *m_settings_manager; }
+    StatesManager& get_states_manager() { return *m_states_manager; }
 
     void close() { m_running = false; }
     void minimize(bool minimize) { m_minimized = minimize; }

@@ -13,22 +13,22 @@
 namespace nl {
 
 void LogManager::init() {
-  std::vector<spdlog::sink_ptr> logSinks;
-  logSinks.reserve(2);
-  logSinks.emplace_back(
+  std::vector<spdlog::sink_ptr> log_sinks;
+  log_sinks.reserve(2);
+  log_sinks.emplace_back(
     std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-  logSinks.emplace_back(std::make_shared<ImGuiLogsink>());
+  log_sinks.emplace_back(std::make_shared<ImGuiLogsink>());
 
-  logSinks[0]->set_pattern("%^[%T] %n: %v%$");
+  log_sinks[0]->set_pattern("%^[%T] %n: %v%$");
 
-  m_engine_logger =
-    std::make_shared<spdlog::logger>("engine", begin(logSinks), end(logSinks));
+  m_engine_logger = std::make_shared<spdlog::logger>("engine", begin(log_sinks),
+                                                     end(log_sinks));
   spdlog::register_logger(m_engine_logger);
   m_engine_logger->set_level(m_engine_log_level);
   m_engine_logger->flush_on(m_engine_flush_level);
 
   m_app_logger =
-    std::make_shared<spdlog::logger>("app", begin(logSinks), end(logSinks));
+    std::make_shared<spdlog::logger>("app", begin(log_sinks), end(log_sinks));
   spdlog::register_logger(m_app_logger);
   m_app_logger->set_level(m_app_log_level);
   m_app_logger->flush_on(m_app_flush_level);
@@ -47,11 +47,11 @@ void LogManager::create_file_logger(std::string_view path) {
 void LogManager::create_backtrace_logger(std::string_view path,
                                          bool enable_engine_backtrace_logger,
                                          bool enable_app_backtrace_logger) {
-  auto backtraceSink = std::make_shared<BacktraceLogsink>(path.data());
+  auto backtrace_sink = std::make_shared<BacktraceLogsink>(path.data());
   m_engine_backtrace_logger =
-    std::make_shared<spdlog::logger>("engine", backtraceSink);
+    std::make_shared<spdlog::logger>("engine", backtrace_sink);
   m_app_backtrace_logger =
-    std::make_shared<spdlog::logger>("app", backtraceSink);
+    std::make_shared<spdlog::logger>("app", backtrace_sink);
 
   if (enable_engine_backtrace_logger) {
     m_engine_backtrace_logger->set_level(DEBUG);

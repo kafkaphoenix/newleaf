@@ -18,16 +18,14 @@ class EntityFactory {
   public:
     using Prototypes = std::map<std::string, entt::entity, NumericComparator>;
 
-    void
-    create_prototypes(std::string_view prefab_name,
-                      const std::vector<std::string>& prototype_ids,
-                      entt::registry& registry,
-                      const std::unique_ptr<AssetsManager>& assets_manager);
-    void
-    update_prototypes(std::string_view prefab_name,
-                      const std::vector<std::string>& prototype_ids,
-                      entt::registry& registry,
-                      const std::unique_ptr<AssetsManager>& assets_manager);
+    void create_prototypes(std::string_view prefab_name,
+                           const std::vector<std::string>& prototype_ids,
+                           entt::registry& registry,
+                           const AssetsManager& assets_manager);
+    void update_prototypes(std::string_view prefab_name,
+                           const std::vector<std::string>& prototype_ids,
+                           entt::registry& registry,
+                           const AssetsManager& assets_manager);
     void delete_prototypes(std::string_view prefab_name,
                            const std::vector<std::string>& prototype_ids,
                            entt::registry& registry);

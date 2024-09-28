@@ -57,10 +57,9 @@ inline void draw_leaf_info(
   }
 }
 
-inline void
-draw_scene_manager(const std::unique_ptr<SceneManager>& scene_manager,
-                   const std::unique_ptr<SettingsManager>& settings_manager) {
-  entt::registry& registry = scene_manager->get_registry();
+inline void draw_scene_manager(SceneManager& scene_manager,
+                               const SettingsManager& settings_manager) {
+  entt::registry& registry = scene_manager.get_registry();
 
   if (registry.storage<entt::entity>().in_use() == 0) {
     ImGui::Text("No entities loaded");
@@ -96,14 +95,13 @@ draw_scene_manager(const std::unique_ptr<SceneManager>& scene_manager,
   }
 
   if (ImGui::CollapsingHeader("Prefabs")) {
-    for (const auto& [prefab_id, prototypes] :
-         scene_manager->get_all_prototypes()) {
+    for (auto& [prefab_id, prototypes] : scene_manager.get_all_prototypes()) {
       std::string prefabName = "Prefab " + prefab_id;
       if (filter_prefabs and scene_objects_text_filter[0] not_eq '\0' and
           strstr(prefabName.c_str(), scene_objects_text_filter) == nullptr) {
         continue;
       }
-      if (ImGui::TreeNode((prefabName + settings_manager->active_scene).c_str(),
+      if (ImGui::TreeNode((prefabName + settings_manager.active_scene).c_str(),
                           prefabName.c_str())) {
         for (auto& [prototype_id, entity] : prototypes) {
           if (filter_prototypes and scene_objects_text_filter[0] not_eq '\0' and
@@ -126,7 +124,7 @@ draw_scene_manager(const std::unique_ptr<SceneManager>& scene_manager,
   }
 
   if (ImGui::CollapsingHeader("Instances")) {
-    for (const auto& [name, entity] : scene_manager->get_named_entities()) {
+    for (auto& [name, entity] : scene_manager.get_named_entities()) {
       if (filter_instances and scene_objects_text_filter[0] not_eq '\0' and
           strstr(name.c_str(), scene_objects_text_filter) == nullptr) {
         continue;
@@ -143,7 +141,7 @@ draw_scene_manager(const std::unique_ptr<SceneManager>& scene_manager,
   }
 
   if (ImGui::CollapsingHeader("Systems")) {
-    for (const auto& name : scene_manager->get_named_systems()) {
+    for (auto& name : scene_manager.get_named_systems()) {
       if (filter_systems and scene_objects_text_filter[0] not_eq '\0' and
           strstr(name.c_str(), scene_objects_text_filter) == nullptr) {
         continue;
@@ -152,7 +150,7 @@ draw_scene_manager(const std::unique_ptr<SceneManager>& scene_manager,
     }
   }
 
-  if (collapsed == 0 or settings_manager->reload_scene) {
+  if (collapsed == 0 or settings_manager.reload_scene) {
     selected_scene_manager_tabkey.clear();
   }
 
@@ -181,7 +179,7 @@ draw_scene_manager(const std::unique_ptr<SceneManager>& scene_manager,
           to_map_func = cType.func("to_map"_hs);
           if (to_map_func) {
             if (ImGui::TreeNode((selected_scene_manager_tabkey + cName +
-                                 settings_manager->active_scene)
+                                 settings_manager.active_scene)
                                   .c_str(),
                                 cName.c_str())) {
               data_ = to_map_func.invoke(cData);
@@ -191,7 +189,7 @@ draw_scene_manager(const std::unique_ptr<SceneManager>& scene_manager,
                 if (info.empty()) {
                   ImGui::Text("no data");
                 } else {
-                  draw_leaf_info(info, settings_manager->active_scene);
+                  draw_leaf_info(info, settings_manager.active_scene);
                 }
               } else {
                 ENGINE_ERROR("failed to get to_map for component {0}", cName);
@@ -201,7 +199,7 @@ draw_scene_manager(const std::unique_ptr<SceneManager>& scene_manager,
             }
           } else {
             if (ImGui::TreeNode((selected_scene_manager_tabkey + cName +
-                                 settings_manager->active_scene)
+                                 settings_manager.active_scene)
                                   .c_str(),
                                 cName.c_str())) {
               ENGINE_ERROR("failed to get to_map for component {0}", cName);

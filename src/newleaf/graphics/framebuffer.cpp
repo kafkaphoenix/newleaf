@@ -16,16 +16,16 @@ FBO::FBO(uint32_t w, uint32_t h, uint32_t t) : m_depth_buffer_type(t) {
   const auto& settings_manager = Application::get().get_settings_manager();
   uint32_t window_w;
   uint32_t window_h;
-  if (settings_manager->fullscreen) {
+  if (settings_manager.fullscreen) {
     int monitorCount;
     GLFWmonitor* monitor =
-      (glfwGetMonitors(&monitorCount))[settings_manager->primary_monitor];
+      (glfwGetMonitors(&monitorCount))[settings_manager.primary_monitor];
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
     window_w = mode->width;
     window_h = mode->height;
   } else {
-    window_w = settings_manager->window_w;
-    window_h = settings_manager->window_h;
+    window_w = settings_manager.window_w;
+    window_h = settings_manager.window_h;
   }
   m_width = w == 0 ? window_w : w;
   m_height = h == 0 ? window_h : h;
@@ -144,7 +144,7 @@ const std::map<std::string, std::string, NumericComparator>& FBO::to_map() {
 void FBO::bind_to_draw() {
   const auto& render_manager = Application::get().get_render_manager();
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_id);
-  render_manager->on_window_resized(m_width, m_height);
+  render_manager.on_window_resized(m_width, m_height);
 }
 
 void FBO::bind_to_read() {
@@ -158,15 +158,15 @@ void FBO::unbind() {
   auto& app = Application::get();
   const auto& settings_manager = app.get_settings_manager();
   const auto& render_manager = app.get_render_manager();
-  if (settings_manager->fullscreen) {
+  if (settings_manager.fullscreen) {
     int monitorCount;
     GLFWmonitor* monitor =
-      (glfwGetMonitors(&monitorCount))[settings_manager->primary_monitor];
+      (glfwGetMonitors(&monitorCount))[settings_manager.primary_monitor];
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-    render_manager->on_window_resized(mode->width, mode->height);
+    render_manager.on_window_resized(mode->width, mode->height);
   } else {
-    render_manager->on_window_resized(settings_manager->window_w,
-                                      settings_manager->window_h);
+    render_manager.on_window_resized(settings_manager.window_w,
+                                     settings_manager.window_h);
   }
 }
 

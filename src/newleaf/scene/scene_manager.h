@@ -24,7 +24,7 @@ class SceneManager {
     SceneManager();
     void register_system(std::string&& name, std::unique_ptr<System>&& system);
     void unregister_system(std::string_view name);
-    bool contains_system(std::string_view name);
+    bool contains_system(std::string_view name) const;
     void update_system_priority(std::string_view name, int32_t priority);
     void clear_systems();
     void on_update(const Time& ts);
@@ -55,7 +55,7 @@ class SceneManager {
     std::string get_active_scene() const;
     const std::map<std::string, entt::entity, NumericComparator>&
     get_named_entities();
-    const std::map<std::string, std::string, NumericComparator>& get_metrics();
+    std::map<std::string, std::string, NumericComparator>& compute_metrics();
 
     // entity factory methods
     void create_prototypes(std::string_view prefab_name,
@@ -67,8 +67,9 @@ class SceneManager {
     EntityFactory::Prototypes
     get_prototypes(std::string_view prefab_name,
                    const std::vector<std::string>& prototype_ids);
-    bool contains_prototypes(std::string_view prefab_name,
-                             const std::vector<std::string>& prototype_ids);
+    bool
+    contains_prototypes(std::string_view prefab_name,
+                        const std::vector<std::string>& prototype_ids) const;
     const std::map<std::string, EntityFactory::Prototypes, NumericComparator>&
     get_all_prototypes();
     const std::map<std::string, std::string, NumericComparator>&

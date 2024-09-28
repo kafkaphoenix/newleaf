@@ -15,9 +15,10 @@ class AssetsManager {
     template <typename Type, typename... Args>
     void load(std::string_view id, Args&&... args);
 
-    template <typename Type> bool contains(std::string_view id);
+    template <typename Type> bool contains(std::string_view id) const;
 
-    template <typename Type> std::shared_ptr<Type> get(std::string_view id);
+    template <typename Type>
+    std::shared_ptr<Type> get(std::string_view id) const;
 
     template <typename Type, typename... Args>
     std::shared_ptr<Type> reload(std::string_view id, Args&&... args);
@@ -30,7 +31,7 @@ class AssetsManager {
       std::string, std::unordered_map<std::string, std::shared_ptr<Asset>>>&
     get_assets() const;
 
-    const std::map<std::string, std::string, NumericComparator>& get_metrics();
+    std::map<std::string, std::string, NumericComparator>& compute_metrics();
 
   private:
     std::unordered_map<std::string,

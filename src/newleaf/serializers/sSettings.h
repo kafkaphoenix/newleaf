@@ -16,9 +16,8 @@ using json = nlohmann::json;
 
 namespace nl {
 
-inline void
-save_settings(const std::unique_ptr<SettingsManager>& settings_manager,
-              std::filesystem::path path) {
+inline void save_settings(const SettingsManager& settings_manager,
+                          std::filesystem::path path) {
   json data = *settings_manager;
 
   if (path.filename() not_eq "settings.json") {
@@ -39,8 +38,8 @@ load_settings(std::string_view app_name) {
   auto path = get_default_roaming_path(app_name) / "settings.json";
 
   if (!std::filesystem::exists(path)) {
-    settings_manager->app_name = app_name.data();
-    settings_manager->logfile_path = std::format("logs/{}.log", app_name);
+    settings_manager.app_name = app_name.data();
+    settings_manager.logfile_path = std::format("logs/{}.log", app_name);
     save_settings(settings_manager, path);
   } else {
     std::ifstream file(path);

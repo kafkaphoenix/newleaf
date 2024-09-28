@@ -11,16 +11,15 @@
 
 namespace nl {
 
-WindowsManager::WindowsManager(
-  const std::unique_ptr<SettingsManager>& settings_manager) {
-  m_data.window_title = settings_manager->app_name;
-  m_data.width = settings_manager->window_w;
-  m_data.height = settings_manager->window_h;
-  m_data.primary_monitor = settings_manager->primary_monitor;
+WindowsManager::WindowsManager(const SettingsManager& settings_manager) {
+  m_data.window_title = settings_manager.app_name;
+  m_data.width = settings_manager.window_w;
+  m_data.height = settings_manager.window_h;
+  m_data.primary_monitor = settings_manager.primary_monitor;
   m_data.mouse_x = m_data.width / 2.0f;  // center of the screen
   m_data.mouse_y = m_data.height / 2.0f; // center of the screen
-  m_data.imgui_window = settings_manager->imgui_window;
-  m_data.fit_to_window = settings_manager->fit_to_window;
+  m_data.imgui_window = settings_manager.imgui_window;
+  m_data.fit_to_window = settings_manager.fit_to_window;
   ENGINE_TRACE("creating window {} with resolution {}x{}...",
                m_data.window_title, m_data.width, m_data.height);
   if (m_window_count == 0) {
@@ -30,34 +29,34 @@ WindowsManager::WindowsManager(
     });
   }
 
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings_manager->opengl_major);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, settings_manager->opengl_minor);
-  glfwWindowHint(GLFW_DEPTH_BITS, settings_manager->depth_bits);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings_manager.opengl_major);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, settings_manager.opengl_minor);
+  glfwWindowHint(GLFW_DEPTH_BITS, settings_manager.depth_bits);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  glfwWindowHint(GLFW_RESIZABLE, settings_manager->resizable);
-  m_data.resizable = settings_manager->resizable;
-  glfwWindowHint(GLFW_REFRESH_RATE, settings_manager->refresh_rate);
-  m_data.refresh_rate = settings_manager->refresh_rate;
+  glfwWindowHint(GLFW_RESIZABLE, settings_manager.resizable);
+  m_data.resizable = settings_manager.resizable;
+  glfwWindowHint(GLFW_REFRESH_RATE, settings_manager.refresh_rate);
+  m_data.refresh_rate = settings_manager.refresh_rate;
 
-  ENGINE_TRACE("loading openGL version {}.{}", settings_manager->opengl_major,
-               settings_manager->opengl_minor);
+  ENGINE_TRACE("loading openGL version {}.{}", settings_manager.opengl_major,
+               settings_manager.opengl_minor);
 
   int monitorCount;
   GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
-  if (settings_manager->primary_monitor < 0 or
-      settings_manager->primary_monitor >= monitorCount) {
+  if (settings_manager.primary_monitor < 0 or
+      settings_manager.primary_monitor >= monitorCount) {
     ENGINE_ERROR("invalid monitor index!");
     return;
   }
   const GLFWvidmode* mode =
-    glfwGetVideoMode(monitors[settings_manager->primary_monitor]);
+    glfwGetVideoMode(monitors[settings_manager.primary_monitor]);
   int xpos = (mode->width - m_data.width) / 2;
   int ypos = (mode->height - m_data.height) / 2;
-  if (settings_manager->fullscreen) {
+  if (settings_manager.fullscreen) {
     m_data.fullscreen = true;
     m_window =
       glfwCreateWindow(mode->width, mode->height, m_data.window_title.c_str(),
-                       monitors[settings_manager->primary_monitor], nullptr);
+                       monitors[settings_manager.primary_monitor], nullptr);
     // center of the screen to avoid 0 0 when windowed first time
     m_data.position_x = xpos;
     m_data.position_y = ypos;
@@ -78,10 +77,10 @@ WindowsManager::WindowsManager(
     glViewport(0, 0, m_data.width, m_data.height);
   }
 
-  set_window_icon(settings_manager->window_icon_path);
-  set_cursor_mode(static_cast<CursorMode>(settings_manager->cursor_mode), true);
-  set_cursor_icon(settings_manager->cursor_icon_path);
-  toggle_vsync(settings_manager->vsync);
+  set_window_icon(settings_manager.window_icon_path);
+  set_cursor_mode(static_cast<CursorMode>(settings_manager.cursor_mode), true);
+  set_cursor_icon(settings_manager.cursor_icon_path);
+  toggle_vsync(settings_manager.vsync);
   glfwSetWindowUserPointer(m_window, &m_data);
 
   glfwSetFramebufferSizeCallback(
@@ -151,24 +150,24 @@ WindowsManager::WindowsManager(
     data.event_callback(e);
   });
 
-  glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button,
-                                          int action, int) {
-    WindowData& data =
-      *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
+  glfwSetMouseButtonCallback(
+    m_window, [](GLFWwindow* window, int button, int action, int) {
+      WindowData& data =
+        *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-    switch (action) {
-    case GLFW_PRESS: {
-      MouseButtonPressedEvent e(static_cast<Mouse>(button));
-      data.event_callback(e);
-      break;
-    }
-    case GLFW_RELEASE: {
-      MouseButtonReleasedEvent e(static_cast<Mouse>(button));
-      data.event_callback(e);
-      break;
-    }
-    }
-  });
+      switch (action) {
+      case GLFW_PRESS: {
+        MouseButtonPressedEvent e(static_cast<Mouse>(button));
+        data.event_callback(e);
+        break;
+      }
+      case GLFW_RELEASE: {
+        MouseButtonReleasedEvent e(static_cast<Mouse>(button));
+        data.event_callback(e);
+        break;
+      }
+      }
+    });
 
   glfwSetCursorPosCallback(
     m_window, [](GLFWwindow* window, double xpos, double ypos) {
@@ -280,12 +279,10 @@ void WindowsManager::on_update() {
   glfwPollEvents();
 }
 
-void WindowsManager::trigger_event(Event&& e) {
-  m_data.event_callback(e);
-}
+void WindowsManager::trigger_event(Event&& e) { m_data.event_callback(e); }
 
 void WindowsManager::set_position(int x, int y) {
-  if (Application::get().get_settings_manager()->fullscreen) {
+  if (Application::get().get_settings_manager().fullscreen) {
     ENGINE_ERROR("cannot set position of fullscreen window!");
     return;
   }
@@ -315,7 +312,7 @@ void WindowsManager::minimize(bool minimize) {
 }
 
 void WindowsManager::maximize(bool maximize) {
-  if (Application::get().get_settings_manager()->fullscreen) {
+  if (Application::get().get_settings_manager().fullscreen) {
     ENGINE_ERROR("cannot maximize fullscreen window!");
     return;
   }
@@ -328,7 +325,7 @@ void WindowsManager::maximize(bool maximize) {
 }
 
 void WindowsManager::toggle_focus(bool focused) {
-  if (Application::get().get_settings_manager()->fullscreen) {
+  if (Application::get().get_settings_manager().fullscreen) {
     ENGINE_ERROR("cannot set focus of fullscreen window!");
     return;
   }
@@ -389,7 +386,7 @@ void WindowsManager::set_window_title(std::string title) {
   if (title not_eq m_data.window_title) {
     glfwSetWindowTitle(m_window, title.c_str());
     m_data.window_title = title;
-    Application::get().get_settings_manager()->app_name = title;
+    Application::get().get_settings_manager().app_name = title;
   }
 }
 
@@ -410,7 +407,7 @@ void WindowsManager::set_window_icon(std::string path) {
     glfwSetWindowIcon(m_window, 1, images);
     stbi_image_free(images[0].pixels);
     m_data.window_icon_path = path;
-    Application::get().get_settings_manager()->window_icon_path = path;
+    Application::get().get_settings_manager().window_icon_path = path;
   }
 }
 
@@ -446,7 +443,7 @@ void WindowsManager::set_cursor_icon(std::string path) {
     glfwSetCursor(m_window, m_data.cursor);
     stbi_image_free(images[0].pixels);
     m_data.cursor_icon_path = path;
-    Application::get().get_settings_manager()->cursor_icon_path = path;
+    Application::get().get_settings_manager().cursor_icon_path = path;
   }
 }
 
@@ -465,7 +462,7 @@ void WindowsManager::set_cursor_mode(CursorMode cursor_mode, bool update) {
     }
     if (update) {
       m_data.cursor_mode = cursor_mode;
-      Application::get().get_settings_manager()->cursor_mode = mode;
+      Application::get().get_settings_manager().cursor_mode = mode;
     }
   }
 }
@@ -510,7 +507,7 @@ void WindowsManager::toggle_resizable(bool resizable) {
 
     glfwSetWindowAttrib(m_window, GLFW_RESIZABLE, resizable);
     m_data.resizable = resizable;
-    Application::get().get_settings_manager()->resizable = resizable;
+    Application::get().get_settings_manager().resizable = resizable;
   }
 }
 
@@ -526,15 +523,15 @@ void WindowsManager::set_refresh_rate(int refresh_rate) {
       return;
     }
 
-    const auto& settings_manager = Application::get().get_settings_manager();
+    auto& settings_manager = Application::get().get_settings_manager();
     int monitorCount;
     GLFWmonitor* monitor =
-      glfwGetMonitors(&monitorCount)[settings_manager->primary_monitor];
+      glfwGetMonitors(&monitorCount)[settings_manager.primary_monitor];
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
     glfwSetWindowMonitor(m_window, monitor, GLFW_DONT_CARE, GLFW_DONT_CARE,
                          mode->width, mode->height, refresh_rate);
     m_data.refresh_rate = refresh_rate;
-    settings_manager->refresh_rate = refresh_rate;
+    settings_manager.refresh_rate = refresh_rate;
     if (m_data.vsync) {
       glfwSwapInterval(1); // https://github.com/glfw/glfw/issues/1072
     }
@@ -545,7 +542,7 @@ void WindowsManager::toggle_vsync(bool enabled) {
   if (enabled not_eq m_data.vsync) {
     glfwSwapInterval(enabled ? 1 : 0);
     m_data.vsync = enabled;
-    Application::get().get_settings_manager()->vsync = enabled;
+    Application::get().get_settings_manager().vsync = enabled;
   }
 }
 
@@ -558,37 +555,37 @@ void WindowsManager::set_window_monitor(int monitor) {
       return;
     }
 
-    const auto& settings_manager = Application::get().get_settings_manager();
+    auto& settings_manager = Application::get().get_settings_manager();
     int xpos = m_data.fullscreen ? GLFW_DONT_CARE : m_data.position_x;
     int ypos = m_data.fullscreen ? GLFW_DONT_CARE : m_data.position_y;
     int refresh_rate =
-      m_data.fullscreen ? settings_manager->refresh_rate : GLFW_DONT_CARE;
+      m_data.fullscreen ? settings_manager.refresh_rate : GLFW_DONT_CARE;
 
     glfwSetWindowMonitor(m_window, monitors[monitor], xpos, ypos, m_data.width,
                          m_data.height, refresh_rate);
     m_data.primary_monitor = monitor;
-    settings_manager->primary_monitor = monitor;
+    settings_manager.primary_monitor = monitor;
   }
 }
 
 void WindowsManager::toggle_fullscreen(bool fullscreen) {
   if (fullscreen and not m_data.fullscreen) {
-    const auto& settings_manager = Application::get().get_settings_manager();
+    auto& settings_manager = Application::get().get_settings_manager();
     int monitorCount;
     GLFWmonitor* monitor =
-      (glfwGetMonitors(&monitorCount))[settings_manager->primary_monitor];
+      (glfwGetMonitors(&monitorCount))[settings_manager.primary_monitor];
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
     m_data.fullscreen = fullscreen;
-    settings_manager->fullscreen = fullscreen;
+    settings_manager.fullscreen = fullscreen;
     glfwSetWindowMonitor(m_window, monitor, GLFW_DONT_CARE, GLFW_DONT_CARE,
                          mode->width, mode->height,
-                         settings_manager->refresh_rate);
+                         settings_manager.refresh_rate);
     if (m_data.vsync) {
       glfwSwapInterval(1); // https://github.com/glfw/glfw/issues/1072
     }
   } else if (not fullscreen and m_data.fullscreen) {
     m_data.fullscreen = fullscreen;
-    Application::get().get_settings_manager()->fullscreen = fullscreen;
+    Application::get().get_settings_manager().fullscreen = fullscreen;
     glfwSetWindowMonitor(m_window, nullptr, m_data.position_x,
                          m_data.position_y, m_data.width, m_data.height,
                          GLFW_DONT_CARE);
@@ -602,19 +599,19 @@ void WindowsManager::toggle_fullscreen(bool fullscreen) {
 void WindowsManager::toggle_window_inside_imgui(bool imgui_window) {
   if (imgui_window not_eq m_data.imgui_window) {
     m_data.imgui_window = imgui_window;
-    Application::get().get_settings_manager()->imgui_window = imgui_window;
+    Application::get().get_settings_manager().imgui_window = imgui_window;
   }
 }
 
 void WindowsManager::toggle_fit_to_window(bool fit_to_window) {
   if (fit_to_window not_eq m_data.fit_to_window) {
     m_data.fit_to_window = fit_to_window;
-    Application::get().get_settings_manager()->fit_to_window = fit_to_window;
+    Application::get().get_settings_manager().fit_to_window = fit_to_window;
   }
 }
 
-std::unique_ptr<WindowsManager> WindowsManager::create(
-  const std::unique_ptr<SettingsManager>& settings_manager) {
+std::unique_ptr<WindowsManager>
+WindowsManager::create(const SettingsManager& settings_manager) {
   return std::make_unique<WindowsManager>(settings_manager);
 }
 }

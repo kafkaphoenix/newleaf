@@ -33,7 +33,7 @@ void TimeSystem::update(entt::registry& registry, const Time& ts) {
     if (last_second != cTime.current_second) {
       // then we update minutes and hours
       if (cTime.current_second == 0) {
-        app.get_windows_manager()->trigger_event(AppTickEvent());
+        app.get_windows_manager().trigger_event(AppTickEvent());
 
         cTime.current_minute++;
         if (cTime.current_minute == 60) {

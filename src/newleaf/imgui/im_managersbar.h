@@ -17,12 +17,11 @@
 
 namespace nl {
 
-inline void
-draw_managersbar(const std::unique_ptr<AssetsManager>& assets_manager,
-                 const std::unique_ptr<RenderManager>& render_manager,
-                 const std::unique_ptr<SceneManager>& scene_manager,
-                 const std::unique_ptr<SettingsManager>& settings_manager,
-                 const std::unique_ptr<StatesManager>& states_manager) {
+inline void draw_managersbar(const AssetsManager& assets_manager,
+                             RenderManager& render_manager,
+                             SceneManager& scene_manager,
+                             SettingsManager& settings_manager,
+                             StatesManager& states_manager) {
   if (ImGui::BeginTabBar("RootTabBar", ImGuiTabBarFlags_Reorderable)) {
     if (ImGui::BeginTabItem("Assets Manager")) {
       draw_assets_manager(assets_manager, settings_manager);
@@ -57,7 +56,7 @@ draw_managersbar(const std::unique_ptr<AssetsManager>& assets_manager,
       filter_shader_info = false;
     }
     if (ImGui::BeginTabItem("States Manager")) {
-      draw_states_manager(settings_manager, states_manager);
+      draw_states_manager(states_manager);
       ImGui::EndTabItem();
     } else {
       states_text_filter[0] = '\0';

@@ -31,23 +31,22 @@ class SceneFactory {
     void delete_entity(entt::entity& e, entt::registry& registry);
 
     void create_scene(std::string scene_name, std::string scene_path,
-                      const std::unique_ptr<AssetsManager>& assets_manager,
-                      const std::unique_ptr<RenderManager>& render_manager,
-                      entt::registry& registry);
-    void reload_scene(const std::unique_ptr<AssetsManager>& assets_manager,
-                      const std::unique_ptr<RenderManager>& render_manager,
+                      AssetsManager& assets_manager,
+                      RenderManager& render_manager, entt::registry& registry);
+    void reload_scene(const AssetsManager& assets_manager,
+                      const RenderManager& render_manager,
                       entt::registry& registry, bool reload_prototypes);
 
-    void clear_scene(const std::unique_ptr<RenderManager>& render_manager,
-                     entt::registry& registry);
+    void clear_scene(RenderManager& render_manager, entt::registry& registry);
 
     std::string get_active_scene() const { return m_active_scene; }
-    const std::map<std::string, std::string, NumericComparator>&
-    get_metrics(entt::registry& registry);
+    std::map<std::string, std::string, NumericComparator>&
+    compute_metrics(entt::registry& registry);
     const std::map<std::string, entt::entity, NumericComparator>&
     get_named_entities(entt::registry& registry);
 
     EntityFactory& get_entity_factory() { return m_entity_factory; }
+    const EntityFactory& get_entity_factory() const { return m_entity_factory; }
 
   private:
     std::string m_active_scene;
@@ -58,16 +57,12 @@ class SceneFactory {
     bool m_dirty_metrics{};
     bool m_dirty_named_entities{};
 
-    void create_shader_programs(
-      const Scene& scene, const std::unique_ptr<AssetsManager>& assets_manager,
-      const std::unique_ptr<RenderManager>& render_manager);
-    void create_textures(const Scene& scene,
-                         const std::unique_ptr<AssetsManager>& assets_manager);
-    void create_models(const Scene& scene,
-                       const std::unique_ptr<AssetsManager>& assets_manager);
-    void create_prototypes(const Scene& scene,
-                           const std::unique_ptr<AssetsManager>& assets_manager,
-                           const std::unique_ptr<RenderManager>& render_manager,
+    void create_shader_programs(const Scene& scene,
+                                AssetsManager& assets_manager,
+                                RenderManager& render_manager);
+    void create_textures(const Scene& scene, AssetsManager& assets_manager);
+    void create_models(const Scene& scene, AssetsManager& assets_manager);
+    void create_prototypes(const Scene& scene, AssetsManager& assets_manager,
                            entt::registry& registry);
 };
 }

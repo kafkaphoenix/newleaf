@@ -29,7 +29,7 @@ class VAO {
     void set_index(std::unique_ptr<IBO>&& ibo);
 
     const std::vector<std::shared_ptr<VBO>>& get_vbos() const { return m_vbos; }
-    const std::unique_ptr<IBO>& get_ebo() const { return m_ibo; }
+    const IBO& get_ebo() const { return *m_ibo; }
     uint32_t get_vbo_index() const { return m_vbo_index; }
     uint32_t get_id() const { return m_id; }
     bool is_binded() const { return m_binded; }

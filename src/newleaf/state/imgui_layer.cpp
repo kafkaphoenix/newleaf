@@ -21,8 +21,8 @@ void ImGuiLayer::on_attach() {
   auto& app = Application::get();
   const auto& settings_manager = app.get_settings_manager();
   std::string glsl_version =
-    std::format("#version {}{}0", settings_manager->opengl_major,
-                settings_manager->opengl_minor);
+    std::format("#version {}{}0", settings_manager.opengl_major,
+                settings_manager.opengl_minor);
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO();
@@ -33,7 +33,7 @@ void ImGuiLayer::on_attach() {
   io.ConfigWindowsMoveFromTitleBarOnly = true;
 
   ImGui::StyleColorsDark();
-  ImGui_ImplGlfw_InitForOpenGL(app.get_windows_manager()->get_native_window(),
+  ImGui_ImplGlfw_InitForOpenGL(app.get_windows_manager().get_native_window(),
                                true);
   ImGui_ImplOpenGL3_Init(glsl_version.data());
 
@@ -58,11 +58,11 @@ void ImGuiLayer::on_imgui_update() {
   auto& app = Application::get();
 
   if (app.is_debugging()) {
-    const auto& settings_manager = app.get_settings_manager();
-    const auto& assets_manager = app.get_assets_manager();
-    const auto& render_manager = app.get_render_manager();
-    const auto& scene_manager = app.get_scene_manager();
-    const auto& states_manager = app.get_states_manager();
+    auto& settings_manager = app.get_settings_manager();
+    auto& assets_manager = app.get_assets_manager();
+    auto& render_manager = app.get_render_manager();
+    auto& scene_manager = app.get_scene_manager();
+    auto& states_manager = app.get_states_manager();
     draw_debugger(settings_manager, assets_manager, render_manager,
                   scene_manager, states_manager);
   }

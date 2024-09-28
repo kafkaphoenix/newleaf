@@ -6,7 +6,6 @@
 
 #include <imgui.h>
 
-#include "../settings/settings_manager.h"
 #include "../state/states_manager.h"
 #include "../utils/map_json_serializer.h"
 #include "../utils/numeric_comparator.h"
@@ -18,9 +17,7 @@ char states_text_filter[128]{}; // TODO: move to class
 bool filter_states{};
 bool filter_layers{};
 
-inline void
-draw_states_manager(const std::unique_ptr<SettingsManager>& settings_manager,
-                    const std::unique_ptr<StatesManager>& states_manager) {
+inline void draw_states_manager(StatesManager& states_manager) {
   int collapsed = collapser();
 
   ImGui::InputText("##filter", states_text_filter,
@@ -42,11 +39,7 @@ draw_states_manager(const std::unique_ptr<SettingsManager>& settings_manager,
     ImGui::SetNextItemOpen(collapsed not_eq 0);
   }
 
-  if (states_manager->get_current_state() == nullptr) {
-    ImGui::Text("No states");
-  }
-
-  for (const auto& [state, layers] : states_manager->get_metrics()) {
+  for (const auto& [state, layers] : states_manager.compute_metrics()) {
     if (filter_states and states_text_filter[0] not_eq '\0' and
         strstr(state.c_str(), states_text_filter) == nullptr) {
       continue;

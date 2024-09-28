@@ -170,9 +170,8 @@ void processComponent(entt::entity& e, const std::string& cPrefab,
 
 void EntityFactory::create_prototypes(
   std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
-  entt::registry& registry,
-  const std::unique_ptr<AssetsManager>& assets_manager) {
-  const auto& prefab = assets_manager->get<Prefab>(prefab_name);
+  entt::registry& registry, const AssetsManager& assets_manager) {
+  const auto& prefab = assets_manager.get<Prefab>(prefab_name);
 
   auto& prefabPrototypes = m_prefabs[prefab_name.data()];
   for (std::string_view prototype_id : prototype_ids) {
@@ -195,10 +194,9 @@ void EntityFactory::create_prototypes(
 
 void EntityFactory::update_prototypes(
   std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
-  entt::registry& registry,
-  const std::unique_ptr<AssetsManager>& assetsManager) {
+  entt::registry& registry, const AssetsManager& assets_manager) {
   delete_prototypes(prefab_name, prototype_ids, registry);
-  create_prototypes(prefab_name, prototype_ids, registry, assetsManager);
+  create_prototypes(prefab_name, prototype_ids, registry, assets_manager);
 }
 
 void EntityFactory::delete_prototypes(

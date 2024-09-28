@@ -121,7 +121,7 @@ void RenderAPI::clear_depth() { glClear(GL_DEPTH_BUFFER_BIT); }
 
 void RenderAPI::draw_indexed(const std::shared_ptr<VAO>& vao) {
   vao->bind();
-  glDrawElements(GL_TRIANGLES, vao->get_ebo()->get_count(), GL_UNSIGNED_INT,
+  glDrawElements(GL_TRIANGLES, vao->get_ebo().get_count(), GL_UNSIGNED_INT,
                  nullptr);
   vao->unbind();
 }

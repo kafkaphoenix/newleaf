@@ -26,12 +26,10 @@ class FBO {
     void clear(const float color[4], const float depth);
 
     void resize(uint32_t width, uint32_t height);
-    const std::unique_ptr<Texture>& get_color_texture() const {
-      return m_color_texture;
-    }
-    const std::unique_ptr<Texture>& get_depth_texture() const {
-      return m_depth_texture;
-    }
+    Texture& get_color_texture() { return *m_color_texture; }
+    const Texture& get_color_texture() const { return *m_color_texture; }
+    Texture& get_depth_texture() { return *m_depth_texture; }
+    const Texture& get_depth_texture() const { return *m_depth_texture; }
     uint32_t get_buffer_id() const;
     std::string_view get_buffer_type() const;
     const std::map<std::string, std::string, NumericComparator>& to_map();

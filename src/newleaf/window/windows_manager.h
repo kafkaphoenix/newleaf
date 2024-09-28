@@ -52,7 +52,7 @@ struct WindowData {
 
 class WindowsManager {
   public:
-    WindowsManager(const std::unique_ptr<SettingsManager>& settings_manager);
+    WindowsManager(const SettingsManager& settings_manager);
     ~WindowsManager();
 
     void shutdown();
@@ -89,7 +89,7 @@ class WindowsManager {
     void toggle_fit_to_window(bool fit_to_window);
 
     static std::unique_ptr<WindowsManager>
-    create(const std::unique_ptr<SettingsManager>& settings_manager);
+    create(const SettingsManager& settings_manager);
 
   private:
     uint32_t m_window_count{};

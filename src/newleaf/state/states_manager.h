@@ -21,10 +21,11 @@ class StatesManager {
     void push_overlay(std::unique_ptr<Layer>&& o, bool enabled);
     void enable_overlay(std::string_view name);
     void disable_overlay(std::string_view name);
-    const std::unique_ptr<State>& get_current_state();
+    State& get_current_state();
+    const State& get_current_state() const;
     uint32_t get_state_index();
 
-    const std::map<std::string, std::string, NumericComparator>& get_metrics();
+    std::map<std::string, std::string, NumericComparator>& compute_metrics();
 
     static std::unique_ptr<StatesManager> create();
 

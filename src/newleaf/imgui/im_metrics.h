@@ -13,9 +13,9 @@ namespace nl {
 
 bool show_tool_metrics = false;
 
-inline void draw_metrics(const std::unique_ptr<AssetsManager>& assets_manager,
-                         const std::unique_ptr<RenderManager>& render_manager,
-                         const std::unique_ptr<SceneManager>& scene_manager) {
+inline void draw_metrics(AssetsManager& assets_manager,
+                         RenderManager& render_manager,
+                         SceneManager& scene_manager) {
   if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_M)) and
       ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
     show_tool_metrics = not show_tool_metrics;
@@ -36,17 +36,17 @@ inline void draw_metrics(const std::unique_ptr<AssetsManager>& assets_manager,
     help_mark("Frames per second");
 
     ImGui::SeparatorText("Scene Manager");
-    for (const auto& [key, value] : scene_manager->get_metrics()) {
+    for (const auto& [key, value] : scene_manager.compute_metrics()) {
       ImGui::Text("%s: %s", key.c_str(), value.c_str());
     }
 
     ImGui::SeparatorText("Assets Manager");
-    for (const auto& [key, value] : assets_manager->get_metrics()) {
+    for (const auto& [key, value] : assets_manager.compute_metrics()) {
       ImGui::Text("%s: %s", key.c_str(), value.c_str());
     }
 
     ImGui::SeparatorText("Render Manager");
-    for (const auto& [key, value] : render_manager->get_metrics()) {
+    for (const auto& [key, value] : render_manager.compute_metrics()) {
       ImGui::Text("%s: %s", key.c_str(), value.c_str());
     }
 

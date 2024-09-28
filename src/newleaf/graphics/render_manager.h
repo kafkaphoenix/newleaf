@@ -21,8 +21,8 @@ class RenderManager {
   public:
     void init() const;
     void shutdown();
-    void reorder() { m_shouldReorder = true; }
-    bool should_reorder() const { return m_shouldReorder; }
+    void reorder() { m_reorder = true; }
+    bool should_reorder() const { return m_reorder; }
 
     void on_window_resized(uint32_t w, uint32_t h) const;
 
@@ -30,9 +30,8 @@ class RenderManager {
                      glm::vec3 cameraPosition);
     void end_scene();
 
-    void
-    add_shader_program(std::string&& name,
-                       const std::unique_ptr<AssetsManager>& assetsManager);
+    void add_shader_program(std::string&& name,
+                            const AssetsManager& assets_manager);
     void add_framebuffer(std::string&& framebuffer, uint32_t width,
                          uint32_t height, uint32_t buffer_type);
     void delete_framebuffer(std::string_view framebuffer);
@@ -44,11 +43,10 @@ class RenderManager {
     get_framebuffers() const {
       return m_framebuffers;
     }
-    const std::unique_ptr<ShaderProgram>&
-    get_shader_program(std::string_view shaderProgram);
+    ShaderProgram& get_shader_program(std::string_view shader_program);
 
     void render(const std::shared_ptr<VAO>& vao, const glm::mat4& transform,
-                std::string_view shaderProgram);
+                std::string_view shader_program);
     void render_framebuffer(const std::shared_ptr<VAO>& vao,
                             std::string_view fbo);
     void render_inside_imgui(const std::shared_ptr<VAO>& vao,
@@ -61,7 +59,7 @@ class RenderManager {
     uint32_t get_framebuffers_count() const { return m_framebuffers.size(); }
     void clear();
     void reset_metrics();
-    const std::map<std::string, std::string, NumericComparator>& get_metrics();
+    std::map<std::string, std::string, NumericComparator>& compute_metrics();
     static std::unique_ptr<RenderManager> create();
 
   private:
@@ -76,6 +74,6 @@ class RenderManager {
     uint32_t m_triangles{};
     uint32_t m_vertices{};
     uint32_t m_indices{};
-    bool m_shouldReorder{};
+    bool m_reorder{};
 };
 }

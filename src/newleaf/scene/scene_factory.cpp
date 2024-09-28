@@ -71,11 +71,10 @@ entt::entity SceneFactory::clone_entity(const entt::entity& e, uint32_t uuid,
   return cloned;
 }
 
-void SceneFactory::create_scene(
-  std::string scene_id, std::string scene_path,
-  const std::unique_ptr<AssetsManager>& assets_manager,
-  const std::unique_ptr<RenderManager>& render_manager,
-  entt::registry& registry) {
+void SceneFactory::create_scene(std::string scene_id, std::string scene_path,
+                                AssetsManager& assets_manager,
+                                RenderManager& render_manager,
+                                entt::registry& registry) {
   Timer timer;
   ENGINE_INFO("creating scene...");
 
@@ -89,10 +88,10 @@ void SceneFactory::create_scene(
   create_models(scene, assets_manager);
   ENGINE_INFO("models creation time: {:.6f}s", timer.get_seconds());
   timer.reset();
-  create_prototypes(scene, assets_manager, render_manager, registry);
+  create_prototypes(scene, assets_manager, registry);
   ENGINE_INFO("entities creation time: {:.6f}s", timer.get_seconds());
   timer.reset();
-  assets_manager->load<Scene>(scene_id, std::move(scene));
+  assets_manager.load<Scene>(scene_id, std::move(scene));
   ENGINE_INFO("scene {} creation time: {:.6f}s", scene_id, timer.get_seconds());
   m_active_scene = std::move(scene_id);
 
@@ -100,22 +99,22 @@ void SceneFactory::create_scene(
   m_dirty_named_entities = true;
 }
 
-void SceneFactory::reload_scene(
-  const std::unique_ptr<AssetsManager>& assets_manager,
-  const std::unique_ptr<RenderManager>& render_manager,
-  entt::registry& registry, bool reload_prototypes) {
+void SceneFactory::reload_scene(const AssetsManager& assets_manager,
+                                const RenderManager& render_manager,
+                                entt::registry& registry,
+                                bool reload_prototypes) {
   Timer timer;
   ENGINE_ASSERT(not m_active_scene.empty(), "no scene is active!");
   ENGINE_INFO("reloading scene {}", m_active_scene);
 
-  const auto& scene = assets_manager->get<Scene>(m_active_scene);
+  const auto& scene = assets_manager.get<Scene>(m_active_scene);
   if (reload_prototypes) {
     registry.clear(); // delete instances and prototypes but reusing them later
     m_entity_factory.clear_prototypes();
 
     for (const auto& [prefab_name, options] : scene->get_prefabs()) {
       ENGINE_TRACE("reloading scene prototypes...");
-      const auto& prefab = assets_manager->get<Prefab>(prefab_name);
+      const auto& prefab = assets_manager.get<Prefab>(prefab_name);
       m_entity_factory.create_prototypes(
         prefab_name, prefab->get_target_prototypes(), registry, assets_manager);
     }
@@ -131,16 +130,15 @@ void SceneFactory::reload_scene(
   m_dirty_named_entities = true;
 }
 
-void SceneFactory::clear_scene(
-  const std::unique_ptr<RenderManager>& render_manager,
-  entt::registry& registry) {
+void SceneFactory::clear_scene(RenderManager& render_manager,
+                               entt::registry& registry) {
   ENGINE_ASSERT(not m_active_scene.empty(), "no scene is active!");
   ENGINE_WARN("clearing scene {}", m_active_scene);
 
   registry.clear(); // soft delete / = {};  would delete them completely but
                     // does not invoke signals/mixin methods
   m_entity_factory.clear_prototypes();
-  render_manager->clear();
+  render_manager.clear();
   m_active_scene.clear();
   m_metrics.clear();
   m_named_entities.clear();
@@ -148,51 +146,50 @@ void SceneFactory::clear_scene(
   m_dirty_named_entities = false;
 }
 
-void SceneFactory::create_shader_programs(
-  const Scene& scene, const std::unique_ptr<AssetsManager>& assets_manager,
-  const std::unique_ptr<RenderManager>& render_manager) {
+void SceneFactory::create_shader_programs(const Scene& scene,
+                                          AssetsManager& assets_manager,
+                                          RenderManager& render_manager) {
   for (const auto& [shader_program, shader_program_data] :
        scene.get_shader_programs()) {
     for (const auto& [shader_type, path] : shader_program_data.items()) {
-      assets_manager->load<Shader>(shader_type, path);
+      assets_manager.load<Shader>(shader_type, path);
     } // TODO maybe delete shader as asset?
-    render_manager->add_shader_program(std::string(shader_program),
-                                       assets_manager);
+    render_manager.add_shader_program(std::string(shader_program),
+                                      assets_manager);
   }
 }
 
-void SceneFactory::create_textures(
-  const Scene& scene, const std::unique_ptr<AssetsManager>& assets_manager) {
+void SceneFactory::create_textures(const Scene& scene,
+                                   AssetsManager& assets_manager) {
   for (const auto& [texture, options] : scene.get_textures()) {
     bool flip_y = options.contains("flip_vertically")
                     ? options.at("flip_vertically").get<bool>()
                     : true;
     bool flip_option =
       flip_y ? Texture::FLIP_VERTICALLY : Texture::DONT_FLIP_VERTICALLY;
-    assets_manager->load<Texture>(
-      texture, options.at("path").get<std::string>(),
-      options.at("type").get<std::string>(), flip_option);
+    assets_manager.load<Texture>(texture, options.at("path").get<std::string>(),
+                                 options.at("type").get<std::string>(),
+                                 flip_option);
   }
 }
 
-void SceneFactory::create_models(
-  const Scene& scene, const std::unique_ptr<AssetsManager>& assets_manager) {
+void SceneFactory::create_models(const Scene& scene,
+                                 AssetsManager& assets_manager) {
   for (const auto& [model, path] : scene.get_models()) {
-    assets_manager->load<Model>(model, path);
+    assets_manager.load<Model>(model, path);
   }
 }
 
-void SceneFactory::create_prototypes(
-  const Scene& scene, const std::unique_ptr<AssetsManager>& assets_manager,
-  const std::unique_ptr<RenderManager>& render_manager,
-  entt::registry& registry) {
+void SceneFactory::create_prototypes(const Scene& scene,
+                                     AssetsManager& assets_manager,
+                                     entt::registry& registry) {
   for (const auto& [prefab_name, options] : scene.get_prefabs()) {
     auto prefab =
       Prefab(options.at("path").get<std::string>(),
              options.at("target_prototypes").get<std::vector<std::string>>());
     ENGINE_TRACE("creating prototypes from prefab {}...", prefab_name);
     std::vector<std::string> targetPrototypes = prefab.get_target_prototypes();
-    assets_manager->load<Prefab>(prefab_name, std::move(prefab));
+    assets_manager.load<Prefab>(prefab_name, std::move(prefab));
     m_entity_factory.create_prototypes(prefab_name, targetPrototypes, registry,
                                        assets_manager);
   }
@@ -204,8 +201,8 @@ void SceneFactory::delete_entity(entt::entity& e, entt::registry& registry) {
   m_dirty_named_entities = true;
 }
 
-const std::map<std::string, std::string, NumericComparator>&
-SceneFactory::get_metrics(entt::registry& registry) {
+std::map<std::string, std::string, NumericComparator>&
+SceneFactory::compute_metrics(entt::registry& registry) {
   if (not m_dirty_metrics) {
     return m_metrics;
   }

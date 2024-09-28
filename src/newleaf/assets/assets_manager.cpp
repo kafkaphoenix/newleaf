@@ -16,7 +16,8 @@ void AssetsManager::load(std::string_view id, Args&&... args) {
   m_dirty = true;
 }
 
-template <typename Type> bool AssetsManager::contains(std::string_view id) {
+template <typename Type>
+bool AssetsManager::contains(std::string_view id) const {
   std::string_view type = typeid(Type).name();
   type = type.substr(type.find_last_of(':') + 1);
   auto& asset_map = m_assets[type.data()];
@@ -24,7 +25,7 @@ template <typename Type> bool AssetsManager::contains(std::string_view id) {
 }
 
 template <typename Type>
-std::shared_ptr<Type> AssetsManager::get(std::string_view id) {
+std::shared_ptr<Type> AssetsManager::get(std::string_view id) const {
   std::string_view type = typeid(Type).name();
   type = type.substr(type.find_last_of(':') + 1);
   ENGINE_ASSERT(contains<Type>(id), "asset {} not found for type {}!", id,
@@ -67,8 +68,8 @@ AssetsManager::get_assets() const {
   return m_assets;
 }
 
-const std::map<std::string, std::string, NumericComparator>&
-AssetsManager::get_metrics() {
+std::map<std::string, std::string, NumericComparator>&
+AssetsManager::compute_metrics() {
   if (not m_dirty) {
     return m_metrics;
   }

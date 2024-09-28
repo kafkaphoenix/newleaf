@@ -19,7 +19,7 @@ inline void draw_logger() {
     return;
 
   auto sink = dynamic_cast<ImGuiLogsink*>(
-    LogManager::get_engine_logger()->sinks()[1].get());
+    LogManager::get_engine_logger().sinks()[1].get());
   sink->draw(&show_tool_logger);
 }
 }

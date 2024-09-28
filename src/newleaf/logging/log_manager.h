@@ -28,17 +28,17 @@ class LogManager {
     static void toggle_app_logger(bool enable);
     static void toggle_engine_backtrace_logger(bool enable);
     static void toggle_app_backtrace_logger(bool enable);
-    static std::shared_ptr<spdlog::logger>& get_engine_logger() {
-      return m_engine_logger;
+    static spdlog::logger& get_engine_logger() {
+      return *m_engine_logger;
     }
-    static std::shared_ptr<spdlog::logger>& get_app_logger() {
-      return m_app_logger;
+    static spdlog::logger& get_app_logger() {
+      return *m_app_logger;
     }
-    static std::shared_ptr<spdlog::logger>& get_engine_backtrace_logger() {
-      return m_engine_backtrace_logger;
+    static spdlog::logger& get_engine_backtrace_logger() {
+      return *m_engine_backtrace_logger;
     }
-    static std::shared_ptr<spdlog::logger>& get_app_backtrace_logger() {
-      return m_app_backtrace_logger;
+    static spdlog::logger& get_app_backtrace_logger() {
+      return *m_app_backtrace_logger;
     }
     static std::string_view get_engine_logger_level() {
       return std::string_view(
@@ -90,27 +90,27 @@ class LogManager {
 }
 
 #define ENGINE_TRACE(...)                                                      \
-  ::nl::LogManager::get_engine_logger()->trace(__VA_ARGS__)
+  ::nl::LogManager::get_engine_logger().trace(__VA_ARGS__)
 #define ENGINE_DEBUG(...)                                                      \
-  ::nl::LogManager::get_engine_logger()->debug(__VA_ARGS__)
+  ::nl::LogManager::get_engine_logger().debug(__VA_ARGS__)
 #define ENGINE_INFO(...)                                                       \
-  ::nl::LogManager::get_engine_logger()->info(__VA_ARGS__)
+  ::nl::LogManager::get_engine_logger().info(__VA_ARGS__)
 #define ENGINE_WARN(...)                                                       \
-  ::nl::LogManager::get_engine_logger()->warn(__VA_ARGS__)
+  ::nl::LogManager::get_engine_logger().warn(__VA_ARGS__)
 #define ENGINE_ERROR(...)                                                      \
-  ::nl::LogManager::get_engine_logger()->error(__VA_ARGS__)
+  ::nl::LogManager::get_engine_logger().error(__VA_ARGS__)
 #define ENGINE_CRITICAL(...)                                                   \
-  ::nl::LogManager::get_engine_logger()->critical(__VA_ARGS__)
+  ::nl::LogManager::get_engine_logger().critical(__VA_ARGS__)
 
-#define APP_TRACE(...) ::nl::LogManager::get_app_logger()->trace(__VA_ARGS__)
-#define APP_DEBUG(...) ::nl::LogManager::get_app_logger()->debug(__VA_ARGS__)
-#define APP_INFO(...) ::nl::LogManager::get_app_logger()->info(__VA_ARGS__)
-#define APP_WARN(...) ::nl::LogManager::get_app_logger()->warn(__VA_ARGS__)
-#define APP_ERROR(...) ::nl::LogManager::get_app_logger()->error(__VA_ARGS__)
+#define APP_TRACE(...) ::nl::LogManager::get_app_logger().trace(__VA_ARGS__)
+#define APP_DEBUG(...) ::nl::LogManager::get_app_logger().debug(__VA_ARGS__)
+#define APP_INFO(...) ::nl::LogManager::get_app_logger().info(__VA_ARGS__)
+#define APP_WARN(...) ::nl::LogManager::get_app_logger().warn(__VA_ARGS__)
+#define APP_ERROR(...) ::nl::LogManager::get_app_logger().error(__VA_ARGS__)
 #define APP_CRITICAL(...)                                                      \
-  ::nl::LogManager::get_app_logger()->critical(__VA_ARGS__)
+  ::nl::LogManager::get_app_logger().critical(__VA_ARGS__)
 
 #define ENGINE_BACKTRACE(...)                                                  \
-  ::nl::LogManager::get_engine_backtrace_logger()->debug(__VA_ARGS__)
+  ::nl::LogManager::get_engine_backtrace_logger().debug(__VA_ARGS__)
 #define APP_BACKTRACE(...)                                                     \
-  ::nl::LogManager::get_app_backtrace_logger()->debug(__VA_ARGS__)
+  ::nl::LogManager::get_app_backtrace_logger().debug(__VA_ARGS__)

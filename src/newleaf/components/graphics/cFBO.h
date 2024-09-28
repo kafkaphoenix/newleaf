@@ -96,27 +96,27 @@ struct CFBO {
       }
     }
 
-    void setup_properties(const std::unique_ptr<ShaderProgram>& sp) {
-      sp->reset_active_uniforms();
-      sp->use();
+    void setup_properties(ShaderProgram& sp) {
+      sp.reset_active_uniforms();
+      sp.use();
       if (mode == Mode::normal) {
-        sp->set_float("mode", 0.f);
+        sp.set_float("mode", 0.f);
       } else if (mode == Mode::inverse) {
-        sp->set_float("mode", 1.f);
+        sp.set_float("mode", 1.f);
       } else if (mode == Mode::grey_scale) {
-        sp->set_float("mode", 2.f);
+        sp.set_float("mode", 2.f);
       } else if (mode == Mode::blur) {
-        sp->set_float("mode", 3.f);
+        sp.set_float("mode", 3.f);
       } else if (mode == Mode::edge) {
-        sp->set_float("mode", 4.f);
+        sp.set_float("mode", 4.f);
       } else if (mode == Mode::sharpen) {
-        sp->set_float("mode", 5.f);
+        sp.set_float("mode", 5.f);
       } else if (mode == Mode::night_vision) {
-        sp->set_float("mode", 6.f);
+        sp.set_float("mode", 6.f);
       } else if (mode == Mode::emboss) {
-        sp->set_float("mode", 7.f);
+        sp.set_float("mode", 7.f);
       }
-      sp->unuse();
+      sp.unuse();
     }
 };
 }
