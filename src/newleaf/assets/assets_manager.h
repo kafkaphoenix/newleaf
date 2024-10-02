@@ -18,10 +18,10 @@ class AssetsManager {
     void load(std::string_view id, Args&&... args) {
       std::string_view type = typeid(Type).name();
       type = type.substr(type.find_last_of(':') + 1);
-      auto& asset_map = m_assets[type.data()];
-      ENGINE_ASSERT(not asset_map.contains(id.data()),
+      auto& assets = m_assets[type.data()];
+      ENGINE_ASSERT(not assets.contains(id.data()),
                     "asset {} already exists for type {}!", id, type);
-      asset_map.emplace(id,
+      assets.emplace(id,
                         std::make_shared<Type>(std::forward<Args>(args)...));
       m_dirty = true;
     }
@@ -29,8 +29,8 @@ class AssetsManager {
     template <typename Type> bool contains(std::string_view id) const {
       std::string_view type = typeid(Type).name();
       type = type.substr(type.find_last_of(':') + 1);
-      auto& asset_map = m_assets.at(type.data());
-      return asset_map.contains(id.data());
+      auto& assets = m_assets.at(type.data());
+      return assets.contains(id.data());
     }
 
     template <typename Type>

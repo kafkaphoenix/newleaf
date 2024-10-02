@@ -5,6 +5,7 @@
 
 #include "../application/application.h"
 #include "../graphics/buffer.h"
+#include "../settings/settings_manager.h"
 #include "../utils/assert.h"
 
 namespace nl {
@@ -105,7 +106,7 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   }
 
   aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-  CMaterial materialData = load_material(material);
+  CMaterial material_data = load_material(material);
 
   // n is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER.
   // diffuse: texture_diffuse_n
@@ -125,17 +126,19 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   load_and_insert_textures(aiTextureType_AMBIENT, "texture_height");
 
   // 0.6 is the default value for diffuse in assimp
-  if (textures.empty() and materialData.diffuse == glm::vec3(0.6f)) {
-    auto& assets_manager = Application::get().get_assets_manager();
-    if (assets_manager.contains<Texture>("default")) {
+  if (textures.empty() and material_data.diffuse == glm::vec3(0.6f)) {
+    std::string_view default_texture_path =
+      Application::get().get_settings_manager().default_texture_path;
+    if (not default_texture_path.empty()) {
+      auto& assets_manager = Application::get().get_assets_manager();
+      if (not assets_manager.contains<Texture>("default")) {
+        assets_manager.load<Texture>("default", default_texture_path,
+                                     "texture_diffuse");
+      }
       textures.emplace_back(assets_manager.get<Texture>("default"));
-    } else {
-      textures.emplace_back(
-        std::make_shared<Texture>("default.png", "texture_diffuse"));
-      assets_manager.load<Texture>("default", "default.png", "texture_diffuse");
     }
   }
-  m_materials.emplace_back(std::move(materialData));
+  m_materials.emplace_back(std::move(material_data));
 
   return CMesh(std::move(vertices), std::move(indices), std::move(textures),
                std::string("camera"));
@@ -161,10 +164,9 @@ Model::load_material_textures(aiMaterial* mat, aiTextureType t,
     if (loaded_texture not_eq m_loaded_textures.end()) {
       textures.emplace_back(std::make_shared<Texture>(*(*loaded_texture)));
     } else {
-      std::shared_ptr<Texture> newTexture =
-        std::make_shared<Texture>(path, type);
-      textures.emplace_back(newTexture);
-      m_loaded_textures.emplace_back(std::move(newTexture));
+      auto new_texture = std::make_shared<Texture>(path, type);
+      textures.emplace_back(new_texture);
+      m_loaded_textures.emplace_back(std::move(new_texture));
     }
   }
 

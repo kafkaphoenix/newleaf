@@ -33,6 +33,8 @@ struct SettingsManager {
     std::string cursor_icon_path = "";
     uint32_t cursor_mode = 2; // 0: normal, 1: hidden, 2: disabled
 
+    std::string default_texture_path = "";
+
     bool enable_debug = true; // TODO use for something
     bool display_fps = false; // TODO implement with enable_debug maybe?
     bool display_collision_boxes = false;
@@ -75,5 +77,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
   enable_engine_logger, enable_app_logger, engine_log_level, app_log_level,
   engine_flush_level, app_flush_level, enable_engine_backtrace_logger,
   enable_app_backtrace_logger, clear_color, clear_depth, active_scene,
-  active_scene_path, reload_prototypes, display_collision_boxes);
+  active_scene_path, reload_prototypes, display_collision_boxes,
+  default_texture_path);
 }
