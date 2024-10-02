@@ -379,7 +379,7 @@ void WindowsManager::set_event_callback(EventCallbackFn&& cb) {
 
 void WindowsManager::set_window_title(std::string title) {
   if (title.empty()) {
-    ENGINE_ERROR("window title is empty!");
+    ENGINE_ERROR("window title undefined!");
     return;
   }
 
@@ -392,7 +392,8 @@ void WindowsManager::set_window_title(std::string title) {
 
 void WindowsManager::set_window_icon(std::string path) {
   if (path.empty()) {
-    ENGINE_ERROR("window icon path is empty!");
+    ENGINE_ERROR("window icon path undefined!");
+    return;
   }
 
   if (not std::filesystem::exists(path)) {
@@ -413,7 +414,7 @@ void WindowsManager::set_window_icon(std::string path) {
 
 void WindowsManager::restore_window_icon() {
   if (m_data.window_icon_path.empty()) {
-    ENGINE_ERROR("window icon path is empty!");
+    ENGINE_ERROR("window icon path undefined!");
     return;
   }
 
@@ -422,7 +423,7 @@ void WindowsManager::restore_window_icon() {
 
 void WindowsManager::set_cursor_icon(std::string path) {
   if (path.empty()) {
-    ENGINE_ERROR("cursor icon path is empty!");
+    ENGINE_ERROR("cursor icon path undefined!");
     return;
   }
 
