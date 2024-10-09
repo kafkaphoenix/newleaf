@@ -1,61 +1,63 @@
-# potatoengine
+# newleaf
 
-Final project: C++ OpenGL engine for 3d and 2d game development.
+C++ game engine for 3d and 2d development
 
 ## Engine Features
 
-- Self contained engine, everything can be accessed just importing a header `engineAPI.h`
-- Scene manager: Entity Component System engine oriented
-- Render manager: OpenGL 4.5 API abstraction
-- Window manager: Multi window/overlay support
-- Assets manager: Caching and hot reloading of prefabs, shaders, textures, models and scenes
-- States manager: State machine
-- Settings manager: Persist your settings
-- Debugger (Logger, Metrics, Dynamic settings, assets/entities/scene/states inspector)
-- Event-driven (Mouse/Keyboard/Window/Application)
-- Loading scenes and entity prototypes from json
+- Scene manager: entity component system oriented. Loading scenes and entity prototypes from json
+- Render manager: openGL 4.6 api abstraction. Model, texture and cubemaps loading capabilities. FBO
+- Window manager: glfw abstraction
+- Event-driven (mouse/keyboard/window/application)
+- Settings manager: customizable engine defined settings
+- Debugger layer: logger, metrics and an assets/entities/scene/states/settings inspector
+- Assets manager: caching and hot reloading of prefabs, shaders, textures, models and scenes
+- States manager: state machine with layers and overlays
 - Perspective camera
-- Model, Texture and Cubemaps loader
-- Phong lighthing
-- Framebuffer for post processing effects
-- Triangle/Quad meshing terrain generation supporting texture, texture atlas and colors
-- Noise generator for procedural terrain
-
-# Demos
-
-Inside the folder `demos` you can find several example scenes:
-
-- Sponza
-- Dabrovic sponza
-- Lowpoly city
-- Skycrapers city
-- Trailer park
-- Noise generated terrain and skybox
-- Flat terrain with primitives and skybox
-- Several cube instances with reflection, light, using a texture atlas and a skybox
-- Flappy Bird game
-
-## To compile and run
-```
-$ mkdir build ; cd build
-$ cmake ../src
-$ cmake --build . --target potatoengine
-$ .\Debug\potatoengine.exe 
-```
+- Model, texture and cubemaps loading capabilities
 
 ## How to use the engine in a personal project
 
-- Once cloned the project create inside a folder where your game app logic will go, an example can be seen in `demos\`
+- Use the engine as a library (shared or static)
+```cmake
+include(FetchContent)
+FetchContent_Declare(
+    newleaf
+    GIT_REPOSITORY https://github.com/kafkaphoenix/newleaf.git
+    GIT_TAG        v0.1.0
+)
+
+FetchContent_GetProperties(newleaf)
+if(NOT newleaf_POPULATED)
+  FetchContent_Populate(newleaf)
+  set(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS} CACHE INTERNAL "" FORCE)
+  add_subdirectory(${newleaf_SOURCE_DIR} ${newleaf_BINARY_DIR})
+endif()
+```
+
+## Demos
+
+- Engine use cases can be found in the [newleaf demos repository](https://github.com/kafkaphoenix/newleaf_demos)
 
 ## Planned features
 
+- User defined settings
+- Shader compilation
+- Render commands batching
 - Expand camera class supporting more modes
-- Profiler
 - Serialization
-- Scripting language
-- Tests
-- Editor Mode
+- Per module tests using catch2
+- Profiler
+- Font rendering
+- Audio
+- Physics
+- Networking
+- Vulkan support
 - Engine wiki documentation
+- Editor Mode
+- Multi window/overlay
+- Scripting language
+- Multiplatform
+- Multithreading
 
 ## Third party libraries
 
@@ -68,6 +70,4 @@ $ .\Debug\potatoengine.exe
 - [nlohmann_json](https://github.com/nlohmann/json): json processing
 - [assimp](https://github.com/assimp/assimp): model loading
 - [spdlog](https://github.com/gabime/spdlog): structured logging
-- [FastNoiseLite](https://github.com/Auburn/FastNoiseLite): noise generation
-- [freetype](https://github.com/freetype/freetype): font rendering
-- [RmlUi](https://github.com/mikke89/RmlUi): ui framework
+- [Catch2](https://github.com/catchorg/Catch2): unit testing
