@@ -95,7 +95,7 @@ struct CMesh {
       if (cTexture) {
         uint32_t i = 1;
         for (auto& texture : cTexture->textures) {
-          sp.set_int(texture->get_type().data() + std::to_string(i), i);
+          sp.set_int(texture->get_type().data() + std::string("_") + std::to_string(i), i);
           texture->bind_slot(i);
           ++i;
         }

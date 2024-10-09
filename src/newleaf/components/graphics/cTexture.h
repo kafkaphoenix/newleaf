@@ -47,10 +47,10 @@ struct CTexture {
     DrawMode draw_mode;
 
     CTexture() = default;
-    explicit CTexture(std::vector<std::string>&& fps, glm::vec4&& c, float bf,
+    explicit CTexture(std::vector<std::string>&& p, glm::vec4&& c, float bf,
                       float r, float ri, bool ht, bool ul, bool ur, bool uf,
                       std::string&& dm)
-      : paths(std::move(fps)), color(std::move(c)), blend_factor(bf),
+      : paths(std::move(p)), color(std::move(c)), blend_factor(bf),
         reflectivity(r), refractive_index(ri), enable_transparency(ht),
         enable_lighting(ul), enable_reflection(ur), enable_refraction(uf),
         _draw_mode(dm) {}
@@ -139,9 +139,9 @@ struct CTexture {
       }
     }
 
-    void reload_textures(std::vector<std::string>&& fps) {
-      ENGINE_ASSERT(fps != paths, "texture paths are the same");
-      paths = std::move(fps);
+    void reload_textures(std::vector<std::string>&& p) {
+      ENGINE_ASSERT(p != paths, "texture paths are the same");
+      paths = std::move(p);
       textures.clear();
       set_textures();
     }
