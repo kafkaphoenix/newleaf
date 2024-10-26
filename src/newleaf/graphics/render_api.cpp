@@ -61,6 +61,8 @@ void APIENTRY message_callback(GLenum source, GLenum type, uint32_t id,
 }
 
 void RenderAPI::init() {
+  ENGINE_TRACE("initializing render api");
+
   glEnable(GL_DEBUG_OUTPUT);
   glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
   glDebugMessageCallback(message_callback, nullptr);

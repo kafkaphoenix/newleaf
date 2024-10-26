@@ -13,6 +13,7 @@ namespace nl {
 
 class StatesManager {
   public:
+    StatesManager();
     ~StatesManager();
 
     void push_state(std::unique_ptr<State>&& s);

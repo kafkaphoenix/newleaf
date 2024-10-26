@@ -12,6 +12,8 @@
 namespace nl {
 
 WindowsManager::WindowsManager(const SettingsManager& settings_manager) {
+  ENGINE_TRACE("initializing windows manager");
+
   m_data.window_title = settings_manager.app_name;
   m_data.width = settings_manager.window_w;
   m_data.height = settings_manager.window_h;
@@ -20,8 +22,8 @@ WindowsManager::WindowsManager(const SettingsManager& settings_manager) {
   m_data.mouse_y = m_data.height / 2.0f; // center of the screen
   m_data.imgui_window = settings_manager.imgui_window;
   m_data.fit_to_window = settings_manager.fit_to_window;
-  ENGINE_TRACE("creating window {} with resolution {}x{}...",
-               m_data.window_title, m_data.width, m_data.height);
+  ENGINE_TRACE("creating window {} with resolution {}x{}", m_data.window_title,
+               m_data.width, m_data.height);
   if (m_window_count == 0) {
     ENGINE_ASSERT(glfwInit(), "failed to initialize glfw!");
     glfwSetErrorCallback([](int error, const char* description) {
@@ -260,11 +262,12 @@ WindowsManager::WindowsManager(const SettingsManager& settings_manager) {
 }
 
 WindowsManager::~WindowsManager() {
-  ENGINE_WARN("deleting window");
+  ENGINE_WARN("deleting windows manager");
   shutdown();
 }
 
 void WindowsManager::shutdown() {
+  // TODO this should accept a window to close
   glfwDestroyWindow(m_window);
   --m_window_count;
 

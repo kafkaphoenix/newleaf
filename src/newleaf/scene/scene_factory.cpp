@@ -23,7 +23,7 @@ using namespace entt::literals;
 namespace nl {
 
 SceneFactory::SceneFactory() : m_entity_factory() {
-  ENGINE_TRACE("registering engine components...");
+  ENGINE_TRACE("registering engine components");
   register_components();
 }
 
@@ -76,7 +76,7 @@ void SceneFactory::create_scene(std::string scene_id, std::string scene_path,
                                 RenderManager& render_manager,
                                 entt::registry& registry) {
   Timer timer;
-  ENGINE_INFO("creating scene...");
+  ENGINE_TRACE("creating scene");
 
   Scene scene = Scene(scene_path);
   create_shader_programs(scene, assets_manager, render_manager);
@@ -105,7 +105,7 @@ void SceneFactory::reload_scene(const AssetsManager& assets_manager,
                                 bool reload_prototypes) {
   Timer timer;
   ENGINE_ASSERT(not m_active_scene.empty(), "no scene is active!");
-  ENGINE_INFO("reloading scene {}", m_active_scene);
+  ENGINE_TRACE("reloading scene {}", m_active_scene);
 
   const auto& scene = assets_manager.get<Scene>(m_active_scene);
   if (reload_prototypes) {
@@ -113,7 +113,7 @@ void SceneFactory::reload_scene(const AssetsManager& assets_manager,
     m_entity_factory.clear_prototypes();
 
     for (const auto& [prefab_name, options] : scene->get_prefabs()) {
-      ENGINE_TRACE("reloading scene prototypes...");
+      ENGINE_TRACE("reloading scene prototypes");
       const auto& prefab = assets_manager.get<Prefab>(prefab_name);
       m_entity_factory.create_prototypes(
         prefab_name, prefab->get_target_prototypes(), registry, assets_manager);
@@ -187,7 +187,7 @@ void SceneFactory::create_prototypes(const Scene& scene,
     auto prefab =
       Prefab(options.at("path").get<std::string>(),
              options.at("target_prototypes").get<std::vector<std::string>>());
-    ENGINE_TRACE("creating prototypes from prefab {}...", prefab_name);
+    ENGINE_TRACE("creating prototypes from prefab {}", prefab_name);
     std::vector<std::string> target_prototypes = prefab.get_target_prototypes();
     assets_manager.load<Prefab>(prefab_name, std::move(prefab));
     m_entity_factory.create_prototypes(prefab_name, target_prototypes, registry,
@@ -212,8 +212,7 @@ SceneFactory::compute_metrics(entt::registry& registry) {
   int total = registry.storage<entt::entity>().in_use();
   int created = registry.storage<entt::entity>().size();
   int n_prototypes = 0;
-  for (const auto& [key, prototypes] :
-       m_entity_factory.get_all_prototypes()) {
+  for (const auto& [key, prototypes] : m_entity_factory.get_all_prototypes()) {
     n_prototypes += prototypes.size();
     m_metrics["prototypes_alive_from_prefab_" + key] =
       std::to_string(prototypes.size());

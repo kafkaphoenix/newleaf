@@ -11,8 +11,10 @@ using namespace entt::literals;
 namespace nl {
 
 SceneManager::SceneManager() : m_scene_factory() {
-  ENGINE_TRACE("initializing scene manager...");
+  ENGINE_TRACE("initializing scene manager");
 }
+
+SceneManager::~SceneManager() { ENGINE_WARN("deleting scene manager"); }
 
 void SceneManager::register_system(std::string&& name,
                                    std::unique_ptr<System>&& system) {

@@ -27,7 +27,6 @@ Application::Application(std::unique_ptr<SettingsManager>&& s, CLArgs&& args)
   m_windows_manager->set_event_callback(BIND_EVENT(on_event));
 
   m_render_manager = RenderManager::create();
-  m_render_manager->init();
   m_scene_manager = SceneManager::create();
   m_imgui_layer = std::make_unique<ImGuiLayer>();
   m_imgui_layer->on_attach();
@@ -35,7 +34,6 @@ Application::Application(std::unique_ptr<SettingsManager>&& s, CLArgs&& args)
 
 Application::~Application() {
   ENGINE_WARN("deleting application");
-  m_render_manager->shutdown();
   m_imgui_layer->on_detach();
 }
 

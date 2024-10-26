@@ -69,6 +69,7 @@ void ImGuiLayer::on_imgui_update() {
 }
 
 void ImGuiLayer::on_detach() {
+  ENGINE_WARN("removing ImGui layer");
   ENGINE_WARN("shutting down imgui api");
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();

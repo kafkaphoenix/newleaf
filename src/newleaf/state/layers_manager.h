@@ -11,6 +11,7 @@ namespace nl {
 
 class LayersManager {
   public:
+    LayersManager();
     ~LayersManager();
 
     void push_layer(std::unique_ptr<Layer>&& l);

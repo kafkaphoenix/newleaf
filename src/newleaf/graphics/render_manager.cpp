@@ -8,9 +8,12 @@
 
 namespace nl {
 
-void RenderManager::init() const { RenderAPI::init(); }
+RenderManager::RenderManager() {
+  ENGINE_TRACE("initializing render manager");
+  RenderAPI::init();
+}
 
-void RenderManager::shutdown() { ENGINE_WARN("shutting down render manager"); }
+RenderManager::~RenderManager() { ENGINE_WARN("deleting render manager"); }
 
 void RenderManager::on_window_resized(uint32_t w, uint32_t h) const {
   RenderAPI::set_viewport(0, 0, w, h);
@@ -107,6 +110,7 @@ void RenderManager::render(const std::shared_ptr<VAO>& vao,
 }
 
 void RenderManager::clear() {
+  ENGINE_DEBUG("clearing render manager");
   if (not m_framebuffers.empty()) {
     m_framebuffers.clear();
     // to avoid problems after using scenes with fbo

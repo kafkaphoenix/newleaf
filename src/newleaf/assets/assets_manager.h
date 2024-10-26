@@ -14,6 +14,9 @@
 namespace nl {
 class AssetsManager {
   public:
+    AssetsManager();
+    ~AssetsManager();
+
     template <typename Type, typename... Args>
     void load(std::string_view id, Args&&... args) {
       std::string_view type = typeid(Type).name();

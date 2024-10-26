@@ -8,14 +8,16 @@
 
 namespace nl {
 
+StatesManager::StatesManager() { ENGINE_TRACE("initializing states manager"); }
+
 StatesManager::~StatesManager() {
   ENGINE_WARN("deleting states manager");
   for (auto& s : m_states) {
+    ENGINE_WARN("detaching state {}", s->get_name());
     s->on_detach();
   }
   m_states.clear();
   m_metrics.clear();
-  m_dirty = false;
 }
 
 void StatesManager::push_state(std::unique_ptr<State>&& s) {

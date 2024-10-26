@@ -19,8 +19,9 @@ namespace nl {
 
 class RenderManager {
   public:
-    void init() const;
-    void shutdown();
+    RenderManager();
+    ~RenderManager();
+
     void reorder() { m_reorder = true; }
     bool should_reorder() const { return m_reorder; }
 

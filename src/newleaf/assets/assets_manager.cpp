@@ -5,7 +5,12 @@
 
 namespace nl {
 
+AssetsManager::AssetsManager() { ENGINE_TRACE("initializing assets manager"); }
+
+AssetsManager::~AssetsManager() { ENGINE_WARN("deleting assets manager"); }
+
 void AssetsManager::clear() {
+  ENGINE_DEBUG("clearing assets manager");
   m_assets.clear();
   m_metrics.clear();
   m_dirty = false;

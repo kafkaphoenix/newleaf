@@ -22,6 +22,7 @@ namespace nl {
 class SceneManager {
   public:
     SceneManager();
+    ~SceneManager();
     void register_system(std::string&& name, std::unique_ptr<System>&& system);
     void unregister_system(std::string_view name);
     bool contains_system(std::string_view name) const;
