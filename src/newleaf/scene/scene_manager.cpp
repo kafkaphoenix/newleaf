@@ -138,6 +138,10 @@ void SceneManager::delete_entity(std::string_view name) {
   delete_entity(get_entity(name));
 }
 
+void SceneManager::delete_entity(UUID& uuid) {
+  delete_entity(get_entity(uuid));
+}
+
 void SceneManager::create_scene(std::string scene_name,
                                 std::string scene_path) {
   auto& app = Application::get();
