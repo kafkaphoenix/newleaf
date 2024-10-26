@@ -29,9 +29,9 @@ void Prefab::process_prototype(const std::string& name,
 }
 
 Prefab::Prefab(std::filesystem::path&& fp,
-               std::vector<std::string>&& targetPrototypes)
+               std::vector<std::string>&& target_prototypes)
   : m_name(std::move(fp.filename().string())), m_path(std::move(fp.string())),
-    m_target_prototypes(std::move(targetPrototypes)) {
+    m_target_prototypes(std::move(target_prototypes)) {
   // One prefab file can contain multiple prototypes and we target only a subset
   // of them
   std::ifstream f(fp);
@@ -135,7 +135,7 @@ bool Prefab::operator==(const Asset& other) const {
   if (typeid(*this) not_eq typeid(other)) {
     ENGINE_ASSERT(false, "cannot compare prefab with other asset type!");
   }
-  const Prefab& otherPrefab = static_cast<const Prefab&>(other);
-  return m_path == otherPrefab.m_path;
+  const Prefab& other_prefab = static_cast<const Prefab&>(other);
+  return m_path == other_prefab.m_path;
 }
 }

@@ -27,17 +27,17 @@ bool filter_systems{};
 
 inline void draw_leaf_info(
   const std::map<std::string, std::string, NumericComparator>& info,
-  const std::string& sceneName) {
+  const std::string& scene_name) {
   for (const auto& [k, v] : info) {
     if (k.starts_with("mesh_") or k.starts_with("texture_") or
         k.starts_with("material_") or k.starts_with("transform_") or
         (k.starts_with("vao_") and v != "undefined")) {
-      if (ImGui::TreeNode((k + sceneName).c_str(), k.c_str())) {
+      if (ImGui::TreeNode((k + scene_name).c_str(), k.c_str())) {
         auto childInfoData = json_to_map(v);
         for (const auto& [key, value] : childInfoData) {
           if (key.starts_with("texture_") or
               (key.starts_with("vao_") and value != "undefined")) {
-            if (ImGui::TreeNode((key + sceneName).c_str(), key.c_str())) {
+            if (ImGui::TreeNode((key + scene_name).c_str(), key.c_str())) {
               // CBody, CShape, CChunk have a CMesh that has a vao and CTexture
               auto rechildInfoData = json_to_map(value);
               for (const auto& [key, value] : rechildInfoData) {
@@ -96,13 +96,13 @@ inline void draw_scene_manager(SceneManager& scene_manager,
 
   if (ImGui::CollapsingHeader("Prefabs")) {
     for (auto& [prefab_id, prototypes] : scene_manager.get_all_prototypes()) {
-      std::string prefabName = "Prefab " + prefab_id;
+      std::string prefab_name = "Prefab " + prefab_id;
       if (filter_prefabs and scene_objects_text_filter[0] not_eq '\0' and
-          strstr(prefabName.c_str(), scene_objects_text_filter) == nullptr) {
+          strstr(prefab_name.c_str(), scene_objects_text_filter) == nullptr) {
         continue;
       }
-      if (ImGui::TreeNode((prefabName + settings_manager.active_scene).c_str(),
-                          prefabName.c_str())) {
+      if (ImGui::TreeNode((prefab_name + settings_manager.active_scene).c_str(),
+                          prefab_name.c_str())) {
         for (auto& [prototype_id, entity] : prototypes) {
           if (filter_prototypes and scene_objects_text_filter[0] not_eq '\0' and
               strstr(prototype_id.c_str(), scene_objects_text_filter) ==

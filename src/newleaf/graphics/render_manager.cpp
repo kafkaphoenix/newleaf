@@ -17,10 +17,10 @@ void RenderManager::on_window_resized(uint32_t w, uint32_t h) const {
 }
 
 void RenderManager::begin_scene(glm::mat4 view, glm::mat4 projection,
-                                glm::vec3 cameraPosition) {
+                                glm::vec3 camera_position) {
   m_view = view;
   m_projection = projection;
-  m_camera_position = cameraPosition;
+  m_camera_position = camera_position;
 }
 
 void RenderManager::end_scene() {}

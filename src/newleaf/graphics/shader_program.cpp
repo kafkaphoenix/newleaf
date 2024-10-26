@@ -26,15 +26,15 @@ void ShaderProgram::link() {
   int status = GL_FALSE;
   glGetProgramiv(m_id, GL_LINK_STATUS, &status);
   if (status not_eq GL_TRUE) [[unlikely]] {
-    int infoLogLength = 0;
-    glGetProgramiv(m_id, GL_INFO_LOG_LENGTH, &infoLogLength);
-    ENGINE_ASSERT(infoLogLength > 0, "shader program {} linking failed!",
+    int log_length = 0;
+    glGetProgramiv(m_id, GL_INFO_LOG_LENGTH, &log_length);
+    ENGINE_ASSERT(log_length > 0, "shader program {} linking failed!",
                   m_name);
-    std::vector<GLchar> shaderProgramInfoLog(infoLogLength);
-    glGetProgramInfoLog(m_id, infoLogLength, &infoLogLength,
-                        shaderProgramInfoLog.data());
+    std::vector<GLchar> shader_program_log_length(log_length);
+    glGetProgramInfoLog(m_id, log_length, &log_length,
+                        shader_program_log_length.data());
     ENGINE_ASSERT(false, "shader program {} linking failed: \n{}", m_name,
-                  std::string(shaderProgramInfoLog.data()));
+                  std::string(shader_program_log_length.data()));
   }
   m_active_uniforms = get_active_uniforms();
   print_active_uniforms();
@@ -74,7 +74,7 @@ std::vector<ActiveUniform> ShaderProgram::get_active_uniforms() {
   glGetProgramInterfaceiv(m_id, GL_UNIFORM, GL_ACTIVE_RESOURCES,
                           &numActiveUniforms);
 
-  std::vector<ActiveUniform> activeUniforms;
+  std::vector<ActiveUniform> active_uniforms;
 
   std::vector<GLenum> properties;
   properties.reserve(3);
@@ -83,26 +83,26 @@ std::vector<ActiveUniform> ShaderProgram::get_active_uniforms() {
   properties.emplace_back(GL_ARRAY_SIZE);
   std::vector<GLint> values(properties.size());
 
-  std::vector<GLchar> nameData(256);
+  std::vector<GLchar> name_data(256);
 
-  activeUniforms.reserve(numActiveUniforms);
+  active_uniforms.reserve(numActiveUniforms);
   for (uint32_t i = 0; i < numActiveUniforms; ++i) {
     glGetProgramResourceiv(m_id, GL_UNIFORM, i, properties.size(),
                            &properties[0], values.size(), nullptr, &values[0]);
 
-    nameData.resize(values[0]);
-    glGetProgramResourceName(m_id, GL_UNIFORM, i, nameData.size(), nullptr,
-                             &nameData[0]);
-    std::string name(reinterpret_cast<char*>(&nameData[0]), values[0] - 1);
+    name_data.resize(values[0]);
+    glGetProgramResourceName(m_id, GL_UNIFORM, i, name_data.size(), nullptr,
+                             &name_data[0]);
+    std::string name(reinterpret_cast<char*>(&name_data[0]), values[0] - 1);
 
     ActiveUniform uniform;
     uniform.type = values[1];
     uniform.name = name;
 
-    activeUniforms.emplace_back(std::move(uniform));
+    active_uniforms.emplace_back(std::move(uniform));
   }
 
-  return activeUniforms;
+  return active_uniforms;
 }
 
 void ShaderProgram::reset_active_uniforms() {

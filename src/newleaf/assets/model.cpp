@@ -10,10 +10,10 @@
 
 namespace nl {
 
-Model::Model(std::filesystem::path&& fp, std::optional<bool> gammaCorrection)
+Model::Model(std::filesystem::path&& fp, std::optional<bool> gamma_correction)
   : m_path(std::move(fp.string())),
     m_directory(std::move(fp.parent_path().string())) {
-  ENGINE_ASSERT(not gammaCorrection.has_value(),
+  ENGINE_ASSERT(not gamma_correction.has_value(),
                 "gamma correction not yet implemented");
 
   Assimp::Importer importer;
@@ -56,8 +56,8 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
     vertex.position = glm::vec3(position.x, position.y, position.z);
 
     if (mesh->HasNormals()) {
-      const auto& normalVector = mesh->mNormals[i];
-      vertex.normal = glm::vec3(normalVector.x, normalVector.y, normalVector.z);
+      const auto& normal_vector = mesh->mNormals[i];
+      vertex.normal = glm::vec3(normal_vector.x, normal_vector.y, normal_vector.z);
     }
 
     if (mesh->mTextureCoords[0]) {
@@ -67,13 +67,13 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
       const auto& texture_coords = mesh->mTextureCoords[0][i];
       vertex.texture_coords = glm::vec2(texture_coords.x, texture_coords.y);
 
-      const auto& tangentVector = mesh->mTangents[i];
+      const auto& tangent_vector = mesh->mTangents[i];
       vertex.tangent =
-        glm::vec3(tangentVector.x, tangentVector.y, tangentVector.z);
+        glm::vec3(tangent_vector.x, tangent_vector.y, tangent_vector.z);
 
-      const auto& bitangentVector = mesh->mBitangents[i];
+      const auto& bitangent_vector = mesh->mBitangents[i];
       vertex.bitangent =
-        glm::vec3(bitangentVector.x, bitangentVector.y, bitangentVector.z);
+        glm::vec3(bitangent_vector.x, bitangent_vector.y, bitangent_vector.z);
     }
 
     if (mesh->HasBones()) {
@@ -237,8 +237,8 @@ bool Model::operator==(const Asset& other) const {
   if (typeid(other) not_eq typeid(Model)) {
     ENGINE_ASSERT(false, "cannot compare model with other asset type!");
   }
-  const Model& otherModel = static_cast<const Model&>(other);
-  return m_path == otherModel.m_path;
+  const Model& other_model = static_cast<const Model&>(other);
+  return m_path == other_model.m_path;
 }
 
 }

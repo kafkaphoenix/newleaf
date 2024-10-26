@@ -20,7 +20,7 @@ namespace nl {
 class Model : public Asset {
   public:
     Model(std::filesystem::path&& fp,
-          std::optional<bool> gammaCorrection = std::nullopt);
+          std::optional<bool> gamma_correction = std::nullopt);
 
     virtual const std::map<std::string, std::string, NumericComparator>&
     to_map() override final;

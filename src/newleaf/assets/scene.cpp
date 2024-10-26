@@ -63,7 +63,7 @@ bool Scene::operator==(const Asset& other) const {
   if (typeid(*this) not_eq typeid(other)) {
     ENGINE_ASSERT(false, "cannot compare scene with other asset type!");
   }
-  const Scene& otherScene = static_cast<const Scene&>(other);
-  return m_path == otherScene.m_path;
+  const Scene& other_scene = static_cast<const Scene&>(other);
+  return m_path == other_scene.m_path;
 }
 }

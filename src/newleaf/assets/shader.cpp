@@ -24,15 +24,15 @@ Shader::Shader(std::filesystem::path&& fp) : m_path(std::move(fp.string())) {
   int32_t status = GL_FALSE;
   glGetShaderiv(m_id, GL_COMPILE_STATUS, &status);
   if (status not_eq GL_TRUE) [[unlikely]] {
-    int infoLogLength = 0;
-    glGetShaderiv(m_id, GL_INFO_LOG_LENGTH, &infoLogLength);
-    ENGINE_ASSERT(infoLogLength > 0, "shader {} compilation failed!", m_path);
-    std::vector<GLchar> shaderInfoLog(infoLogLength);
-    glGetShaderInfoLog(m_id, infoLogLength, &infoLogLength,
-                       shaderInfoLog.data());
+    int log_length = 0;
+    glGetShaderiv(m_id, GL_INFO_LOG_LENGTH, &log_length);
+    ENGINE_ASSERT(log_length > 0, "shader {} compilation failed!", m_path);
+    std::vector<GLchar> shader_log_length(log_length);
+    glGetShaderInfoLog(m_id, log_length, &log_length,
+                       shader_log_length.data());
     glDeleteShader(m_id);
     ENGINE_ASSERT(false, "shader {} compilation failed: \n{}", m_path,
-                  std::string(shaderInfoLog.data()));
+                  std::string(shader_log_length.data()));
   }
 }
 
@@ -72,8 +72,8 @@ bool Shader::operator==(const Asset& other) const {
   if (typeid(*this) not_eq typeid(other)) {
     ENGINE_ASSERT(false, "cannot compare shader with other asset type!");
   }
-  const Shader& otherShader = static_cast<const Shader&>(other);
-  return m_path == otherShader.m_path and m_type == otherShader.m_type and
-         m_id == otherShader.m_id;
+  const Shader& other_shader = static_cast<const Shader&>(other);
+  return m_path == other_shader.m_path and m_type == other_shader.m_type and
+         m_id == other_shader.m_id;
 }
 }

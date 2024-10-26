@@ -24,7 +24,7 @@ namespace nl {
 class Prefab : public Asset {
   public:
     Prefab(std::filesystem::path&& fp,
-           std::vector<std::string>&& targetPrototypes);
+           std::vector<std::string>&& target_prototypes);
 
     virtual const std::map<std::string, std::string, NumericComparator>&
     to_map() override final;

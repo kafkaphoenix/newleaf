@@ -17,9 +17,9 @@ FBO::FBO(uint32_t w, uint32_t h, uint32_t t) : m_depth_buffer_type(t) {
   uint32_t window_w;
   uint32_t window_h;
   if (settings_manager.fullscreen) {
-    int monitorCount;
+    int monitor_count;
     GLFWmonitor* monitor =
-      (glfwGetMonitors(&monitorCount))[settings_manager.primary_monitor];
+      (glfwGetMonitors(&monitor_count))[settings_manager.primary_monitor];
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
     window_w = mode->width;
     window_h = mode->height;
@@ -159,9 +159,9 @@ void FBO::unbind() {
   const auto& settings_manager = app.get_settings_manager();
   const auto& render_manager = app.get_render_manager();
   if (settings_manager.fullscreen) {
-    int monitorCount;
+    int monitor_count;
     GLFWmonitor* monitor =
-      (glfwGetMonitors(&monitorCount))[settings_manager.primary_monitor];
+      (glfwGetMonitors(&monitor_count))[settings_manager.primary_monitor];
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
     render_manager.on_window_resized(mode->width, mode->height);
   } else {

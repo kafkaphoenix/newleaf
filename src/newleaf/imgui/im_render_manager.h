@@ -94,8 +94,8 @@ inline void draw_render_manager(const RenderManager& render_manager,
   if (not selected_render_manager_tabkey.empty()) {
     if (selected_render_manager_tabtype == "Shader Program") {
       const auto& shader_program = sp.at(selected_render_manager_tabkey);
-      const auto& shaderProgramInfo = shader_program->to_map();
-      for (const auto& [key, value] : shaderProgramInfo) {
+      const auto& shader_program_info = shader_program->to_map();
+      for (const auto& [key, value] : shader_program_info) {
         if (filter_shader_info and render_objects_text_filter[0] not_eq '\0' and
             strstr(key.c_str(), render_objects_text_filter) == nullptr) {
           continue;
@@ -104,16 +104,16 @@ inline void draw_render_manager(const RenderManager& render_manager,
       }
     } else if (selected_render_manager_tabtype == "Framebuffers") {
       const auto& value = fbos.at(selected_render_manager_tabkey);
-      const auto& fboInfo = value->to_map();
-      for (const auto& [key, value] : fboInfo) {
+      const auto& fbo_info = value->to_map();
+      for (const auto& [key, value] : fbo_info) {
         if (key == "color_texture" or key == "depth_texture") {
-          const auto& textureInfo = json_to_map(value);
+          const auto& texture_info = json_to_map(value);
           if (ImGui::TreeNode((selected_render_manager_tabtype +
                                selected_render_manager_tabkey + key +
                                settings_manager.active_scene)
                                 .c_str(),
                               key.c_str())) {
-            for (const auto& [key, value] : textureInfo) {
+            for (const auto& [key, value] : texture_info) {
               ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
             }
             ImGui::TreePop();

@@ -41,10 +41,10 @@ WindowsManager::WindowsManager(const SettingsManager& settings_manager) {
   ENGINE_TRACE("loading openGL version {}.{}", settings_manager.opengl_major,
                settings_manager.opengl_minor);
 
-  int monitorCount;
-  GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
+  int monitor_count;
+  GLFWmonitor** monitors = glfwGetMonitors(&monitor_count);
   if (settings_manager.primary_monitor < 0 or
-      settings_manager.primary_monitor >= monitorCount) {
+      settings_manager.primary_monitor >= monitor_count) {
     ENGINE_ERROR("invalid monitor index!");
     return;
   }
@@ -525,9 +525,9 @@ void WindowsManager::set_refresh_rate(int refresh_rate) {
     }
 
     auto& settings_manager = Application::get().get_settings_manager();
-    int monitorCount;
+    int monitor_count;
     GLFWmonitor* monitor =
-      glfwGetMonitors(&monitorCount)[settings_manager.primary_monitor];
+      glfwGetMonitors(&monitor_count)[settings_manager.primary_monitor];
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
     glfwSetWindowMonitor(m_window, monitor, GLFW_DONT_CARE, GLFW_DONT_CARE,
                          mode->width, mode->height, refresh_rate);
@@ -549,9 +549,9 @@ void WindowsManager::toggle_vsync(bool enabled) {
 
 void WindowsManager::set_window_monitor(int monitor) {
   if (monitor not_eq m_data.primary_monitor) {
-    int monitorCount;
-    GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
-    if (monitor < 0 or monitor >= monitorCount) {
+    int monitor_count;
+    GLFWmonitor** monitors = glfwGetMonitors(&monitor_count);
+    if (monitor < 0 or monitor >= monitor_count) {
       ENGINE_ERROR("invalid monitor index!");
       return;
     }
@@ -572,9 +572,9 @@ void WindowsManager::set_window_monitor(int monitor) {
 void WindowsManager::toggle_fullscreen(bool fullscreen) {
   if (fullscreen and not m_data.fullscreen) {
     auto& settings_manager = Application::get().get_settings_manager();
-    int monitorCount;
+    int monitor_count;
     GLFWmonitor* monitor =
-      (glfwGetMonitors(&monitorCount))[settings_manager.primary_monitor];
+      (glfwGetMonitors(&monitor_count))[settings_manager.primary_monitor];
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
     m_data.fullscreen = fullscreen;
     settings_manager.fullscreen = fullscreen;

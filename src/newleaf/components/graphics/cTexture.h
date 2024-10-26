@@ -56,12 +56,12 @@ struct CTexture {
         _draw_mode(dm) {}
 
     void print() const {
-      std::string texturePaths;
+      std::string texture_paths;
       if (paths.size() == 0) {
-        texturePaths = "\n\t\t\t\t\t\t none";
+        texture_paths = "\n\t\t\t\t\t\t none";
       } else {
         for (std::string_view path : paths) {
-          texturePaths += std::format("\n\t\t\t\t\t\t {}", path);
+          texture_paths += std::format("\n\t\t\t\t\t\t {}", path);
         }
       }
       ENGINE_BACKTRACE(
@@ -75,7 +75,7 @@ struct CTexture {
         "{8}\n\t\t\t\t\t\ttextures: {9}",
         glm::to_string(color), blend_factor, reflectivity, refractive_index,
         enable_transparency, enable_lighting, enable_reflection,
-        enable_refraction, _draw_mode, texturePaths);
+        enable_refraction, _draw_mode, texture_paths);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {

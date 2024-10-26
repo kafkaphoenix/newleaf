@@ -325,11 +325,11 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
 
         if (empty) {
           std::string text = "No log records";
-          auto window_w = ImGui::GetWindowSize().x;
-          auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
+          auto window_width = ImGui::GetWindowSize().x;
+          auto text_width = ImGui::CalcTextSize(text.c_str()).x;
 
           ImGui::NewLine();
-          ImGui::SetCursorPosX((window_w - textWidth) * 0.5f);
+          ImGui::SetCursorPosX((window_width - text_width) * 0.5f);
           ImGui::TextUnformatted(text.c_str());
         }
       }

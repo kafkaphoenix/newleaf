@@ -21,9 +21,9 @@ class Texture : public Asset {
             std::optional<bool> wrap = std::nullopt);
     Texture(std::filesystem::path&& fp,
             std::optional<std::string>&& type = std::nullopt,
-            std::optional<bool> flipVertically = std::nullopt,
+            std::optional<bool> flip_vertically = std::nullopt,
             std::optional<uint32_t> mipmap_level = std::nullopt,
-            std::optional<bool> gammaCorrection = std::nullopt);
+            std::optional<bool> gamma_correction = std::nullopt);
     virtual ~Texture() override final;
 
     void bind_slot(uint32_t slot);

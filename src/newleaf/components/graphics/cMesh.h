@@ -217,12 +217,12 @@ struct CMesh {
     }
 
     void print() const {
-      std::string texturePaths;
+      std::string paths;
       for (const auto& texture : textures) {
-        texturePaths += std::format("\n\t\t\ttexture: {}", texture->get_path());
+        paths += std::format("\n\t\t\ttexture: {}", texture->get_path());
       }
       ENGINE_BACKTRACE("\t\tvertices: {0}\n\t\tindices: {1}{2}",
-                       vertices.size(), indices.size(), texturePaths);
+                       vertices.size(), indices.size(), paths);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {

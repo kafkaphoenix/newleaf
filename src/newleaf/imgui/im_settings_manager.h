@@ -127,13 +127,13 @@ inline void draw_settings_manager(SettingsManager& settings_manager,
                               settings_manager.opengl_major,
                               settings_manager.opengl_minor)
                     .c_str());
-      const auto& windowData = windows_manager.get_window_data();
+      const auto& window_data = windows_manager.get_window_data();
       ImGui::Text(std::format("Window position x:{}, y:{}",
-                              windowData.position_x, windowData.position_y)
+                              window_data.position_x, window_data.position_y)
                     .c_str());
       ImGui::Text(std::format("Mouse position x:{}, y:{}",
-                              windowData.debug_mouse_x,
-                              windowData.debug_mouse_y)
+                              window_data.debug_mouse_x,
+                              window_data.debug_mouse_y)
                     .c_str());
 
     } else if (selected_settings_manager_tabkey == "Debug") {

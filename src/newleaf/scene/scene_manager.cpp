@@ -165,7 +165,7 @@ void SceneManager::print_scene() {
   auto entities = m_registry.view<CUUID>();
   entt::meta_type cType;
   entt::meta_any cData;
-  entt::meta_func printFunc;
+  entt::meta_func print_func;
   std::string_view cName;
   if (entities.empty()) {
     ENGINE_BACKTRACE("===================entities===================");
@@ -182,12 +182,12 @@ void SceneManager::print_scene() {
       if (storage.contains(e)) {
         cType = entt::resolve(storage.type());
         cData = cType.construct(storage.value(e));
-        printFunc = cType.func("print"_hs);
-        if (printFunc) {
+        print_func = cType.func("print"_hs);
+        if (print_func) {
           cName = storage.type().name();
           cName = cName.substr(cName.find_last_of(':') + 1);
           ENGINE_BACKTRACE("\t{}", cName);
-          printFunc.invoke(cData);
+          print_func.invoke(cData);
         } else {
           cName = storage.type().name();
           cName = cName.substr(cName.find_last_of(':') + 1);

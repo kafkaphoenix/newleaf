@@ -77,7 +77,7 @@ class Application {
     bool m_paused{};
     bool m_restore_pause{};
     bool m_debugging{};
-    float m_lastFrame{};
+    float m_last_frame{};
     float m_accumulator{};
 
     CLArgs m_clargs;

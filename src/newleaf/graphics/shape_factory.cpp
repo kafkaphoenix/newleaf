@@ -103,15 +103,15 @@ std::shared_ptr<VAO> ShapeFactory::create_circle(float radius,
   vertices.reserve(segments + 1);
   vertices.push_back({{0.f, 0.f, 0.f}, {0.5f, 0.5f}});
 
-  float angleIncrement = 2 * std::numbers::pi / segments;
+  float angle_increment = 2 * std::numbers::pi / segments;
 
   // Vertices around the circle
   indices.reserve(segments * 3);
   for (uint32_t i = 0; i < segments; ++i) {
-    float x = radius * cos(i * angleIncrement);
-    float y = radius * sin(i * angleIncrement);
-    float u = 0.5f * (1.f + cos(i * angleIncrement));
-    float v = 0.5f * (1.f + sin(i * angleIncrement));
+    float x = radius * cos(i * angle_increment);
+    float y = radius * sin(i * angle_increment);
+    float u = 0.5f * (1.f + cos(i * angle_increment));
+    float v = 0.5f * (1.f + sin(i * angle_increment));
     vertices.push_back({{x, y, 0.f}, {u, v}});
     indices.push_back(0);
     indices.push_back(i + 1);

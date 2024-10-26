@@ -47,9 +47,9 @@ void Application::pause(bool pause) { m_paused = pause; }
 
 void Application::run() {
   while (m_running) {
-    float currentFrame = (float)glfwGetTime();
-    Time ts = currentFrame - m_lastFrame;
-    m_lastFrame = currentFrame;
+    float current_frame = (float)glfwGetTime();
+    Time ts = current_frame - m_last_frame;
+    m_last_frame = current_frame;
     m_accumulator += ts;
 
     if (not m_minimized) [[likely]] {

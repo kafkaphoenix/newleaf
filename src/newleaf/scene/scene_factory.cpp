@@ -188,9 +188,9 @@ void SceneFactory::create_prototypes(const Scene& scene,
       Prefab(options.at("path").get<std::string>(),
              options.at("target_prototypes").get<std::vector<std::string>>());
     ENGINE_TRACE("creating prototypes from prefab {}...", prefab_name);
-    std::vector<std::string> targetPrototypes = prefab.get_target_prototypes();
+    std::vector<std::string> target_prototypes = prefab.get_target_prototypes();
     assets_manager.load<Prefab>(prefab_name, std::move(prefab));
-    m_entity_factory.create_prototypes(prefab_name, targetPrototypes, registry,
+    m_entity_factory.create_prototypes(prefab_name, target_prototypes, registry,
                                        assets_manager);
   }
 }
@@ -211,15 +211,15 @@ SceneFactory::compute_metrics(entt::registry& registry) {
   m_metrics["active_scene"] = m_active_scene;
   int total = registry.storage<entt::entity>().in_use();
   int created = registry.storage<entt::entity>().size();
-  int prototypes = 0;
-  for (const auto& [key, prototypesMap] :
+  int n_prototypes = 0;
+  for (const auto& [key, prototypes] :
        m_entity_factory.get_all_prototypes()) {
-    prototypes += prototypesMap.size();
+    n_prototypes += prototypes.size();
     m_metrics["prototypes_alive_from_prefab_" + key] =
-      std::to_string(prototypesMap.size());
+      std::to_string(prototypes.size());
   }
-  m_metrics["prototypes_total_alive"] = std::to_string(prototypes);
-  m_metrics["instances_total_alive"] = std::to_string(total - prototypes);
+  m_metrics["prototypes_total_alive"] = std::to_string(n_prototypes);
+  m_metrics["instances_total_alive"] = std::to_string(total - n_prototypes);
   m_metrics["entities_total_alive"] = std::to_string(total);
   m_metrics["entities_total_created"] = std::to_string(created);
   m_metrics["entities_total_released"] = std::to_string(created - total);

@@ -72,20 +72,20 @@ inline void draw_assets_manager(const AssetsManager& assets_manager,
   if (not selected_asset_manager_tab_key.empty()) {
     const auto& asset =
       assets.at(selected_asset_tab_type).at(selected_asset_manager_tab_key);
-    const auto& assetInfo = asset->to_map();
+    const auto& asset_info = asset->to_map();
 
-    for (const auto& [key, value] : assetInfo) {
+    for (const auto& [key, value] : asset_info) {
       if (key.starts_with("prototype_") and
           selected_asset_tab_type == "Prefab") {
         const auto& prefab =
           assets_manager.get<Prefab>(selected_asset_manager_tab_key);
-        const auto& prototypeInfo = prefab->get_target_prototype_info(value);
+        const auto& prototype_info = prefab->get_target_prototype_info(value);
         if (ImGui::TreeNode((selected_asset_tab_type +
                              selected_asset_manager_tab_key + key +
                              settings_manager.active_scene)
                               .c_str(),
                             key.c_str())) {
-          for (const auto& [key, value] : prototypeInfo) {
+          for (const auto& [key, value] : prototype_info) {
             ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
           }
           ImGui::TreePop();
@@ -94,13 +94,13 @@ inline void draw_assets_manager(const AssetsManager& assets_manager,
                  selected_asset_tab_type == "Model") {
         const auto& model =
           assets_manager.get<Model>(selected_asset_manager_tab_key);
-        const auto& textureInfo = model->get_loaded_texture_info(value);
+        const auto& texture_info = model->get_loaded_texture_info(value);
         if (ImGui::TreeNode((selected_asset_tab_type +
                              selected_asset_manager_tab_key + key +
                              settings_manager.active_scene)
                               .c_str(),
                             key.c_str())) {
-          for (const auto& [key, value] : textureInfo) {
+          for (const auto& [key, value] : texture_info) {
             ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
           }
           ImGui::TreePop();
@@ -128,22 +128,22 @@ inline void draw_assets_manager(const AssetsManager& assets_manager,
       const auto& texture =
         assets_manager.get<Texture>(selected_asset_manager_tab_key);
       if (not texture->is_cubemap()) {
-        uint32_t maxWidth = texture->get_width();
-        uint32_t maxHeight = texture->get_height();
-        if (maxWidth <= 64 and maxHeight <= 64) {
-          maxWidth *= 2;
-          maxHeight *= 2;
-        } else if (maxWidth >= 1024 or maxHeight >= 1024) {
-          maxHeight /= 4;
-          maxWidth /= 4;
-        } else if (maxWidth >= 512 or maxHeight >= 512) {
-          maxHeight /= 3;
-          maxWidth /= 3;
-        } else if (maxWidth >= 256 or maxHeight >= 256) {
-          maxHeight /= 2;
-          maxWidth /= 2;
+        uint32_t max_width = texture->get_width();
+        uint32_t max_height = texture->get_height();
+        if (max_width <= 64 and max_height <= 64) {
+          max_width *= 2;
+          max_height *= 2;
+        } else if (max_width >= 1024 or max_height >= 1024) {
+          max_height /= 4;
+          max_width /= 4;
+        } else if (max_width >= 512 or max_height >= 512) {
+          max_height /= 3;
+          max_width /= 3;
+        } else if (max_width >= 256 or max_height >= 256) {
+          max_height /= 2;
+          max_width /= 2;
         }
-        ImGui::Image((void*)texture->get_id(), ImVec2(maxWidth, maxHeight),
+        ImGui::Image((void*)texture->get_id(), ImVec2(max_width, max_height),
                      ImVec2(0, 1), ImVec2(1, 0));
       }
     }

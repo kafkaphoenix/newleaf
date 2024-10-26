@@ -27,7 +27,7 @@ class RenderManager {
     void on_window_resized(uint32_t w, uint32_t h) const;
 
     void begin_scene(glm::mat4 view, glm::mat4 projection,
-                     glm::vec3 cameraPosition);
+                     glm::vec3 camera_position);
     void end_scene();
 
     void add_shader_program(std::string&& name,

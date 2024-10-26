@@ -24,16 +24,16 @@ void VAO::unbind() {
 }
 
 void VAO::attach_vertex(std::shared_ptr<VBO>&& vbo, VertexType type) {
-  size_t vertexSize = 0;
+  size_t stride = 0;
   if (type == VertexType::vertex) {
-    vertexSize = sizeof(Vertex);
+    stride = sizeof(Vertex);
   } else if (type == VertexType::shape_vertex) {
-    vertexSize = sizeof(ShapeVertex);
+    stride = sizeof(ShapeVertex);
   } else if (type == VertexType::terrain_vertex) {
-    vertexSize = sizeof(TerrainVertex);
+    stride = sizeof(TerrainVertex);
   }
 
-  glVertexArrayVertexBuffer(m_id, 0, vbo->get_id(), 0, vertexSize);
+  glVertexArrayVertexBuffer(m_id, 0, vbo->get_id(), 0, stride);
   m_vbos.emplace_back(std::move(vbo));
 
   if (type == VertexType::vertex) {

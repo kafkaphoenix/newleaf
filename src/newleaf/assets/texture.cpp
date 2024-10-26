@@ -41,28 +41,28 @@ Texture::Texture(uint32_t width, uint32_t height, GLenum glFormat,
 }
 
 Texture::Texture(std::filesystem::path&& fp, std::optional<std::string>&& type,
-                 std::optional<bool> flipVertically,
+                 std::optional<bool> flip_vertically,
                  std::optional<uint32_t> mipmap_level,
-                 std::optional<bool> gammaCorrection)
+                 std::optional<bool> gamma_correction)
   : m_directory(std::filesystem::is_directory(fp) ? std::move(fp.string())
                                                   : ""),
     m_cubemap(std::filesystem::is_directory(fp)),
     m_type(std::move(type.value_or(""))),
-    m_flip_vertically(flipVertically.value_or(true)),
+    m_flip_vertically(flip_vertically.value_or(true)),
     m_mipmap_level(mipmap_level.value_or(4)),
-    m_gamma_correction(gammaCorrection.value_or(false)) {
+    m_gamma_correction(gamma_correction.value_or(false)) {
   if (m_cubemap) {
-    std::string fileExt =
+    std::string file_ext =
       std::filesystem::exists(fp / "front.jpg") ? ".jpg" : ".png";
     m_paths.reserve(6);
     m_paths.emplace_back(
-      std::move((fp / ("front" + fileExt))
+      std::move((fp / ("front" + file_ext))
                   .string())); // it needs to be added in this order
-    m_paths.emplace_back(std::move((fp / ("back" + fileExt)).string()));
-    m_paths.emplace_back(std::move((fp / ("top" + fileExt)).string()));
-    m_paths.emplace_back(std::move((fp / ("bottom" + fileExt)).string()));
-    m_paths.emplace_back(std::move((fp / ("right" + fileExt)).string()));
-    m_paths.emplace_back(std::move((fp / ("left" + fileExt)).string()));
+    m_paths.emplace_back(std::move((fp / ("back" + file_ext)).string()));
+    m_paths.emplace_back(std::move((fp / ("top" + file_ext)).string()));
+    m_paths.emplace_back(std::move((fp / ("bottom" + file_ext)).string()));
+    m_paths.emplace_back(std::move((fp / ("right" + file_ext)).string()));
+    m_paths.emplace_back(std::move((fp / ("left" + file_ext)).string()));
   } else {
     m_paths.emplace_back(std::move(fp.string()));
   }
@@ -210,14 +210,14 @@ bool Texture::operator==(const Asset& other) const {
   if (typeid(*this) != typeid(other)) {
     ENGINE_ASSERT(false, "cannot compare texture with other asset type!");
   }
-  const Texture& otherTexture = static_cast<const Texture&>(other);
+  const Texture& other_texture = static_cast<const Texture&>(other);
   for (const std::string& path : m_paths) {
-    if (std::find(otherTexture.m_paths.begin(), otherTexture.m_paths.end(),
-                  path) == otherTexture.m_paths.end()) {
+    if (std::find(other_texture.m_paths.begin(), other_texture.m_paths.end(),
+                  path) == other_texture.m_paths.end()) {
       return false;
     }
   }
-  return m_id == otherTexture.m_id;
+  return m_id == other_texture.m_id;
 }
 
 std::unique_ptr<Texture> Texture::create(uint32_t width, uint32_t height,

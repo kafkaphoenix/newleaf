@@ -53,55 +53,55 @@ void processCTag(entt::entity e, std::string_view cTag) {
   entt::meta_type cType = entt::resolve(entt::hashed_string{cTag.data()});
   ENGINE_ASSERT(cType, "no component type found for component tag {}", cTag)
 
-  entt::meta_func assignFunc = cType.func("assign"_hs);
-  ENGINE_ASSERT(assignFunc, "no assign function found for component tag {}",
+  entt::meta_func assign_func = cType.func("assign"_hs);
+  ENGINE_ASSERT(assign_func, "no assign function found for component tag {}",
                 cTag)
 
-  entt::meta_any metaComponent = assignFunc.invoke({}, e);
+  entt::meta_any meta_component = assign_func.invoke({}, e);
   entt::meta_func triggerEventFunc = cType.func("on_component_added"_hs);
   if (triggerEventFunc) {
-    triggerEventFunc.invoke({}, e, metaComponent);
+    triggerEventFunc.invoke({}, e, meta_component);
   }
 }
 
-void processComponent(entt::entity e, const std::string& cPrefab,
+void process_component(entt::entity e, const std::string& cPrefab,
                       const json& cValue) {
   entt::meta_type cType = entt::resolve(entt::hashed_string{cPrefab.data()});
   ENGINE_ASSERT(cType, "no component type found for component {}", cPrefab)
 
-  entt::meta_func assignFunc = cType.func("assign"_hs);
-  ENGINE_ASSERT(assignFunc, "no assign function found for component {}",
+  entt::meta_func assign_func = cType.func("assign"_hs);
+  ENGINE_ASSERT(assign_func, "no assign function found for component {}",
                 cPrefab)
 
-  entt::meta_any metaComponent;
+  entt::meta_any meta_component;
   if (cValue.is_string()) {
-    metaComponent = assignFunc.invoke({}, e, cValue.get<std::string>());
+    meta_component = assign_func.invoke({}, e, cValue.get<std::string>());
   } else if (cValue.is_number_integer()) {
-    metaComponent = assignFunc.invoke({}, e, cValue.get<int>());
+    meta_component = assign_func.invoke({}, e, cValue.get<int>());
   } else if (cValue.is_number_float()) {
-    metaComponent = assignFunc.invoke({}, e, cValue.get<float>());
+    meta_component = assign_func.invoke({}, e, cValue.get<float>());
   } else if (cValue.is_boolean()) {
-    metaComponent = assignFunc.invoke({}, e, cValue.get<bool>());
+    meta_component = assign_func.invoke({}, e, cValue.get<bool>());
   } else if (cValue.is_object() and cValue.contains("x") and
              cValue.contains("y") and cValue.contains("z")) {
-    metaComponent = assignFunc.invoke({}, e, json_to_vec3(cValue));
+    meta_component = assign_func.invoke({}, e, json_to_vec3(cValue));
   } else if (cValue.is_object()) {
-    metaComponent = assignFunc.invoke({}, e);
-    ENGINE_ASSERT(metaComponent, "no meta component found for component {}",
+    meta_component = assign_func.invoke({}, e);
+    ENGINE_ASSERT(meta_component, "no meta component found for component {}",
                   cPrefab)
 
     for (const auto& [cField, cFieldValue] : cValue.items()) {
       if (cFieldValue.is_string()) {
-        metaComponent.set(entt::hashed_string{cField.data()},
+        meta_component.set(entt::hashed_string{cField.data()},
                           cFieldValue.get<std::string>());
       } else if (cFieldValue.is_number_integer()) {
-        metaComponent.set(entt::hashed_string{cField.data()},
+        meta_component.set(entt::hashed_string{cField.data()},
                           cFieldValue.get<int>());
       } else if (cFieldValue.is_number_float()) {
-        metaComponent.set(entt::hashed_string{cField.data()},
+        meta_component.set(entt::hashed_string{cField.data()},
                           cFieldValue.get<float>());
       } else if (cFieldValue.is_boolean()) {
-        metaComponent.set(entt::hashed_string{cField.data()},
+        meta_component.set(entt::hashed_string{cField.data()},
                           cFieldValue.get<bool>());
       } else if (cFieldValue.is_array()) {
         std::vector<std::string> paths;
@@ -112,42 +112,42 @@ void processComponent(entt::entity e, const std::string& cPrefab,
                         value.type_name(), cPrefab, cField);
           paths.emplace_back(value.get<std::string>());
         }
-        metaComponent.set(entt::hashed_string{cField.data()}, std::move(paths));
+        meta_component.set(entt::hashed_string{cField.data()}, std::move(paths));
       } else if (cFieldValue.is_object()) {
         if (cFieldValue.contains("x") and cFieldValue.contains("y") and
             cFieldValue.contains("z") and cFieldValue.contains("w")) {
           if (cField == "rotation") {
-            metaComponent.set(entt::hashed_string{cField.data()},
+            meta_component.set(entt::hashed_string{cField.data()},
                               json_to_quat(cFieldValue));
           } else {
-            metaComponent.set(entt::hashed_string{cField.data()},
+            meta_component.set(entt::hashed_string{cField.data()},
                               json_to_vec4(cFieldValue));
           }
         } else if (cFieldValue.contains("x") and cFieldValue.contains("y") and
                    cFieldValue.contains("z")) {
           if (cField == "rotation") {
-            metaComponent.set(
+            meta_component.set(
               entt::hashed_string{cField.data()},
               glm::quat(glm::radians(json_to_vec3(cFieldValue))));
           } else {
-            metaComponent.set(entt::hashed_string{cField.data()},
+            meta_component.set(entt::hashed_string{cField.data()},
                               json_to_vec3(cFieldValue));
           }
         } else if (cFieldValue.contains("x") and cFieldValue.contains("y")) {
-          metaComponent.set(entt::hashed_string{cField.data()},
+          meta_component.set(entt::hashed_string{cField.data()},
                             json_to_vec2(cFieldValue));
         } else if (cFieldValue.contains("r") and cFieldValue.contains("g") and
                    cFieldValue.contains("b") and cFieldValue.contains("a")) {
-          metaComponent.set(entt::hashed_string{cField.data()},
+          meta_component.set(entt::hashed_string{cField.data()},
                             json_to_vec4(cFieldValue, "color"));
         } else if (cFieldValue.contains("r") and cFieldValue.contains("g") and
                    cFieldValue.contains("b")) {
-          metaComponent.set(entt::hashed_string{cField.data()},
+          meta_component.set(entt::hashed_string{cField.data()},
                             json_to_vec3(cFieldValue, "color"));
         } else if (cField == "json") { // TODO unused
           ENGINE_ASSERT(false, "json field is not supported for component {}",
                         cPrefab);
-          metaComponent.set(entt::hashed_string{cField.data()},
+          meta_component.set(entt::hashed_string{cField.data()},
                             std::move(cFieldValue));
         } else {
           ENGINE_ASSERT(false, "unsupported type {} for component {} field {}",
@@ -164,7 +164,7 @@ void processComponent(entt::entity e, const std::string& cPrefab,
   }
   entt::meta_func triggerEventFunc = cType.func("on_component_added"_hs);
   if (triggerEventFunc) {
-    triggerEventFunc.invoke({}, e, metaComponent);
+    triggerEventFunc.invoke({}, e, meta_component);
   }
 }
 
@@ -173,9 +173,9 @@ void EntityFactory::create_prototypes(
   entt::registry& registry, const AssetsManager& assets_manager) {
   const auto& prefab = assets_manager.get<Prefab>(prefab_name);
 
-  auto& prefabPrototypes = m_prefabs[prefab_name.data()];
+  auto& prefab_prototypes = m_prefabs[prefab_name.data()];
   for (std::string_view prototype_id : prototype_ids) {
-    ENGINE_ASSERT(not prefabPrototypes.contains(prototype_id.data()),
+    ENGINE_ASSERT(not prefab_prototypes.contains(prototype_id.data()),
                   "prototype {} for prefab {} already exists", prototype_id,
                   prefab_name);
     entt::entity e = registry.create();
@@ -184,10 +184,10 @@ void EntityFactory::create_prototypes(
       processCTag(e, cTag);
     }
     for (const auto& [cPrefab, cValue] : prefab->get_components(prototype_id)) {
-      processComponent(e, cPrefab, cValue);
+      process_component(e, cPrefab, cValue);
     }
 
-    prefabPrototypes.insert({prototype_id.data(), e});
+    prefab_prototypes.insert({prototype_id.data(), e});
   }
   m_dirty = true;
 }
