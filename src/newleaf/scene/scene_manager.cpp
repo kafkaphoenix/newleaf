@@ -134,6 +134,10 @@ void SceneManager::delete_entity(entt::entity e) {
   m_scene_factory.delete_entity(e, m_registry);
 }
 
+void SceneManager::delete_entity(std::string_view name) {
+  delete_entity(get_entity(name));
+}
+
 void SceneManager::create_scene(std::string scene_name,
                                 std::string scene_path) {
   auto& app = Application::get();
