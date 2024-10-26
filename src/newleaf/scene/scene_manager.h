@@ -45,8 +45,8 @@ class SceneManager {
                                std::string&& prototype_id, std::string&& name,
                                std::optional<std::string> tag = std::nullopt,
                                std::optional<uint32_t> uuid = std::nullopt);
-    entt::entity clone_entity(const entt::entity& e);
-    void delete_entity(entt::entity& e);
+    entt::entity clone_entity(entt::entity e);
+    void delete_entity(entt::entity e);
 
     void create_scene(std::string scene_name, std::string scene_path);
     void reload_scene(bool reload_prototypes);

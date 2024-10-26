@@ -126,11 +126,11 @@ entt::entity SceneManager::create_entity(std::string_view prefab_id,
                                        m_registry, std::move(name), tag, uuid);
 }
 
-entt::entity SceneManager::clone_entity(const entt::entity& e) {
+entt::entity SceneManager::clone_entity(entt::entity e) {
   return m_scene_factory.clone_entity(e, UUID(), m_registry);
 }
 
-void SceneManager::delete_entity(entt::entity& e) {
+void SceneManager::delete_entity(entt::entity e) {
   m_scene_factory.delete_entity(e, m_registry);
 }
 

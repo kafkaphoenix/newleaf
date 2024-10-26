@@ -49,7 +49,7 @@ glm::quat json_to_quat(const json& j) {
   return q;
 }
 
-void processCTag(entt::entity& e, std::string_view cTag) {
+void processCTag(entt::entity e, std::string_view cTag) {
   entt::meta_type cType = entt::resolve(entt::hashed_string{cTag.data()});
   ENGINE_ASSERT(cType, "no component type found for component tag {}", cTag)
 
@@ -64,7 +64,7 @@ void processCTag(entt::entity& e, std::string_view cTag) {
   }
 }
 
-void processComponent(entt::entity& e, const std::string& cPrefab,
+void processComponent(entt::entity e, const std::string& cPrefab,
                       const json& cValue) {
   entt::meta_type cType = entt::resolve(entt::hashed_string{cPrefab.data()});
   ENGINE_ASSERT(cType, "no component type found for component {}", cPrefab)

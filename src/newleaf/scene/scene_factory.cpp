@@ -41,7 +41,7 @@ entt::entity SceneFactory::create_entity(std::string_view prefab_id,
   return e;
 }
 
-entt::entity SceneFactory::clone_entity(const entt::entity& e, uint32_t uuid,
+entt::entity SceneFactory::clone_entity(const entt::entity e, uint32_t uuid,
                                         entt::registry& registry,
                                         std::optional<std::string> name,
                                         std::optional<std::string> tag) {
@@ -195,7 +195,7 @@ void SceneFactory::create_prototypes(const Scene& scene,
   }
 }
 
-void SceneFactory::delete_entity(entt::entity& e, entt::registry& registry) {
+void SceneFactory::delete_entity(entt::entity e, entt::registry& registry) {
   registry.emplace<CDeleted>(e);
   m_dirty_metrics = true;
   m_dirty_named_entities = true;
