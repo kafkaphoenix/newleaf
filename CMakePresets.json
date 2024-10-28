@@ -7,130 +7,137 @@
     },
     "configurePresets": [
         {
-            "name": "defaults",
-            "binaryDir": "${sourceDir}/build",
+            "name": "default",
             "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build",
             "architecture": {
                 "strategy": "set",
-                "value": "win32"
+                "value": "x64"
             },
             "cacheVariables": {
-                "ENABLE_DEBUG": "OFF",
-                "ENABLE_CLANG_TIDY": "OFF",
-                "ENABLE_CPPCHECK": "OFF",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "OFF",
-                "CMAKE_CXX_COMPILER": "C:/Program Files/Microsoft Visual Studio/2022/Preview/VC/Tools/MSVC/14.39.33321/bin/Hostx86/x86/cl.exe",
-                "CMAKE_C_COMPILER": "C:/Program Files/Microsoft Visual Studio/2022/Preview/VC/Tools/MSVC/14.39.33321/bin/Hostx86/x86/cl.exe"
+                "CMAKE_TOOLCHAIN_FILE": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_CXX_COMPILER": "C:/Program Files/Microsoft Visual Studio/2022/Preview/VC/Tools/MSVC/14.41.34120/bin/Hostx64/x64/cl.exe"
             }
         },
         {
-            "name": "release-MSVC",
-            "inherits": [
-                "defaults"
-            ],
+            "name": "ninja-clang",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build",
+            "architecture": {
+                "strategy": "set",
+                "value": "x64"
+            },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "ENABLE_DEBUG": "ON",
+                "ENABLE_CLANG_TIDY": "ON",
+                "ENABLE_CPPCHECK": "ON",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_TOOLCHAIN_FILE": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_CXX_COMPILER": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/Llvm/x64/bin/clang++.exe",
+                "CMAKE_RC_COMPILER": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/Llvm/x64/bin/clang-cl.exe"
             }
         },
         {
-            "name": "debug-MSVC",
-            "inherits": [
-                "defaults"
-            ],
+            "name": "ninja-gcc",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build",
+            "architecture": {
+                "strategy": "set",
+                "value": "x64"
+            },
+            "cacheVariables": {
+                "ENABLE_DEBUG": "ON",
+                "ENABLE_CLANG_TIDY": "ON",
+                "ENABLE_CPPCHECK": "ON",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_TOOLCHAIN_FILE": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_CXX_COMPILER": "C:/mingw64/bin/g++.exe"
+            }
+        },
+        {
+            "name": "static",
+            "inherits": "default",
+            "cacheVariables": {
+              "CMAKE_BUILD_TYPE": "Release",
+              "NEWLEAF_BUILD_DOCS": "ON"
+            }
+        },
+        {
+            "name": "shared",
+            "inherits": "default",
+            "cacheVariables": {
+              "BUILD_SHARED_LIBS": "ON",
+              "CMAKE_BUILD_TYPE": "Release",
+              "NEWLEAF_BUILD_DOCS": "ON"
+            }
+        },
+        {
+            "name": "debug-msvc",
+            "inherits": "default",
             "cacheVariables": {
                 "ENABLE_DEBUG": "ON",
                 "ENABLE_CPPCHECK": "ON",
                 "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "release-clang",
-            "inherits": [
-                "defaults"
-            ],
-            "cacheVariables": {
-                "CMAKE_CXX_COMPILER": "C:/Program Files/Microsoft Visual Studio/2022/Preview/VC/Tools/Llvm/x64/bin/clang-cl.exe",
-                "CMAKE_C_COMPILER": "C:/Program Files/Microsoft Visual Studio/2022/Preview/VC/Tools/Llvm/x64/bin/clang-cl.exe",
-                "CMAKE_BUILD_TYPE": "Release"
             }
         },
         {
             "name": "debug-clang",
-            "inherits": [
-                "defaults"
-            ],
+            "inherits": "ninja-clang",
             "cacheVariables": {
-                "ENABLE_DEBUG": "ON",
-                "ENABLE_CPPCHECK": "ON",
-                "CMAKE_CXX_COMPILER": "C:/Program Files/Microsoft Visual Studio/2022/Preview/VC/Tools/Llvm/x64/bin/clang-cl.exe",
-                "CMAKE_C_COMPILER": "C:/Program Files/Microsoft Visual Studio/2022/Preview/VC/Tools/Llvm/x64/bin/clang-cl.exe",
                 "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "release-gcc",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build",
-            "cacheVariables": {
-                "ENABLE_DEBUG": "ON",
-                "ENABLE_CLANG_TIDY": "OFF",
-                "ENABLE_CPPCHECK": "ON",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "CMAKE_CXX_COMPILER": "C:/mingw64/bin/g++.exe",
-                "CMAKE_C_COMPILER": "C:/mingw64/bin/gcc.exe",
-                "CMAKE_BUILD_TYPE": "Release"
             }
         },
         {
             "name": "debug-gcc",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build",
+            "inherits": "ninja-gcc",
             "cacheVariables": {
-                "ENABLE_DEBUG": "ON",
-                "ENABLE_CLANG_TIDY": "OFF",
-                "ENABLE_CPPCHECK": "ON",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "CMAKE_CXX_COMPILER": "C:/mingw64/bin/g++.exe",
-                "CMAKE_C_COMPILER": "C:/mingw64/bin/gcc.exe",
                 "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "tests",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_TESTS": "ON"
             }
         }
     ],
     "buildPresets": [
         {
-            "name": "release-MSVC",
-            "displayName": "Release",
-            "configurePreset": "release",
+            "name": "release-static",
+            "displayName": "Release static",
+            "configurePreset": "static",
             "configuration": "Release"
         },
         {
-            "name": "debug-MSVC",
-            "displayName": "Debug",
-            "configurePreset": "debug",
+            "name": "release-shared",
+            "displayName": "Release shared",
+            "configurePreset": "shared",
+            "configuration": "Release"
+        },
+        {
+            "name": "debug-msvc",
+            "displayName": "Debug msvc",
+            "configurePreset": "debug-msvc",
             "configuration": "Debug"
         },
         {
-            "name": "release-clang",
-            "displayName": "Release",
-            "configurePreset": "release-clang",
-            "configuration": "Release"
-        },
-        {
             "name": "debug-clang",
-            "displayName": "Debug",
+            "displayName": "Debug clang",
             "configurePreset": "debug-clang",
             "configuration": "Debug"
         },
         {
-            "name": "release-gcc",
-            "displayName": "Release",
-            "configurePreset": "release-gcc",
-            "configuration": "Release"
+            "name": "debug-gcc",
+            "displayName": "Debug gcc",
+            "configurePreset": "debug-gcc",
+            "configuration": "Debug"
         },
         {
-            "name": "debug-gcc",
-            "displayName": "Debug",
-            "configurePreset": "debug-gcc",
+            "name": "tests",
+            "displayName": "Tests",
+            "configurePreset": "tests",
             "configuration": "Debug"
         }
     ]
