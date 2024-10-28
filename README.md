@@ -17,7 +17,7 @@ C++ game engine for 3d and 2d development
 
 ## How to use the engine in a personal project
 
-- Use the engine as a library (shared or static)
+Use the engine as a library (shared or static)
 ```cmake
 include(FetchContent)
 FetchContent_Declare(
@@ -36,7 +36,7 @@ endif()
 
 ## Demos
 
-- Engine use cases can be found in the [newleaf demos repository](https://github.com/kafkaphoenix/newleaf_demos)
+Engine use cases can be found in the [newleaf demos repository](https://github.com/kafkaphoenix/newleaf_demos)
 
 ## Planned features
 
