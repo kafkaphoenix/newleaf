@@ -49,8 +49,13 @@ Texture::Texture(std::filesystem::path&& fp, std::optional<std::string>&& type,
     m_cubemap(std::filesystem::is_directory(fp)),
     m_type(std::move(type.value_or(""))),
     m_flip_vertically(flip_vertically.value_or(true)),
-    m_mipmap_level(mipmap_level.value_or(4)),
     m_gamma_correction(gamma_correction.value_or(false)) {
+  // calculate mipmap levels
+  uint32_t max_mip_levels =
+    1 +
+    static_cast<uint32_t>(std::floor(std::log2(std::max(m_width, m_height))));
+  m_mipmap_level =
+    std::min(mipmap_level.value_or(max_mip_levels), max_mip_levels);
   if (m_cubemap) {
     std::string file_ext =
       std::filesystem::exists(fp / "front.jpg") ? ".jpg" : ".png";
