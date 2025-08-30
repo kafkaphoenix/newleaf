@@ -17,12 +17,9 @@ namespace nl {
 class Texture : public Asset {
   public:
     Texture() = default; // TODO revisit is for std::vector in Model class
-    Texture(uint32_t width, uint32_t height, GLenum glFormat,
-            std::optional<bool> wrap = std::nullopt);
-    Texture(std::filesystem::path&& fp,
-            std::optional<std::string>&& type = std::nullopt,
-            std::optional<bool> flip_vertically = std::nullopt,
-            std::optional<uint32_t> mipmap_level = std::nullopt,
+    Texture(uint32_t width, uint32_t height, GLenum glFormat, std::optional<bool> wrap = std::nullopt);
+    Texture(std::filesystem::path&& fp, std::optional<std::string>&& type = std::nullopt,
+            std::optional<bool> flip_vertically = std::nullopt, std::optional<uint32_t> mipmap_level = std::nullopt,
             std::optional<bool> gamma_correction = std::nullopt);
     virtual ~Texture() override final;
 
@@ -33,12 +30,9 @@ class Texture : public Asset {
     uint32_t get_width() const { return m_width; }
     uint32_t get_height() const { return m_height; }
     uint32_t get_id() const { return m_id; }
-    std::string_view get_path() const {
-      return (m_paths.size() == 1) ? m_paths[0] : m_directory;
-    }
+    std::string_view get_path() const { return (m_paths.size() == 1) ? m_paths[0] : m_directory; }
     std::string_view get_type() const { return m_type; }
-    virtual const std::map<std::string, std::string, NumericComparator>&
-    to_map() override final;
+    virtual const std::map<std::string, std::string, NumericComparator>& to_map() override final;
     bool is_cubemap() const { return m_cubemap; }
 
     virtual bool operator==(const Asset& other) const override final;
@@ -49,9 +43,7 @@ class Texture : public Asset {
     static constexpr bool WRAP = true;
     static constexpr bool DONT_WRAP = false;
 
-    static std::unique_ptr<Texture> create(uint32_t width, uint32_t height,
-                                           GLenum glFormat,
-                                           std::optional<bool> wrap);
+    static std::unique_ptr<Texture> create(uint32_t width, uint32_t height, GLenum glFormat, std::optional<bool> wrap);
 
   private:
     std::vector<std::string> m_paths;

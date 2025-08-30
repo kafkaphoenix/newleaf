@@ -8,8 +8,7 @@
 
 namespace nl {
 
-void Prefab::process_prototype(const std::string& name,
-                               const json& prototype_data, const json& data) {
+void Prefab::process_prototype(const std::string& name, const json& prototype_data, const json& data) {
   std::vector<std::string> inherits;
   std::vector<std::string> ctags;
   std::unordered_map<std::string, json> components;
@@ -23,21 +22,18 @@ void Prefab::process_prototype(const std::string& name,
   read(prototype_data, inherits, ctags,
        components); // child overrides parent if common definition exists
 
-  m_prototypes.emplace(name, Prototype{.inherits = std::move(inherits),
-                                       .ctags = std::move(ctags),
-                                       .components = std::move(components)});
+  m_prototypes.emplace(
+    name, Prototype{.inherits = std::move(inherits), .ctags = std::move(ctags), .components = std::move(components)});
 }
 
-Prefab::Prefab(std::filesystem::path&& fp,
-               std::vector<std::string>&& target_prototypes)
+Prefab::Prefab(std::filesystem::path&& fp, std::vector<std::string>&& target_prototypes)
   : m_name(std::move(fp.filename().string())), m_path(std::move(fp.string())),
     m_target_prototypes(std::move(target_prototypes)) {
   // One prefab file can contain multiple prototypes and we target only a subset
   // of them
   std::ifstream f(fp);
   ENGINE_ASSERT(f.is_open(), "failed to open prefab file!");
-  ENGINE_ASSERT(f.peek() not_eq std::ifstream::traits_type::eof(),
-                "prefab file is empty!");
+  ENGINE_ASSERT(f.peek() not_eq std::ifstream::traits_type::eof(), "prefab file is empty!");
   json data = json::parse(f);
   f.close();
 
@@ -49,8 +45,7 @@ Prefab::Prefab(std::filesystem::path&& fp,
     }
   } else {
     for (const auto& [name, prototype_data] : data.items()) {
-      if (std::find(m_target_prototypes.begin(), m_target_prototypes.end(),
-                    name) == m_target_prototypes.end()) {
+      if (std::find(m_target_prototypes.begin(), m_target_prototypes.end(), name) == m_target_prototypes.end()) {
         continue;
       }
       process_prototype(name, prototype_data, data);
@@ -58,8 +53,7 @@ Prefab::Prefab(std::filesystem::path&& fp,
   }
 }
 
-void Prefab::read(const json& data, std::vector<std::string>& inherits,
-                  std::vector<std::string>& ctags,
+void Prefab::read(const json& data, std::vector<std::string>& inherits, std::vector<std::string>& ctags,
                   std::unordered_map<std::string, json>& components) {
   if (data.contains("ctags")) {
     for (const json& c : data.at("ctags")) {
@@ -70,8 +64,7 @@ void Prefab::read(const json& data, std::vector<std::string>& inherits,
   if (data.contains("components")) {
     for (const auto& [cKey, cValue] : data.at("components").items()) {
       if (inherits.size() > 0) {
-        std::erase_if(ctags,
-                      [&cKey](const std::string& c) { return c == cKey; });
+        std::erase_if(ctags, [&cKey](const std::string& c) { return c == cKey; });
       }
       if (components.contains(cKey)) {
         for (const auto& [cFieldKey, cFieldValue] : cValue.items()) {
@@ -104,26 +97,20 @@ const std::map<std::string, std::string, NumericComparator>& Prefab::to_map() {
 
 const std::map<std::string, std::string, NumericComparator>&
 Prefab::get_target_prototype_info(std::string_view prototype_id) {
-  if (not m_prototype_info.empty() and
-      m_prototype_info.contains(prototype_id.data())) {
+  if (not m_prototype_info.empty() and m_prototype_info.contains(prototype_id.data())) {
     return m_prototype_info.at(prototype_id.data());
   }
 
   std::map<std::string, std::string, NumericComparator> m_info{};
   m_info["name"] = prototype_id.data();
-  for (uint32_t i = 0; i < m_prototypes.at(prototype_id.data()).inherits.size();
-       ++i) {
-    m_info["inherits " + std::to_string(i)] =
-      *std::next(m_prototypes.at(prototype_id.data()).inherits.begin(), i);
+  for (uint32_t i = 0; i < m_prototypes.at(prototype_id.data()).inherits.size(); ++i) {
+    m_info["inherits " + std::to_string(i)] = *std::next(m_prototypes.at(prototype_id.data()).inherits.begin(), i);
   }
-  for (uint32_t i = 0; i < m_prototypes.at(prototype_id.data()).ctags.size();
-       ++i) {
-    m_info["cTag " + std::to_string(i)] =
-      *std::next(m_prototypes.at(prototype_id.data()).ctags.begin(), i);
+  for (uint32_t i = 0; i < m_prototypes.at(prototype_id.data()).ctags.size(); ++i) {
+    m_info["cTag " + std::to_string(i)] = *std::next(m_prototypes.at(prototype_id.data()).ctags.begin(), i);
   }
   uint32_t i = 0;
-  for (const auto& [componentID, _] :
-       m_prototypes.at(prototype_id.data()).components) {
+  for (const auto& [componentID, _] : m_prototypes.at(prototype_id.data()).components) {
     m_info["component " + std::to_string(i++)] = componentID;
   }
   m_prototype_info[prototype_id.data()] = m_info;

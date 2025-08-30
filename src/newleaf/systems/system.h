@@ -26,9 +26,8 @@ class System {
 };
 
 struct SystemComparator {
-    bool operator()(
-      const std::pair<std::string, std::unique_ptr<System>>& lhs,
-      const std::pair<std::string, std::unique_ptr<System>>& rhs) const {
+    bool operator()(const std::pair<std::string, std::unique_ptr<System>>& lhs,
+                    const std::pair<std::string, std::unique_ptr<System>>& rhs) const {
       return lhs.second->get_priority() < rhs.second->get_priority();
     }
 };

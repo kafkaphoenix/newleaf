@@ -34,16 +34,13 @@ class SceneManager {
     entt::entity get_entity(UUID& uuid);
     const std::vector<std::string>& get_named_systems();
 
-    template <typename Component>
-    void on_component_added(entt::entity e, Component& c);
-    template <typename Component>
-    void on_component_cloned(entt::entity e, Component& c);
+    template <typename Component> void on_component_added(entt::entity e, Component& c);
+    template <typename Component> void on_component_cloned(entt::entity e, Component& c);
 
     static std::unique_ptr<SceneManager> create();
 
     // scene factory methods
-    entt::entity create_entity(std::string_view prefab_id,
-                               std::string&& prototype_id, std::string&& name,
+    entt::entity create_entity(std::string_view prefab_id, std::string&& prototype_id, std::string&& name,
                                std::optional<std::string> tag = std::nullopt,
                                std::optional<uint32_t> uuid = std::nullopt);
     entt::entity clone_entity(entt::entity e);
@@ -56,35 +53,25 @@ class SceneManager {
     void clear_scene();
     void print_scene();
     std::string get_active_scene() const;
-    const std::map<std::string, entt::entity, NumericComparator>&
-    get_named_entities();
+    const std::map<std::string, entt::entity, NumericComparator>& get_named_entities();
     std::map<std::string, std::string, NumericComparator>& compute_metrics();
 
     // entity factory methods
-    void create_prototypes(std::string_view prefab_name,
-                           const std::vector<std::string>& prototype_ids);
-    void update_prototypes(std::string_view prefab_name,
-                           const std::vector<std::string>& prototype_ids);
-    void delete_prototypes(std::string_view prefab_name,
-                           const std::vector<std::string>& prototype_ids);
-    EntityFactory::Prototypes
-    get_prototypes(std::string_view prefab_name,
-                   const std::vector<std::string>& prototype_ids);
-    bool
-    contains_prototypes(std::string_view prefab_name,
-                        const std::vector<std::string>& prototype_ids) const;
-    const std::map<std::string, EntityFactory::Prototypes, NumericComparator>&
-    get_all_prototypes();
-    const std::map<std::string, std::string, NumericComparator>&
-    get_prototypes_count_by_prefab();
+    void create_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids);
+    void update_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids);
+    void delete_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids);
+    EntityFactory::Prototypes get_prototypes(std::string_view prefab_name,
+                                             const std::vector<std::string>& prototype_ids);
+    bool contains_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids) const;
+    const std::map<std::string, EntityFactory::Prototypes, NumericComparator>& get_all_prototypes();
+    const std::map<std::string, std::string, NumericComparator>& get_prototypes_count_by_prefab();
     // does not delete entt entities, just clears the map
     void clear_prototypes();
 
   private:
     entt::registry m_registry;
     SceneFactory m_scene_factory;
-    std::set<std::pair<std::string, std::unique_ptr<System>>, SystemComparator>
-      m_systems;
+    std::set<std::pair<std::string, std::unique_ptr<System>>, SystemComparator> m_systems;
     std::vector<std::string> m_named_systems;
     bool m_dirty_systems{};
 };

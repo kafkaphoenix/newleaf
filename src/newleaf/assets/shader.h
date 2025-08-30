@@ -16,8 +16,7 @@ class Shader : public Asset {
     Shader(std::filesystem::path&& fp);
     virtual ~Shader() override final;
 
-    virtual const std::map<std::string, std::string, NumericComparator>&
-    to_map() override final;
+    virtual const std::map<std::string, std::string, NumericComparator>& to_map() override final;
 
     virtual bool operator==(const Asset& other) const override final;
     operator GLuint() const { return m_id; }

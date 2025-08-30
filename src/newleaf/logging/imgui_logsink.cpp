@@ -26,10 +26,8 @@ void ImGuiLogsink::show_log_format_popup() {
 }
 
 int ImGuiLogsink::calculate_elapsed_local_time(const Record& r) {
-  auto now =
-    std::chrono::current_zone()->to_local(std::chrono::system_clock::now());
-  auto now_str =
-    std::format("{:%T}", std::chrono::floor<std::chrono::seconds>(now));
+  auto now = std::chrono::current_zone()->to_local(std::chrono::system_clock::now());
+  auto now_str = std::format("{:%T}", std::chrono::floor<std::chrono::seconds>(now));
   std::tm tm_now{};
   std::istringstream ss(now_str);
   ss >> std::get_time(&tm_now, "%H:%M:%S");
@@ -38,8 +36,8 @@ int ImGuiLogsink::calculate_elapsed_local_time(const Record& r) {
   std::tm tm_msg{};
   ss >> std::get_time(&tm_msg, "%H:%M:%S");
 
-  int elapsed = tm_now.tm_hour * 3600 + tm_now.tm_min * 60 + tm_now.tm_sec -
-                tm_msg.tm_hour * 3600 - tm_msg.tm_min * 60 - tm_msg.tm_sec;
+  int elapsed = tm_now.tm_hour * 3600 + tm_now.tm_min * 60 + tm_now.tm_sec - tm_msg.tm_hour * 3600 -
+                tm_msg.tm_min * 60 - tm_msg.tm_sec;
   return elapsed;
 }
 
@@ -80,9 +78,8 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
 
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.f);
     ImGui::SameLine();
-    if (ImGui::Button("Format") or
-        ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_F), false) and
-          ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
+    if (ImGui::Button("Format") or ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_F), false) and
+                                     ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
       ImGui::OpenPopup("LogFormatPopup");
     }
     if (ImGui::IsItemHovered()) {
@@ -99,14 +96,12 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
       clear_ = true;
       ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5F, 0.5F, 0.5F, 1.f));
     }
-    if (ImGui::Button("Auto Scroll") or
-        ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_A), false) and
-          ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
+    if (ImGui::Button("Auto Scroll") or ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_A), false) and
+                                          ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
       m_autoscroll = not m_autoscroll;
     }
     if (ImGui::IsItemHovered()) {
-      ImGui::SetTooltip(
-        "Automatically scroll to the bottom of the log. CTRL+A to toggle");
+      ImGui::SetTooltip("Automatically scroll to the bottom of the log. CTRL+A to toggle");
     }
     if (clear_) {
       ImGui::PopStyleColor();
@@ -118,9 +113,8 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
       clear_ = true;
       ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5F, 0.5F, 0.5F, 1.f));
     }
-    if (ImGui::Button("Wrap") or
-        ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_W), false) and
-          ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
+    if (ImGui::Button("Wrap") or ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_W), false) and
+                                   ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
       m_wrap = not m_wrap;
     }
     if (ImGui::IsItemHovered()) {
@@ -132,9 +126,8 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
 
     ImGui::SameLine();
     bool copy = false;
-    if (ImGui::Button("Copy") or
-        ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_C), false) and
-          ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
+    if (ImGui::Button("Copy") or ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_C), false) and
+                                   ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
       copy = true;
     }
     if (ImGui::IsItemHovered()) {
@@ -142,9 +135,8 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
     }
 
     ImGui::SameLine();
-    if (ImGui::Button("Clear") or
-        ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_K), false) and
-          ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
+    if (ImGui::Button("Clear") or ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_K), false) and
+                                    ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
       clear();
     }
     if (ImGui::IsItemHovered()) {
@@ -165,21 +157,16 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
       m_text_filter[0] = '\0';
     }
 
-    if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), false,
-                          ImGuiWindowFlags_HorizontalScrollbar)) {
+    if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar)) {
       ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 1));
 
-      if (ImGui::BeginTable(
-            "LogTable", 5,
-            ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Borders |
-              ImGuiTableFlags_Resizable | ImGuiTableFlags_Hideable)) {
+      if (ImGui::BeginTable("LogTable", 5,
+                            ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable |
+                              ImGuiTableFlags_Hideable)) {
         ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthFixed, 60.f);
-        ImGui::TableSetupColumn("Thread", ImGuiTableColumnFlags_WidthFixed,
-                                40.f);
-        ImGui::TableSetupColumn("Source", ImGuiTableColumnFlags_WidthFixed,
-                                65.f);
-        ImGui::TableSetupColumn("Level", ImGuiTableColumnFlags_WidthFixed,
-                                60.f);
+        ImGui::TableSetupColumn("Thread", ImGuiTableColumnFlags_WidthFixed, 40.f);
+        ImGui::TableSetupColumn("Source", ImGuiTableColumnFlags_WidthFixed, 65.f);
+        ImGui::TableSetupColumn("Level", ImGuiTableColumnFlags_WidthFixed, 60.f);
         ImGui::TableSetupColumn("Message", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableHeadersRow();
 
@@ -191,8 +178,7 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
             ImGui::LogToClipboard();
           }
           for (const auto& record : m_records) {
-            if (record.m_level not_eq m_filter_level and
-                m_filter_level not_eq "all") {
+            if (record.m_level not_eq m_filter_level and m_filter_level not_eq "all") {
               continue;
             }
             if (m_filter_time not_eq "all") {
@@ -235,8 +221,7 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
               }
             }
 
-            if (m_text_filter[0] not_eq '\0' and
-                strstr(record.m_msg.c_str(), m_text_filter) == nullptr) {
+            if (m_text_filter[0] not_eq '\0' and strstr(record.m_msg.c_str(), m_text_filter) == nullptr) {
               continue;
             }
 
@@ -275,27 +260,19 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
             if (m_show_level) {
               ImGui::TableSetColumnEnabled(3, true);
               if (record.m_level == "trace") {
-                ImGui::PushStyleColor(ImGuiCol_Text,
-                                      ImVec4(0.7F, 0.7F, 0.7F, 1.f));
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7F, 0.7F, 0.7F, 1.f));
               } else if (record.m_level == "debug") {
-                ImGui::PushStyleColor(ImGuiCol_Text,
-                                      ImVec4(1.0F, 1.0F, 1.0F, 1.0F));
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
-                                       IM_COL32(0, 0, 255, 255));
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0F, 1.0F, 1.0F, 1.0F));
+                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(0, 0, 255, 255));
               } else if (record.m_level == "info") {
-                ImGui::PushStyleColor(ImGuiCol_Text,
-                                      ImVec4(0.f, 1.f, 0.f, 1.f));
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.f, 1.f, 0.f, 1.f));
               } else if (record.m_level == "warning") {
-                ImGui::PushStyleColor(ImGuiCol_Text,
-                                      ImVec4(1.f, 1.f, 0.f, 1.f));
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.f, 1.f));
               } else if (record.m_level == "error") {
-                ImGui::PushStyleColor(ImGuiCol_Text,
-                                      ImVec4(1.f, 0.f, 0.f, 1.f));
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 0.f, 0.f, 1.f));
               } else if (record.m_level == "critical") {
-                ImGui::PushStyleColor(ImGuiCol_Text,
-                                      ImVec4(1.0F, 1.0F, 1.0F, 1.0F));
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
-                                       IM_COL32(255, 0, 0, 255));
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0F, 1.0F, 1.0F, 1.0F));
+                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(255, 0, 0, 255));
               }
               ImGui::TextUnformatted(record.m_level.c_str());
               ImGui::PopStyleColor();
@@ -316,8 +293,7 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
             ImGui::LogFinish();
           }
         }
-        if (m_autoscroll and not empty and
-            ImGui::GetScrollY() < ImGui::GetScrollMaxY()) {
+        if (m_autoscroll and not empty and ImGui::GetScrollY() < ImGui::GetScrollMaxY()) {
           ImGui::SetScrollHereY(1.f);
         }
         ImGui::EndTable();
@@ -347,8 +323,7 @@ void ImGuiLogsink::sink_it_(const spdlog::details::log_msg& msg) {
 
   if (m_show_time) {
     auto time = std::chrono::current_zone()->to_local(msg.time);
-    r.m_time =
-      std::format("{:%T}", std::chrono::floor<std::chrono::seconds>(time));
+    r.m_time = std::format("{:%T}", std::chrono::floor<std::chrono::seconds>(time));
   }
 
   if (m_show_thread) {

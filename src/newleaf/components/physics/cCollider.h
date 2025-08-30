@@ -28,10 +28,7 @@ struct CCollider {
     CCollider() = default;
     explicit CCollider(Type t, glm::vec3&& s) : type(t), size(std::move(s)) {}
 
-    void print() const {
-      ENGINE_BACKTRACE("\t\ttype: {0}\n\t\t\t\t\t\tsize: {1}", _type,
-                       glm::to_string(size));
-    }
+    void print() const { ENGINE_BACKTRACE("\t\ttype: {0}\n\t\t\t\t\t\tsize: {1}", _type, glm::to_string(size)); }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
       std::map<std::string, std::string, NumericComparator> info;
@@ -60,8 +57,7 @@ struct CCollider {
 };
 }
 
-template <>
-inline void nl::SceneManager::on_component_added(entt::entity e, CCollider& c) {
+template <> inline void nl::SceneManager::on_component_added(entt::entity e, CCollider& c) {
   c.set_type();
 
   m_registry.replace<CCollider>(e, c);

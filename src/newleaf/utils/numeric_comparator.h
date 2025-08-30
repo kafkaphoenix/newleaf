@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>
 #include <cctype>
 #include <sstream>
+#include <string>
 
 namespace nl {
 
@@ -46,8 +46,7 @@ struct NumericComparator {
       rhs_stream >> rhs_number;
 
       if (lhs_number == rhs_number) {
-        return NumericComparator{}(lhs.substr(lhs_stream.tellg()),
-                                   rhs.substr(rhs_stream.tellg()));
+        return NumericComparator{}(lhs.substr(lhs_stream.tellg()), rhs.substr(rhs_stream.tellg()));
       }
 
       return lhs_number < rhs_number;

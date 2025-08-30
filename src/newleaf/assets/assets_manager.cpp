@@ -16,18 +16,14 @@ void AssetsManager::clear() {
   m_dirty = false;
 }
 
-std::unique_ptr<AssetsManager> AssetsManager::create() {
-  return std::make_unique<AssetsManager>();
-}
+std::unique_ptr<AssetsManager> AssetsManager::create() { return std::make_unique<AssetsManager>(); }
 
-const std::unordered_map<
-  std::string, std::unordered_map<std::string, std::shared_ptr<Asset>>>&
+const std::unordered_map<std::string, std::unordered_map<std::string, std::shared_ptr<Asset>>>&
 AssetsManager::get_assets() const {
   return m_assets;
 }
 
-std::map<std::string, std::string, NumericComparator>&
-AssetsManager::compute_metrics() {
+std::map<std::string, std::string, NumericComparator>& AssetsManager::compute_metrics() {
   if (not m_dirty) {
     return m_metrics;
   }

@@ -46,10 +46,8 @@ class VBO {
     bool is_immutable() const { return m_immutable; }
 
     static std::unique_ptr<VBO> create(const std::vector<Vertex>& vertices);
-    static std::unique_ptr<VBO>
-    CreateShape(const std::vector<ShapeVertex>& vertices);
-    static std::unique_ptr<VBO>
-    CreateTerrain(const std::vector<TerrainVertex>& vertices);
+    static std::unique_ptr<VBO> CreateShape(const std::vector<ShapeVertex>& vertices);
+    static std::unique_ptr<VBO> CreateTerrain(const std::vector<TerrainVertex>& vertices);
 
   private:
     uint32_t m_id{};

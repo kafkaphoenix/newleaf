@@ -29,7 +29,5 @@ class AppException : public CustomException {
 
 }
 
-#define throw_engine_exception(arg)                                            \
-  throw ::nl::EngineException(std::format(arg), __FILE__, __LINE__)
-#define throw_app_exception(arg)                                               \
-  throw ::nl::AppException(std::format(arg), __FILE__, __LINE__)
+#define throw_engine_exception(arg) throw ::nl::EngineException(std::format(arg), __FILE__, __LINE__)
+#define throw_app_exception(arg) throw ::nl::AppException(std::format(arg), __FILE__, __LINE__)

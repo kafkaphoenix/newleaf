@@ -24,12 +24,8 @@ class State {
     virtual void on_event(Event&) {}
 
     std::string_view get_name() const { return m_name; }
-    LayersManager& get_layers_manager() {
-      return *m_layers_manager;
-    }
-    const LayersManager& get_layers_manager() const {
-      return *m_layers_manager;
-    }
+    LayersManager& get_layers_manager() { return *m_layers_manager; }
+    const LayersManager& get_layers_manager() const { return *m_layers_manager; }
     void clear_layers() { m_layers_manager->clear(); }
 
   protected:

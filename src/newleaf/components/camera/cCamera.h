@@ -44,20 +44,17 @@ struct CCamera {
     float up_angle{};
 
     CCamera() = default;
-    explicit CCamera(std::string&& t, std::string&& ar, std::string&& m,
-                     float f, float zf, float zm, float nc, float fc)
-      : _type(std::move(t)), _aspect_ratio(std::move(ar)), _mode(std::move(m)),
-        fov(f), zoom_factor(zf), zoom_min(zm), zoom_max(zm), near_clip(nc),
-        far_clip(fc) {}
+    explicit CCamera(std::string&& t, std::string&& ar, std::string&& m, float f, float zf, float zm, float nc,
+                     float fc)
+      : _type(std::move(t)), _aspect_ratio(std::move(ar)), _mode(std::move(m)), fov(f), zoom_factor(zf), zoom_min(zm),
+        zoom_max(zm), near_clip(nc), far_clip(fc) {}
 
     void print() const {
-      ENGINE_BACKTRACE(
-        "\t\ttype: {0}\n\t\t\t\t\t\taspect_ratio: {1}\n\t\t\t\t\t\tmode: "
-        "{2}\n\t\t\t\t\t\tfov: {3}\n\t\t\t\t\t\tzoom_factor: "
-        "{4}\n\t\t\t\t\t\tzoom_min: {5}\n\t\t\t\t\t\tzoom_max: "
-        "{6}\n\t\t\t\t\t\tnear_clip: {7}\n\t\t\t\t\t\tfar_clip: {8}",
-        _type, _aspect_ratio, _mode, fov, zoom_factor, zoom_min, zoom_max,
-        near_clip, far_clip);
+      ENGINE_BACKTRACE("\t\ttype: {0}\n\t\t\t\t\t\taspect_ratio: {1}\n\t\t\t\t\t\tmode: "
+                       "{2}\n\t\t\t\t\t\tfov: {3}\n\t\t\t\t\t\tzoom_factor: "
+                       "{4}\n\t\t\t\t\t\tzoom_min: {5}\n\t\t\t\t\t\tzoom_max: "
+                       "{6}\n\t\t\t\t\t\tnear_clip: {7}\n\t\t\t\t\t\tfar_clip: {8}",
+                       _type, _aspect_ratio, _mode, fov, zoom_factor, zoom_min, zoom_max, near_clip, far_clip);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
@@ -112,11 +109,9 @@ struct CCamera {
     void calculate_projection() {
       if (type == CameraType::perspective) {
         zoom_factor = std::clamp(zoom_factor, zoom_min, zoom_max);
-        projection = glm::perspective(glm::radians(fov * 1.f / zoom_factor),
-                                      aspect_ratio_value, near_clip, far_clip);
+        projection = glm::perspective(glm::radians(fov * 1.f / zoom_factor), aspect_ratio_value, near_clip, far_clip);
       } else if (type == CameraType::orthographic) {
-        projection = glm::ortho(-aspect_ratio_value * zoom_factor,
-                                aspect_ratio_value * zoom_factor, -zoom_factor,
+        projection = glm::ortho(-aspect_ratio_value * zoom_factor, aspect_ratio_value * zoom_factor, -zoom_factor,
                                 zoom_factor, near_clip, far_clip);
       }
     }
@@ -129,8 +124,7 @@ struct CCamera {
 };
 }
 
-template <>
-inline void nl::SceneManager::on_component_added(entt::entity e, CCamera& c) {
+template <> inline void nl::SceneManager::on_component_added(entt::entity e, CCamera& c) {
   c.set_camera_type();
   c.set_aspect_ratio();
   c.set_mode();

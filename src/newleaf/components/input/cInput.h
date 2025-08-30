@@ -26,16 +26,13 @@ struct CInput {
 
     CInput() = default;
     explicit CInput(std::string&& m, float ms, float ts, float vs, float rs)
-      : _mode(std::move(m)), mouse_sensitivity(ms), translation_speed(ts),
-        vertical_speed(vs), rotation_speed(rs) {}
+      : _mode(std::move(m)), mouse_sensitivity(ms), translation_speed(ts), vertical_speed(vs), rotation_speed(rs) {}
 
     void print() const {
-      ENGINE_BACKTRACE(
-        "\t\tmode: {0}\n\t\t\t\t\t\tmouse_sensitivity: "
-        "{1}\n\t\t\t\t\t\ttranslation_speed: {2}\n\t\t\t\t\t\tvertical_speed: "
-        "{3}\n\t\t\t\t\t\trotation_speed: {4}",
-        _mode, mouse_sensitivity, translation_speed, vertical_speed,
-        rotation_speed);
+      ENGINE_BACKTRACE("\t\tmode: {0}\n\t\t\t\t\t\tmouse_sensitivity: "
+                       "{1}\n\t\t\t\t\t\ttranslation_speed: {2}\n\t\t\t\t\t\tvertical_speed: "
+                       "{3}\n\t\t\t\t\t\trotation_speed: {4}",
+                       _mode, mouse_sensitivity, translation_speed, vertical_speed, rotation_speed);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
@@ -63,8 +60,7 @@ struct CInput {
 };
 }
 
-template <>
-inline void nl::SceneManager::on_component_added(entt::entity e, CInput& c) {
+template <> inline void nl::SceneManager::on_component_added(entt::entity e, CInput& c) {
   c.set_mode();
 
   m_registry.replace<CInput>(e, c);

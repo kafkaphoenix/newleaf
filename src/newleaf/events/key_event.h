@@ -19,8 +19,7 @@ class KeyEvent : public Event {
 
 class KeyPressedEvent : public KeyEvent {
   public:
-    KeyPressedEvent(const Key key, bool is_repeating)
-      : KeyEvent(key), m_repeating(is_repeating) {}
+    KeyPressedEvent(const Key key, bool is_repeating) : KeyEvent(key), m_repeating(is_repeating) {}
 
     bool is_repeating() const { return m_repeating; }
 

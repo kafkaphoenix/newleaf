@@ -15,28 +15,24 @@ namespace nl {
 void LogManager::init() {
   std::vector<spdlog::sink_ptr> log_sinks;
   log_sinks.reserve(2);
-  log_sinks.emplace_back(
-    std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+  log_sinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
   log_sinks.emplace_back(std::make_shared<ImGuiLogsink>());
 
   log_sinks[0]->set_pattern("%^[%T] %n: %v%$");
 
-  m_engine_logger = std::make_shared<spdlog::logger>("engine", begin(log_sinks),
-                                                     end(log_sinks));
+  m_engine_logger = std::make_shared<spdlog::logger>("engine", begin(log_sinks), end(log_sinks));
   spdlog::register_logger(m_engine_logger);
   m_engine_logger->set_level(m_engine_log_level);
   m_engine_logger->flush_on(m_engine_flush_level);
 
-  m_app_logger =
-    std::make_shared<spdlog::logger>("app", begin(log_sinks), end(log_sinks));
+  m_app_logger = std::make_shared<spdlog::logger>("app", begin(log_sinks), end(log_sinks));
   spdlog::register_logger(m_app_logger);
   m_app_logger->set_level(m_app_log_level);
   m_app_logger->flush_on(m_app_flush_level);
 }
 
 void LogManager::create_file_logger(std::string_view path) {
-  auto file_sink =
-    std::make_shared<spdlog::sinks::basic_file_sink_mt>(path.data(), true);
+  auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path.data(), true);
 
   file_sink->set_pattern("[%D %T] [%l] %n: %v");
 
@@ -44,14 +40,11 @@ void LogManager::create_file_logger(std::string_view path) {
   m_app_logger->sinks().emplace_back(file_sink);
 }
 
-void LogManager::create_backtrace_logger(std::string_view path,
-                                         bool enable_engine_backtrace_logger,
+void LogManager::create_backtrace_logger(std::string_view path, bool enable_engine_backtrace_logger,
                                          bool enable_app_backtrace_logger) {
   auto backtrace_sink = std::make_shared<BacktraceLogsink>(path.data());
-  m_engine_backtrace_logger =
-    std::make_shared<spdlog::logger>("engine", backtrace_sink);
-  m_app_backtrace_logger =
-    std::make_shared<spdlog::logger>("app", backtrace_sink);
+  m_engine_backtrace_logger = std::make_shared<spdlog::logger>("engine", backtrace_sink);
+  m_app_backtrace_logger = std::make_shared<spdlog::logger>("app", backtrace_sink);
 
   if (enable_engine_backtrace_logger) {
     m_engine_backtrace_logger->set_level(DEBUG);
@@ -71,26 +64,22 @@ void LogManager::create_backtrace_logger(std::string_view path,
 }
 
 void LogManager::clear_all_backtrace_logger() {
-  auto sink = dynamic_cast<BacktraceLogsink*>(
-    m_engine_backtrace_logger->sinks()[0].get());
+  auto sink = dynamic_cast<BacktraceLogsink*>(m_engine_backtrace_logger->sinks()[0].get());
   sink->clear("all");
 }
 
 void LogManager::clear_engine_backtrace_logger() {
-  auto sink = dynamic_cast<BacktraceLogsink*>(
-    m_engine_backtrace_logger->sinks()[0].get());
+  auto sink = dynamic_cast<BacktraceLogsink*>(m_engine_backtrace_logger->sinks()[0].get());
   sink->clear("engine");
 }
 
 void LogManager::clear_app_backtrace_logger() {
-  auto sink =
-    dynamic_cast<BacktraceLogsink*>(m_app_backtrace_logger->sinks()[0].get());
+  auto sink = dynamic_cast<BacktraceLogsink*>(m_app_backtrace_logger->sinks()[0].get());
   sink->clear("app");
 }
 
 void LogManager::dump_backtrace() {
-  auto sink = dynamic_cast<BacktraceLogsink*>(
-    m_engine_backtrace_logger->sinks()[0].get());
+  auto sink = dynamic_cast<BacktraceLogsink*>(m_engine_backtrace_logger->sinks()[0].get());
   sink->dump_to_file();
 }
 

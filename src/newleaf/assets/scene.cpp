@@ -10,8 +10,7 @@ namespace nl {
 Scene::Scene(std::filesystem::path&& fp) : m_path(std::move(fp.string())) {
   std::ifstream f(fp);
   ENGINE_ASSERT(f.is_open(), "failed to open scene file!");
-  ENGINE_ASSERT(f.peek() not_eq std::ifstream::traits_type::eof(),
-                "scene file is empty!");
+  ENGINE_ASSERT(f.peek() not_eq std::ifstream::traits_type::eof(), "scene file is empty!");
   json data = json::parse(f);
   f.close();
 
@@ -26,8 +25,7 @@ void Scene::read(const json& data) {
       }
     }
     if (data.at("assets").contains("textures")) {
-      for (const auto& [key, value] :
-           data.at("assets").at("textures").items()) {
+      for (const auto& [key, value] : data.at("assets").at("textures").items()) {
         m_textures[key] = value;
       }
     }

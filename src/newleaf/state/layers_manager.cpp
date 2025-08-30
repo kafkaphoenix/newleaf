@@ -34,9 +34,8 @@ void LayersManager::push_overlay(std::unique_ptr<Layer>&& o, bool enabled) {
 }
 
 void LayersManager::enable_overlay(std::string_view name) {
-  auto it = std::ranges::find_if(
-    m_layers | std::views::drop(m_index),
-    [&](const auto& layer) { return layer->get_name() == name; });
+  auto it = std::ranges::find_if(m_layers | std::views::drop(m_index),
+                                 [&](const auto& layer) { return layer->get_name() == name; });
   if (it not_eq m_layers.end()) {
     if (not(*it)->is_enabled()) {
       (*it)->on_attach();
@@ -48,9 +47,8 @@ void LayersManager::enable_overlay(std::string_view name) {
 }
 
 void LayersManager::disable_overlay(std::string_view name) {
-  auto it = std::ranges::find_if(
-    m_layers | std::views::drop(m_index),
-    [&](const auto& layer) { return layer->get_name() == name; });
+  auto it = std::ranges::find_if(m_layers | std::views::drop(m_index),
+                                 [&](const auto& layer) { return layer->get_name() == name; });
   if (it not_eq m_layers.end()) {
     if ((*it)->is_enabled()) {
       (*it)->on_detach();
@@ -73,7 +71,5 @@ void LayersManager::clear() {
   m_index = 0;
 }
 
-std::unique_ptr<LayersManager> LayersManager::create() {
-  return std::make_unique<LayersManager>();
-}
+std::unique_ptr<LayersManager> LayersManager::create() { return std::make_unique<LayersManager>(); }
 }

@@ -7,9 +7,8 @@
 
 namespace nl {
 
-std::shared_ptr<VAO>
-ShapeFactory::create(const std::vector<ShapeVertex>& vertices,
-                     const std::vector<uint32_t>& indices) {
+std::shared_ptr<VAO> ShapeFactory::create(const std::vector<ShapeVertex>& vertices,
+                                          const std::vector<uint32_t>& indices) {
   std::shared_ptr<VAO> vao = VAO::create();
   vao->attach_vertex(VBO::CreateShape(vertices), VAO::VertexType::shape_vertex);
   vao->set_index(IBO::create(indices));
@@ -17,37 +16,32 @@ ShapeFactory::create(const std::vector<ShapeVertex>& vertices,
 }
 
 std::shared_ptr<VAO> ShapeFactory::create_triangle(float size) {
-  std::vector<ShapeVertex> vertices = {{{0.f, size, 0.f}, {0.5f, 1.f}},
-                                       {{-size, -size, 0.f}, {0.f, 0.f}},
-                                       {{size, -size, 0.f}, {1.f, 0.f}}};
+  std::vector<ShapeVertex> vertices = {
+    {{0.f, size, 0.f}, {0.5f, 1.f}}, {{-size, -size, 0.f}, {0.f, 0.f}}, {{size, -size, 0.f}, {1.f, 0.f}}};
 
   std::vector<uint32_t> indices = {0, 1, 2};
 
   return create(vertices, indices);
 }
 
-std::shared_ptr<VAO> ShapeFactory::create_rectangle(float width, float height,
-                                                    bool repeat_texture) {
+std::shared_ptr<VAO> ShapeFactory::create_rectangle(float width, float height, bool repeat_texture) {
   uint32_t overflow = 1;
   if (repeat_texture) {
     ENGINE_ASSERT(width == height, "cannot repeat texture on non-square shape");
     overflow = width;
   }
 
-  std::vector<ShapeVertex> vertices = {
-    {{-width, -height, 0.f}, {0.f, 0.f}},
-    {{width, -height, 0.f}, {overflow, 0.f}},
-    {{width, height, 0.f}, {overflow, overflow}},
-    {{-width, height, 0.f}, {0.f, overflow}}};
+  std::vector<ShapeVertex> vertices = {{{-width, -height, 0.f}, {0.f, 0.f}},
+                                       {{width, -height, 0.f}, {overflow, 0.f}},
+                                       {{width, height, 0.f}, {overflow, overflow}},
+                                       {{-width, height, 0.f}, {0.f, overflow}}};
 
   std::vector<uint32_t> indices = {0, 1, 2, 2, 3, 0};
 
   return create(vertices, indices);
 }
 
-std::shared_ptr<VAO> ShapeFactory::create_cube(float width, float height,
-                                               float depth,
-                                               bool repeat_texture) {
+std::shared_ptr<VAO> ShapeFactory::create_cube(float width, float height, float depth, bool repeat_texture) {
   uint32_t overflow = 1;
   if (repeat_texture) {
     ENGINE_ASSERT(width == height, "cannot repeat texture on non-square shape");
@@ -88,14 +82,12 @@ std::shared_ptr<VAO> ShapeFactory::create_cube(float width, float height,
                                    // left and right
                                    11, 8, 9, 9, 10, 11, 12, 13, 14, 14, 15, 12,
                                    // bottom and top
-                                   16, 17, 18, 18, 19, 16, 20, 21, 22, 22, 23,
-                                   20};
+                                   16, 17, 18, 18, 19, 16, 20, 21, 22, 22, 23, 20};
 
   return create(vertices, indices);
 }
 
-std::shared_ptr<VAO> ShapeFactory::create_circle(float radius,
-                                                 uint32_t segments) {
+std::shared_ptr<VAO> ShapeFactory::create_circle(float radius, uint32_t segments) {
   std::vector<ShapeVertex> vertices;
   std::vector<uint32_t> indices;
 

@@ -15,9 +15,7 @@ struct CTextureAtlas {
     CTextureAtlas() = default;
     explicit CTextureAtlas(uint32_t r, uint32_t i) : rows(r), index(i) {}
 
-    void print() const {
-      ENGINE_BACKTRACE("\t\trows: {0}\n\t\t\t\t\t\tindex: {1}", rows, index);
-    }
+    void print() const { ENGINE_BACKTRACE("\t\trows: {0}\n\t\t\t\t\t\tindex: {1}", rows, index); }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
       std::map<std::string, std::string, NumericComparator> info;

@@ -88,8 +88,7 @@ class WindowsManager {
     void toggle_window_inside_imgui(bool imgui_window);
     void toggle_fit_to_window(bool fit_to_window);
 
-    static std::unique_ptr<WindowsManager>
-    create(const SettingsManager& settings_manager);
+    static std::unique_ptr<WindowsManager> create(const SettingsManager& settings_manager);
 
   private:
     uint32_t m_window_count{};

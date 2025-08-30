@@ -13,8 +13,7 @@
 
 namespace nl {
 
-Application::Application(std::unique_ptr<SettingsManager>&& s, CLArgs&& args)
-  : m_clargs(std::move(args)) {
+Application::Application(std::unique_ptr<SettingsManager>&& s, CLArgs&& args) : m_clargs(std::move(args)) {
   m_instance = this;
   m_settings_manager = std::move(s);
 
@@ -37,9 +36,7 @@ Application::~Application() {
   m_imgui_layer->on_detach();
 }
 
-void Application::on_event(Event& e) {
-  m_states_manager->get_current_state().on_event(e);
-}
+void Application::on_event(Event& e) { m_states_manager->get_current_state().on_event(e); }
 
 void Application::pause(bool pause) { m_paused = pause; }
 

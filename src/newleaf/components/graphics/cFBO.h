@@ -17,16 +17,7 @@
 namespace nl {
 
 struct CFBO {
-    enum class Mode {
-      normal,
-      inverse,
-      grey_scale,
-      blur,
-      edge,
-      sharpen,
-      night_vision,
-      emboss
-    };
+    enum class Mode { normal, inverse, grey_scale, blur, edge, sharpen, night_vision, emboss };
 
     std::string fbo;
     std::string _mode;
@@ -37,16 +28,13 @@ struct CFBO {
     uint32_t height{};
 
     CFBO() = default;
-    explicit CFBO(std::string&& fbo, Mode m, std::string&& attachment,
-                  uint32_t w, uint32_t h)
-      : fbo(std::move(fbo)), mode(m), _attachment(std::move(attachment)),
-        width(w), height(h) {}
+    explicit CFBO(std::string&& fbo, Mode m, std::string&& attachment, uint32_t w, uint32_t h)
+      : fbo(std::move(fbo)), mode(m), _attachment(std::move(attachment)), width(w), height(h) {}
 
     void print() const {
-      ENGINE_BACKTRACE(
-        "\t\tfbo: {0}\n\t\t\t\t\t\tmode: {1}\n\t\t\t\t\t\tattachment: "
-        "{2}\n\t\t\t\t\t\twidth: {3}\n\t\t\t\t\t\theight: {4}",
-        fbo, _mode, _attachment, width, height);
+      ENGINE_BACKTRACE("\t\tfbo: {0}\n\t\t\t\t\t\tmode: {1}\n\t\t\t\t\t\tattachment: "
+                       "{2}\n\t\t\t\t\t\twidth: {3}\n\t\t\t\t\t\theight: {4}",
+                       fbo, _mode, _attachment, width, height);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
@@ -121,8 +109,7 @@ struct CFBO {
 };
 }
 
-template <>
-inline void nl::SceneManager::on_component_added(entt::entity e, CFBO& c) {
+template <> inline void nl::SceneManager::on_component_added(entt::entity e, CFBO& c) {
   c.set_mode();
   c.set_attachment();
 

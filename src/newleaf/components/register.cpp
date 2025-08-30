@@ -169,8 +169,7 @@ void register_components() {
     .data<&CTexture::_draw_mode>("draw_mode"_hs)
     .func<&CTexture::print>("print"_hs)
     .func<&CTexture::to_map>("to_map"_hs)
-    .func<&on_component_added<CTexture>, entt::as_ref_t>(
-      "on_component_added"_hs)
+    .func<&on_component_added<CTexture>, entt::as_ref_t>("on_component_added"_hs)
     .func<&assign<CTexture>, entt::as_ref_t>("assign"_hs);
 
   entt::meta<CTextureAtlas>()
@@ -209,8 +208,7 @@ void register_components() {
     .data<&CCollider::size>("size"_hs)
     .func<&CCollider::print>("print"_hs)
     .func<&CCollider::to_map>("to_map"_hs)
-    .func<&on_component_added<CCollider>, entt::as_ref_t>(
-      "on_component_added"_hs)
+    .func<&on_component_added<CCollider>, entt::as_ref_t>("on_component_added"_hs)
     .func<&assign<CCollider>, entt::as_ref_t>("assign"_hs);
 
   entt::meta<CGravity>()

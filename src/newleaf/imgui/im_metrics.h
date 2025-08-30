@@ -13,11 +13,8 @@ namespace nl {
 
 bool show_tool_metrics = false;
 
-inline void draw_metrics(AssetsManager& assets_manager,
-                         RenderManager& render_manager,
-                         SceneManager& scene_manager) {
-  if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_M)) and
-      ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
+inline void draw_metrics(AssetsManager& assets_manager, RenderManager& render_manager, SceneManager& scene_manager) {
+  if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_M)) and ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
     show_tool_metrics = not show_tool_metrics;
   }
 
@@ -29,8 +26,7 @@ inline void draw_metrics(AssetsManager& assets_manager,
   if (ImGui::Begin("Metrics", &show_tool_metrics)) {
     ImGui::SeparatorText("App");
     auto& io = ImGui::GetIO();
-    ImGui::Text("FPS avg %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate,
-                io.Framerate);
+    ImGui::Text("FPS avg %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
     ImGui::SameLine();
     underline(ImColor(255, 255, 255));
     help_mark("Frames per second");

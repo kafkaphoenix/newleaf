@@ -16,8 +16,7 @@ using json = nlohmann::json;
 
 namespace nl {
 
-inline void save_settings(const SettingsManager& settings_manager,
-                          std::filesystem::path path) {
+inline void save_settings(const SettingsManager& settings_manager, std::filesystem::path path) {
   json data = settings_manager;
 
   if (path.filename() not_eq "settings.json") {
@@ -31,10 +30,8 @@ inline void save_settings(const SettingsManager& settings_manager,
   file.close();
 }
 
-inline std::unique_ptr<SettingsManager>
-load_settings(std::string_view app_name) {
-  std::unique_ptr<SettingsManager> settings_manager =
-    std::make_unique<SettingsManager>();
+inline std::unique_ptr<SettingsManager> load_settings(std::string_view app_name) {
+  std::unique_ptr<SettingsManager> settings_manager = std::make_unique<SettingsManager>();
   auto path = get_default_roaming_path(app_name) / "settings.json";
 
   if (!std::filesystem::exists(path)) {
@@ -44,8 +41,7 @@ load_settings(std::string_view app_name) {
   } else {
     std::ifstream file(path);
     ENGINE_ASSERT(file.is_open(), "failed to open settings file!");
-    ENGINE_ASSERT(file.peek() not_eq std::ifstream::traits_type::eof(),
-                  "settings file is empty!");
+    ENGINE_ASSERT(file.peek() not_eq std::ifstream::traits_type::eof(), "settings file is empty!");
     json data = json::parse(file);
     file.close();
     *settings_manager = data.get<SettingsManager>();

@@ -20,8 +20,7 @@ bool filter_layers{};
 inline void draw_states_manager(StatesManager& states_manager) {
   int collapsed = collapser();
 
-  ImGui::InputText("##filter", states_text_filter,
-                   IM_ARRAYSIZE(states_text_filter));
+  ImGui::InputText("##filter", states_text_filter, IM_ARRAYSIZE(states_text_filter));
   if (ImGui::IsItemHovered()) {
     ImGui::SetTooltip("Filter states or layers by name");
   }
@@ -40,13 +39,11 @@ inline void draw_states_manager(StatesManager& states_manager) {
   }
 
   for (const auto& [state, layers] : states_manager.compute_metrics()) {
-    if (filter_states and states_text_filter[0] not_eq '\0' and
-        strstr(state.c_str(), states_text_filter) == nullptr) {
+    if (filter_states and states_text_filter[0] not_eq '\0' and strstr(state.c_str(), states_text_filter) == nullptr) {
       continue;
     }
     if (ImGui::CollapsingHeader(state.c_str())) {
-      std::map<std::string, std::string, NumericComparator> layersMap =
-        json_to_map(layers);
+      std::map<std::string, std::string, NumericComparator> layersMap = json_to_map(layers);
       for (const auto& [name, enabled] : layersMap) {
         if (filter_layers and states_text_filter[0] not_eq '\0' and
             strstr(name.c_str(), states_text_filter) == nullptr) {

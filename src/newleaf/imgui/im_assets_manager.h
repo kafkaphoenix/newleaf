@@ -19,8 +19,7 @@ std::string selected_asset_tab_type;
 std::string selected_path;
 char assets_text_filter[128]{}; // TODO: move to class
 
-inline void draw_assets_manager(const AssetsManager& assets_manager,
-                                const SettingsManager& settings_manager) {
+inline void draw_assets_manager(const AssetsManager& assets_manager, const SettingsManager& settings_manager) {
   const auto& assets = assets_manager.get_assets();
 
   if (assets.empty()) {
@@ -30,8 +29,7 @@ inline void draw_assets_manager(const AssetsManager& assets_manager,
 
   int collapsed = collapser();
 
-  ImGui::InputText("##filter", assets_text_filter,
-                   IM_ARRAYSIZE(assets_text_filter));
+  ImGui::InputText("##filter", assets_text_filter, IM_ARRAYSIZE(assets_text_filter));
   if (ImGui::IsItemHovered()) {
     ImGui::SetTooltip("Filter assets by name");
   }
@@ -50,8 +48,7 @@ inline void draw_assets_manager(const AssetsManager& assets_manager,
 
     if (ImGui::CollapsingHeader(type.c_str())) {
       for (const auto& [name, _] : value) {
-        if (assets_text_filter[0] not_eq '\0' and
-            strstr(name.c_str(), assets_text_filter) == nullptr) {
+        if (assets_text_filter[0] not_eq '\0' and strstr(name.c_str(), assets_text_filter) == nullptr) {
           continue;
         }
         if (ImGui::Selectable(name.c_str())) {
@@ -70,45 +67,34 @@ inline void draw_assets_manager(const AssetsManager& assets_manager,
 
   ImGui::NextColumn();
   if (not selected_asset_manager_tab_key.empty()) {
-    const auto& asset =
-      assets.at(selected_asset_tab_type).at(selected_asset_manager_tab_key);
+    const auto& asset = assets.at(selected_asset_tab_type).at(selected_asset_manager_tab_key);
     const auto& asset_info = asset->to_map();
 
     for (const auto& [key, value] : asset_info) {
-      if (key.starts_with("prototype_") and
-          selected_asset_tab_type == "Prefab") {
-        const auto& prefab =
-          assets_manager.get<Prefab>(selected_asset_manager_tab_key);
+      if (key.starts_with("prototype_") and selected_asset_tab_type == "Prefab") {
+        const auto& prefab = assets_manager.get<Prefab>(selected_asset_manager_tab_key);
         const auto& prototype_info = prefab->get_target_prototype_info(value);
-        if (ImGui::TreeNode((selected_asset_tab_type +
-                             selected_asset_manager_tab_key + key +
-                             settings_manager.active_scene)
-                              .c_str(),
-                            key.c_str())) {
+        if (ImGui::TreeNode(
+              (selected_asset_tab_type + selected_asset_manager_tab_key + key + settings_manager.active_scene).c_str(),
+              key.c_str())) {
           for (const auto& [key, value] : prototype_info) {
             ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
           }
           ImGui::TreePop();
         }
-      } else if (key.starts_with("loaded_texture_") and
-                 selected_asset_tab_type == "Model") {
-        const auto& model =
-          assets_manager.get<Model>(selected_asset_manager_tab_key);
+      } else if (key.starts_with("loaded_texture_") and selected_asset_tab_type == "Model") {
+        const auto& model = assets_manager.get<Model>(selected_asset_manager_tab_key);
         const auto& texture_info = model->get_loaded_texture_info(value);
-        if (ImGui::TreeNode((selected_asset_tab_type +
-                             selected_asset_manager_tab_key + key +
-                             settings_manager.active_scene)
-                              .c_str(),
-                            key.c_str())) {
+        if (ImGui::TreeNode(
+              (selected_asset_tab_type + selected_asset_manager_tab_key + key + settings_manager.active_scene).c_str(),
+              key.c_str())) {
           for (const auto& [key, value] : texture_info) {
             ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
           }
           ImGui::TreePop();
         }
-      } else if (key.starts_with("path_") and
-                 selected_asset_tab_type == "Texture") {
-        const auto& texture =
-          assets_manager.get<Texture>(selected_asset_manager_tab_key);
+      } else if (key.starts_with("path_") and selected_asset_tab_type == "Texture") {
+        const auto& texture = assets_manager.get<Texture>(selected_asset_manager_tab_key);
         if (texture->is_cubemap()) {
           ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
         } else {
@@ -125,8 +111,7 @@ inline void draw_assets_manager(const AssetsManager& assets_manager,
     }
 
     if (not selected_path.empty()) {
-      const auto& texture =
-        assets_manager.get<Texture>(selected_asset_manager_tab_key);
+      const auto& texture = assets_manager.get<Texture>(selected_asset_manager_tab_key);
       if (not texture->is_cubemap()) {
         uint32_t max_width = texture->get_width();
         uint32_t max_height = texture->get_height();
@@ -143,8 +128,7 @@ inline void draw_assets_manager(const AssetsManager& assets_manager,
           max_height /= 2;
           max_width /= 2;
         }
-        ImGui::Image((void*)texture->get_id(), ImVec2(max_width, max_height),
-                     ImVec2(0, 1), ImVec2(1, 0));
+        ImGui::Image((void*)texture->get_id(), ImVec2(max_width, max_height), ImVec2(0, 1), ImVec2(1, 0));
       }
     }
   }

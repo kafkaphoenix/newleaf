@@ -19,15 +19,13 @@ bool filter_fbos{};
 bool filter_shader_programs{};
 bool filter_shader_info{};
 
-inline void draw_render_manager(const RenderManager& render_manager,
-                                const SettingsManager& settings_manager) {
+inline void draw_render_manager(const RenderManager& render_manager, const SettingsManager& settings_manager) {
   const auto& fbos = render_manager.get_framebuffers();
   const auto& sp = render_manager.get_shader_programs();
 
   int collapsed = collapser();
 
-  ImGui::InputText("##filter", render_objects_text_filter,
-                   IM_ARRAYSIZE(render_objects_text_filter));
+  ImGui::InputText("##filter", render_objects_text_filter, IM_ARRAYSIZE(render_objects_text_filter));
   if (ImGui::IsItemHovered()) {
     ImGui::SetTooltip("Filter render objects by name");
   }
@@ -73,8 +71,7 @@ inline void draw_render_manager(const RenderManager& render_manager,
       ImGui::Text("No shader programs");
     }
     for (const auto& [key, value] : sp) {
-      if (filter_shader_programs and
-          render_objects_text_filter[0] not_eq '\0' and
+      if (filter_shader_programs and render_objects_text_filter[0] not_eq '\0' and
           strstr(key.c_str(), render_objects_text_filter) == nullptr) {
         continue;
       }
@@ -108,11 +105,10 @@ inline void draw_render_manager(const RenderManager& render_manager,
       for (const auto& [key, value] : fbo_info) {
         if (key == "color_texture" or key == "depth_texture") {
           const auto& texture_info = json_to_map(value);
-          if (ImGui::TreeNode((selected_render_manager_tabtype +
-                               selected_render_manager_tabkey + key +
-                               settings_manager.active_scene)
-                                .c_str(),
-                              key.c_str())) {
+          if (ImGui::TreeNode(
+                (selected_render_manager_tabtype + selected_render_manager_tabkey + key + settings_manager.active_scene)
+                  .c_str(),
+                key.c_str())) {
             for (const auto& [key, value] : texture_info) {
               ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
             }

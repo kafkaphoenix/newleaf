@@ -17,15 +17,12 @@ class AssetsManager {
     AssetsManager();
     ~AssetsManager();
 
-    template <typename Type, typename... Args>
-    void load(std::string_view id, Args&&... args) {
+    template <typename Type, typename... Args> void load(std::string_view id, Args&&... args) {
       std::string_view type = typeid(Type).name();
       type = type.substr(type.find_last_of(':') + 1);
       auto& assets = m_assets[type.data()]; // create type map if not exists
-      ENGINE_ASSERT(not assets.contains(id.data()),
-                    "asset {} already exists for type {}!", id, type);
-      assets.emplace(id,
-                        std::make_shared<Type>(std::forward<Args>(args)...));
+      ENGINE_ASSERT(not assets.contains(id.data()), "asset {} already exists for type {}!", id, type);
+      assets.emplace(id, std::make_shared<Type>(std::forward<Args>(args)...));
       m_dirty = true;
     }
 
@@ -33,51 +30,41 @@ class AssetsManager {
       std::string_view type = typeid(Type).name();
       type = type.substr(type.find_last_of(':') + 1);
       auto it = m_assets.find(type.data());
-      if (it == m_assets.end()) return false; // type not found so can't find asset
+      if (it == m_assets.end())
+        return false; // type not found so can't find asset
       return it->second.contains(id.data());
     }
 
-    template <typename Type>
-    std::shared_ptr<Type> get(std::string_view id) const {
+    template <typename Type> std::shared_ptr<Type> get(std::string_view id) const {
       std::string_view type = typeid(Type).name();
       type = type.substr(type.find_last_of(':') + 1);
-      ENGINE_ASSERT(contains<Type>(id), "asset {} not found for type {}!", id,
-                    type);
-      return std::static_pointer_cast<Type>(
-        m_assets.at(type.data()).at(id.data())); // I know the type is correct
+      ENGINE_ASSERT(contains<Type>(id), "asset {} not found for type {}!", id, type);
+      return std::static_pointer_cast<Type>(m_assets.at(type.data()).at(id.data())); // I know the type is correct
     }
 
-    template <typename Type, typename... Args>
-    std::shared_ptr<Type> reload(std::string_view id, Args&&... args) {
+    template <typename Type, typename... Args> std::shared_ptr<Type> reload(std::string_view id, Args&&... args) {
       std::string_view type = typeid(Type).name();
       type = type.substr(type.find_last_of(':') + 1);
-      ENGINE_ASSERT(contains<Type>(id), "asset {} not found for type {}!", id,
-                    type);
+      ENGINE_ASSERT(contains<Type>(id), "asset {} not found for type {}!", id, type);
       auto& maybe_asset = m_assets.at(type.data()).at(id.data());
-      std::shared_ptr<Asset> asset =
-        std::make_shared<Type>(std::forward<Args>(args)...);
+      std::shared_ptr<Asset> asset = std::make_shared<Type>(std::forward<Args>(args)...);
       maybe_asset = std::move(asset);
 
       m_dirty = true;
       ENGINE_TRACE("reloaded asset {}", id);
-      return std::static_pointer_cast<Type>(
-        maybe_asset); // I know the type is correct
+      return std::static_pointer_cast<Type>(maybe_asset); // I know the type is correct
     }
 
     void clear();
 
     static std::unique_ptr<AssetsManager> create();
 
-    const std::unordered_map<
-      std::string, std::unordered_map<std::string, std::shared_ptr<Asset>>>&
-    get_assets() const;
+    const std::unordered_map<std::string, std::unordered_map<std::string, std::shared_ptr<Asset>>>& get_assets() const;
 
     std::map<std::string, std::string, NumericComparator>& compute_metrics();
 
   private:
-    std::unordered_map<std::string,
-                       std::unordered_map<std::string, std::shared_ptr<Asset>>>
-      m_assets;
+    std::unordered_map<std::string, std::unordered_map<std::string, std::shared_ptr<Asset>>> m_assets;
     std::map<std::string, std::string, NumericComparator> m_metrics;
     bool m_dirty{};
 };

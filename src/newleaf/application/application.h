@@ -26,8 +26,7 @@ class State;
 
 class Application {
   public:
-    Application(std::unique_ptr<SettingsManager>&& settings_manager,
-                CLArgs&& args);
+    Application(std::unique_ptr<SettingsManager>&& settings_manager, CLArgs&& args);
     virtual ~Application();
 
     void on_event(Event& e);

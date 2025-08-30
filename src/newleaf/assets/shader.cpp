@@ -9,8 +9,7 @@ namespace nl {
 Shader::Shader(std::filesystem::path&& fp) : m_path(std::move(fp.string())) {
   std::ifstream f(fp);
   ENGINE_ASSERT(f.is_open(), "failed to open shader file!");
-  ENGINE_ASSERT(f.peek() not_eq std::ifstream::traits_type::eof(),
-                "shader file is empty!");
+  ENGINE_ASSERT(f.peek() not_eq std::ifstream::traits_type::eof(), "shader file is empty!");
   std::string data(std::istreambuf_iterator<char>(f), {});
   f.close();
 
@@ -28,11 +27,9 @@ Shader::Shader(std::filesystem::path&& fp) : m_path(std::move(fp.string())) {
     glGetShaderiv(m_id, GL_INFO_LOG_LENGTH, &log_length);
     ENGINE_ASSERT(log_length > 0, "shader {} compilation failed!", m_path);
     std::vector<GLchar> shader_log_length(log_length);
-    glGetShaderInfoLog(m_id, log_length, &log_length,
-                       shader_log_length.data());
+    glGetShaderInfoLog(m_id, log_length, &log_length, shader_log_length.data());
     glDeleteShader(m_id);
-    ENGINE_ASSERT(false, "shader {} compilation failed: \n{}", m_path,
-                  std::string(shader_log_length.data()));
+    ENGINE_ASSERT(false, "shader {} compilation failed: \n{}", m_path, std::string(shader_log_length.data()));
   }
 }
 
@@ -73,7 +70,6 @@ bool Shader::operator==(const Asset& other) const {
     ENGINE_ASSERT(false, "cannot compare shader with other asset type!");
   }
   const Shader& other_shader = static_cast<const Shader&>(other);
-  return m_path == other_shader.m_path and m_type == other_shader.m_type and
-         m_id == other_shader.m_id;
+  return m_path == other_shader.m_path and m_type == other_shader.m_type and m_id == other_shader.m_id;
 }
 }

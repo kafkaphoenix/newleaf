@@ -47,13 +47,10 @@ struct CTexture {
     DrawMode draw_mode;
 
     CTexture() = default;
-    explicit CTexture(std::vector<std::string>&& p, glm::vec4&& c, float bf,
-                      float r, float ri, bool ht, bool ul, bool ur, bool uf,
-                      std::string&& dm)
-      : paths(std::move(p)), color(std::move(c)), blend_factor(bf),
-        reflectivity(r), refractive_index(ri), enable_transparency(ht),
-        enable_lighting(ul), enable_reflection(ur), enable_refraction(uf),
-        _draw_mode(dm) {}
+    explicit CTexture(std::vector<std::string>&& p, glm::vec4&& c, float bf, float r, float ri, bool ht, bool ul,
+                      bool ur, bool uf, std::string&& dm)
+      : paths(std::move(p)), color(std::move(c)), blend_factor(bf), reflectivity(r), refractive_index(ri),
+        enable_transparency(ht), enable_lighting(ul), enable_reflection(ur), enable_refraction(uf), _draw_mode(dm) {}
 
     void print() const {
       std::string texture_paths;
@@ -64,18 +61,16 @@ struct CTexture {
           texture_paths += std::format("\n\t\t\t\t\t\t {}", path);
         }
       }
-      ENGINE_BACKTRACE(
-        "\t\tcolor: {0}\n\t\t\t\t\t\tblend_factor: "
-        "{1}\n\t\t\t\t\t\treflectivity: "
-        "{2}\n\t\t\t\t\t\trefractive_index: "
-        "{3}\n\t\t\t\t\t\tenable_transparency: "
-        "{4}\n\t\t\t\t\t\tenable_lighting: "
-        "{5}\n\t\t\t\t\t\tenable_reflection: "
-        "{6}\n\t\t\t\t\t\tenable_refraction: {7}\n\t\t\t\t\t\tdraw_mode: "
-        "{8}\n\t\t\t\t\t\ttextures: {9}",
-        glm::to_string(color), blend_factor, reflectivity, refractive_index,
-        enable_transparency, enable_lighting, enable_reflection,
-        enable_refraction, _draw_mode, texture_paths);
+      ENGINE_BACKTRACE("\t\tcolor: {0}\n\t\t\t\t\t\tblend_factor: "
+                       "{1}\n\t\t\t\t\t\treflectivity: "
+                       "{2}\n\t\t\t\t\t\trefractive_index: "
+                       "{3}\n\t\t\t\t\t\tenable_transparency: "
+                       "{4}\n\t\t\t\t\t\tenable_lighting: "
+                       "{5}\n\t\t\t\t\t\tenable_reflection: "
+                       "{6}\n\t\t\t\t\t\tenable_refraction: {7}\n\t\t\t\t\t\tdraw_mode: "
+                       "{8}\n\t\t\t\t\t\ttextures: {9}",
+                       glm::to_string(color), blend_factor, reflectivity, refractive_index, enable_transparency,
+                       enable_lighting, enable_reflection, enable_refraction, _draw_mode, texture_paths);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
@@ -97,9 +92,7 @@ struct CTexture {
       return info;
     }
 
-    std::string get_texture_info(uint32_t index) const {
-      return map_to_json(textures.at(index)->to_map());
-    }
+    std::string get_texture_info(uint32_t index) const { return map_to_json(textures.at(index)->to_map()); }
 
     void set_draw_mode() { // TODO maybe send assets manager to this function?
       if (_draw_mode == "color") {
@@ -110,17 +103,14 @@ struct CTexture {
         draw_mode = DrawMode::texture_atlas;
       } else if (_draw_mode == "textures_blend") { // blend two textures
         draw_mode = DrawMode::texture_blend;
-      } else if (_draw_mode ==
-                 "texture_atlas_blend") { // blend two textures in the atlas //
-                                          // TODO: this is not implemented
+      } else if (_draw_mode == "texture_atlas_blend") { // blend two textures in the atlas //
+                                                        // TODO: this is not implemented
         draw_mode = DrawMode::texture_atlas_blend;
-      } else if (_draw_mode ==
-                 "texture_blend_color") { // blend texture with a color
+      } else if (_draw_mode == "texture_blend_color") { // blend texture with a color
         draw_mode = DrawMode::texture_blend_color;
-      } else if (_draw_mode ==
-                 "texture_atlas_blend_color") { // blend texture in the atlas
-                                                // with
-                                                // a color
+      } else if (_draw_mode == "texture_atlas_blend_color") { // blend texture in the atlas
+                                                              // with
+                                                              // a color
         draw_mode = DrawMode::texture_atlas_blend_color;
       } else {
         ENGINE_ASSERT(false, "unknown draw mode {}", _draw_mode);
@@ -148,8 +138,7 @@ struct CTexture {
 };
 }
 
-template <>
-inline void nl::SceneManager::on_component_added(entt::entity e, CTexture& c) {
+template <> inline void nl::SceneManager::on_component_added(entt::entity e, CTexture& c) {
   c.set_draw_mode();
   c.set_textures();
 

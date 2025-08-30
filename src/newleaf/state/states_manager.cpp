@@ -31,9 +31,8 @@ void StatesManager::push_state(std::unique_ptr<State>&& s) {
 }
 
 void StatesManager::pop_state(std::string_view name) {
-  auto it = std::ranges::find_if(
-    m_states | std::views::take(m_index),
-    [&](const auto& state) { return state->get_name() == name; });
+  auto it = std::ranges::find_if(m_states | std::views::take(m_index),
+                                 [&](const auto& state) { return state->get_name() == name; });
   if (it not_eq m_states.begin() + m_index) {
     (*it)->on_detach();
     m_states.erase(it);
@@ -54,8 +53,7 @@ void StatesManager::push_layer(std::unique_ptr<Layer>&& l) {
 
 void StatesManager::push_overlay(std::unique_ptr<Layer>&& o, bool enabled) {
   ENGINE_ASSERT(m_index > 0, "no states to push overlay to");
-  m_states[m_index - 1]->get_layers_manager().push_overlay(std::move(o),
-                                                           enabled);
+  m_states[m_index - 1]->get_layers_manager().push_overlay(std::move(o), enabled);
   m_dirty = true;
 }
 
@@ -83,8 +81,7 @@ const State& StatesManager::get_current_state() const {
 
 uint32_t StatesManager::get_state_index() { return m_index; }
 
-std::map<std::string, std::string, NumericComparator>&
-StatesManager::compute_metrics() {
+std::map<std::string, std::string, NumericComparator>& StatesManager::compute_metrics() {
   if (not m_dirty) {
     return m_metrics;
   }
@@ -93,8 +90,7 @@ StatesManager::compute_metrics() {
   for (const auto& state : m_states | std::views::take(m_index)) {
     std::map<std::string, std::string, NumericComparator> layers;
     for (const auto& layer : state->get_layers_manager().get_layers()) {
-      layers[layer->get_name().data()] =
-        layer->is_enabled() ? "enabled" : "disabled";
+      layers[layer->get_name().data()] = layer->is_enabled() ? "enabled" : "disabled";
     }
     m_metrics[state->get_name().data()] = map_to_json(layers);
   }
@@ -103,7 +99,5 @@ StatesManager::compute_metrics() {
   return m_metrics;
 }
 
-std::unique_ptr<StatesManager> StatesManager::create() {
-  return std::make_unique<StatesManager>();
-}
+std::unique_ptr<StatesManager> StatesManager::create() { return std::make_unique<StatesManager>(); }
 }

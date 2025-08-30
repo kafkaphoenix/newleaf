@@ -27,21 +27,18 @@
 
 namespace nl {
 
-void render(CTexture* cTexture, CTextureAtlas* cTextureAtlas,
-            const CSkybox* cSkybox, CMaterial* cMaterial, CMesh* cMesh,
-            const CTransform& cTransform, const CShaderProgram& cShaderProgram,
-            CTexture* cSkyboxTexture, CCollider* cCollider,
-            RenderManager& render_manager) {
+void render(CTexture* cTexture, CTextureAtlas* cTextureAtlas, const CSkybox* cSkybox, CMaterial* cMaterial,
+            CMesh* cMesh, const CTransform& cTransform, const CShaderProgram& cShaderProgram, CTexture* cSkyboxTexture,
+            CCollider* cCollider, RenderManager& render_manager) {
   if (cTexture and cTexture->enable_transparency) {
     RenderAPI::toggle_culling(false);
   }
   if (cSkybox) {
     RenderAPI::set_depth_lequal();
   }
-  cMesh->bind_textures(render_manager.get_shader_program(cShaderProgram.name),
-                       cTexture, cTextureAtlas, cSkyboxTexture, cMaterial);
-  render_manager.render(cMesh->get_vao(), cTransform.calculate(),
-                        cShaderProgram.name);
+  cMesh->bind_textures(render_manager.get_shader_program(cShaderProgram.name), cTexture, cTextureAtlas, cSkyboxTexture,
+                       cMaterial);
+  render_manager.render(cMesh->get_vao(), cTransform.calculate(), cShaderProgram.name);
   cMesh->unbind_textures(cTexture);
   if (cTexture and cTexture->enable_transparency) {
     RenderAPI::toggle_culling(true);
@@ -49,8 +46,7 @@ void render(CTexture* cTexture, CTextureAtlas* cTextureAtlas,
   if (cSkybox) {
     RenderAPI::set_depth_less();
   }
-  if (cCollider and
-      Application::get().get_settings_manager().display_collision_boxes) {
+  if (cCollider and Application::get().get_settings_manager().display_collision_boxes) {
     // TODO fix transparency so I can render this first
     // disabling culling is not working
     auto& sp = render_manager.get_shader_program("shape");
@@ -59,8 +55,7 @@ void render(CTexture* cTexture, CTextureAtlas* cTextureAtlas,
     sp.set_float("use_color", 1.f);
     sp.set_vec4("color", cCollider->color);
     sp.unuse();
-    render_manager.render(cCollider->mesh.get_vao(), cTransform.calculate(),
-                          "shape");
+    render_manager.render(cCollider->mesh.get_vao(), cTransform.calculate(), "shape");
   }
 }
 
@@ -68,8 +63,7 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
   auto& app = Application::get();
   auto& render_manager = app.get_render_manager();
 
-  entt::entity fbo =
-    registry.view<CFBO, CUUID>().front(); // TODO: support more than one?
+  entt::entity fbo = registry.view<CFBO, CUUID>().front(); // TODO: support more than one?
   if (fbo not_eq entt::null) {
     CFBO& cfbo = registry.get<CFBO>(fbo);
     const auto& default_FBO = render_manager.get_framebuffers().at(cfbo.fbo);
@@ -81,17 +75,14 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
   RenderAPI::clear();
   render_manager.reset_metrics();
 
-  entt::entity camera =
-    registry.view<CCamera, CActiveCamera, CTransform, CUUID>().front();
+  entt::entity camera = registry.view<CCamera, CActiveCamera, CTransform, CUUID>().front();
   APP_ASSERT(camera not_eq entt::null, "no active camera found!");
   CCamera& cCamera = registry.get<CCamera>(camera);
   const CTransform& cCameraTransform = registry.get<CTransform>(camera);
   cCamera.calculate_view(cCameraTransform.position, cCameraTransform.rotation);
-  render_manager.begin_scene(cCamera.view, cCamera.projection,
-                             cCameraTransform.position);
+  render_manager.begin_scene(cCamera.view, cCamera.projection, cCameraTransform.position);
 
-  entt::entity sky =
-    registry.view<CSkybox, CUUID>().front(); // TODO: support more than one?
+  entt::entity sky = registry.view<CSkybox, CUUID>().front(); // TODO: support more than one?
   CTexture* cSkyboxTexture;
   if (sky not_eq entt::null) {
     cSkyboxTexture = registry.try_get<CTexture>(sky);
@@ -99,15 +90,12 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
 
   if (render_manager.should_reorder()) {
     registry.sort<CDistanceFromCamera>(
-      [](const CDistanceFromCamera& lhs, const CDistanceFromCamera& rhs) {
-        return lhs.distance < rhs.distance;
-      });
+      [](const CDistanceFromCamera& lhs, const CDistanceFromCamera& rhs) { return lhs.distance < rhs.distance; });
     registry.sort<CUUID, CDistanceFromCamera>();
   }
 
   registry.view<CTransform, CShaderProgram, CUUID>().each(
-    [&](entt::entity e, const CTransform& cTransform,
-        const CShaderProgram& cShaderProgram, const CUUID& cUUID) {
+    [&](entt::entity e, const CTransform& cTransform, const CShaderProgram& cShaderProgram, const CUUID& cUUID) {
       CTexture* cTexture = registry.try_get<CTexture>(e);
       CTextureAtlas* cTextureAtlas = registry.try_get<CTextureAtlas>(e);
       CSkybox* cSkybox = registry.try_get<CSkybox>(e);
@@ -122,44 +110,39 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
           if (not cTexture) {
             CName* cName = registry.try_get<CName>(e);
             if (cName) {
-              APP_ASSERT(false, "no texture found for entity {} {}", cUUID.uuid,
-                         cName->name);
+              APP_ASSERT(false, "no texture found for entity {} {}", cUUID.uuid, cName->name);
             } else {
               APP_ASSERT(false, "no texture found for entity {}", cUUID.uuid);
             }
           }
 
-          render(cTexture, cTextureAtlas, cSkybox, cMaterial, cMesh, cTransform,
-                 cShaderProgram, cSkyboxTexture, cCollider, render_manager);
+          render(cTexture, cTextureAtlas, cSkybox, cMaterial, cMesh, cTransform, cShaderProgram, cSkyboxTexture,
+                 cCollider, render_manager);
         } else if (cBody) { // models
           for (uint32_t i = 0; i < cBody->meshes.size(); ++i) {
             CMesh& mesh = cBody->meshes.at(i);
             CMaterial& material = cBody->materials.at(i);
-            render(cTexture, cTextureAtlas, cSkybox, &material, &mesh,
-                   cTransform, cShaderProgram, cSkyboxTexture, cCollider,
-                   render_manager);
+            render(cTexture, cTextureAtlas, cSkybox, &material, &mesh, cTransform, cShaderProgram, cSkyboxTexture,
+                   cCollider, render_manager);
           }
         } else if (cShape) { // primitives
           if (not cTexture) {
             CName* cName = registry.try_get<CName>(e);
             if (cName) {
-              APP_ASSERT(false, "no texture found for entity {} {}", cUUID.uuid,
-                         cName->name);
+              APP_ASSERT(false, "no texture found for entity {} {}", cUUID.uuid, cName->name);
             } else {
               APP_ASSERT(false, "no texture found for entity {}", cUUID.uuid);
             }
           }
 
           for (auto& mesh : cShape->meshes) {
-            render(cTexture, cTextureAtlas, cSkybox, cMaterial, &mesh,
-                   cTransform, cShaderProgram, cSkyboxTexture, cCollider,
-                   render_manager);
+            render(cTexture, cTextureAtlas, cSkybox, cMaterial, &mesh, cTransform, cShaderProgram, cSkyboxTexture,
+                   cCollider, render_manager);
           }
         } else {
           CName* cName = registry.try_get<CName>(e);
           if (cName) {
-            APP_ASSERT(false, "no mesh found for entity {} {}", cUUID.uuid,
-                       cName->name);
+            APP_ASSERT(false, "no mesh found for entity {} {}", cUUID.uuid, cName->name);
           } else {
             APP_ASSERT(false, "no mesh found for entity {}", cUUID.uuid);
           }
@@ -172,19 +155,16 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
     const auto& default_FBO = render_manager.get_framebuffers().at(cfbo.fbo);
     default_FBO->unbind(); // go back to default framebuffer
     RenderAPI::clear_color();
-    RenderAPI::toggle_depth_test(
-      false); // disable depth test so screen-space quad isn't discarded due to
-              // depth test.
+    RenderAPI::toggle_depth_test(false); // disable depth test so screen-space quad isn't discarded due to
+                                         // depth test.
     CShape& cShape = registry.get<CShape>(fbo);
     cfbo.setup_properties(render_manager.get_shader_program("fbo"));
     const auto& settings_manager = app.get_settings_manager();
     if (settings_manager.imgui_window) {
-      render_manager.render_inside_imgui(cShape.meshes.at(0).get_vao(),
-                                         cfbo.fbo, "scene", {0, 0}, {0, 0},
+      render_manager.render_inside_imgui(cShape.meshes.at(0).get_vao(), cfbo.fbo, "scene", {0, 0}, {0, 0},
                                          settings_manager.fit_to_window);
     } else {
-      render_manager.render_framebuffer(cShape.meshes.at(0).get_vao(),
-                                        cfbo.fbo);
+      render_manager.render_framebuffer(cShape.meshes.at(0).get_vao(), cfbo.fbo);
     }
   }
 

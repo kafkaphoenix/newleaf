@@ -27,24 +27,18 @@ SceneFactory::SceneFactory() : m_entity_factory() {
   register_components();
 }
 
-entt::entity SceneFactory::create_entity(std::string_view prefab_id,
-                                         std::string&& prototype_id,
-                                         entt::registry& registry,
-                                         std::string&& name,
-                                         std::optional<std::string> tag,
+entt::entity SceneFactory::create_entity(std::string_view prefab_id, std::string&& prototype_id,
+                                         entt::registry& registry, std::string&& name, std::optional<std::string> tag,
                                          std::optional<uint32_t> uuid) {
   UUID _uuid = uuid.has_value() ? UUID(uuid.value()) : UUID();
   std::string _tag = tag.has_value() ? tag.value() : prototype_id;
-  entt::entity e = clone_entity(
-    m_entity_factory.get_prototypes(prefab_id, {prototype_id}).at(prototype_id),
-    _uuid, registry, std::move(name), std::move(_tag));
+  entt::entity e = clone_entity(m_entity_factory.get_prototypes(prefab_id, {prototype_id}).at(prototype_id), _uuid,
+                                registry, std::move(name), std::move(_tag));
   return e;
 }
 
-entt::entity SceneFactory::clone_entity(const entt::entity e, uint32_t uuid,
-                                        entt::registry& registry,
-                                        std::optional<std::string> name,
-                                        std::optional<std::string> tag) {
+entt::entity SceneFactory::clone_entity(const entt::entity e, uint32_t uuid, entt::registry& registry,
+                                        std::optional<std::string> name, std::optional<std::string> tag) {
   entt::entity cloned = registry.create();
 
   for (const auto& curr : registry.storage()) {
@@ -71,10 +65,8 @@ entt::entity SceneFactory::clone_entity(const entt::entity e, uint32_t uuid,
   return cloned;
 }
 
-void SceneFactory::create_scene(std::string scene_id, std::string scene_path,
-                                AssetsManager& assets_manager,
-                                RenderManager& render_manager,
-                                entt::registry& registry) {
+void SceneFactory::create_scene(std::string scene_id, std::string scene_path, AssetsManager& assets_manager,
+                                RenderManager& render_manager, entt::registry& registry) {
   Timer timer;
   ENGINE_TRACE("creating scene");
 
@@ -99,10 +91,8 @@ void SceneFactory::create_scene(std::string scene_id, std::string scene_path,
   m_dirty_named_entities = true;
 }
 
-void SceneFactory::reload_scene(const AssetsManager& assets_manager,
-                                const RenderManager& render_manager,
-                                entt::registry& registry,
-                                bool reload_prototypes) {
+void SceneFactory::reload_scene(const AssetsManager& assets_manager, const RenderManager& render_manager,
+                                entt::registry& registry, bool reload_prototypes) {
   Timer timer;
   ENGINE_ASSERT(not m_active_scene.empty(), "no scene is active!");
   ENGINE_TRACE("reloading scene {}", m_active_scene);
@@ -115,23 +105,20 @@ void SceneFactory::reload_scene(const AssetsManager& assets_manager,
     for (const auto& [prefab_name, options] : scene->get_prefabs()) {
       ENGINE_TRACE("reloading scene prototypes");
       const auto& prefab = assets_manager.get<Prefab>(prefab_name);
-      m_entity_factory.create_prototypes(
-        prefab_name, prefab->get_target_prototypes(), registry, assets_manager);
+      m_entity_factory.create_prototypes(prefab_name, prefab->get_target_prototypes(), registry, assets_manager);
     }
   } else {
     auto to_destroy = registry.view<CUUID>();
     registry.destroy(to_destroy.begin(), to_destroy.end());
   }
 
-  ENGINE_INFO("scene {} reloading time: {:.6f}s", m_active_scene,
-              timer.get_seconds());
+  ENGINE_INFO("scene {} reloading time: {:.6f}s", m_active_scene, timer.get_seconds());
 
   m_dirty_metrics = true;
   m_dirty_named_entities = true;
 }
 
-void SceneFactory::clear_scene(RenderManager& render_manager,
-                               entt::registry& registry) {
+void SceneFactory::clear_scene(RenderManager& render_manager, entt::registry& registry) {
   ENGINE_ASSERT(not m_active_scene.empty(), "no scene is active!");
   ENGINE_WARN("clearing scene {}", m_active_scene);
 
@@ -146,52 +133,39 @@ void SceneFactory::clear_scene(RenderManager& render_manager,
   m_dirty_named_entities = false;
 }
 
-void SceneFactory::create_shader_programs(const Scene& scene,
-                                          AssetsManager& assets_manager,
+void SceneFactory::create_shader_programs(const Scene& scene, AssetsManager& assets_manager,
                                           RenderManager& render_manager) {
-  for (const auto& [shader_program, shader_program_data] :
-       scene.get_shader_programs()) {
+  for (const auto& [shader_program, shader_program_data] : scene.get_shader_programs()) {
     for (const auto& [shader_type, path] : shader_program_data.items()) {
       assets_manager.load<Shader>(shader_type, path);
     } // TODO maybe delete shader as asset?
-    render_manager.add_shader_program(std::string(shader_program),
-                                      assets_manager);
+    render_manager.add_shader_program(std::string(shader_program), assets_manager);
   }
 }
 
-void SceneFactory::create_textures(const Scene& scene,
-                                   AssetsManager& assets_manager) {
+void SceneFactory::create_textures(const Scene& scene, AssetsManager& assets_manager) {
   for (const auto& [texture, options] : scene.get_textures()) {
-    bool flip_y = options.contains("flip_vertically")
-                    ? options.at("flip_vertically").get<bool>()
-                    : true;
-    bool flip_option =
-      flip_y ? Texture::FLIP_VERTICALLY : Texture::DONT_FLIP_VERTICALLY;
-    assets_manager.load<Texture>(texture, options.at("path").get<std::string>(),
-                                 options.at("type").get<std::string>(),
+    bool flip_y = options.contains("flip_vertically") ? options.at("flip_vertically").get<bool>() : true;
+    bool flip_option = flip_y ? Texture::FLIP_VERTICALLY : Texture::DONT_FLIP_VERTICALLY;
+    assets_manager.load<Texture>(texture, options.at("path").get<std::string>(), options.at("type").get<std::string>(),
                                  flip_option);
   }
 }
 
-void SceneFactory::create_models(const Scene& scene,
-                                 AssetsManager& assets_manager) {
+void SceneFactory::create_models(const Scene& scene, AssetsManager& assets_manager) {
   for (const auto& [model, path] : scene.get_models()) {
     assets_manager.load<Model>(model, path);
   }
 }
 
-void SceneFactory::create_prototypes(const Scene& scene,
-                                     AssetsManager& assets_manager,
-                                     entt::registry& registry) {
+void SceneFactory::create_prototypes(const Scene& scene, AssetsManager& assets_manager, entt::registry& registry) {
   for (const auto& [prefab_name, options] : scene.get_prefabs()) {
     auto prefab =
-      Prefab(options.at("path").get<std::string>(),
-             options.at("target_prototypes").get<std::vector<std::string>>());
+      Prefab(options.at("path").get<std::string>(), options.at("target_prototypes").get<std::vector<std::string>>());
     ENGINE_TRACE("creating prototypes from prefab {}", prefab_name);
     std::vector<std::string> target_prototypes = prefab.get_target_prototypes();
     assets_manager.load<Prefab>(prefab_name, std::move(prefab));
-    m_entity_factory.create_prototypes(prefab_name, target_prototypes, registry,
-                                       assets_manager);
+    m_entity_factory.create_prototypes(prefab_name, target_prototypes, registry, assets_manager);
   }
 }
 
@@ -201,8 +175,7 @@ void SceneFactory::delete_entity(entt::entity e, entt::registry& registry) {
   m_dirty_named_entities = true;
 }
 
-std::map<std::string, std::string, NumericComparator>&
-SceneFactory::compute_metrics(entt::registry& registry) {
+std::map<std::string, std::string, NumericComparator>& SceneFactory::compute_metrics(entt::registry& registry) {
   if (not m_dirty_metrics) {
     return m_metrics;
   }
@@ -214,8 +187,7 @@ SceneFactory::compute_metrics(entt::registry& registry) {
   int n_prototypes = 0;
   for (const auto& [key, prototypes] : m_entity_factory.get_all_prototypes()) {
     n_prototypes += prototypes.size();
-    m_metrics["prototypes_alive_from_prefab_" + key] =
-      std::to_string(prototypes.size());
+    m_metrics["prototypes_alive_from_prefab_" + key] = std::to_string(prototypes.size());
   }
   m_metrics["prototypes_total_alive"] = std::to_string(n_prototypes);
   m_metrics["instances_total_alive"] = std::to_string(total - n_prototypes);
@@ -235,9 +207,7 @@ SceneFactory::get_named_entities(entt::registry& registry) {
 
   m_named_entities.clear();
   registry.view<CName, CUUID>().each(
-    [&](entt::entity e, const CName& cName, const CUUID& cUUID) {
-      m_named_entities.emplace(cName.name, e);
-    });
+    [&](entt::entity e, const CName& cName, const CUUID& cUUID) { m_named_entities.emplace(cName.name, e); });
   m_dirty_named_entities = false;
 
   return m_named_entities;

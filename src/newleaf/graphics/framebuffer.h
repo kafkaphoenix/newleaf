@@ -34,8 +34,7 @@ class FBO {
     std::string_view get_buffer_type() const;
     const std::map<std::string, std::string, NumericComparator>& to_map();
 
-    static std::unique_ptr<FBO> create(uint32_t width, uint32_t height,
-                                       uint32_t buffer_type);
+    static std::unique_ptr<FBO> create(uint32_t width, uint32_t height, uint32_t buffer_type);
 
     static constexpr uint32_t DEPTH_TEXTURE = 1;
     static constexpr uint32_t DEPTH_RENDERBUFFER = 2;

@@ -33,19 +33,16 @@ struct CLight {
 
     CLight() = default;
     explicit CLight(std::string&& t) : _type(std::move(t)) {}
-    explicit CLight(std::string&& t, glm::vec3&& c, float i, float r, float ica,
-                    float oca)
-      : _type(std::move(t)), color(std::move(c)), intensity(i), range(r),
-        inner_cone_angle(ica), outer_cone_angle(oca) {}
+    explicit CLight(std::string&& t, glm::vec3&& c, float i, float r, float ica, float oca)
+      : _type(std::move(t)), color(std::move(c)), intensity(i), range(r), inner_cone_angle(ica), outer_cone_angle(oca) {
+    }
 
     void print() const {
-      ENGINE_BACKTRACE(
-        "\t\ttype: {0}\n\t\t\t\t\t\tcolor: {1}\n\t\t\t\t\t\tintensity: "
-        "{2}\n\t\t\t\t\t\trange: "
-        "{3}\n\t\t\t\t\t\tinner_cone_angle: {4}\n\t\t\t\t\t\touter_cone_angle: "
-        "{5}",
-        _type, glm::to_string(color), intensity, range, inner_cone_angle,
-        outer_cone_angle);
+      ENGINE_BACKTRACE("\t\ttype: {0}\n\t\t\t\t\t\tcolor: {1}\n\t\t\t\t\t\tintensity: "
+                       "{2}\n\t\t\t\t\t\trange: "
+                       "{3}\n\t\t\t\t\t\tinner_cone_angle: {4}\n\t\t\t\t\t\touter_cone_angle: "
+                       "{5}",
+                       _type, glm::to_string(color), intensity, range, inner_cone_angle, outer_cone_angle);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
@@ -76,8 +73,7 @@ struct CLight {
 };
 }
 
-template <>
-inline void nl::SceneManager::on_component_added(entt::entity e, CLight& c) {
+template <> inline void nl::SceneManager::on_component_added(entt::entity e, CLight& c) {
   c.set_light_type();
 
   m_registry.replace<CLight>(e, c);

@@ -15,12 +15,9 @@ RenderManager::RenderManager() {
 
 RenderManager::~RenderManager() { ENGINE_WARN("deleting render manager"); }
 
-void RenderManager::on_window_resized(uint32_t w, uint32_t h) const {
-  RenderAPI::set_viewport(0, 0, w, h);
-}
+void RenderManager::on_window_resized(uint32_t w, uint32_t h) const { RenderAPI::set_viewport(0, 0, w, h); }
 
-void RenderManager::begin_scene(glm::mat4 view, glm::mat4 projection,
-                                glm::vec3 camera_position) {
+void RenderManager::begin_scene(glm::mat4 view, glm::mat4 projection, glm::vec3 camera_position) {
   m_view = view;
   m_projection = projection;
   m_camera_position = camera_position;
@@ -28,8 +25,7 @@ void RenderManager::begin_scene(glm::mat4 view, glm::mat4 projection,
 
 void RenderManager::end_scene() {}
 
-void RenderManager::add_shader_program(std::string&& name,
-                                       const AssetsManager& assets_manager) {
+void RenderManager::add_shader_program(std::string&& name, const AssetsManager& assets_manager) {
   auto newShaderProgram = ShaderProgram::create(std::string(name));
   const auto& vs = assets_manager.get<Shader>("v" + name);
   const auto& fs = assets_manager.get<Shader>("f" + name);
@@ -42,17 +38,13 @@ void RenderManager::add_shader_program(std::string&& name,
   m_shader_programs.emplace(std::move(name), std::move(newShaderProgram));
 }
 
-void RenderManager::add_framebuffer(std::string&& name, uint32_t w, uint32_t h,
-                                    uint32_t t) {
+void RenderManager::add_framebuffer(std::string&& name, uint32_t w, uint32_t h, uint32_t t) {
   m_framebuffers.emplace(std::move(name), FBO::create(w, h, t));
 }
 
-void RenderManager::delete_framebuffer(std::string_view name) {
-  m_framebuffers.erase(name.data());
-}
+void RenderManager::delete_framebuffer(std::string_view name) { m_framebuffers.erase(name.data()); }
 
-void RenderManager::render_framebuffer(const std::shared_ptr<VAO>& vao,
-                                       std::string_view fbo) {
+void RenderManager::render_framebuffer(const std::shared_ptr<VAO>& vao, std::string_view fbo) {
   auto& sp = get_shader_program("fbo");
 
   sp.use();
@@ -70,14 +62,10 @@ void RenderManager::render_framebuffer(const std::shared_ptr<VAO>& vao,
   sp.unuse();
 }
 
-void RenderManager::render_inside_imgui(const std::shared_ptr<VAO>& vao,
-                                        std::string_view fbo,
-                                        std::string_view title, glm::vec2 size,
-                                        glm::vec2 position,
-                                        bool fit_to_window) {
+void RenderManager::render_inside_imgui(const std::shared_ptr<VAO>& vao, std::string_view fbo, std::string_view title,
+                                        glm::vec2 size, glm::vec2 position, bool fit_to_window) {
   auto& fbo_ = m_framebuffers.at(fbo.data());
-  render_scene(fbo_->get_color_texture().get_id(), title, size, position,
-               fit_to_window);
+  render_scene(fbo_->get_color_texture().get_id(), title, size, position, fit_to_window);
 
   m_draw_calls++;
   m_triangles += vao->get_ebo().get_count() / 3;
@@ -87,8 +75,7 @@ void RenderManager::render_inside_imgui(const std::shared_ptr<VAO>& vao,
   m_indices += vao->get_ebo().get_count();
 }
 
-void RenderManager::render(const std::shared_ptr<VAO>& vao,
-                           const glm::mat4& transform,
+void RenderManager::render(const std::shared_ptr<VAO>& vao, const glm::mat4& transform,
                            std::string_view shader_program) {
   auto& sp = get_shader_program(shader_program);
 
@@ -119,18 +106,14 @@ void RenderManager::clear() {
   m_shader_programs.clear();
 }
 
-std::unique_ptr<RenderManager> RenderManager::create() {
-  return std::make_unique<RenderManager>();
-}
+std::unique_ptr<RenderManager> RenderManager::create() { return std::make_unique<RenderManager>(); }
 
 ShaderProgram& RenderManager::get_shader_program(std::string_view name) {
-  ENGINE_ASSERT(m_shader_programs.contains(name.data()),
-                "shader program {} not found!", name);
+  ENGINE_ASSERT(m_shader_programs.contains(name.data()), "shader program {} not found!", name);
   return *m_shader_programs.at(name.data());
 }
 
-std::map<std::string, std::string, NumericComparator>&
-RenderManager::compute_metrics() {
+std::map<std::string, std::string, NumericComparator>& RenderManager::compute_metrics() {
   m_metrics["framebuffers"] = std::to_string(m_framebuffers.size());
   m_metrics["shader_programs"] = std::to_string(m_shader_programs.size());
   m_metrics["draw_calls"] = std::to_string(m_draw_calls);

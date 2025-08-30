@@ -5,12 +5,8 @@
 
 namespace nl {
 
-inline std::filesystem::path
-get_default_roaming_path(std::string_view app_name) {
-  auto path = std::filesystem::temp_directory_path()
-                .parent_path()
-                .parent_path()
-                .parent_path();
+inline std::filesystem::path get_default_roaming_path(std::string_view app_name) {
+  auto path = std::filesystem::temp_directory_path().parent_path().parent_path().parent_path();
 
   path /= "Roaming";
 

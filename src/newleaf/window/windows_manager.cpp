@@ -22,13 +22,11 @@ WindowsManager::WindowsManager(const SettingsManager& settings_manager) {
   m_data.mouse_y = m_data.height / 2.0f; // center of the screen
   m_data.imgui_window = settings_manager.imgui_window;
   m_data.fit_to_window = settings_manager.fit_to_window;
-  ENGINE_TRACE("creating window {} with resolution {}x{}", m_data.window_title,
-               m_data.width, m_data.height);
+  ENGINE_TRACE("creating window {} with resolution {}x{}", m_data.window_title, m_data.width, m_data.height);
   if (m_window_count == 0) {
     ENGINE_ASSERT(glfwInit(), "failed to initialize glfw!");
-    glfwSetErrorCallback([](int error, const char* description) {
-      ENGINE_ASSERT(false, "glfw error! {0}: {1}", error, description);
-    });
+    glfwSetErrorCallback(
+      [](int error, const char* description) { ENGINE_ASSERT(false, "glfw error! {0}: {1}", error, description); });
   }
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings_manager.opengl_major);
@@ -40,32 +38,27 @@ WindowsManager::WindowsManager(const SettingsManager& settings_manager) {
   glfwWindowHint(GLFW_REFRESH_RATE, settings_manager.refresh_rate);
   m_data.refresh_rate = settings_manager.refresh_rate;
 
-  ENGINE_TRACE("loading openGL version {}.{}", settings_manager.opengl_major,
-               settings_manager.opengl_minor);
+  ENGINE_TRACE("loading openGL version {}.{}", settings_manager.opengl_major, settings_manager.opengl_minor);
 
   int monitor_count;
   GLFWmonitor** monitors = glfwGetMonitors(&monitor_count);
-  if (settings_manager.primary_monitor < 0 or
-      settings_manager.primary_monitor >= monitor_count) {
+  if (settings_manager.primary_monitor < 0 or settings_manager.primary_monitor >= monitor_count) {
     ENGINE_ERROR("invalid monitor index!");
     return;
   }
-  const GLFWvidmode* mode =
-    glfwGetVideoMode(monitors[settings_manager.primary_monitor]);
+  const GLFWvidmode* mode = glfwGetVideoMode(monitors[settings_manager.primary_monitor]);
   int xpos = (mode->width - m_data.width) / 2;
   int ypos = (mode->height - m_data.height) / 2;
   if (settings_manager.fullscreen) {
     m_data.fullscreen = true;
-    m_window =
-      glfwCreateWindow(mode->width, mode->height, m_data.window_title.c_str(),
-                       monitors[settings_manager.primary_monitor], nullptr);
+    m_window = glfwCreateWindow(mode->width, mode->height, m_data.window_title.c_str(),
+                                monitors[settings_manager.primary_monitor], nullptr);
     // center of the screen to avoid 0 0 when windowed first time
     m_data.position_x = xpos;
     m_data.position_y = ypos;
   } else {
     m_data.fullscreen = false;
-    m_window = glfwCreateWindow(m_data.width, m_data.height,
-                                m_data.window_title.c_str(), nullptr, nullptr);
+    m_window = glfwCreateWindow(m_data.width, m_data.height, m_data.window_title.c_str(), nullptr, nullptr);
     set_position(xpos, ypos);
   }
 
@@ -85,138 +78,121 @@ WindowsManager::WindowsManager(const SettingsManager& settings_manager) {
   toggle_vsync(settings_manager.vsync);
   glfwSetWindowUserPointer(m_window, &m_data);
 
-  glfwSetFramebufferSizeCallback(
-    m_window, [](GLFWwindow* window, int width, int height) {
-      WindowData& data =
-        *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
+  glfwSetFramebufferSizeCallback(m_window, [](GLFWwindow* window, int width, int height) {
+    WindowData& data = *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-      if (not data.fullscreen) {
-        data.width = width;
-        data.height = height;
-      }
+    if (not data.fullscreen) {
+      data.width = width;
+      data.height = height;
+    }
 
-      // for fullscreen it will update the resolution
-      WindowResizeEvent e(width, height);
+    // for fullscreen it will update the resolution
+    WindowResizeEvent e(width, height);
+    data.event_callback(e);
+  });
+
+  glfwSetWindowPosCallback(m_window, [](GLFWwindow* window, int xpos, int ypos) {
+    WindowData& data = *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
+
+    if (not data.fullscreen) {
+      data.position_x = xpos;
+      data.position_y = ypos;
+      WindowMovedEvent e(xpos, ypos);
       data.event_callback(e);
-    });
-
-  glfwSetWindowPosCallback(
-    m_window, [](GLFWwindow* window, int xpos, int ypos) {
-      WindowData& data =
-        *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
-
-      if (not data.fullscreen) {
-        data.position_x = xpos;
-        data.position_y = ypos;
-        WindowMovedEvent e(xpos, ypos);
-        data.event_callback(e);
-      }
-    });
+    }
+  });
 
   glfwSetWindowCloseCallback(m_window, [](GLFWwindow* window) {
-    WindowData& data =
-      *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
+    WindowData& data = *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
     WindowCloseEvent e;
     data.event_callback(e);
   });
 
-  glfwSetKeyCallback(
-    m_window, [](GLFWwindow* window, int key, int, int action, int) {
-      WindowData& data =
-        *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
+  glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int, int action, int) {
+    WindowData& data = *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-      switch (action) {
-      case GLFW_PRESS: {
-        KeyPressedEvent e(static_cast<Key>(key), false);
-        data.event_callback(e);
-        break;
-      }
-      case GLFW_RELEASE: {
-        KeyReleasedEvent e(static_cast<Key>(key));
-        data.event_callback(e);
-        break;
-      }
-      case GLFW_REPEAT: {
-        KeyPressedEvent e(static_cast<Key>(key), true);
-        data.event_callback(e);
-        break;
-      }
-      }
-    });
+    switch (action) {
+    case GLFW_PRESS: {
+      KeyPressedEvent e(static_cast<Key>(key), false);
+      data.event_callback(e);
+      break;
+    }
+    case GLFW_RELEASE: {
+      KeyReleasedEvent e(static_cast<Key>(key));
+      data.event_callback(e);
+      break;
+    }
+    case GLFW_REPEAT: {
+      KeyPressedEvent e(static_cast<Key>(key), true);
+      data.event_callback(e);
+      break;
+    }
+    }
+  });
 
   glfwSetCharCallback(m_window, [](GLFWwindow* window, uint32_t key) {
-    WindowData& data =
-      *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
+    WindowData& data = *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
     KeyTypedEvent e(static_cast<Key>(key));
     data.event_callback(e);
   });
 
-  glfwSetMouseButtonCallback(
-    m_window, [](GLFWwindow* window, int button, int action, int) {
-      WindowData& data =
-        *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
+  glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int) {
+    WindowData& data = *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-      switch (action) {
-      case GLFW_PRESS: {
-        MouseButtonPressedEvent e(static_cast<Mouse>(button));
-        data.event_callback(e);
-        break;
-      }
-      case GLFW_RELEASE: {
-        MouseButtonReleasedEvent e(static_cast<Mouse>(button));
-        data.event_callback(e);
-        break;
-      }
-      }
-    });
+    switch (action) {
+    case GLFW_PRESS: {
+      MouseButtonPressedEvent e(static_cast<Mouse>(button));
+      data.event_callback(e);
+      break;
+    }
+    case GLFW_RELEASE: {
+      MouseButtonReleasedEvent e(static_cast<Mouse>(button));
+      data.event_callback(e);
+      break;
+    }
+    }
+  });
 
-  glfwSetCursorPosCallback(
-    m_window, [](GLFWwindow* window, double xpos, double ypos) {
-      WindowData& data =
-        *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
+  glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xpos, double ypos) {
+    WindowData& data = *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-      if (data.first_mouse) {
-        data.debug_mouse_x = (float)xpos;
-        data.debug_mouse_y = (float)ypos;
-        data.first_mouse = false;
-      }
-
-      float xoffset = (float)xpos - data.debug_mouse_x;
-      float yoffset =
-        data.debug_mouse_y -
-        (float)ypos; // reversed since y-coordinates go from bottom to top
-
+    if (data.first_mouse) {
       data.debug_mouse_x = (float)xpos;
       data.debug_mouse_y = (float)ypos;
+      data.first_mouse = false;
+    }
 
-      if (not data.update_camera_position) {
-        return;
-      }
+    float xoffset = (float)xpos - data.debug_mouse_x;
+    float yoffset = data.debug_mouse_y - (float)ypos; // reversed since y-coordinates go from bottom to top
 
-      data.mouse_x = data.debug_mouse_x;
-      data.mouse_y = data.debug_mouse_y;
+    data.debug_mouse_x = (float)xpos;
+    data.debug_mouse_y = (float)ypos;
 
-      MouseMovedEvent e(xoffset, yoffset);
-      data.event_callback(e);
-    });
+    if (not data.update_camera_position) {
+      return;
+    }
 
-  glfwSetScrollCallback(
-    m_window, [](GLFWwindow* window, double xoffset, double yoffset) {
-      WindowData& data =
-        *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
+    data.mouse_x = data.debug_mouse_x;
+    data.mouse_y = data.debug_mouse_y;
 
-      if (not data.update_camera_position) {
-        return;
-      }
+    MouseMovedEvent e(xoffset, yoffset);
+    data.event_callback(e);
+  });
 
-      MouseScrolledEvent e((float)xoffset, (float)yoffset);
-      data.event_callback(e);
-    });
+  glfwSetScrollCallback(m_window, [](GLFWwindow* window, double xoffset, double yoffset) {
+    WindowData& data = *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
+
+    if (not data.update_camera_position) {
+      return;
+    }
+
+    MouseScrolledEvent e((float)xoffset, (float)yoffset);
+    data.event_callback(e);
+  });
 
   glfwSetWindowIconifyCallback(m_window, [](GLFWwindow* window, int minimized) {
-    WindowData& data =
-      *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
+    WindowData& data = *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
     if (minimized == GLFW_TRUE) {
       data.minimized = true;
@@ -229,25 +205,22 @@ WindowsManager::WindowsManager(const SettingsManager& settings_manager) {
     }
   });
 
-  glfwSetWindowMaximizeCallback(
-    m_window, [](GLFWwindow* window, int maximized) {
-      WindowData& data =
-        *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
+  glfwSetWindowMaximizeCallback(m_window, [](GLFWwindow* window, int maximized) {
+    WindowData& data = *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-      if (maximized == GLFW_TRUE) {
-        data.maximized = true;
-        WindowMaximizedEvent e;
-        data.event_callback(e);
-      } else {
-        data.maximized = false;
-        WindowRestoredEvent e;
-        data.event_callback(e);
-      }
-    });
+    if (maximized == GLFW_TRUE) {
+      data.maximized = true;
+      WindowMaximizedEvent e;
+      data.event_callback(e);
+    } else {
+      data.maximized = false;
+      WindowRestoredEvent e;
+      data.event_callback(e);
+    }
+  });
 
   glfwSetWindowFocusCallback(m_window, [](GLFWwindow* window, int focused) {
-    WindowData& data =
-      *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
+    WindowData& data = *std::bit_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
     if (focused == GLFW_TRUE) {
       data.focused = true;
@@ -302,9 +275,7 @@ void WindowsManager::set_last_mouse_position(float x, float y) {
   m_data.mouse_y = y;
 }
 
-void WindowsManager::update_camera_position(bool enable) {
-  m_data.update_camera_position = enable;
-}
+void WindowsManager::update_camera_position(bool enable) { m_data.update_camera_position = enable; }
 
 void WindowsManager::minimize(bool minimize) {
   if (minimize and not m_data.minimized) {
@@ -376,9 +347,7 @@ void WindowsManager::toggle_wireframe(bool wireframe) {
   }
 }
 
-void WindowsManager::set_event_callback(EventCallbackFn&& cb) {
-  m_data.event_callback = std::move(cb);
-}
+void WindowsManager::set_event_callback(EventCallbackFn&& cb) { m_data.event_callback = std::move(cb); }
 
 void WindowsManager::set_window_title(std::string title) {
   if (title.empty()) {
@@ -406,8 +375,7 @@ void WindowsManager::set_window_icon(std::string path) {
 
   if (path not_eq m_data.window_icon_path) {
     GLFWimage images[1];
-    images[0].pixels =
-      stbi_load(path.c_str(), &images[0].width, &images[0].height, 0, 4);
+    images[0].pixels = stbi_load(path.c_str(), &images[0].width, &images[0].height, 0, 4);
     glfwSetWindowIcon(m_window, 1, images);
     stbi_image_free(images[0].pixels);
     m_data.window_icon_path = path;
@@ -441,8 +409,7 @@ void WindowsManager::set_cursor_icon(std::string path) {
     }
 
     GLFWimage images[1];
-    images[0].pixels =
-      stbi_load(path.c_str(), &images[0].width, &images[0].height, 0, 4);
+    images[0].pixels = stbi_load(path.c_str(), &images[0].width, &images[0].height, 0, 4);
     m_data.cursor = glfwCreateCursor(&images[0], 0, 0);
     glfwSetCursor(m_window, m_data.cursor);
     stbi_image_free(images[0].pixels);
@@ -529,11 +496,9 @@ void WindowsManager::set_refresh_rate(int refresh_rate) {
 
     auto& settings_manager = Application::get().get_settings_manager();
     int monitor_count;
-    GLFWmonitor* monitor =
-      glfwGetMonitors(&monitor_count)[settings_manager.primary_monitor];
+    GLFWmonitor* monitor = glfwGetMonitors(&monitor_count)[settings_manager.primary_monitor];
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-    glfwSetWindowMonitor(m_window, monitor, GLFW_DONT_CARE, GLFW_DONT_CARE,
-                         mode->width, mode->height, refresh_rate);
+    glfwSetWindowMonitor(m_window, monitor, GLFW_DONT_CARE, GLFW_DONT_CARE, mode->width, mode->height, refresh_rate);
     m_data.refresh_rate = refresh_rate;
     settings_manager.refresh_rate = refresh_rate;
     if (m_data.vsync) {
@@ -562,11 +527,9 @@ void WindowsManager::set_window_monitor(int monitor) {
     auto& settings_manager = Application::get().get_settings_manager();
     int xpos = m_data.fullscreen ? GLFW_DONT_CARE : m_data.position_x;
     int ypos = m_data.fullscreen ? GLFW_DONT_CARE : m_data.position_y;
-    int refresh_rate =
-      m_data.fullscreen ? settings_manager.refresh_rate : GLFW_DONT_CARE;
+    int refresh_rate = m_data.fullscreen ? settings_manager.refresh_rate : GLFW_DONT_CARE;
 
-    glfwSetWindowMonitor(m_window, monitors[monitor], xpos, ypos, m_data.width,
-                         m_data.height, refresh_rate);
+    glfwSetWindowMonitor(m_window, monitors[monitor], xpos, ypos, m_data.width, m_data.height, refresh_rate);
     m_data.primary_monitor = monitor;
     settings_manager.primary_monitor = monitor;
   }
@@ -576,13 +539,11 @@ void WindowsManager::toggle_fullscreen(bool fullscreen) {
   if (fullscreen and not m_data.fullscreen) {
     auto& settings_manager = Application::get().get_settings_manager();
     int monitor_count;
-    GLFWmonitor* monitor =
-      (glfwGetMonitors(&monitor_count))[settings_manager.primary_monitor];
+    GLFWmonitor* monitor = (glfwGetMonitors(&monitor_count))[settings_manager.primary_monitor];
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
     m_data.fullscreen = fullscreen;
     settings_manager.fullscreen = fullscreen;
-    glfwSetWindowMonitor(m_window, monitor, GLFW_DONT_CARE, GLFW_DONT_CARE,
-                         mode->width, mode->height,
+    glfwSetWindowMonitor(m_window, monitor, GLFW_DONT_CARE, GLFW_DONT_CARE, mode->width, mode->height,
                          settings_manager.refresh_rate);
     if (m_data.vsync) {
       glfwSwapInterval(1); // https://github.com/glfw/glfw/issues/1072
@@ -590,8 +551,7 @@ void WindowsManager::toggle_fullscreen(bool fullscreen) {
   } else if (not fullscreen and m_data.fullscreen) {
     m_data.fullscreen = fullscreen;
     Application::get().get_settings_manager().fullscreen = fullscreen;
-    glfwSetWindowMonitor(m_window, nullptr, m_data.position_x,
-                         m_data.position_y, m_data.width, m_data.height,
+    glfwSetWindowMonitor(m_window, nullptr, m_data.position_x, m_data.position_y, m_data.width, m_data.height,
                          GLFW_DONT_CARE);
     restore_window_icon();
     if (m_data.vsync) {
@@ -614,8 +574,7 @@ void WindowsManager::toggle_fit_to_window(bool fit_to_window) {
   }
 }
 
-std::unique_ptr<WindowsManager>
-WindowsManager::create(const SettingsManager& settings_manager) {
+std::unique_ptr<WindowsManager> WindowsManager::create(const SettingsManager& settings_manager) {
   return std::make_unique<WindowsManager>(settings_manager);
 }
 }

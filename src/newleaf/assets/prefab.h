@@ -23,38 +23,29 @@ struct Prototype {
 namespace nl {
 class Prefab : public Asset {
   public:
-    Prefab(std::filesystem::path&& fp,
-           std::vector<std::string>&& target_prototypes);
+    Prefab(std::filesystem::path&& fp, std::vector<std::string>&& target_prototypes);
 
-    virtual const std::map<std::string, std::string, NumericComparator>&
-    to_map() override final;
+    virtual const std::map<std::string, std::string, NumericComparator>& to_map() override final;
     const std::map<std::string, std::string, NumericComparator>&
     get_target_prototype_info(std::string_view prototype_id);
 
-    const std::vector<std::string>&
-    get_inherits(std::string_view prototype_id) const {
+    const std::vector<std::string>& get_inherits(std::string_view prototype_id) const {
       return m_prototypes.at(prototype_id.data()).inherits;
     }
 
-    const std::vector<std::string>&
-    get_ctags(std::string_view prototype_id) const {
+    const std::vector<std::string>& get_ctags(std::string_view prototype_id) const {
       return m_prototypes.at(prototype_id.data()).ctags;
     }
 
-    const std::unordered_map<std::string, json>&
-    get_components(std::string_view prototype_id) const {
+    const std::unordered_map<std::string, json>& get_components(std::string_view prototype_id) const {
       return m_prototypes.at(prototype_id.data()).components;
     }
 
-    const std::vector<std::string>& get_target_prototypes() const {
-      return m_target_prototypes;
-    }
+    const std::vector<std::string>& get_target_prototypes() const { return m_target_prototypes; }
 
     std::string_view get_name() const { return m_name; }
 
-    const std::unordered_map<std::string, Prototype>& get_prototypes() const {
-      return m_prototypes;
-    }
+    const std::unordered_map<std::string, Prototype>& get_prototypes() const { return m_prototypes; }
 
     virtual bool operator==(const Asset& other) const override final;
 
@@ -65,15 +56,11 @@ class Prefab : public Asset {
     std::unordered_map<std::string, Prototype> m_prototypes;
 
     std::map<std::string, std::string, NumericComparator> m_info;
-    std::map<std::string, std::map<std::string, std::string, NumericComparator>,
-             NumericComparator>
-      m_prototype_info;
+    std::map<std::string, std::map<std::string, std::string, NumericComparator>, NumericComparator> m_prototype_info;
 
-    void read(const json& j, std::vector<std::string>& inherits,
-              std::vector<std::string>& ctags,
+    void read(const json& j, std::vector<std::string>& inherits, std::vector<std::string>& ctags,
               std::unordered_map<std::string, json>& components);
 
-    void process_prototype(const std::string& name, const json& prototype_data,
-                           const json& data);
+    void process_prototype(const std::string& name, const json& prototype_data, const json& data);
 };
 }

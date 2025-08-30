@@ -23,8 +23,7 @@ class VAO {
     void attach_vertex_attributes();
     void attach_shape_vertex_attributes();
     void attach_terrain_vertex_attributes();
-    void update_vertex(std::shared_ptr<VBO>&& vbo, uint32_t index,
-                       VertexType type);
+    void update_vertex(std::shared_ptr<VBO>&& vbo, uint32_t index, VertexType type);
     void clear_vbos();
     void set_index(std::unique_ptr<IBO>&& ibo);
 

@@ -36,18 +36,16 @@ struct CMesh {
     std::string vertex_type;
 
     CMesh() = default;
-    explicit CMesh(std::vector<Vertex>&& v, std::vector<uint32_t>&& i,
-                   std::vector<std::shared_ptr<Texture>>&& t, std::string&& vt)
-      : vertices(std::move(v)), indices(std::move(i)), textures(std::move(t)),
-        vertex_type(std::move(vt)) {}
+    explicit CMesh(std::vector<Vertex>&& v, std::vector<uint32_t>&& i, std::vector<std::shared_ptr<Texture>>&& t,
+                   std::string&& vt)
+      : vertices(std::move(v)), indices(std::move(i)), textures(std::move(t)), vertex_type(std::move(vt)) {}
 
     void setup_mesh() {
       vao = VAO::create();
       if (vertex_type == "camera") {
         vao->attach_vertex(VBO::create(vertices), VAO::VertexType::vertex);
       } else if (vertex_type == "shape") { // TODO this is not used
-        vao->attach_vertex(VBO::create(vertices),
-                           VAO::VertexType::shape_vertex);
+        vao->attach_vertex(VBO::create(vertices), VAO::VertexType::shape_vertex);
       } else if (vertex_type == "terrain") { // TODO maybe a better way to do
                                              // this using vertices?
         vao->attach_vertex(std::move(vbo), VAO::VertexType::terrain_vertex);
@@ -61,8 +59,7 @@ struct CMesh {
       if (vertex_type == "camera") {
         vao->update_vertex(VBO::create(vertices), 0, VAO::VertexType::vertex);
       } else if (vertex_type == "shape") {
-        vao->update_vertex(VBO::create(vertices), 0,
-                           VAO::VertexType::shape_vertex);
+        vao->update_vertex(VBO::create(vertices), 0, VAO::VertexType::shape_vertex);
       } else if (vertex_type == "terrain") {
         vao->update_vertex(std::move(vbo), 0, VAO::VertexType::terrain_vertex);
       } else {
@@ -78,19 +75,14 @@ struct CMesh {
     }
 
     // TODO move this method to a system?
-    void bind_textures(ShaderProgram& sp,
-                       CTexture* cTexture, CTextureAtlas* cTextureAtlas,
-                       CTexture* cSkyboxTexture, CMaterial* cMaterial) {
+    void bind_textures(ShaderProgram& sp, CTexture* cTexture, CTextureAtlas* cTextureAtlas, CTexture* cSkyboxTexture,
+                       CMaterial* cMaterial) {
       sp.reset_active_uniforms();
       sp.use();
-      sp.set_float("enable_fog",
-                    static_cast<float>(entt::monostate<"enable_fog"_hs>{}));
-      sp.set_float("fog_density",
-                    static_cast<float>(entt::monostate<"fog_density"_hs>{}));
-      sp.set_float("fog_gradient",
-                    static_cast<float>(entt::monostate<"fog_gradient"_hs>{}));
-      sp.set_vec3("fog_color",
-                   static_cast<glm::vec3>(entt::monostate<"fog_color"_hs>{}));
+      sp.set_float("enable_fog", static_cast<float>(entt::monostate<"enable_fog"_hs>{}));
+      sp.set_float("fog_density", static_cast<float>(entt::monostate<"fog_density"_hs>{}));
+      sp.set_float("fog_gradient", static_cast<float>(entt::monostate<"fog_gradient"_hs>{}));
+      sp.set_vec3("fog_color", static_cast<glm::vec3>(entt::monostate<"fog_color"_hs>{}));
 
       if (cTexture) {
         uint32_t i = 1;
@@ -101,26 +93,20 @@ struct CMesh {
         }
         if (cTexture->draw_mode == CTexture::DrawMode::color or
             cTexture->draw_mode == CTexture::DrawMode::texture_blend_color or
-            cTexture->draw_mode ==
-              CTexture::DrawMode::texture_atlas_blend_color) {
+            cTexture->draw_mode == CTexture::DrawMode::texture_atlas_blend_color) {
           sp.set_float("use_color", 1.f);
           sp.set_vec4("color", cTexture->color);
         }
         if (cTexture->enable_lighting) {
           sp.set_float("enable_lighting", 1.f);
-          sp.set_vec3(
-            "light_position",
-            static_cast<glm::vec3>(entt::monostate<"light_position"_hs>{}));
-          sp.set_vec3("light_color", static_cast<glm::vec3>(
-                                        entt::monostate<"light_color"_hs>{}));
+          sp.set_vec3("light_position", static_cast<glm::vec3>(entt::monostate<"light_position"_hs>{}));
+          sp.set_vec3("light_color", static_cast<glm::vec3>(entt::monostate<"light_color"_hs>{}));
         }
         if (cTexture->draw_mode == CTexture::DrawMode::texture_atlas or
             cTexture->draw_mode == CTexture::DrawMode::texture_atlas_blend or
-            cTexture->draw_mode ==
-              CTexture::DrawMode::texture_atlas_blend_color) {
+            cTexture->draw_mode == CTexture::DrawMode::texture_atlas_blend_color) {
           if (sp.get_name() == "camera" or
-              sp.get_name() ==
-                "shape") { // terrain shader get texture atlas data from vertex
+              sp.get_name() == "shape") { // terrain shader get texture atlas data from vertex
             sp.set_float("use_texture_atlas", 1.f);
             uint32_t index = cTextureAtlas->index;
             uint32_t rows = cTextureAtlas->rows;
@@ -135,25 +121,16 @@ struct CMesh {
         if (cTexture->draw_mode == CTexture::DrawMode::texture_blend or
             cTexture->draw_mode == CTexture::DrawMode::texture_atlas_blend or
             cTexture->draw_mode == CTexture::DrawMode::texture_blend_color or
-            cTexture->draw_mode ==
-              CTexture::DrawMode::texture_atlas_blend_color) {
+            cTexture->draw_mode == CTexture::DrawMode::texture_atlas_blend_color) {
           sp.set_float("use_blending", 1.f);
           sp.set_float("blend_factor", cTexture->blend_factor);
         }
-        if (static_cast<float>(entt::monostate<"use_sky_blending"_hs>{}) ==
-              1.f and
-            sp.get_name() == "camera") {
-          sp.set_float(
-            "use_sky_blending",
-            static_cast<float>(entt::monostate<"use_sky_blending"_hs>{}));
-          sp.set_float(
-            "skyblend_factor",
-            static_cast<float>(entt::monostate<"skyblend_factor"_hs>{}));
+        if (static_cast<float>(entt::monostate<"use_sky_blending"_hs>{}) == 1.f and sp.get_name() == "camera") {
+          sp.set_float("use_sky_blending", static_cast<float>(entt::monostate<"use_sky_blending"_hs>{}));
+          sp.set_float("skyblend_factor", static_cast<float>(entt::monostate<"skyblend_factor"_hs>{}));
           int ti = 10;
           for (auto& t : cSkyboxTexture->textures) {
-            sp.set_int(t->get_type().data() + std::string("_sky_") +
-                          std::to_string(ti),
-                        ti);
+            sp.set_int(t->get_type().data() + std::string("_sky_") + std::to_string(ti), ti);
             t->bind_slot(ti);
             ti++;
           }
@@ -221,8 +198,7 @@ struct CMesh {
       for (const auto& texture : textures) {
         paths += std::format("\n\t\t\ttexture: {}", texture->get_path());
       }
-      ENGINE_BACKTRACE("\t\tvertices: {0}\n\t\tindices: {1}{2}",
-                       vertices.size(), indices.size(), paths);
+      ENGINE_BACKTRACE("\t\tvertices: {0}\n\t\tindices: {1}{2}", vertices.size(), indices.size(), paths);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
@@ -238,8 +214,6 @@ struct CMesh {
 
     std::string get_vao_info() const { return map_to_json(vao->to_map()); }
 
-    std::string get_texture_info(uint32_t index) const {
-      return map_to_json(textures.at(index)->to_map());
-    }
+    std::string get_texture_info(uint32_t index) const { return map_to_json(textures.at(index)->to_map()); }
 };
 }
