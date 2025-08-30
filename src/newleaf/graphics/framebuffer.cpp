@@ -116,7 +116,7 @@ std::string_view FBO::get_buffer_type() const {
     return "depth stencil renderbuffer";
   } else {
     ENGINE_ERROR("no buffer attached to framebuffer {}", m_id);
-    return "none";
+    return "no buffer";
   }
 }
 

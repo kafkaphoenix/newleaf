@@ -29,7 +29,7 @@ Texture::Texture(uint32_t width, uint32_t height, GLenum glFormat,
   m_mipmap_level = 1;
   m_flip_vertically = false;
   m_paths.emplace_back("fbo texture");
-  m_type = "texture_difusse";
+  m_type = "texture_diffuse";
   // https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexStorage2D.xhtml
   if (m_opengl_format == GL_RGBA8) {
     m_format = GL_RGBA;

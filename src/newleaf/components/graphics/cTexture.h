@@ -58,7 +58,7 @@ struct CTexture {
     void print() const {
       std::string texture_paths;
       if (paths.size() == 0) {
-        texture_paths = "\n\t\t\t\t\t\t none";
+        texture_paths = "\n\t\t\t\t\t\t undefined texture paths";
       } else {
         for (std::string_view path : paths) {
           texture_paths += std::format("\n\t\t\t\t\t\t {}", path);
