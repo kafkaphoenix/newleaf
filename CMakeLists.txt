@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(newleaf
-VERSION 0.1.0
+VERSION 0.1.1
 HOMEPAGE_URL "https://github.com/kafkaphoenix/newleaf"
 DESCRIPTION "C++ game engine for 3d and 2d development"
 LANGUAGES CXX
@@ -10,10 +10,6 @@ LANGUAGES CXX
 message(VERBOSE "*")
 message(VERBOSE "* ${PROJECT_NAME} v${PROJECT_VERSION} (${CMAKE_BUILD_TYPE})")
 message(VERBOSE "*")
-
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(ENABLE_DEBUG "enable debugging info" OFF)
 option(BUILD_SHARED_LIBS "build engine as a shared library" OFF)
