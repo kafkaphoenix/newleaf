@@ -7,6 +7,9 @@
 
 namespace nl {
 
+// Warning: with sticky keys on, it will keep registering the key as pressed
+// this method is part of the polling system, use the event system for more
+// accurate input handling or multithreading
 bool Input::is_key_pressed(Key k) {
   GLFWwindow* w = Application::get().get_windows_manager().get_native_window();
   return glfwGetKey(w, static_cast<uint32_t>(k)) == GLFW_PRESS;
