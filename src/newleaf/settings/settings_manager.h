@@ -29,6 +29,7 @@ struct SettingsManager {
     uint32_t opengl_minor = 6;
     bool imgui_window = true; // it needs an opengl fbo to work
     bool fit_to_window = true;
+    bool sticky_keys_polling = false;
 
     std::string cursor_icon_path = "";
     uint32_t cursor_mode = 2; // 0: normal, 1: hidden, 2: disabled

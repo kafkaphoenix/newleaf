@@ -19,8 +19,8 @@ void Prefab::process_prototype(const std::string& name, const json& prototype_da
       read(data.at(father), inherits, ctags, components);
     }
   }
-  read(prototype_data, inherits, ctags,
-       components); // child overrides parent if common definition exists
+  // child overrides parent when inherited
+  read(prototype_data, inherits, ctags, components);
 
   m_prototypes.emplace(
     name, Prototype{.inherits = std::move(inherits), .ctags = std::move(ctags), .components = std::move(components)});

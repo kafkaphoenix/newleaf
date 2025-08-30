@@ -574,6 +574,17 @@ void WindowsManager::toggle_fit_to_window(bool fit_to_window) {
   }
 }
 
+// When sticky keys mode is enabled, the pollable state of a key will remain GLFW_PRESS 
+// until the state of that key is polled with glfwGetKey. 
+// Once it has been polled, if a key release event had been processed in the meantime,
+// the state will reset to GLFW_RELEASE, otherwise it will remain GLFW_PRESS.
+void WindowsManager::toggle_sticky_keys_polling(bool enabled) {
+  if (enabled not_eq m_data.sticky_keys_polling) {
+    m_data.sticky_keys_polling = enabled;
+    Application::get().get_settings_manager().sticky_keys_polling = enabled;
+  }
+}
+
 std::unique_ptr<WindowsManager> WindowsManager::create(const SettingsManager& settings_manager) {
   return std::make_unique<WindowsManager>(settings_manager);
 }

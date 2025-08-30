@@ -31,6 +31,7 @@ struct WindowData {
     bool focused{};
     bool visible{};
     bool wireframe{};
+    bool sticky_keys_polling{};
     EventCallbackFn event_callback;
 
     // settings
@@ -72,7 +73,7 @@ class WindowsManager {
     void toggle_visible(bool visible);
     void toggle_wireframe(bool wireframe);
     void set_event_callback(EventCallbackFn&& cb);
-
+    void toggle_sticky_keys_polling(bool enabled);
     void set_window_title(std::string title);
     void set_window_icon(std::string path);
     void restore_window_icon();
