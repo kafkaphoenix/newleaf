@@ -21,7 +21,7 @@ class AssetsManager {
     void load(std::string_view id, Args&&... args) {
       std::string_view type = typeid(Type).name();
       type = type.substr(type.find_last_of(':') + 1);
-      auto& assets = m_assets[type.data()];
+      auto& assets = m_assets[type.data()]; // create type map if not exists
       ENGINE_ASSERT(not assets.contains(id.data()),
                     "asset {} already exists for type {}!", id, type);
       assets.emplace(id,
@@ -32,8 +32,9 @@ class AssetsManager {
     template <typename Type> bool contains(std::string_view id) const {
       std::string_view type = typeid(Type).name();
       type = type.substr(type.find_last_of(':') + 1);
-      auto& assets = m_assets.at(type.data());
-      return assets.contains(id.data());
+      auto it = m_assets.find(type.data());
+      if (it == m_assets.end()) return false; // type not found so can't find asset
+      return it->second.contains(id.data());
     }
 
     template <typename Type>
