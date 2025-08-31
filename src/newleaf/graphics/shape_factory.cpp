@@ -10,7 +10,7 @@ namespace nl {
 std::shared_ptr<VAO> ShapeFactory::create(const std::vector<ShapeVertex>& vertices,
                                           const std::vector<uint32_t>& indices) {
   std::shared_ptr<VAO> vao = VAO::create();
-  vao->attach_vertex(VBO::CreateShape(vertices), VAO::VertexType::shape_vertex);
+  vao->attach_vertex(VBO::CreateShape(vertices), VAO::VertexType::Shape);
   vao->set_index(IBO::create(indices));
   return vao;
 }

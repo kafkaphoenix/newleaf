@@ -9,7 +9,7 @@
 namespace nl {
 #define MAX_BONE_INFLUENCE 4 // TODO use
 
-struct Vertex { // TODO move
+struct ModelVertex { // TODO move
     glm::vec3 position{};
     glm::vec3 normal{};
     glm::vec2 texture_coords{};
@@ -34,18 +34,19 @@ struct TerrainVertex {
 
 class VBO {
   public:
-    VBO(const std::vector<Vertex>& vertices);
+    VBO(const std::vector<ModelVertex>& vertices);
     VBO(const std::vector<ShapeVertex>& vertices);
     VBO(const std::vector<TerrainVertex>& vertices);
     ~VBO();
 
-    void reload(const std::vector<Vertex>& vertices);
+    // TODO more methods are missing unless i refactor how to approach vertex without knowing the vertex
+    void reload(const std::vector<ModelVertex>& vertices);
 
     uint32_t get_count() const { return m_count; }
     uint32_t get_id() const { return m_id; }
     bool is_immutable() const { return m_immutable; }
 
-    static std::unique_ptr<VBO> create(const std::vector<Vertex>& vertices);
+    static std::unique_ptr<VBO> CreateModel(const std::vector<ModelVertex>& vertices);
     static std::unique_ptr<VBO> CreateShape(const std::vector<ShapeVertex>& vertices);
     static std::unique_ptr<VBO> CreateTerrain(const std::vector<TerrainVertex>& vertices);
 

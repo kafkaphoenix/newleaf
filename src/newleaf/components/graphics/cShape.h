@@ -57,22 +57,19 @@ struct CShape {
                     "shape witdh and height must be greater than 0");
       ENGINE_ASSERT(size.z > 0.f or _type not_eq "cube", "cube depth must be greater than 0");
       CMesh mesh;
+      mesh.vertex_type = "shape";
       if (_type == "triangle") {
         type = CShape::Type::triangle;
         mesh.vao = ShapeFactory::create_triangle(size.x);
-        mesh.vertex_type = "shape";
       } else if (_type == "rectangle") {
         type = CShape::Type::rectangle;
         mesh.vao = ShapeFactory::create_rectangle(size.x, size.y, repeat_texture);
-        mesh.vertex_type = "shape";
       } else if (_type == "cube") {
         type = CShape::Type::cube;
         mesh.vao = ShapeFactory::create_cube(size.x, size.y, size.z, repeat_texture);
-        mesh.vertex_type = "shape";
       } else if (_type == "circle") {
         type = CShape::Type::circle;
         mesh.vao = ShapeFactory::create_circle(size.x, size.y);
-        mesh.vertex_type = "shape";
       } else {
         ENGINE_ASSERT(false, "unknown shape type {}", _type);
       }

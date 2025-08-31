@@ -18,9 +18,9 @@ class VAO {
     void bind();
     void unbind();
 
-    enum class VertexType { vertex, shape_vertex, terrain_vertex };
+    enum class VertexType { Model, Shape, Terrain };
     void attach_vertex(std::shared_ptr<VBO>&& vbo, VertexType type);
-    void attach_vertex_attributes();
+    void attach_model_vertex_attributes();
     void attach_shape_vertex_attributes();
     void attach_terrain_vertex_attributes();
     void update_vertex(std::shared_ptr<VBO>&& vbo, uint32_t index, VertexType type);

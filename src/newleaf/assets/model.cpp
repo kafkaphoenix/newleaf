@@ -39,12 +39,12 @@ void Model::process_node(aiNode* node, const aiScene* scene) {
 }
 
 CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
-  std::vector<Vertex> vertices{};
+  std::vector<ModelVertex> vertices{};
   std::vector<uint32_t> indices{};
   std::vector<std::shared_ptr<Texture>> textures;
 
   for (uint32_t i = 0; i < mesh->mNumVertices; ++i) {
-    Vertex vertex{};
+    ModelVertex vertex{};
     const auto& position = mesh->mVertices[i]; // assimp vector does not directly convert to glm vec3
     vertex.position = glm::vec3(position.x, position.y, position.z);
 
@@ -127,7 +127,7 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   }
   m_materials.emplace_back(std::move(material_data));
 
-  return CMesh(std::move(vertices), std::move(indices), std::move(textures), std::string("camera"));
+  return CMesh(std::move(vertices), std::move(indices), std::move(textures), std::string("model"));
 }
 
 std::vector<std::shared_ptr<Texture>> Model::load_material_textures(aiMaterial* mat, aiTextureType t,

@@ -30,25 +30,25 @@ namespace nl {
 struct CMesh {
     std::vector<std::shared_ptr<Texture>> textures;
     std::shared_ptr<VAO> vao;
-    std::vector<Vertex> vertices; // TODO: delete this
+    std::vector<ModelVertex> vertices; // TODO: delete this
     std::shared_ptr<VBO> vbo;
     std::vector<uint32_t> indices;
     std::string vertex_type;
 
     CMesh() = default;
-    explicit CMesh(std::vector<Vertex>&& v, std::vector<uint32_t>&& i, std::vector<std::shared_ptr<Texture>>&& t,
+    explicit CMesh(std::vector<ModelVertex>&& v, std::vector<uint32_t>&& i, std::vector<std::shared_ptr<Texture>>&& t,
                    std::string&& vt)
       : vertices(std::move(v)), indices(std::move(i)), textures(std::move(t)), vertex_type(std::move(vt)) {}
 
     void setup_mesh() {
       vao = VAO::create();
-      if (vertex_type == "camera") {
-        vao->attach_vertex(VBO::create(vertices), VAO::VertexType::vertex);
-      } else if (vertex_type == "shape") { // TODO this is not used
-        vao->attach_vertex(VBO::create(vertices), VAO::VertexType::shape_vertex);
+      if (vertex_type == "model") {
+        vao->attach_vertex(VBO::CreateModel(vertices), VAO::VertexType::Model);
+      } else if (vertex_type == "shape") { // TODO this is not used and use wrong method, shape factory  use create shape
+        vao->attach_vertex(VBO::CreateModel(vertices), VAO::VertexType::Shape);
       } else if (vertex_type == "terrain") { // TODO maybe a better way to do
-                                             // this using vertices?
-        vao->attach_vertex(std::move(vbo), VAO::VertexType::terrain_vertex);
+                                             // this using vertices? terrain returns vbo from other side
+        vao->attach_vertex(std::move(vbo), VAO::VertexType::Terrain);
       } else {
         ENGINE_ASSERT(false, "unknown vertex type {}", vertex_type);
       }
@@ -56,12 +56,12 @@ struct CMesh {
     }
 
     void update_mesh() {
-      if (vertex_type == "camera") {
-        vao->update_vertex(VBO::create(vertices), 0, VAO::VertexType::vertex);
+      if (vertex_type == "model") {
+        vao->update_vertex(VBO::CreateModel(vertices), 0, VAO::VertexType::Model);
       } else if (vertex_type == "shape") {
-        vao->update_vertex(VBO::create(vertices), 0, VAO::VertexType::shape_vertex);
+        vao->update_vertex(VBO::CreateModel(vertices), 0, VAO::VertexType::Shape);
       } else if (vertex_type == "terrain") {
-        vao->update_vertex(std::move(vbo), 0, VAO::VertexType::terrain_vertex);
+        vao->update_vertex(std::move(vbo), 0, VAO::VertexType::Terrain);
       } else {
         ENGINE_ASSERT(false, "unknown vertex type {}", vertex_type);
       }
@@ -105,7 +105,7 @@ struct CMesh {
         if (cTexture->draw_mode == CTexture::DrawMode::texture_atlas or
             cTexture->draw_mode == CTexture::DrawMode::texture_atlas_blend or
             cTexture->draw_mode == CTexture::DrawMode::texture_atlas_blend_color) {
-          if (sp.get_name() == "camera" or
+          if (sp.get_name() == "model" or
               sp.get_name() == "shape") { // terrain shader get texture atlas data from vertex
             sp.set_float("use_texture_atlas", 1.f);
             uint32_t index = cTextureAtlas->index;
@@ -125,7 +125,7 @@ struct CMesh {
           sp.set_float("use_blending", 1.f);
           sp.set_float("blend_factor", cTexture->blend_factor);
         }
-        if (static_cast<float>(entt::monostate<"use_sky_blending"_hs>{}) == 1.f and sp.get_name() == "camera") {
+        if (static_cast<float>(entt::monostate<"use_sky_blending"_hs>{}) == 1.f and sp.get_name() == "model") {
           sp.set_float("use_sky_blending", static_cast<float>(entt::monostate<"use_sky_blending"_hs>{}));
           sp.set_float("skyblend_factor", static_cast<float>(entt::monostate<"skyblend_factor"_hs>{}));
           int ti = 10;

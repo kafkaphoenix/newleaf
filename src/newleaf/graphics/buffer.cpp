@@ -11,13 +11,13 @@ static constexpr GLbitfield mapping_flags =
 static constexpr GLbitfield storage_flags =
   GL_DYNAMIC_STORAGE_BIT | mapping_flags; // allow modification of the buffer but not resizing
 
-VBO::VBO(const std::vector<Vertex>& vertices) : m_count(vertices.size()), m_immutable(true) {
+VBO::VBO(const std::vector<ModelVertex>& vertices) : m_count(vertices.size()), m_immutable(true) {
   if (m_immutable) {
     glCreateBuffers(1, &m_id);
-    glNamedBufferStorage(m_id, sizeof(Vertex) * vertices.size(), vertices.data(), storage_flags);
+    glNamedBufferStorage(m_id, sizeof(ModelVertex) * vertices.size(), vertices.data(), storage_flags);
   } else {
     glCreateBuffers(1, &m_id);
-    glNamedBufferData(m_id, sizeof(Vertex) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
+    glNamedBufferData(m_id, sizeof(ModelVertex) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
   }
 }
 
@@ -31,11 +31,11 @@ VBO::VBO(const std::vector<TerrainVertex>& vertices) : m_count(vertices.size()) 
   glNamedBufferStorage(m_id, sizeof(TerrainVertex) * vertices.size(), vertices.data(), storage_flags);
 }
 
-void VBO::reload(const std::vector<Vertex>& vertices) {
+void VBO::reload(const std::vector<ModelVertex>& vertices) {
   if (m_immutable) {
-    glNamedBufferSubData(m_id, 0, sizeof(Vertex) * vertices.size(), vertices.data());
+    glNamedBufferSubData(m_id, 0, sizeof(ModelVertex) * vertices.size(), vertices.data());
   } else {
-    glNamedBufferData(m_id, sizeof(Vertex) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
+    glNamedBufferData(m_id, sizeof(ModelVertex) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
   }
 }
 
@@ -44,7 +44,7 @@ VBO::~VBO() {
   glDeleteBuffers(1, &m_id);
 }
 
-std::unique_ptr<VBO> VBO::create(const std::vector<Vertex>& vertices) { return std::make_unique<VBO>(vertices); }
+std::unique_ptr<VBO> VBO::CreateModel(const std::vector<ModelVertex>& vertices) { return std::make_unique<VBO>(vertices); }
 
 std::unique_ptr<VBO> VBO::CreateShape(const std::vector<ShapeVertex>& vertices) {
   return std::make_unique<VBO>(vertices);
