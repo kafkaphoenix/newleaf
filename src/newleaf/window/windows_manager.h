@@ -34,7 +34,8 @@ struct WindowData {
     bool sticky_keys_polling{};
     EventCallbackFn event_callback;
 
-    // settings
+    // TODO once setting is refactored remove settings from here,
+    // settings manager should keep state and call window or renderer
     std::string window_title;
     std::string window_icon_path;
     int width;
