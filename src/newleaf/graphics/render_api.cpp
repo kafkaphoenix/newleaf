@@ -84,8 +84,6 @@ void RenderAPI::set_clear_color(const std::array<float, 4>& color) {
   glClearColor(color[0], color[1], color[2], color[3]);
 }
 
-void RenderAPI::set_clear_depth(const float depth) { glClearDepth(depth); }
-
 void RenderAPI::toggle_wireframe(bool enabled) {
   enabled ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }

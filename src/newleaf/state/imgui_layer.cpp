@@ -61,7 +61,8 @@ void ImGuiLayer::on_imgui_update() {
     auto& render_manager = app.get_render_manager();
     auto& scene_manager = app.get_scene_manager();
     auto& states_manager = app.get_states_manager();
-    draw_debugger(settings_manager, assets_manager, render_manager, scene_manager, states_manager);
+    auto& windows_manager = app.get_windows_manager();
+    draw_debugger(settings_manager, assets_manager, render_manager, scene_manager, states_manager, windows_manager);
   }
 }
 

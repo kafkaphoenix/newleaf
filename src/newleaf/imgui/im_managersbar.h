@@ -19,7 +19,7 @@ namespace nl {
 
 inline void draw_managersbar(const AssetsManager& assets_manager, RenderManager& render_manager,
                              SceneManager& scene_manager, SettingsManager& settings_manager,
-                             StatesManager& states_manager) {
+                             StatesManager& states_manager, WindowsManager& windows_manager) {
   if (ImGui::BeginTabBar("RootTabBar", ImGuiTabBarFlags_Reorderable)) {
     if (ImGui::BeginTabItem("Assets Manager")) {
       draw_assets_manager(assets_manager, settings_manager);
@@ -62,7 +62,7 @@ inline void draw_managersbar(const AssetsManager& assets_manager, RenderManager&
       filter_layers = false;
     }
     if (ImGui::BeginTabItem("Settings Manager")) {
-      draw_settings_manager(settings_manager, render_manager);
+      draw_settings_manager(settings_manager, render_manager, windows_manager);
       ImGui::EndTabItem();
     } else {
       selected_settings_manager_tabkey.clear();

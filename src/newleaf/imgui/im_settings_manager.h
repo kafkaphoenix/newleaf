@@ -18,7 +18,7 @@ namespace nl {
 
 std::string selected_settings_manager_tabkey;
 
-inline void draw_settings_manager(SettingsManager& settings_manager, const RenderManager& render_manager) {
+inline void draw_settings_manager(SettingsManager& settings_manager, const RenderManager& render_manager, WindowsManager& windows_manager) {
   ImGui::Columns(2);
 
   ImGui::SeparatorText("Engine");
@@ -38,14 +38,10 @@ inline void draw_settings_manager(SettingsManager& settings_manager, const Rende
     selected_settings_manager_tabkey = "Scene";
   }
 
-  auto& app = Application::get();
-  bool paused = app.is_paused();
-
   ImGui::NextColumn();
   if (not selected_settings_manager_tabkey.empty()) {
     ImGui::SeparatorText("Edit");
     if (selected_settings_manager_tabkey == "Window") {
-      auto& windows_manager = Application::get().get_windows_manager();
       ImGui::Checkbox("Fullscreen", &settings_manager.fullscreen);
       windows_manager.toggle_fullscreen(settings_manager.fullscreen);
 
@@ -129,6 +125,8 @@ inline void draw_settings_manager(SettingsManager& settings_manager, const Rende
         std::format("Mouse position x:{}, y:{}", window_data.debug_mouse_x, window_data.debug_mouse_y).c_str());
 
     } else if (selected_settings_manager_tabkey == "Debug") {
+      auto& app = Application::get();
+      bool paused = app.is_paused();
       ImGui::Checkbox("Game paused", &paused);
       app.pause(paused);
       ImGui::Checkbox("Debug enabled",
@@ -136,6 +134,8 @@ inline void draw_settings_manager(SettingsManager& settings_manager, const Rende
       ImGui::Checkbox("Display FPS",
                       &settings_manager.display_fps); // TODO use for something
       ImGui::Checkbox("Display collision boxes", &settings_manager.display_collision_boxes);
+      ImGui::Checkbox("Display wireframe", &settings_manager.display_wireframe);
+      windows_manager.toggle_wireframe(settings_manager.display_wireframe);
     } else if (selected_settings_manager_tabkey == "Logger") {
       ImGui::Checkbox("Enable engine logger", &settings_manager.enable_engine_logger);
       LogManager::toggle_engine_logger(settings_manager.enable_engine_logger);
@@ -242,8 +242,8 @@ inline void draw_settings_manager(SettingsManager& settings_manager, const Rende
         LogManager::dump_backtrace();
       }
     } else if (selected_settings_manager_tabkey == "Render") {
-      ImGui::ColorEdit4("Clear color", settings_manager.clear_color.data());
-      ImGui::SliderFloat("Clear depth", &settings_manager.clear_depth, 0.f, 1.f);
+      // TODO display render settings like different passes
+      ImGui::Text("Pending");
     } else if (selected_settings_manager_tabkey == "Scene") {
       ImGui::Text("Name: %s", settings_manager.active_scene.c_str());
       ImGui::Text("Path: %s ", settings_manager.active_scene_path.c_str());
