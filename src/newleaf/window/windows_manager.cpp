@@ -252,6 +252,8 @@ void WindowsManager::shutdown() {
 }
 
 void WindowsManager::on_update() {
+  // TODO maybe think a better way
+  RenderAPI::toggle_wireframe(m_data.wireframe);
   m_context->swap_buffers();
   glfwPollEvents();
 }
@@ -573,7 +575,6 @@ void WindowsManager::toggle_wireframe(bool wireframe) {
   if (wireframe not_eq m_data.wireframe) {
     m_data.wireframe = wireframe;
     Application::get().get_settings_manager().display_wireframe = wireframe;
-    RenderAPI::toggle_wireframe(wireframe);
   }
 }
 
