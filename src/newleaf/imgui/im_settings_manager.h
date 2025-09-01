@@ -8,7 +8,6 @@
 #include <imgui_stdlib.h>
 
 #include "../application/application.h"
-#include "../graphics/render_api.h"
 #include "../graphics/render_manager.h"
 #include "../logging/log_manager.h"
 #include "../settings/settings_manager.h"
@@ -133,13 +132,15 @@ inline void draw_settings_manager(SettingsManager& settings_manager, const Rende
       app.pause(paused);
       ImGui::Checkbox("Debug enabled",
                       &settings_manager.enabled_debug); // TODO use for something
+      windows_manager.toggle_enabled_debug(settings_manager.enabled_debug);
       ImGui::Checkbox("Display FPS",
                       &settings_manager.display_fps); // TODO use for something
+      windows_manager.toggle_display_fps(settings_manager.display_fps);
       ImGui::Checkbox("Display collision boxes", &settings_manager.display_collision_boxes);
+      windows_manager.toggle_display_collision_boxes(settings_manager.display_collision_boxes);
       ImGui::Checkbox("Display wireframe", &settings_manager.display_wireframe);
       // TODO this setting should be in renderer, but in reality all of them should be in settings
       windows_manager.toggle_wireframe(settings_manager.display_wireframe);
-      RenderAPI::toggle_wireframe(settings_manager.display_wireframe);
     } else if (selected_settings_manager_tabkey == "Logger") {
       ImGui::Checkbox("Enable engine logger", &settings_manager.enable_engine_logger);
       LogManager::toggle_engine_logger(settings_manager.enable_engine_logger);

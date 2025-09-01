@@ -6,6 +6,7 @@
 #include "../events/key_event.h"
 #include "../events/mouse_event.h"
 #include "../events/window_event.h"
+#include "../graphics/render_api.h"
 #include "../logging/log_manager.h"
 #include "../utils/assert.h"
 
@@ -572,6 +573,7 @@ void WindowsManager::toggle_wireframe(bool wireframe) {
   if (wireframe not_eq m_data.wireframe) {
     m_data.wireframe = wireframe;
     Application::get().get_settings_manager().display_wireframe = wireframe;
+    RenderAPI::toggle_wireframe(wireframe);
   }
 }
 
