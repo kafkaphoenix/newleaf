@@ -38,7 +38,7 @@ struct SettingsManager {
 
     std::string default_texture_path = "";
 
-    bool enable_debug = false; // TODO use for something more than debug LOG/CRASH
+    bool debug_enabled = false; // TODO use for something more than debug LOG/CRASH
     bool display_fps = false;  // TODO implement with enable_debug maybe?
     bool display_collision_boxes = false;
     bool display_wireframe = false;
@@ -74,7 +74,7 @@ struct SettingsManager {
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SettingsManager, app_name, root, logfile_path, backtrace_logfile_path,
                                    window_icon_path, window_w, window_h, depth_bits, refresh_rate, fullscreen,
                                    primary_monitor, vsync, resizable, imgui_window, fit_to_window, sticky_keys_polling,
-                                   cursor_icon_path, cursor_mode, enable_debug, display_fps, enable_engine_logger,
+                                   cursor_icon_path, cursor_mode, debug_enabled, display_fps, enable_engine_logger,
                                    enable_app_logger, engine_log_level, app_log_level, engine_flush_level,
                                    app_flush_level, enable_engine_backtrace_logger, enable_app_backtrace_logger,
                                    clear_color, active_scene, active_scene_path, reload_prototypes,

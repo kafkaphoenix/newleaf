@@ -132,7 +132,7 @@ inline void draw_settings_manager(SettingsManager& settings_manager, const Rende
       ImGui::Checkbox("Game paused", &paused);
       app.pause(paused);
       ImGui::Checkbox("Debug enabled",
-                      &settings_manager.enable_debug); // TODO use for something
+                      &settings_manager.debug_enabled); // TODO use for something
       ImGui::Checkbox("Display FPS",
                       &settings_manager.display_fps); // TODO use for something
       ImGui::Checkbox("Display collision boxes", &settings_manager.display_collision_boxes);

@@ -341,12 +341,6 @@ void WindowsManager::toggle_visible(bool visible) {
   }
 }
 
-void WindowsManager::toggle_wireframe(bool wireframe) {
-  if (wireframe not_eq m_data.wireframe) {
-    m_data.wireframe = wireframe;
-  }
-}
-
 void WindowsManager::set_event_callback(EventCallbackFn&& cb) { m_data.event_callback = std::move(cb); }
 
 void WindowsManager::set_window_title(std::string title) {
@@ -571,6 +565,34 @@ void WindowsManager::toggle_fit_to_window(bool fit_to_window) {
   if (fit_to_window not_eq m_data.fit_to_window) {
     m_data.fit_to_window = fit_to_window;
     Application::get().get_settings_manager().fit_to_window = fit_to_window;
+  }
+}
+
+void WindowsManager::toggle_wireframe(bool wireframe) {
+  if (wireframe not_eq m_data.wireframe) {
+    m_data.wireframe = wireframe;
+    Application::get().get_settings_manager().display_wireframe = wireframe;
+  }
+}
+
+void WindowsManager::toggle_display_collision_boxes(bool display) {
+  if (display not_eq m_data.display_collision_boxes) {
+    m_data.display_collision_boxes = display;
+    Application::get().get_settings_manager().display_collision_boxes = display;
+  }
+}
+
+void WindowsManager::toggle_display_fps(bool display) {
+  if (display not_eq m_data.display_fps) {
+    m_data.display_fps = display;
+    Application::get().get_settings_manager().display_fps = display;
+  }
+}
+
+void WindowsManager::toggle_debug_enabled(bool enabled) {
+  if (enabled not_eq m_data.debug_enabled) {
+    m_data.debug_enabled = enabled;
+    Application::get().get_settings_manager().debug_enabled = enabled;
   }
 }
 

@@ -30,7 +30,6 @@ struct WindowData {
     bool maximized{};
     bool focused{};
     bool visible{};
-    bool wireframe{};
     bool sticky_keys_polling{};
     EventCallbackFn event_callback;
 
@@ -50,6 +49,10 @@ struct WindowData {
     bool fullscreen{};
     bool imgui_window{};
     bool fit_to_window{};
+    bool wireframe{};
+    bool display_collision_boxes{};
+    bool display_fps{};
+    bool debug_enabled{};
 };
 
 class WindowsManager {
@@ -72,7 +75,6 @@ class WindowsManager {
     void maximize(bool maximize);
     void toggle_focus(bool focused);
     void toggle_visible(bool visible);
-    void toggle_wireframe(bool wireframe);
     void set_event_callback(EventCallbackFn&& cb);
     void toggle_sticky_keys_polling(bool enabled);
     void set_window_title(std::string title);
@@ -89,6 +91,10 @@ class WindowsManager {
     void toggle_fullscreen(bool fullscreen);
     void toggle_window_inside_imgui(bool imgui_window);
     void toggle_fit_to_window(bool fit_to_window);
+    void toggle_wireframe(bool wireframe);
+    void toggle_display_collision_boxes(bool display);
+    void toggle_display_fps(bool display);
+    void toggle_debug_enabled(bool enabled);
 
     static std::unique_ptr<WindowsManager> create(const SettingsManager& settings_manager);
 
