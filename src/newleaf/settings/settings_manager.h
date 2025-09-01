@@ -38,8 +38,8 @@ struct SettingsManager {
 
     std::string default_texture_path = "";
 
-    bool enable_debug = false; // TODO use for something
-    bool display_fps = false; // TODO implement with enable_debug maybe?
+    bool enable_debug = false; // TODO use for something more than debug LOG/CRASH
+    bool display_fps = false;  // TODO implement with enable_debug maybe?
     bool display_collision_boxes = false;
     bool display_wireframe = false;
 
