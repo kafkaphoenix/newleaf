@@ -52,7 +52,7 @@ struct WindowData {
     bool wireframe{};
     bool display_collision_boxes{};
     bool display_fps{};
-    bool debug_enabled{};
+    bool enabled_debug{};
 };
 
 class WindowsManager {
@@ -94,7 +94,7 @@ class WindowsManager {
     void toggle_wireframe(bool wireframe);
     void toggle_display_collision_boxes(bool display);
     void toggle_display_fps(bool display);
-    void toggle_debug_enabled(bool enabled);
+    void toggle_enabled_debug(bool enabled);
 
     static std::unique_ptr<WindowsManager> create(const SettingsManager& settings_manager);
 
