@@ -34,6 +34,8 @@ if(NOT newleaf_POPULATED)
 endif()
 ```
 
+> Currently, only Windows environments are supported.
+
 ## Demos
 
 Engine use cases can be found in the [newleaf demos repository](https://github.com/kafkaphoenix/newleaf_demos)
@@ -58,6 +60,7 @@ Engine use cases can be found in the [newleaf demos repository](https://github.c
 - Scripting language
 - Multiplatform
 - Multithreading
+- Linux support
 
 ## Third party libraries
 
