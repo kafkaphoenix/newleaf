@@ -33,6 +33,15 @@ void LayersManager::push_overlay(std::unique_ptr<Layer>&& o, bool enabled) {
   m_layers.emplace_back(std::move(o));
 }
 
+bool LayersManager::is_overlay_enabled(std::string_view name) const {
+  auto it = std::ranges::find_if(m_layers | std::views::drop(m_index),
+                                 [&](const auto& layer) { return layer->get_name() == name; });
+  if (it not_eq m_layers.end()) {
+    return (*it)->is_enabled();
+  }
+  return false;
+}
+
 void LayersManager::enable_overlay(std::string_view name) {
   auto it = std::ranges::find_if(m_layers | std::views::drop(m_index),
                                  [&](const auto& layer) { return layer->get_name() == name; });

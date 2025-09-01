@@ -6,7 +6,6 @@
 #include "../events/key_event.h"
 #include "../events/mouse_event.h"
 #include "../events/window_event.h"
-#include "../graphics/render_api.h"
 #include "../logging/log_manager.h"
 #include "../utils/assert.h"
 
@@ -252,8 +251,6 @@ void WindowsManager::shutdown() {
 }
 
 void WindowsManager::on_update() {
-  // TODO maybe think a better way
-  RenderAPI::toggle_wireframe(m_data.wireframe);
   m_context->swap_buffers();
   glfwPollEvents();
 }
@@ -571,6 +568,7 @@ void WindowsManager::toggle_fit_to_window(bool fit_to_window) {
   }
 }
 
+// shouldn't be a permanent setting
 void WindowsManager::toggle_wireframe(bool wireframe) {
   if (wireframe not_eq m_data.wireframe) {
     m_data.wireframe = wireframe;
@@ -578,6 +576,7 @@ void WindowsManager::toggle_wireframe(bool wireframe) {
   }
 }
 
+// shouldn't be a permanent setting
 void WindowsManager::toggle_display_collision_boxes(bool display) {
   if (display not_eq m_data.display_collision_boxes) {
     m_data.display_collision_boxes = display;

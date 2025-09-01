@@ -13,6 +13,8 @@
 #include "../settings/settings_manager.h"
 #include "../window/windows_manager.h"
 #include "im_utils.h"
+#include "../graphics/render_api.h"
+
 
 namespace nl {
 
@@ -141,6 +143,7 @@ inline void draw_settings_manager(SettingsManager& settings_manager, const Rende
       ImGui::Checkbox("Display wireframe", &settings_manager.display_wireframe);
       // TODO this setting should be in renderer, but in reality all of them should be in settings
       windows_manager.toggle_wireframe(settings_manager.display_wireframe);
+      RenderAPI::toggle_wireframe(settings_manager.display_wireframe);
     } else if (selected_settings_manager_tabkey == "Logger") {
       ImGui::Checkbox("Enable engine logger", &settings_manager.enable_engine_logger);
       LogManager::toggle_engine_logger(settings_manager.enable_engine_logger);

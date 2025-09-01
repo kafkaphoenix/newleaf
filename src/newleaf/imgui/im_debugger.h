@@ -21,7 +21,7 @@ inline void draw_debugger(SettingsManager& settings_manager, AssetsManager& asse
 
   ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
 
-  ImGui::SetNextWindowSize(ImVec2(500, 600), ImGuiCond_FirstUseEver);
+  ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_FirstUseEver);
   if (ImGui::Begin("Debugger", nullptr, window_flags)) {
     draw_menubar(assets_manager, render_manager, scene_manager);
     draw_managersbar(assets_manager, render_manager, scene_manager, settings_manager, states_manager, windows_manager);
