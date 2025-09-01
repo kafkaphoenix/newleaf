@@ -66,6 +66,9 @@ inline void draw_managersbar(const AssetsManager& assets_manager, RenderManager&
       ImGui::EndTabItem();
     } else {
       selected_settings_manager_tabkey.clear();
+      // TODO once setting is refactored if we have a loop with events maybe we can let this true when closing
+      settings_manager.display_wireframe = false;
+      settings_manager.display_collision_boxes = false;
     }
     ImGui::EndTabBar();
   }
