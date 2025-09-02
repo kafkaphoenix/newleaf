@@ -100,7 +100,7 @@ struct CFBO {
         sp.set_float("mode", 4.f);
       } else if (mode == Mode::sharpen) {
         sp.set_float("mode", 5.f);
-      } else if (mode == Mode::night_vision) {
+      } else if (mode == Mode::nightvision) {
         sp.set_float("mode", 6.f);
       } else if (mode == Mode::emboss) {
         sp.set_float("mode", 7.f);
