@@ -7,6 +7,7 @@
 
 #include <entt/entt.hpp>
 
+#include "../../graphics/render_manager.h"
 #include "../../graphics/framebuffer.h"
 #include "../../graphics/shader_program.h"
 #include "../../logging/log_manager.h"
@@ -112,6 +113,8 @@ struct CFBO {
 template <> inline void nl::SceneManager::on_component_added(entt::entity e, CFBO& c) {
   c.set_mode();
   c.set_attachment();
+  auto& render_manager = Application::get().get_render_manager();
+  render_manager.add_framebuffer(std::string(c.fbo), c.width, c.height, c.attachment);
 
   m_registry.replace<CFBO>(e, c);
 }

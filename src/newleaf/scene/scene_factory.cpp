@@ -138,7 +138,7 @@ void SceneFactory::create_shader_programs(const Scene& scene, AssetsManager& ass
   for (const auto& [shader_program, shader_program_data] : scene.get_shader_programs()) {
     for (const auto& [shader_type, path] : shader_program_data.items()) {
       assets_manager.load<Shader>(shader_type, path);
-    } // TODO maybe delete shader as asset?
+    }
     render_manager.add_shader_program(std::string(shader_program), assets_manager);
   }
 }
