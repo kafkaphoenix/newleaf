@@ -55,18 +55,6 @@ struct CMesh {
       vao->set_index(IBO::create(indices));
     }
 
-    void update_mesh() {
-      if (vertex_type == "model") {
-        vao->update_vertex(VBO::CreateModel(vertices), 0, VAO::VertexType::Model);
-      } else if (vertex_type == "shape") {
-        vao->update_vertex(VBO::CreateModel(vertices), 0, VAO::VertexType::Shape);
-      } else if (vertex_type == "terrain") {
-        vao->update_vertex(std::move(vbo), 0, VAO::VertexType::Terrain);
-      } else {
-        ENGINE_ASSERT(false, "unknown vertex type {}", vertex_type);
-      }
-    }
-
     const std::shared_ptr<VAO>& get_vao() {
       if (not vao) {
         setup_mesh();
