@@ -18,7 +18,7 @@
 namespace nl {
 
 struct CFBO {
-    enum class Mode { normal, inverse, grey_scale, blur, edge, sharpen, night_vision, emboss };
+    enum class Mode { normal, inverse, greyscale, blur, edge, sharpen, nightvision, emboss };
 
     std::string fbo;
     std::string _mode;
@@ -69,15 +69,15 @@ struct CFBO {
       } else if (_mode == "inverse") {
         mode = Mode::inverse;
       } else if (_mode == "greyscale") {
-        mode = Mode::grey_scale;
+        mode = Mode::greyscale;
       } else if (_mode == "blur") {
         mode = Mode::blur;
       } else if (_mode == "edge") {
         mode = Mode::edge;
       } else if (_mode == "sharpen") {
         mode = Mode::sharpen;
-      } else if (_mode == "night_vision") {
-        mode = Mode::night_vision;
+      } else if (_mode == "nightvision") {
+        mode = Mode::nightvision;
       } else if (_mode == "emboss") {
         mode = Mode::emboss;
       } else {
@@ -92,7 +92,7 @@ struct CFBO {
         sp.set_float("mode", 0.f);
       } else if (mode == Mode::inverse) {
         sp.set_float("mode", 1.f);
-      } else if (mode == Mode::grey_scale) {
+      } else if (mode == Mode::greyscale) {
         sp.set_float("mode", 2.f);
       } else if (mode == Mode::blur) {
         sp.set_float("mode", 3.f);
