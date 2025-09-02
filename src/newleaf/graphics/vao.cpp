@@ -114,11 +114,6 @@ void VAO::attach_terrain_vertex_attributes() {
   ++m_vbo_index;
 }
 
-void VAO::update_vertex(std::shared_ptr<VBO>&& vbo, uint32_t index, VertexType type) {
-  // TODO: update only the vbo at index ? should not be binded here
-  m_dirty = true;
-}
-
 void VAO::clear_vbos() { // TODO: move to on detach on component? Do i need it?
                          // should not be binded here
   m_vbos.clear();

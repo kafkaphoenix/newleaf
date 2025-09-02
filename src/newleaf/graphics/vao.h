@@ -20,10 +20,6 @@ class VAO {
 
     enum class VertexType { Model, Shape, Terrain };
     void attach_vertex(std::shared_ptr<VBO>&& vbo, VertexType type);
-    void attach_model_vertex_attributes();
-    void attach_shape_vertex_attributes();
-    void attach_terrain_vertex_attributes();
-    void update_vertex(std::shared_ptr<VBO>&& vbo, uint32_t index, VertexType type);
     void clear_vbos();
     void set_index(std::unique_ptr<IBO>&& ibo);
 
@@ -37,6 +33,9 @@ class VAO {
     static std::shared_ptr<VAO> create();
 
   private:
+    void attach_model_vertex_attributes();
+    void attach_shape_vertex_attributes();
+    void attach_terrain_vertex_attributes();
     uint32_t m_id{};
     uint32_t m_vbo_index{};
     std::vector<std::shared_ptr<VBO>> m_vbos;

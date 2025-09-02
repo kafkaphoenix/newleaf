@@ -42,6 +42,7 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   std::vector<ModelVertex> vertices{};
   std::vector<uint32_t> indices{};
   std::vector<std::shared_ptr<Texture>> textures;
+  vertices.reserve(mesh->mNumVertices);
 
   for (uint32_t i = 0; i < mesh->mNumVertices; ++i) {
     ModelVertex vertex{};

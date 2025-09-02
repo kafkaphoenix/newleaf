@@ -39,12 +39,8 @@ class VBO {
     VBO(const std::vector<TerrainVertex>& vertices);
     ~VBO();
 
-    // TODO more methods are missing unless i refactor how to approach vertex without knowing the vertex
-    void reload(const std::vector<ModelVertex>& vertices);
-
     uint32_t get_count() const { return m_count; }
     uint32_t get_id() const { return m_id; }
-    bool is_immutable() const { return m_immutable; }
 
     static std::unique_ptr<VBO> CreateModel(const std::vector<ModelVertex>& vertices);
     static std::unique_ptr<VBO> CreateShape(const std::vector<ShapeVertex>& vertices);
@@ -53,7 +49,6 @@ class VBO {
   private:
     uint32_t m_id{};
     uint32_t m_count{};
-    bool m_immutable{};
 };
 
 class IBO {
@@ -65,13 +60,11 @@ class IBO {
 
     uint32_t get_count() const { return m_count; }
     uint32_t get_id() const { return m_id; }
-    bool is_immutable() const { return m_immutable; }
 
     static std::unique_ptr<IBO> create(const std::vector<uint32_t>& indices);
 
   private:
     uint32_t m_id{};
     uint32_t m_count{};
-    bool m_immutable{};
 };
 }
