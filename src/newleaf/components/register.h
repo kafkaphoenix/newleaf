@@ -25,6 +25,7 @@ struct CTransform;
 struct CLight;
 struct CSkybox;
 struct CTime;
+struct CFog;
 
 inline CActiveCamera& cast_cactive_camera(void* other) { return *static_cast<CActiveCamera*>(other); }
 
@@ -71,6 +72,8 @@ inline CTransform& cast_ctransform(void* other) { return *static_cast<CTransform
 inline CLight& cast_clight(void* other) { return *static_cast<CLight*>(other); }
 
 inline CSkybox& cast_cskybox(void* other) { return *static_cast<CSkybox*>(other); }
+
+inline CFog& cast_cfog(void* other) { return *static_cast<CFog*>(other); }
 
 inline CTime& cast_ctime(void* other) { return *static_cast<CTime*>(other); }
 

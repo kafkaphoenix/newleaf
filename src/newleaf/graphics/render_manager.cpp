@@ -26,16 +26,16 @@ void RenderManager::begin_scene(glm::mat4 view, glm::mat4 projection, glm::vec3 
 void RenderManager::end_scene() {}
 
 void RenderManager::add_shader_program(std::string&& name, const AssetsManager& assets_manager) {
-  auto newShaderProgram = ShaderProgram::create(std::string(name));
+  auto shader_program = ShaderProgram::create(std::string(name));
   const auto& vs = assets_manager.get<Shader>("v" + name);
   const auto& fs = assets_manager.get<Shader>("f" + name);
-  newShaderProgram->attach(*vs);
-  newShaderProgram->attach(*fs);
-  newShaderProgram->link();
-  newShaderProgram->detach(*vs);
-  newShaderProgram->detach(*fs);
+  shader_program->attach(*vs);
+  shader_program->attach(*fs);
+  shader_program->link();
+  shader_program->detach(*vs);
+  shader_program->detach(*fs);
   ENGINE_TRACE("shader {} linked!", name);
-  m_shader_programs.emplace(std::move(name), std::move(newShaderProgram));
+  m_shader_programs.emplace(std::move(name), std::move(shader_program));
 }
 
 void RenderManager::add_framebuffer(std::string&& name, uint32_t w, uint32_t h, uint32_t t) {

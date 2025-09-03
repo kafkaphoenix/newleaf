@@ -21,6 +21,7 @@
 #include "physics/cGravity.h"
 #include "physics/cRigidBody.h"
 #include "physics/cTransform.h"
+#include "world/cFog.h"
 #include "world/cLight.h"
 #include "world/cSkybox.h"
 #include "world/cTime.h"
@@ -101,6 +102,7 @@ void register_components() {
     .ctor<&cast_cfbo, entt::as_ref_t>()
     .data<&CFBO::fbo>("fbo"_hs)
     .data<&CFBO::_mode>("mode"_hs)
+    .data<&CFBO::time>("time"_hs)
     .data<&CFBO::_attachment>("attachment"_hs)
     .data<&CFBO::width>("width"_hs)
     .data<&CFBO::height>("height"_hs)
@@ -257,14 +259,20 @@ void register_components() {
   entt::meta<CSkybox>()
     .type("skybox"_hs)
     .ctor<&cast_cskybox, entt::as_ref_t>()
-    .data<&CSkybox::enable_fog>("enable_fog"_hs)
-    .data<&CSkybox::fog_color>("fog_color"_hs)
-    .data<&CSkybox::fog_density>("fog_density"_hs)
-    .data<&CSkybox::fog_gradient>("fog_gradient"_hs)
     .data<&CSkybox::rotation_speed>("rotation_speed"_hs)
     .func<&CSkybox::print>("print"_hs)
     .func<&CSkybox::to_map>("to_map"_hs)
     .func<&assign<CSkybox>, entt::as_ref_t>("assign"_hs);
+
+  entt::meta<CFog>()
+    .type("fog"_hs)
+    .ctor<&cast_cfog, entt::as_ref_t>()
+    .data<&CFog::color>("color"_hs)
+    .data<&CFog::density>("density"_hs)
+    .data<&CFog::gradient>("gradient"_hs)
+    .func<&CFog::print>("print"_hs)
+    .func<&CFog::to_map>("to_map"_hs)
+    .func<&assign<CFog>, entt::as_ref_t>("assign"_hs);
 
   entt::meta<CTime>()
     .type("time"_hs)

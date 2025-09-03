@@ -44,7 +44,8 @@ struct CMesh {
       vao = VAO::create();
       if (vertex_type == "model") {
         vao->attach_vertex(VBO::CreateModel(vertices), VAO::VertexType::Model);
-      } else if (vertex_type == "shape") { // TODO this is not used and use wrong method, shape factory  use create shape
+      } else if (vertex_type ==
+                 "shape") { // TODO this is not used and use wrong method, shape factory  use create shape
         vao->attach_vertex(VBO::CreateModel(vertices), VAO::VertexType::Shape);
       } else if (vertex_type == "terrain") { // TODO maybe a better way to do
                                              // this using vertices? terrain returns vbo from other side
@@ -67,7 +68,6 @@ struct CMesh {
                        CMaterial* cMaterial) {
       sp.reset_active_uniforms();
       sp.use();
-      sp.set_float("enable_fog", static_cast<float>(entt::monostate<"enable_fog"_hs>{}));
       sp.set_float("fog_density", static_cast<float>(entt::monostate<"fog_density"_hs>{}));
       sp.set_float("fog_gradient", static_cast<float>(entt::monostate<"fog_gradient"_hs>{}));
       sp.set_vec3("fog_color", static_cast<glm::vec3>(entt::monostate<"fog_color"_hs>{}));
