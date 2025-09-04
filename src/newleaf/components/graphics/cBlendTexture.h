@@ -18,25 +18,26 @@
 
 namespace nl {
 
-struct CTextureAtlas {
+struct CBlendTexture {
     std::string path;
     std::shared_ptr<Texture> texture;
-    uint32_t rows{};
-    uint32_t index{};
+    float blend_factor{};
+    bool repeat{};
 
-    CTextureAtlas() = default;
-    explicit CTextureAtlas(std::string&& p, uint32_t r, uint32_t i) : path(std::move(p)), rows(r), index(i) {}
+    CBlendTexture() = default;
+    explicit CBlendTexture(std::string&& p, float b) : path(std::move(p)), blend_factor(b) {}
 
     void print() const {
-      ENGINE_BACKTRACE("\t\tpath: {0}\n\t\t\t\t\t\trows: {1}\n\t\t\t\t\t\tindex: {2}", path, rows, index);
+      ENGINE_BACKTRACE("\t\tpath: {0}\n\t\t\t\t\t\tblend_factor: {1}\n\t\t\t\t\t\trepeat: {2}", path, blend_factor,
+                       repeat);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
       std::map<std::string, std::string, NumericComparator> info;
       info["path"] = path;
-      info["rows"] = std::to_string(rows);
-      info["index"] = std::to_string(index);
+      info["blend_factor"] = std::to_string(blend_factor);
       info["texture"] = get_texture_info();
+      info["repeat"] = repeat ? "true" : "false";
 
       return info;
     }
@@ -61,8 +62,8 @@ struct CTextureAtlas {
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CTextureAtlas& c) {
+template <> inline void nl::SceneManager::on_component_added(entt::entity e, CBlendTexture& c) {
   c.set_texture();
 
-  m_registry.replace<CTextureAtlas>(e, c);
+  m_registry.replace<CBlendTexture>(e, c);
 }

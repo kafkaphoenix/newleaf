@@ -9,73 +9,48 @@
 #include "../../components/physics/cTransform.h"
 #include "../../components/world/cSkybox.h"
 #include "../../components/world/cTime.h"
+#include "../../components/graphics/cBlendTexture.h"
 
 using namespace entt::literals;
-
 namespace nl {
-
-SkyboxSystem::~SkyboxSystem() { entt::monostate<"use_sky_blending"_hs>{} = 0.f; }
-
-void SkyboxSystem::init(entt::registry& registry) {
-  registry.view<CSkybox, CTransform, CRigidBody, CTime, CTexture, CUUID>().each(
-    [&](const CSkybox& cSkybox, CTransform& cTransform, const CRigidBody& cRigidBody, const CTime& cTime,
-        CTexture& cTexture, const CUUID& cUUID) {
-      if (cTexture.draw_mode == CTexture::DrawMode::texture_blend) {
-        float blend_factor = 0.f;
-        if (cTime.current_hour >= cTime.night_start and cTime.current_hour < cTime.day_transition_start) {
-          blend_factor = 0.f;
-        } else if (cTime.current_hour >= cTime.day_transition_start and cTime.current_hour < cTime.day_start) {
-          blend_factor = (cTime.current_minute + (cTime.current_hour - cTime.day_transition_start) * cTime.fps) / 120.f;
-        } else if (cTime.current_hour >= cTime.day_start and cTime.current_hour < cTime.night_transition_start) {
-          blend_factor = 1.f;
-        } else if (cTime.current_hour >= cTime.night_transition_start and cTime.current_hour < cTime.night_start) {
-          blend_factor =
-            1.f - ((cTime.current_minute + (cTime.current_hour - cTime.night_transition_start) * cTime.fps) / 120.f);
-        }
-        cTexture.blend_factor = blend_factor;
-        entt::monostate<"sky_blend_factor"_hs>{} = blend_factor;
-        entt::monostate<"use_sky_blending"_hs>{} = 1.f;
-      } else {
-        entt::monostate<"use_sky_blending"_hs>{} = 0.f;
-      }
-    });
-}
 
 void SkyboxSystem::update(entt::registry& registry, const Time& ts) {
   if (Application::get().is_paused()) {
     return;
   }
 
-  registry.view<CSkybox, CTransform, CRigidBody, CTime, CTexture, CUUID>().each(
-    [&](const CSkybox& cSkybox, CTransform& cTransform, const CRigidBody& cRigidBody, const CTime& cTime,
-        CTexture& cTexture, const CUUID& cUUID) {
-      if (cTexture.draw_mode == CTexture::DrawMode::texture_blend) {
+  entt::entity clock = registry.view<CTime, CUUID>().front();
+  APP_ASSERT(clock not_eq entt::null, "no active clock found!");
+  const CTime& cTime = registry.get<CTime>(clock);
+
+  registry.view<CSkybox, CTexture, CBlendTexture, CTransform, CRigidBody, CUUID>().each(
+    [&](entt::entity e, const CSkybox& cSkybox, CTransform& cTransform, const CRigidBody& cRigidBody, CTexture& cTexture, const CUUID& cUUID) {
+      CBlendTexture* cSkyboxBlend = registry.try_get<CBlendTexture>(e);
+      if (cSkyboxBlend) {
         float blend_factor = 0.f;
         if (cTime.current_hour >= cTime.night_start and cTime.current_hour < cTime.day_transition_start) {
+          // night
           blend_factor = 0.f;
         } else if (cTime.current_hour >= cTime.day_transition_start and cTime.current_hour < cTime.day_start) {
+          // morning
           blend_factor = (cTime.current_minute + (cTime.current_hour - cTime.day_transition_start) * cTime.fps) / 120.f;
         } else if (cTime.current_hour >= cTime.day_start and cTime.current_hour < cTime.night_transition_start) {
+          // day
           blend_factor = 1.f;
         } else if (cTime.current_hour >= cTime.night_transition_start and cTime.current_hour < cTime.night_start) {
+          // late afternoon
           blend_factor =
             1.f - ((cTime.current_minute + (cTime.current_hour - cTime.night_transition_start) * cTime.fps) / 120.f);
         }
-        cTexture.blend_factor = blend_factor;
-        entt::monostate<"sky_blend_factor"_hs>{} = blend_factor;
-        entt::monostate<"use_sky_blending"_hs>{} = 1.f;
-      } else {
-        entt::monostate<"use_sky_blending"_hs>{} = 0.f;
+        cSkyboxBlend->blend_factor = blend_factor;
       }
 
       if (cRigidBody.kinematic) {
-        // TODO cActiveSkybox so we can set different ones in different planets
         float rotation = 0.f;
         if (cSkybox.rotation_speed > 0.f) {
           rotation = cSkybox.rotation_speed;
         } else {
-          // to avoid rotating fps frames per second instead of one we need to
-          // divide by fps
+          // to avoid rotating fps frames per second instead of one second we need to divide by fps
           float rotationAnglePerSecond = (360.f / (cTime.day_length * 3600.f)) / cTime.fps;
           rotation = rotationAnglePerSecond * cTime.acceleration;
         }

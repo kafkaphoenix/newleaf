@@ -8,13 +8,12 @@
 #include <imgui_stdlib.h>
 
 #include "../application/application.h"
+#include "../graphics/render_api.h"
 #include "../graphics/render_manager.h"
 #include "../logging/log_manager.h"
 #include "../settings/settings_manager.h"
 #include "../window/windows_manager.h"
 #include "im_utils.h"
-#include "../graphics/render_api.h"
-
 
 namespace nl {
 
@@ -145,8 +144,8 @@ inline void draw_settings_manager(SettingsManager& settings_manager, const Rende
       windows_manager.toggle_wireframe(settings_manager.display_wireframe);
       RenderAPI::toggle_wireframe(settings_manager.display_wireframe);
     } else if (selected_settings_manager_tabkey == "Logger") {
-      ImGui::Checkbox("Enable engine logger", &settings_manager.enable_engine_logger);
-      LogManager::toggle_engine_logger(settings_manager.enable_engine_logger);
+      ImGui::Checkbox("Enable engine logger", &settings_manager.engine_logger_enabled);
+      LogManager::toggle_engine_logger(settings_manager.engine_logger_enabled);
       if (ImGui::BeginCombo("Engine log level", settings_manager.engine_log_level == 0   ? "trace"
                                                 : settings_manager.engine_log_level == 1 ? "debug"
                                                 : settings_manager.engine_log_level == 2 ? "info"
@@ -189,8 +188,8 @@ inline void draw_settings_manager(SettingsManager& settings_manager, const Rende
         }
         ImGui::EndCombo();
       }
-      ImGui::Checkbox("Enable app logger", &settings_manager.enable_app_logger);
-      LogManager::toggle_app_logger(settings_manager.enable_app_logger);
+      ImGui::Checkbox("Enable app logger", &settings_manager.app_logger_enabled);
+      LogManager::toggle_app_logger(settings_manager.app_logger_enabled);
       if (ImGui::BeginCombo("App log level", settings_manager.app_log_level == 0   ? "trace"
                                              : settings_manager.app_log_level == 1 ? "debug"
                                              : settings_manager.app_log_level == 2 ? "info"
@@ -233,10 +232,10 @@ inline void draw_settings_manager(SettingsManager& settings_manager, const Rende
         }
         ImGui::EndCombo();
       }
-      ImGui::Checkbox("Enable engine backtrace logger", &settings_manager.enable_engine_backtrace_logger);
-      LogManager::toggle_engine_backtrace_logger(settings_manager.enable_engine_backtrace_logger);
-      ImGui::Checkbox("Enable app backtrace logger", &settings_manager.enable_app_backtrace_logger);
-      LogManager::toggle_app_backtrace_logger(settings_manager.enable_app_backtrace_logger);
+      ImGui::Checkbox("Enable engine backtrace logger", &settings_manager.engine_backtrace_logger_enabled);
+      LogManager::toggle_engine_backtrace_logger(settings_manager.engine_backtrace_logger_enabled);
+      ImGui::Checkbox("Enable app backtrace logger", &settings_manager.app_backtrace_logger_enabled);
+      LogManager::toggle_app_backtrace_logger(settings_manager.app_backtrace_logger_enabled);
       if (ImGui::Button("Clear all backtrace logger")) {
         LogManager::clear_all_backtrace_logger();
       }

@@ -26,6 +26,11 @@ struct CLight;
 struct CSkybox;
 struct CTime;
 struct CFog;
+struct CReflection;
+struct CTransparent;
+struct CBlendColor;
+struct CBlendTexture;
+struct CColor;
 
 inline CActiveCamera& cast_cactive_camera(void* other) { return *static_cast<CActiveCamera*>(other); }
 
@@ -76,6 +81,16 @@ inline CSkybox& cast_cskybox(void* other) { return *static_cast<CSkybox*>(other)
 inline CFog& cast_cfog(void* other) { return *static_cast<CFog*>(other); }
 
 inline CTime& cast_ctime(void* other) { return *static_cast<CTime*>(other); }
+
+inline CReflection& cast_creflection(void* other) { return *static_cast<CReflection*>(other); }
+
+inline CTransparent& cast_ctransparent(void* other) { return *static_cast<CTransparent*>(other); }
+
+inline CBlendColor& cast_cblend_color(void* other) { return *static_cast<CBlendColor*>(other); }
+
+inline CBlendTexture& cast_cblend_texture(void* other) { return *static_cast<CBlendTexture*>(other); }
+
+inline CColor& cast_ccolor(void* other) { return *static_cast<CColor*>(other); }
 
 void register_components();
 }

@@ -13,8 +13,8 @@ class LogManager {
   public:
     static void init();
     static void create_file_logger(std::string_view path);
-    static void create_backtrace_logger(std::string_view path, bool enable_engine_backtrace_logger,
-                                        bool enable_app_backtrace_logger);
+    static void create_backtrace_logger(std::string_view path, bool engine_backtrace_logger_enabled,
+                                        bool app_backtrace_logger_enabled);
     static void clear_all_backtrace_logger();
     static void clear_engine_backtrace_logger();
     static void clear_app_backtrace_logger();

@@ -3,14 +3,19 @@
 #include "camera/cActiveCamera.h"
 #include "camera/cCamera.h"
 #include "camera/cDistanceFromCamera.h"
+#include "graphics/cBlendColor.h"
+#include "graphics/cBlendTexture.h"
 #include "graphics/cBody.h"
+#include "graphics/cColor.h"
 #include "graphics/cFBO.h"
 #include "graphics/cMaterial.h"
 #include "graphics/cMesh.h"
+#include "graphics/cReflection.h"
 #include "graphics/cShaderProgram.h"
 #include "graphics/cShape.h"
 #include "graphics/cTexture.h"
 #include "graphics/cTextureAtlas.h"
+#include "graphics/cTransparent.h"
 #include "input/cActiveInput.h"
 #include "input/cInput.h"
 #include "meta.h"
@@ -149,7 +154,6 @@ void register_components() {
     .data<&CShape::_type>("type"_hs)
     .data<&CShape::size>("size"_hs)
     .data<&CShape::meshes>("meshes"_hs)
-    .data<&CShape::repeat_texture>("repeat_texture"_hs)
     .func<&CShape::print>("print"_hs)
     .func<&CShape::to_map>("to_map"_hs)
     .func<&on_component_added<CShape>, entt::as_ref_t>("on_component_added"_hs)
@@ -160,15 +164,7 @@ void register_components() {
     .ctor<&cast_ctexture, entt::as_ref_t>()
     .data<&CTexture::paths>("paths"_hs)
     .data<&CTexture::textures>("textures"_hs)
-    .data<&CTexture::color>("color"_hs)
-    .data<&CTexture::blend_factor>("blend_factor"_hs)
-    .data<&CTexture::reflectivity>("reflectivity"_hs)
-    .data<&CTexture::refractive_index>("refractive_index"_hs)
-    .data<&CTexture::enable_transparency>("enable_transparency"_hs)
-    .data<&CTexture::enable_lighting>("enable_lighting"_hs)
-    .data<&CTexture::enable_reflection>("enable_reflection"_hs)
-    .data<&CTexture::enable_refraction>("enable_refraction"_hs)
-    .data<&CTexture::_draw_mode>("draw_mode"_hs)
+    .data<&CTexture::repeat>("repeat"_hs)
     .func<&CTexture::print>("print"_hs)
     .func<&CTexture::to_map>("to_map"_hs)
     .func<&on_component_added<CTexture>, entt::as_ref_t>("on_component_added"_hs)
@@ -177,11 +173,59 @@ void register_components() {
   entt::meta<CTextureAtlas>()
     .type("texture_atlas"_hs)
     .ctor<&cast_ctexture_atlas, entt::as_ref_t>()
+    .data<&CTextureAtlas::path>("path"_hs)
+    .data<&CTextureAtlas::texture>("texture"_hs)
     .data<&CTextureAtlas::rows>("rows"_hs)
     .data<&CTextureAtlas::index>("index"_hs)
     .func<&CTextureAtlas::print>("print"_hs)
     .func<&CTextureAtlas::to_map>("to_map"_hs)
     .func<&assign<CTextureAtlas>, entt::as_ref_t>("assign"_hs);
+
+  entt::meta<CBlendTexture>()
+    .type("blend_texture"_hs)
+    .ctor<&cast_cblend_texture, entt::as_ref_t>()
+    .data<&CBlendTexture::path>("path"_hs)
+    .data<&CBlendTexture::texture>("texture"_hs)
+    .data<&CBlendTexture::blend_factor>("blend_factor"_hs)
+    .data<&CBlendTexture::repeat>("repeat"_hs)
+    .func<&CBlendTexture::print>("print"_hs)
+    .func<&CBlendTexture::to_map>("to_map"_hs)
+    .func<&on_component_added<CBlendTexture>, entt::as_ref_t>("on_component_added"_hs)
+    .func<&assign<CBlendTexture>, entt::as_ref_t>("assign"_hs);
+
+  entt::meta<CBlendColor>()
+    .type("blend_color"_hs)
+    .ctor<&cast_cblend_color, entt::as_ref_t>()
+    .data<&CBlendColor::color>("color"_hs)
+    .data<&CBlendColor::blend_factor>("blend_factor"_hs)
+    .func<&CBlendColor::print>("print"_hs)
+    .func<&CBlendColor::to_map>("to_map"_hs)
+    .func<&assign<CBlendColor>, entt::as_ref_t>("assign"_hs);
+
+  entt::meta<CColor>()
+    .type("color"_hs)
+    .ctor<&cast_ccolor, entt::as_ref_t>()
+    .data<&CColor::color>("color"_hs)
+    .func<&CColor::print>("print"_hs)
+    .func<&CColor::to_map>("to_map"_hs)
+    .func<&assign<CColor>, entt::as_ref_t>("assign"_hs);
+
+  entt::meta<CTransparent>()
+    .type("transparent"_hs)
+    .ctor<&cast_ctransparent, entt::as_ref_t>()
+    .data<&CTransparent::transparent>("transparent"_hs)
+    .func<&CTransparent::print>("print"_hs)
+    .func<&CTransparent::to_map>("to_map"_hs)
+    .func<&assign<CTransparent>, entt::as_ref_t>("assign"_hs);
+
+  entt::meta<CReflection>()
+    .type("reflection"_hs)
+    .ctor<&cast_creflection, entt::as_ref_t>()
+    .data<&CReflection::reflectivity>("reflectivity"_hs)
+    .data<&CReflection::refractivity>("refractivity"_hs)
+    .func<&CReflection::print>("print"_hs)
+    .func<&CReflection::to_map>("to_map"_hs)
+    .func<&assign<CReflection>, entt::as_ref_t>("assign"_hs);
 
   entt::meta<CActiveInput>()
     .type("active_input"_hs)
@@ -245,6 +289,7 @@ void register_components() {
   entt::meta<CLight>()
     .type("light"_hs)
     .ctor<&cast_clight, entt::as_ref_t>()
+    .data<&CLight::enabled>("enabled"_hs)
     .data<&CLight::_type>("type"_hs)
     .data<&CLight::color>("color"_hs)
     .data<&CLight::intensity>("intensity"_hs)
@@ -267,9 +312,10 @@ void register_components() {
   entt::meta<CFog>()
     .type("fog"_hs)
     .ctor<&cast_cfog, entt::as_ref_t>()
+    .data<&CFog::enabled>("enabled"_hs)
     .data<&CFog::color>("color"_hs)
-    .data<&CFog::density>("density"_hs)
-    .data<&CFog::gradient>("gradient"_hs)
+    .data<&CFog::lower_limit>("lower_limit"_hs)
+    .data<&CFog::upper_limit>("upper_limit"_hs)
     .func<&CFog::print>("print"_hs)
     .func<&CFog::to_map>("to_map"_hs)
     .func<&assign<CFog>, entt::as_ref_t>("assign"_hs);

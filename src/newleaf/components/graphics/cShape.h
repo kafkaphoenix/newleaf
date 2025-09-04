@@ -26,16 +26,14 @@ struct CShape {
     Type type;
     glm::vec3 size{glm::vec3(1.f)};
     std::vector<CMesh> meshes;
-    bool repeat_texture{};
 
     CShape() = default;
-    explicit CShape(Type t, glm::vec3&& d, std::vector<CMesh>&& m, bool r = false)
-      : type(t), size(d), meshes(std::move(m)), repeat_texture(r) {}
+    explicit CShape(Type t, glm::vec3&& d, std::vector<CMesh>&& m) : type(t), size(d), meshes(std::move(m)) {}
 
     void print() const {
       ENGINE_BACKTRACE("\t\ttype: {0}\n\t\t\t\t\t\tsize: {1}\n\t\t\t\t\t\tmeshes: "
-                       "{2}\n\t\t\t\t\t\trepeat_texture: {3}",
-                       _type, glm::to_string(size), meshes.size(), repeat_texture);
+                       "{2}",
+                       _type, glm::to_string(size), meshes.size());
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
@@ -45,13 +43,13 @@ struct CShape {
       for (uint32_t i = 0; i < meshes.size(); ++i) {
         info["mesh_" + std::to_string(i)] = get_mesh_info(i);
       }
-      info["repeat_texture"] = repeat_texture ? "true" : "false";
 
       return info;
     }
 
     std::string get_mesh_info(uint32_t index) const { return map_to_json(meshes.at(index).to_map()); }
 
+    // TODO repeat false while handler is added
     void create_mesh() {
       ENGINE_ASSERT(size.x > 0.f and (size.y > 0.f or _type == "triangle"),
                     "shape witdh and height must be greater than 0");
@@ -63,10 +61,10 @@ struct CShape {
         mesh.vao = ShapeFactory::create_triangle(size.x);
       } else if (_type == "rectangle") {
         type = CShape::Type::rectangle;
-        mesh.vao = ShapeFactory::create_rectangle(size.x, size.y, repeat_texture);
+        mesh.vao = ShapeFactory::create_rectangle(size.x, size.y, false);
       } else if (_type == "cube") {
         type = CShape::Type::cube;
-        mesh.vao = ShapeFactory::create_cube(size.x, size.y, size.z, repeat_texture);
+        mesh.vao = ShapeFactory::create_cube(size.x, size.y, size.z, false);
       } else if (_type == "circle") {
         type = CShape::Type::circle;
         mesh.vao = ShapeFactory::create_circle(size.x, size.y);

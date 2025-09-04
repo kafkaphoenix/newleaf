@@ -124,9 +124,6 @@ void process_component(entt::entity e, const std::string& cPrefab, const json& c
           meta_component.set(entt::hashed_string{cField.data()}, json_to_vec4(cFieldValue, "color"));
         } else if (cFieldValue.contains("r") and cFieldValue.contains("g") and cFieldValue.contains("b")) {
           meta_component.set(entt::hashed_string{cField.data()}, json_to_vec3(cFieldValue, "color"));
-        } else if (cField == "json") { // TODO unused
-          ENGINE_ASSERT(false, "json field is not supported for component {}", cPrefab);
-          meta_component.set(entt::hashed_string{cField.data()}, std::move(cFieldValue));
         } else {
           ENGINE_ASSERT(false, "unsupported type {} for component {} field {}", cFieldValue.type_name(), cPrefab,
                         cField)

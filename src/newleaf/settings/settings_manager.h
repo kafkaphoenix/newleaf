@@ -43,8 +43,8 @@ struct SettingsManager {
     bool display_collision_boxes = false;
     bool display_wireframe = false;
 
-    bool enable_engine_logger = true;
-    bool enable_app_logger = true;
+    bool engine_logger_enabled = true;
+    bool app_logger_enabled = true;
     // 0: trace, 1: debug, 2: info, 3: warning, 4: error, 5: critical
     uint32_t engine_log_level{};
     // 0: trace, 1: debug, 2: info, 3: warning, 4: error, 5: critical
@@ -53,12 +53,12 @@ struct SettingsManager {
     uint32_t app_log_level{};
     // 0: trace, 1: debug, 2: info, 3: warning, 4: error, 5: critical
     uint32_t app_flush_level{};
-#ifdef ENABLE_DEBUG
-    bool enable_engine_backtrace_logger = true;
-    bool enable_app_backtrace_logger = true;
+#ifdef DEBUG_ENABLED
+    bool engine_backtrace_logger_enabled = true;
+    bool app_backtrace_logger_enabled = true;
 #else
-    bool enable_engine_backtrace_logger = false;
-    bool enable_app_backtrace_logger = false;
+    bool engine_backtrace_logger_enabled = false;
+    bool app_backtrace_logger_enabled = false;
 #endif
 
     std::array<float, 4> clear_color = {0.45f, 0.55f, 0.6f, 1.f};
@@ -74,9 +74,9 @@ struct SettingsManager {
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SettingsManager, app_name, root, logfile_path, backtrace_logfile_path,
                                    window_icon_path, window_w, window_h, depth_bits, refresh_rate, fullscreen,
                                    primary_monitor, vsync, resizable, imgui_window, fit_to_window, sticky_keys_polling,
-                                   cursor_icon_path, cursor_mode, enabled_debug, display_fps, enable_engine_logger,
-                                   enable_app_logger, engine_log_level, app_log_level, engine_flush_level,
-                                   app_flush_level, enable_engine_backtrace_logger, enable_app_backtrace_logger,
+                                   cursor_icon_path, cursor_mode, enabled_debug, display_fps, engine_logger_enabled,
+                                   app_logger_enabled, engine_log_level, app_log_level, engine_flush_level,
+                                   app_flush_level, engine_backtrace_logger_enabled, app_backtrace_logger_enabled,
                                    clear_color, active_scene, active_scene_path, reload_prototypes,
                                    display_collision_boxes, default_texture_path, display_wireframe);
 }

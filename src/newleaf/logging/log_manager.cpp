@@ -40,13 +40,13 @@ void LogManager::create_file_logger(std::string_view path) {
   m_app_logger->sinks().emplace_back(file_sink);
 }
 
-void LogManager::create_backtrace_logger(std::string_view path, bool enable_engine_backtrace_logger,
-                                         bool enable_app_backtrace_logger) {
+void LogManager::create_backtrace_logger(std::string_view path, bool engine_backtrace_logger_enabled,
+                                         bool app_backtrace_logger_enabled) {
   auto backtrace_sink = std::make_shared<BacktraceLogsink>(path.data());
   m_engine_backtrace_logger = std::make_shared<spdlog::logger>("engine", backtrace_sink);
   m_app_backtrace_logger = std::make_shared<spdlog::logger>("app", backtrace_sink);
 
-  if (enable_engine_backtrace_logger) {
+  if (engine_backtrace_logger_enabled) {
     m_engine_backtrace_logger->set_level(DEBUG);
     m_engine_backtrace_logger->flush_on(DEBUG);
   } else {
@@ -54,7 +54,7 @@ void LogManager::create_backtrace_logger(std::string_view path, bool enable_engi
     m_engine_backtrace_logger->flush_on(OFF);
   }
 
-  if (enable_app_backtrace_logger) {
+  if (app_backtrace_logger_enabled) {
     m_app_backtrace_logger->set_level(DEBUG);
     m_app_backtrace_logger->flush_on(DEBUG);
   } else {
