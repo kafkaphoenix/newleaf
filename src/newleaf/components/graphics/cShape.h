@@ -49,7 +49,7 @@ struct CShape {
 
     std::string get_mesh_info(uint32_t index) const { return map_to_json(meshes.at(index).to_map()); }
 
-    // TODO repeat false while handler is added
+    // TODO repeat can't be modified, should be add here to control overflow repeat? texture repeat is defined in the prefab
     void create_mesh() {
       ENGINE_ASSERT(size.x > 0.f and (size.y > 0.f or _type == "triangle"),
                     "shape witdh and height must be greater than 0");
@@ -61,10 +61,10 @@ struct CShape {
         mesh.vao = ShapeFactory::create_triangle(size.x);
       } else if (_type == "rectangle") {
         type = CShape::Type::rectangle;
-        mesh.vao = ShapeFactory::create_rectangle(size.x, size.y, false);
+        mesh.vao = ShapeFactory::create_rectangle(size.x, size.y, true);
       } else if (_type == "cube") {
         type = CShape::Type::cube;
-        mesh.vao = ShapeFactory::create_cube(size.x, size.y, size.z, false);
+        mesh.vao = ShapeFactory::create_cube(size.x, size.y, size.z, true);
       } else if (_type == "circle") {
         type = CShape::Type::circle;
         mesh.vao = ShapeFactory::create_circle(size.x, size.y);

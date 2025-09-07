@@ -164,7 +164,6 @@ void register_components() {
     .ctor<&cast_ctexture, entt::as_ref_t>()
     .data<&CTexture::paths>("paths"_hs)
     .data<&CTexture::textures>("textures"_hs)
-    .data<&CTexture::repeat>("repeat"_hs)
     .func<&CTexture::print>("print"_hs)
     .func<&CTexture::to_map>("to_map"_hs)
     .func<&on_component_added<CTexture>, entt::as_ref_t>("on_component_added"_hs)

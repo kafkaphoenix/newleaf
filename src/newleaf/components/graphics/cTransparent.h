@@ -12,7 +12,7 @@
 namespace nl {
 
 struct CTransparent {
-    bool transparent{};
+    bool transparent{true};
 
     CTransparent() = default;
     explicit CTransparent(bool t) : transparent(t) {}

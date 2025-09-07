@@ -21,12 +21,9 @@ namespace nl {
 struct CTexture {
     std::vector<std::string> paths;
     std::vector<std::shared_ptr<Texture>> textures;
-    // TODO this repeat doesnt solve shape not having repeat and with more than
-    // one texture it is not clear if all repeat or not, same with transparency component
-    bool repeat;
 
     CTexture() = default;
-    explicit CTexture(std::vector<std::string>&& p) : paths(std::move(p)), repeat(false) {}
+    explicit CTexture(std::vector<std::string>&& p) : paths(std::move(p)) {}
 
     void print() const {
       std::string texture_paths;
@@ -37,12 +34,11 @@ struct CTexture {
           texture_paths += std::format("\n\t\t\t\t\t\t {}", path);
         }
       }
-      ENGINE_BACKTRACE("\t\ttextures: {0}\n\t\t\t\t\t\t repeat: {1}", texture_paths, repeat);
+      ENGINE_BACKTRACE("\t\ttextures: {0}", texture_paths);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
       std::map<std::string, std::string, NumericComparator> info;
-      info["repeat"] = repeat ? "true" : "false";
       for (uint32_t i = 0; i < textures.size(); ++i) {
         info["texture_" + std::to_string(i)] = get_texture_info(i);
       }
