@@ -104,7 +104,7 @@ void VAO::attach_terrain_vertex_attributes() {
   glVertexArrayAttribBinding(m_id, 2, m_vbo_index);
 
   glEnableVertexArrayAttrib(m_id, 3);
-  glVertexArrayAttribFormat(m_id, 3, 3, GL_FLOAT, GL_FALSE, offsetof(TerrainVertex, color));
+  glVertexArrayAttribFormat(m_id, 3, 4, GL_FLOAT, GL_FALSE, offsetof(TerrainVertex, color));
   glVertexArrayAttribBinding(m_id, 3, m_vbo_index);
 
   ++m_vbo_index;

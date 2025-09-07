@@ -82,8 +82,8 @@ void RenderManager::render(const std::shared_ptr<VAO>& vao, const glm::mat4& tra
   sp.use();
   sp.set_mat4("projection", m_projection);
   sp.set_mat4("view", m_view);
-  sp.set_vec3("camera_position", m_camera_position);
   sp.set_mat4("model", transform);
+  sp.set_vec3("camera_position", m_camera_position);
 
   RenderAPI::draw_indexed(vao);
 

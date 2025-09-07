@@ -28,7 +28,7 @@ struct TerrainVertex {
     glm::vec3 position{};
     glm::vec3 normal{};
     glm::vec2 texture_coords{};
-    glm::vec3 color{};
+    glm::vec4 color{}; // TODO maybe remove after re adding terrain code and use component instead (same for model)
 };
 
 class VBO {

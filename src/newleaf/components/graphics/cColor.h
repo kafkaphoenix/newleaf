@@ -15,7 +15,7 @@ struct CColor {
     glm::vec4 color{};
 
     CColor() = default;
-    explicit CColor(float r, float g, float b, float a) : color(r, g, b, a) {}
+    explicit CColor(glm::vec4&& c) : color(std::move(c)) {}
 
     void print() const { ENGINE_BACKTRACE("\t\tcolor: {0}", glm::to_string(color)); }
 

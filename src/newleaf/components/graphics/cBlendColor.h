@@ -16,8 +16,7 @@ struct CBlendColor {
     float blend_factor{};
 
     CBlendColor() = default;
-    explicit CBlendColor(glm::vec4 color, float blend_factor) : color(color), blend_factor(blend_factor) {}
-
+    explicit CBlendColor(glm::vec4&& c, float bf) : color(std::move(c)), blend_factor(bf) {}
     void print() const {
       ENGINE_BACKTRACE("\t\tcolor: {0}\n\t\t\t\t\t\tblend_factor: {1}", glm::to_string(color), blend_factor);
     }

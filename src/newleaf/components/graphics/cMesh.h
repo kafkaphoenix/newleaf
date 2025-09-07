@@ -70,7 +70,9 @@ struct CMesh {
     // TODO rethink with uniform buffer object in system
     void configure_fog(ShaderProgram& sp) {
       sp.set_float("fog_enabled", static_cast<float>(entt::monostate<"fog_enabled"_hs>{}));
-      sp.set_vec3("fog_color", static_cast<glm::vec3>(entt::monostate<"fog_color"_hs>{}));
+      sp.set_vec4("fog_color", static_cast<glm::vec4>(entt::monostate<"fog_color"_hs>{}));
+      sp.set_float("fog_density", static_cast<float>(entt::monostate<"fog_density"_hs>{}));
+      sp.set_float("fog_gradient", static_cast<float>(entt::monostate<"fog_gradient"_hs>{}));
       sp.set_float("fog_lower_limit", static_cast<float>(entt::monostate<"fog_lower_limit"_hs>{}));
       sp.set_float("fog_upper_limit", static_cast<float>(entt::monostate<"fog_upper_limit"_hs>{}));
     }
@@ -88,6 +90,7 @@ struct CMesh {
 
     void configure_reflection(ShaderProgram& sp, CReflection* cReflection) {
       if (cReflection) {
+        sp.set_float("reflection_enabled", cReflection->enabled ? 1.f : 0.f);
         sp.set_float("reflectivity", cReflection->reflectivity);
         sp.set_float("refractivity", cReflection->refractivity);
       }
@@ -105,7 +108,6 @@ struct CMesh {
     // TODO move to system and rethink with uniform buffer object in system
     void configure_texture_atlas(ShaderProgram& sp, CTextureAtlas* cTextureAtlas) {
       // TODO terrain shader not using this logic at all (get from terrain vertex directly)
-      // and model is not compatible with texture atlas yet
       if (cTextureAtlas) {
         if (sp.get_name() == "shape") {
           sp.set_float("texture_atlas_enabled", 1.f);
@@ -225,19 +227,15 @@ struct CMesh {
         configure_blend(sp, cBlendTexture, cBlendColor);
       }
 
-      // this set texture sampler2D terrain or shapes with a ctexture
-      // we skip sky as we do it in configure skybox
-      // and models use their own textures saved in the model
-      // TODO rethink with uniform and texture buffer objects so we avoid sending
-      // all this every draw call
-      if (cTexture and not cSkybox) {
+      if (cTexture) {
         uint32_t i = 1;
         for (auto& texture : cTexture->textures) {
           sp.set_int(texture->get_type().data() + std::string("_") + std::to_string(i), i);
           texture->bind_slot(i);
           ++i;
         }
-      } else {
+      } else if (not cTexture) { // model texture
+        // TODO add model textures to CTexture and remove this and use only one shader maybe
         configure_model_texture(sp, cMaterial);
       }
       sp.unuse();

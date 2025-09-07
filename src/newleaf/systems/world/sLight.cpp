@@ -29,5 +29,8 @@ void LightSystem::update(entt::registry& registry, const Time& ts) {
       entt::monostate<"light_inner_cone_angle"_hs>{} = cLight.inner_cone_angle;
       entt::monostate<"light_outer_cone_angle"_hs>{} = cLight.outer_cone_angle;
     });
+
+    // TODO update light position based on light type (directional, cone, area, ...)
+    // or time etc
 }
 }
