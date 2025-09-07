@@ -101,19 +101,19 @@ Prefab::get_target_prototype_info(std::string_view prototype_id) {
     return m_prototype_info.at(prototype_id.data());
   }
 
-  std::map<std::string, std::string, NumericComparator> m_info{};
-  m_info["name"] = prototype_id.data();
+  std::map<std::string, std::string, NumericComparator> m_prototype_data{};
+  m_prototype_data["name"] = prototype_id.data();
   for (uint32_t i = 0; i < m_prototypes.at(prototype_id.data()).inherits.size(); ++i) {
-    m_info["inherits " + std::to_string(i)] = *std::next(m_prototypes.at(prototype_id.data()).inherits.begin(), i);
+    m_prototype_data["inherits " + std::to_string(i)] = *std::next(m_prototypes.at(prototype_id.data()).inherits.begin(), i);
   }
   for (uint32_t i = 0; i < m_prototypes.at(prototype_id.data()).ctags.size(); ++i) {
-    m_info["cTag " + std::to_string(i)] = *std::next(m_prototypes.at(prototype_id.data()).ctags.begin(), i);
+    m_prototype_data["cTag " + std::to_string(i)] = *std::next(m_prototypes.at(prototype_id.data()).ctags.begin(), i);
   }
   uint32_t i = 0;
   for (const auto& [componentID, _] : m_prototypes.at(prototype_id.data()).components) {
-    m_info["component " + std::to_string(i++)] = componentID;
+    m_prototype_data["component " + std::to_string(i++)] = componentID;
   }
-  m_prototype_info[prototype_id.data()] = m_info;
+  m_prototype_info[prototype_id.data()] = m_prototype_data;
 
   return m_prototype_info.at(prototype_id.data());
 }

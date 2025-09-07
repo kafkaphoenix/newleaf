@@ -29,8 +29,8 @@ struct SettingsManager {
     bool resizable = true;
     uint32_t opengl_major = 4; // only 4.6 is supported
     uint32_t opengl_minor = 6;
-    bool imgui_window = true; // it needs an opengl fbo to work
-    bool fit_to_window = true;
+    bool imgui_window = false; // it needs an opengl fbo to work
+    bool fit_to_window = true; // it needs an opengl fbo to work
     bool sticky_keys_polling = false;
 
     std::string cursor_icon_path = "";

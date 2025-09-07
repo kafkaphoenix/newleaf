@@ -77,8 +77,8 @@ inline void draw_assets_manager(const AssetsManager& assets_manager, const Setti
         if (ImGui::TreeNode(
               (selected_asset_tab_type + selected_asset_manager_tab_key + key + settings_manager.active_scene).c_str(),
               key.c_str())) {
-          for (const auto& [key, value] : prototype_info) {
-            ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
+          for (const auto& [k, v] : prototype_info) {
+            ImGui::BulletText("%s: %s", k.c_str(), v.c_str());
           }
           ImGui::TreePop();
         }
@@ -88,8 +88,8 @@ inline void draw_assets_manager(const AssetsManager& assets_manager, const Setti
         if (ImGui::TreeNode(
               (selected_asset_tab_type + selected_asset_manager_tab_key + key + settings_manager.active_scene).c_str(),
               key.c_str())) {
-          for (const auto& [key, value] : texture_info) {
-            ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
+          for (const auto& [k, v] : texture_info) {
+            ImGui::BulletText("%s: %s", k.c_str(), v.c_str());
           }
           ImGui::TreePop();
         }

@@ -88,11 +88,13 @@ struct CMesh {
       sp.set_float("light_outer_cone_angle", static_cast<float>(entt::monostate<"light_outer_cone_angle"_hs>{}));
     }
 
-    void configure_reflection(ShaderProgram& sp, CReflection* cReflection) {
+    void configure_reflection(ShaderProgram& sp, CReflection* cReflection, CTexture* cSkyboxTexture,
+                              CBlendTexture* cSkyboxBlend) {
       if (cReflection) {
         sp.set_float("reflection_enabled", cReflection->enabled ? 1.f : 0.f);
         sp.set_float("reflectivity", cReflection->reflectivity);
         sp.set_float("refractivity", cReflection->refractivity);
+        configure_reflected_skybox(sp, cSkyboxTexture, cSkyboxBlend);
       }
     }
 
@@ -125,14 +127,15 @@ struct CMesh {
       }
     }
 
-    void configure_skybox(ShaderProgram& sp, CTexture* cSkyboxTexture, CBlendTexture* cSkyboxBlend) {
+    void configure_reflected_skybox(ShaderProgram& sp, CTexture* cSkyboxTexture, CBlendTexture* cSkyboxBlend) {
       // TODO better reflection than sending the skybox texture and the blend
       // that's why we send them to all shaders
       // TODO use uniform buffer object for this
-      if (cSkyboxTexture) {
+      if (cSkyboxTexture and sp.get_name() != "skybox") {
         // 10 and 11 are reserved for skybox
         sp.set_int("skybox_texture", 10);
         // we only have one texture for skybox cubemap
+        ENGINE_ASSERT(cSkyboxTexture->textures.size() == 1, "invalid skybox texture");
         cSkyboxTexture->textures[0]->bind_slot(10);
         if (cSkyboxBlend) {
           sp.set_float("blend_skybox_enabled", 1.f);
@@ -217,15 +220,11 @@ struct CMesh {
       sp.use();
       configure_fog(sp);
       configure_light(sp);
-      configure_reflection(sp, cReflection);
+      configure_reflection(sp, cReflection, cSkyboxTexture, cSkyboxBlend);
       configure_material(sp, cMaterial);
       configure_texture_atlas(sp, cTextureAtlas);
-      configure_skybox(sp, cSkyboxTexture, cSkyboxBlend);
       configure_color(sp, cColor);
-      // we skip sky as we do it in configure skybox TODO rethink
-      if (not cSkybox) {
-        configure_blend(sp, cBlendTexture, cBlendColor);
-      }
+      configure_blend(sp, cBlendTexture, cBlendColor);
 
       if (cTexture) {
         uint32_t i = 1;
@@ -234,7 +233,7 @@ struct CMesh {
           texture->bind_slot(i);
           ++i;
         }
-      } else if (not cTexture) { // model texture
+      } else { // model texture
         // TODO add model textures to CTexture and remove this and use only one shader maybe
         configure_model_texture(sp, cMaterial);
       }

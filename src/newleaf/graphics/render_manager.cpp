@@ -49,6 +49,7 @@ void RenderManager::render_framebuffer(const std::shared_ptr<VAO>& vao, std::str
 
   sp.use();
   sp.set_int("screen_texture", 100);
+  // TODO uniform time for effect not being used
   m_framebuffers.at(fbo.data())->get_color_texture().bind_slot(100);
 
   RenderAPI::draw_indexed(vao);
