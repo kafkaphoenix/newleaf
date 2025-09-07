@@ -27,7 +27,7 @@ FetchContent_Declare(
 )
 
 FetchContent_GetProperties(newleaf)
-if(NOT newleaf_POPULATED)
+if (NOT newleaf_POPULATED)
   FetchContent_Populate(newleaf)
   set(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS} CACHE INTERNAL "" FORCE)
   add_subdirectory(${newleaf_SOURCE_DIR} ${newleaf_BINARY_DIR})
