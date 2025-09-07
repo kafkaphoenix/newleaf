@@ -73,8 +73,8 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
     }
 
     if (mesh->HasVertexColors(0)) {
-      const auto& color = mesh->mColors[0][i];
-      vertex.color = glm::vec4(color.r, color.g, color.b, color.a);
+      // TODO vertex colors maybe i dont need? or think if adding color component a better way
+      // or sending here an entity
     }
 
     if (mesh->mAABB.mMin not_eq aiVector3D(0.f, 0.f, 0.f) and mesh->mAABB.mMax not_eq aiVector3D(0.f, 0.f, 0.f)) {

@@ -9,7 +9,7 @@
 namespace nl {
 #define MAX_BONE_INFLUENCE 4 // TODO use
 
-struct ModelVertex { // TODO move
+struct ModelVertex { // TODO move?
     glm::vec3 position{};
     glm::vec3 normal{};
     glm::vec2 texture_coords{};
@@ -17,7 +17,6 @@ struct ModelVertex { // TODO move
     glm::vec3 bitangent{};
     int bone_ids[MAX_BONE_INFLUENCE]{};
     float bone_weights[MAX_BONE_INFLUENCE]{};
-    glm::vec4 color{glm::vec4(0.9725f, 0.f, 0.9725f, 1.f)};
 };
 
 struct ShapeVertex {

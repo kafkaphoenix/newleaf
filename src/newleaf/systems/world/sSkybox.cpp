@@ -23,8 +23,8 @@ void SkyboxSystem::update(entt::registry& registry, const Time& ts) {
   APP_ASSERT(clock not_eq entt::null, "no active clock found!");
   const CTime& cTime = registry.get<CTime>(clock);
 
-  registry.view<CSkybox, CTexture, CBlendTexture, CTransform, CRigidBody, CUUID>().each(
-    [&](entt::entity e, const CSkybox& cSkybox, CTransform& cTransform, const CRigidBody& cRigidBody, CTexture& cTexture, const CUUID& cUUID) {
+  registry.view<CSkybox, CTexture, CTransform, CRigidBody, CUUID>().each(
+    [&](entt::entity e, const CSkybox& cSkybox, const CTexture& cTexture, CTransform& cTransform, const CRigidBody& cRigidBody, const CUUID& cUUID) {
       CBlendTexture* cSkyboxBlend = registry.try_get<CBlendTexture>(e);
       if (cSkyboxBlend) {
         float blend_factor = 0.f;

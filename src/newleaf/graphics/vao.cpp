@@ -75,10 +75,6 @@ void VAO::attach_model_vertex_attributes() {
   glVertexArrayAttribFormat(m_id, 6, 4, GL_FLOAT, GL_FALSE, offsetof(ModelVertex, bone_weights));
   glVertexArrayAttribBinding(m_id, 6, m_vbo_index);
 
-  glEnableVertexArrayAttrib(m_id, 7);
-  glVertexArrayAttribFormat(m_id, 7, 4, GL_FLOAT, GL_FALSE, offsetof(ModelVertex, color));
-  glVertexArrayAttribBinding(m_id, 7, m_vbo_index);
-
   ++m_vbo_index;
 }
 

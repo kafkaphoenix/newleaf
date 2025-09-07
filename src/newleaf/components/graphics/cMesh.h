@@ -24,7 +24,6 @@
 #include "cColor.h"
 #include "cMaterial.h"
 #include "cReflection.h"
-#include "cSkybox.h"
 #include "cTexture.h"
 #include "cTextureAtlas.h"
 
@@ -112,12 +111,12 @@ struct CMesh {
           sp.set_float("texture_atlas_enabled", 1.f);
           uint32_t index = cTextureAtlas->index;
           uint32_t rows = cTextureAtlas->rows;
-          sp.set_float("rows", rows);
+          sp.set_float("texture_atlas_rows", rows);
           uint32_t col = index % rows;
           float coll = static_cast<float>(col) / rows;
           uint32_t row = index / rows;
           float roww = static_cast<float>(row) / rows;
-          sp.set_vec2("offset", glm::vec2(coll, roww));
+          sp.set_vec2("texture_atlas_offset", glm::vec2(coll, roww));
         }
       } else {
         sp.set_float("texture_atlas_enabled", 0.f);
@@ -134,12 +133,12 @@ struct CMesh {
         // we only have one texture for skybox cubemap
         cSkyboxTexture->textures[0]->bind_slot(10);
         if (cSkyboxBlend) {
-          sp.set_float("sky_blend_enabled", 1.f);
-          sp.set_int("skybox_blend_texture", 11);
+          sp.set_float("blend_skybox_enabled", 1.f);
+          sp.set_int("blend_skybox_texture", 11);
           cSkyboxBlend->texture->bind_slot(11);
-          sp.set_float("sky_blend_factor", cSkyboxBlend->blend_factor);
+          sp.set_float("blend_skybox_factor", cSkyboxBlend->blend_factor);
         } else {
-          sp.set_float("sky_blend_enabled", 0.f);
+          sp.set_float("blend_skybox_enabled", 0.f);
         }
       }
     }
@@ -156,7 +155,7 @@ struct CMesh {
     void configure_blend(ShaderProgram& sp, CBlendTexture* cBlendTexture, CBlendColor* cBlendColor) {
       if (cBlendTexture) {
         sp.set_float("blend_texture_enabled", 1.f);
-        sp.set_float("blend_factor", cBlendTexture->blend_factor);
+        sp.set_float("blend_texture_factor", cBlendTexture->blend_factor);
         sp.set_int("blend_texture", 9); // slot 9 reserved for blend texture
         cBlendTexture->texture->bind_slot(9);
       } else {
@@ -164,7 +163,7 @@ struct CMesh {
       }
       if (cBlendColor) {
         sp.set_float("blend_color_enabled", 1.f);
-        sp.set_float("blend_factor", cBlendColor->blend_factor);
+        sp.set_float("blend_color_factor", cBlendColor->blend_factor);
         sp.set_vec4("blend_color", cBlendColor->color);
       } else {
         sp.set_float("blend_color_enabled", 0.f);
@@ -179,6 +178,12 @@ struct CMesh {
       uint32_t i = 1;
       // TODO improve code for several textures and to select normal/material
       // with arrays
+      if (textures.size() == 0) {
+        sp.set_float("texture_enabled", 0.f); // will use material only
+        ENGINE_ASSERT(cMaterial, "no texture or material found for model");
+        return;
+      }
+      sp.set_float("texture_enabled", 1.f);
       for (auto& texture : textures) {
         std::string number;
         std::string_view type = texture->get_type();
@@ -197,14 +202,8 @@ struct CMesh {
         texture->bind_slot(i);
         ++i;
       }
-      if (textures.size() == 0) {
-        ENGINE_ASSERT(cMaterial, "no texture or material found for model");
-        sp.set_float("texture_enabled", 0.f);
-      } else {
-        if (diffuse_n == 1) {
-          sp.set_float("normal_enabled", 1.f);
-        }
-      }
+      // TODO rethink how to use normal and other together
+      sp.set_float("normal_enabled", normal_n > 1 ? 1.f : 0.f);
     }
 
     // TODO remove this and rethink in systems with uniform buffer objects
@@ -221,12 +220,15 @@ struct CMesh {
       configure_texture_atlas(sp, cTextureAtlas);
       configure_skybox(sp, cSkyboxTexture, cSkyboxBlend);
       configure_color(sp, cColor);
-      configure_blend(sp, cBlendTexture, cBlendColor);
+      // we skip sky as we do it in configure skybox TODO rethink
+      if (not cSkybox) {
+        configure_blend(sp, cBlendTexture, cBlendColor);
+      }
 
       // this set texture sampler2D terrain or shapes with a ctexture
       // we skip sky as we do it in configure skybox
       // and models use their own textures saved in the model
-      // rethink with uniform and texture buffer objects so we avoid sending
+      // TODO rethink with uniform and texture buffer objects so we avoid sending
       // all this every draw call
       if (cTexture and not cSkybox) {
         uint32_t i = 1;
