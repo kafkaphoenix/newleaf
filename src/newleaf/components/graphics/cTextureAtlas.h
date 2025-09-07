@@ -36,7 +36,7 @@ struct CTextureAtlas {
       info["path"] = path;
       info["rows"] = std::to_string(rows);
       info["index"] = std::to_string(index);
-      info["texture"] = get_texture_info();
+      info["texture_0"] = get_texture_info();
 
       return info;
     }

@@ -36,7 +36,7 @@ struct CBlendTexture {
       std::map<std::string, std::string, NumericComparator> info;
       info["path"] = path;
       info["blend_factor"] = std::to_string(blend_factor);
-      info["texture"] = get_texture_info();
+      info["texture_0"] = get_texture_info();
       info["repeat"] = repeat ? "true" : "false";
 
       return info;
