@@ -14,28 +14,6 @@
 using namespace entt::literals;
 namespace nl {
 
-void SkyboxSystem::init(entt::registry& registry) {
-  entt::entity clock = registry.view<CTime, CUUID>().front();
-  APP_ASSERT(clock not_eq entt::null, "no active clock found!");
-  const CTime& cTime = registry.get<CTime>(clock);
-
-  registry.view<CSkybox, CTransform, CRigidBody, CUUID>().each([&](entt::entity e, const CSkybox& cSkybox,
-                                                                   CTransform& cTransform, const CRigidBody& cRigidBody,
-                                                                   const CUUID& cUUID) {
-    if (cRigidBody.kinematic) {
-      float rotation = 0.f;
-      if (cSkybox.rotation_speed > 0.f) {
-        rotation = cSkybox.rotation_speed;
-      } else {
-        // to avoid rotating fps frames per second instead of one second we need to divide by fps
-        float rotationAnglePerSecond = (360.f / (cTime.day_length * 3600.f)) / cTime.fps;
-        rotation = rotationAnglePerSecond * cTime.acceleration;
-      }
-      cTransform.rotation = glm::angleAxis(glm::radians(rotation), glm::vec3(0.f, 1.f, 0.f)) * cTransform.rotation;
-    }
-  });
-}
-
 void SkyboxSystem::update(entt::registry& registry, const Time& ts) {
   if (Application::get().is_paused()) {
     return;
@@ -66,6 +44,19 @@ void SkyboxSystem::update(entt::registry& registry, const Time& ts) {
             1.f - ((cTime.current_minute + (cTime.current_hour - cTime.night_transition_start) * cTime.fps) / 120.f);
         }
         cSkyboxBlend->blend_factor = blend_factor;
+      }
+
+      // this can't be in init because clock doesn't exist yet when register system triggers init
+      if (cRigidBody.kinematic) {
+        float rotation = 0.f;
+        if (cSkybox.rotation_speed > 0.f) {
+          rotation = cSkybox.rotation_speed;
+        } else {
+          // to avoid rotating fps frames per second instead of one second we need to divide by fps
+          float rotationAnglePerSecond = (360.f / (cTime.day_length * 3600.f)) / cTime.fps;
+          rotation = rotationAnglePerSecond * cTime.acceleration;
+        }
+        cTransform.rotation = glm::angleAxis(glm::radians(rotation), glm::vec3(0.f, 1.f, 0.f)) * cTransform.rotation;
       }
     });
 }

@@ -12,7 +12,6 @@ class SkyboxSystem : public System {
   public:
     SkyboxSystem(int priority) : System(priority) {}
 
-    void init(entt::registry& registry) override final;
     void update(entt::registry& registry, const Time& ts) override final;
 };
 
