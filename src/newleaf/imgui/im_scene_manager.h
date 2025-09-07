@@ -33,7 +33,7 @@ inline void draw_leaf_info(const std::map<std::string, std::string, NumericCompa
       if (ImGui::TreeNode((k + scene_name).c_str(), k.c_str())) {
         auto childInfoData = json_to_map(v);
         for (const auto& [key, value] : childInfoData) {
-          if (key.starts_with("texture_") or (key.starts_with("vao_") and value != "undefined")) {
+          if ((key.starts_with("texture_") and  not key.ends_with("_type")) or (key.starts_with("vao_") and value != "undefined")) {
             if (ImGui::TreeNode((key + scene_name).c_str(), key.c_str())) {
               // CBody, CShape, CChunk have a CMesh that has a vao and CTexture
               auto rechildInfoData = json_to_map(value);
