@@ -162,6 +162,7 @@ struct CFBO {
     void setup_properties(ShaderProgram& sp) {
       sp.reset_active_uniforms();
       sp.use();
+      sp.set_float("time", time);
       if (mode == Mode::normal) {
         sp.set_float("mode", 0.f);
       } else if (mode == Mode::inverse) {

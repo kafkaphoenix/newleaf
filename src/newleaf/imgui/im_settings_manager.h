@@ -33,9 +33,6 @@ inline void draw_settings_manager(SettingsManager& settings_manager, const Rende
   if (ImGui::Selectable("Logger")) {
     selected_settings_manager_tabkey = "Logger";
   }
-  if (ImGui::Selectable("Render")) {
-    selected_settings_manager_tabkey = "Render";
-  }
   if (ImGui::Selectable("Scene")) {
     selected_settings_manager_tabkey = "Scene";
   }
@@ -248,9 +245,6 @@ inline void draw_settings_manager(SettingsManager& settings_manager, const Rende
       if (ImGui::Button("Dump backtrace")) {
         LogManager::dump_backtrace();
       }
-    } else if (selected_settings_manager_tabkey == "Render") {
-      // TODO display render settings like different passes
-      ImGui::Text("Pending");
     } else if (selected_settings_manager_tabkey == "Scene") {
       ImGui::Text("Name: %s", settings_manager.active_scene.c_str());
       ImGui::Text("Path: %s ", settings_manager.active_scene_path.c_str());
