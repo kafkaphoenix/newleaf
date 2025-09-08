@@ -73,4 +73,6 @@ void ImGuiLayer::on_detach() {
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();
 }
+
+std::unique_ptr<Layer> ImGuiLayer::create() { return std::make_unique<ImGuiLayer>(); }
 }

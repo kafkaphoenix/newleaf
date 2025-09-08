@@ -27,7 +27,7 @@ Application::Application(std::unique_ptr<SettingsManager>&& s, CLArgs&& args) : 
 
   m_render_manager = RenderManager::create();
   m_scene_manager = SceneManager::create();
-  m_imgui_layer = std::make_unique<ImGuiLayer>();
+  m_imgui_layer = ImGuiLayer::create();
   m_imgui_layer->on_attach();
 }
 
@@ -50,14 +50,14 @@ void Application::run() {
     if (not m_minimized) [[likely]] {
       while (m_accumulator > ts) {
         // to be able to render inside an imgui window
-        m_imgui_layer->begin();
+        ImGuiLayer::begin();
         auto& current_state = m_states_manager->get_current_state();
         current_state.on_update(ts);
         m_scene_manager->on_update(ts);
 
         m_imgui_layer->on_imgui_update();
         current_state.on_imgui_update();
-        m_imgui_layer->end();
+        ImGuiLayer::end();
 
         m_accumulator -= ts;
         if (m_accumulator < 0) {
