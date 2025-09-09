@@ -60,6 +60,7 @@ class WindowsManager {
     WindowsManager(const SettingsManager& settings_manager);
     ~WindowsManager();
 
+    void init();
     void shutdown();
     void on_update();
     void trigger_event(Event&& e);

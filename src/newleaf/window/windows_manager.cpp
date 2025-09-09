@@ -22,6 +22,11 @@ WindowsManager::WindowsManager(const SettingsManager& settings_manager) {
   m_data.mouse_y = m_data.height / 2.0f; // center of the screen
   m_data.imgui_window = settings_manager.imgui_window;
   m_data.fit_to_window = settings_manager.fit_to_window;
+
+}
+
+void WindowsManager::init() {
+  const auto& settings_manager = Application::get().get_settings_manager();
   ENGINE_TRACE("creating window {} with resolution {}x{}", m_data.window_title, m_data.width, m_data.height);
   if (m_window_count == 0) {
     ENGINE_ASSERT(glfwInit(), "failed to initialize glfw!");
