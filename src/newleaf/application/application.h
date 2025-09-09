@@ -58,9 +58,9 @@ class Application {
     static Application& get() { return *m_instance; }
 
   protected:
-    std::unique_ptr<SceneManager> m_scene_manager;
-    std::unique_ptr<AssetsManager> m_assets_manager;
     std::unique_ptr<SettingsManager> m_settings_manager;
+    std::unique_ptr<AssetsManager> m_assets_manager;
+    std::unique_ptr<SceneManager> m_scene_manager;
     std::unique_ptr<StatesManager> m_states_manager;
     std::unique_ptr<WindowsManager> m_windows_manager;
     std::unique_ptr<RenderManager> m_render_manager;
