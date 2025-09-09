@@ -12,8 +12,8 @@ namespace nl {
 inline void render_scene(uint32_t fboTextureID, std::string_view title, glm::vec2 size, glm::vec2 position,
                          bool fit_to_window) {
   const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-  uint32_t window_w = size.x != 0 ? size.x : main_viewport->Size.x;
-  uint32_t window_h = size.y != 0 ? size.y : main_viewport->Size.y;
+  uint32_t window_w = size.x not_eq 0 ? size.x : main_viewport->Size.x;
+  uint32_t window_h = size.y not_eq 0 ? size.y : main_viewport->Size.y;
   window_w *= 0.75f;
   window_h *= 0.75f;
   uint32_t w, h;

@@ -107,31 +107,12 @@ struct CMesh {
       }
     }
 
-    // TODO move to system and rethink with uniform buffer object in system
-    void configure_texture_atlas(ShaderProgram& sp, CTextureAtlas* cTextureAtlas) {
-      // TODO terrain shader not using this logic at all (get from terrain vertex directly)
-      if (cTextureAtlas) {
-        if (sp.get_name() == "shape") {
-          sp.set_float("texture_atlas_enabled", 1.f);
-          uint32_t index = cTextureAtlas->index;
-          uint32_t rows = cTextureAtlas->rows;
-          sp.set_float("texture_atlas_rows", rows);
-          uint32_t col = index % rows;
-          float coll = static_cast<float>(col) / rows;
-          uint32_t row = index / rows;
-          float roww = static_cast<float>(row) / rows;
-          sp.set_vec2("texture_atlas_offset", glm::vec2(coll, roww));
-        }
-      } else {
-        sp.set_float("texture_atlas_enabled", 0.f);
-      }
-    }
-
     void configure_reflected_skybox(ShaderProgram& sp, CTexture* cSkyboxTexture, CBlendTexture* cSkyboxBlend) {
       // TODO better reflection than sending the skybox texture and the blend
       // that's why we send them to all shaders
-      // TODO use uniform buffer object for this
-      if (cSkyboxTexture and sp.get_name() != "skybox") {
+      // TODO use uniform buffer object for this and think a better way to avoid sky entity that checking shader program
+      // name
+      if (cSkyboxTexture and sp.get_name() not_eq "skybox") {
         // 10 and 11 are reserved for skybox
         sp.set_int("skybox_texture", 10);
         // we only have one texture for skybox cubemap
@@ -175,7 +156,39 @@ struct CMesh {
       }
     }
 
+    // TODO move to system and rethink with uniform buffer object in system
+    void configure_texture_atlas(ShaderProgram& sp, CTextureAtlas* cTextureAtlas) {
+      // TODO terrain shader not using this logic at all (get from terrain vertex directly)
+      if (cTextureAtlas) {
+        sp.set_int(cTextureAtlas->texture->get_type().data() + std::string("_1"), 1);
+        cTextureAtlas->texture->bind_slot(1);
+        uint32_t index = cTextureAtlas->index;
+        uint32_t rows = cTextureAtlas->rows;
+        sp.set_float("texture_atlas_rows", rows);
+        uint32_t col = index % rows;
+        float coll = static_cast<float>(col) / rows;
+        uint32_t row = index / rows;
+        float roww = static_cast<float>(row) / rows;
+        sp.set_vec2("texture_atlas_offset", glm::vec2(coll, roww));
+      }
+    }
+
+    void configure_texture(ShaderProgram& sp, CTexture* cTexture) {
+      if (cTexture) {
+        uint32_t i = 1;
+        for (auto& texture : cTexture->textures) {
+          sp.set_int(texture->get_type().data() + std::string("_") + std::to_string(i), i);
+          texture->bind_slot(i);
+          ++i;
+        }
+      }
+    }
+
+    // TODO remove this method after refactor model
     void configure_model_texture(ShaderProgram& sp, CMaterial* cMaterial) {
+      if (sp.get_name() not_eq "model") {
+        return;
+      }
       uint32_t diffuse_n = 1;
       uint32_t specular_n = 1;
       uint32_t normal_n = 1;
@@ -222,22 +235,12 @@ struct CMesh {
       configure_light(sp);
       configure_reflection(sp, cReflection, cSkyboxTexture, cSkyboxBlend);
       configure_material(sp, cMaterial);
+      configure_texture(sp, cTexture);
       configure_texture_atlas(sp, cTextureAtlas);
+      // TODO add model textures to CTexture and remove this and use only one shader maybe
+      configure_model_texture(sp, cMaterial);
       configure_color(sp, cColor);
       configure_blend(sp, cBlendTexture, cBlendColor);
-
-      if (cTexture) {
-        uint32_t i = 1;
-        for (auto& texture : cTexture->textures) {
-          sp.set_int(texture->get_type().data() + std::string("_") + std::to_string(i), i);
-          texture->bind_slot(i);
-          ++i;
-        }
-      } else { // model texture
-        // TODO add model textures to CTexture and remove this and use only one shader maybe
-        configure_model_texture(sp, cMaterial);
-      }
-      sp.unuse();
     }
 
     void unbind_textures(CTexture* cTexture, CTextureAtlas* cTextureAtlas, CBlendTexture* cBlendTexture) {

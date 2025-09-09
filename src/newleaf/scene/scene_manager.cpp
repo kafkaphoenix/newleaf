@@ -23,7 +23,7 @@ void SceneManager::register_system(std::string&& name, std::unique_ptr<System>&&
 
 void SceneManager::unregister_system(std::string_view name) {
   bool deleted = false;
-  for (auto it = m_systems.begin(); it != m_systems.end(); ++it) {
+  for (auto it = m_systems.begin(); it not_eq m_systems.end(); ++it) {
     if (it->first == name) {
       m_systems.erase(it);
       deleted = true;

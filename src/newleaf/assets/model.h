@@ -40,8 +40,8 @@ class Model : public Asset {
     std::map<std::string, std::map<std::string, std::string, NumericComparator>, NumericComparator>
       m_loaded_texture_info;
 
-    void process_node(aiNode* node, const aiScene* scene);
-    CMesh process_mesh(aiMesh* mesh, const aiScene* scene);
+    void process_node(aiNode* node, aiMesh** meshes, aiMaterial** materials);
+    CMesh process_mesh(aiMesh* mesh, aiMaterial* material);
     std::vector<std::shared_ptr<Texture>> load_material_textures(aiMaterial* mat, aiTextureType t, std::string type);
     CMaterial load_material(aiMaterial* mat);
 };

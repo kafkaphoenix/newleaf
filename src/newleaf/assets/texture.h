@@ -16,7 +16,7 @@
 namespace nl {
 class Texture : public Asset {
   public:
-    Texture() = default; // TODO revisit is for std::vector in Model class
+    Texture() = default; // TODO revisit is for std::vector in Model class. This will create invalid texture
     Texture(uint32_t width, uint32_t height, GLenum glFormat, std::optional<bool> wrap = std::nullopt);
     Texture(std::filesystem::path&& fp, std::optional<std::string>&& type = std::nullopt,
             std::optional<bool> flip_vertically = std::nullopt, std::optional<uint32_t> mipmap_level = std::nullopt,

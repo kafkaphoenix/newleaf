@@ -13,22 +13,21 @@
 
 namespace nl {
 
-Application::Application(std::unique_ptr<SettingsManager>&& s, CLArgs&& args) : m_clargs(std::move(args)) {
-  m_instance = this;
-  m_settings_manager = std::move(s);
-
-  m_name = m_settings_manager->app_name;
-  std::filesystem::current_path(m_settings_manager->root);
-  m_states_manager = StatesManager::create();
-  m_assets_manager = AssetsManager::create();
-
-  m_windows_manager = WindowsManager::create(*m_settings_manager);
-  m_windows_manager->set_event_callback(BIND_EVENT(on_event));
-
-  m_render_manager = RenderManager::create();
-  m_scene_manager = SceneManager::create();
-  m_imgui_layer = ImGuiLayer::create();
-  m_imgui_layer->on_attach();
+Application::Application(std::unique_ptr<SettingsManager>&& s, CLArgs&& args)
+    : m_clargs(std::move(args)),
+      m_settings_manager(std::move(s)),
+      m_name(m_settings_manager->app_name),
+      m_states_manager(StatesManager::create()),
+      m_assets_manager(AssetsManager::create()),
+      m_windows_manager(WindowsManager::create(*m_settings_manager)),
+      m_render_manager(RenderManager::create()),
+      m_scene_manager(SceneManager::create()),
+      m_imgui_layer(ImGuiLayer::create())
+{
+    m_instance = this;
+    std::filesystem::current_path(m_settings_manager->root);
+    m_windows_manager->set_event_callback(BIND_EVENT(on_event));
+    m_imgui_layer->on_attach();
 }
 
 Application::~Application() {

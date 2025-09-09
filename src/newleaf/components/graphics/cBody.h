@@ -63,7 +63,7 @@ struct CBody {
     }
 
     void reload_mesh(std::string&& fp) {
-      ENGINE_ASSERT(fp != path, "path for model is the same");
+      ENGINE_ASSERT(fp not_eq path, "path for model is the same");
       path = std::move(fp);
       set_mesh();
     }

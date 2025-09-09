@@ -195,7 +195,7 @@ const std::map<std::string, std::string, NumericComparator>& Texture::to_map() {
 }
 
 bool Texture::operator==(const Asset& other) const {
-  if (typeid(*this) != typeid(other)) {
+  if (typeid(*this) not_eq typeid(other)) {
     ENGINE_ASSERT(false, "cannot compare texture with other asset type!");
   }
   const Texture& other_texture = static_cast<const Texture&>(other);

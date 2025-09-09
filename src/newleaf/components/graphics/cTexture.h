@@ -61,7 +61,7 @@ struct CTexture {
     }
 
     void reload_textures(std::vector<std::string>&& p) {
-      ENGINE_ASSERT(p != paths, "texture paths are the same");
+      ENGINE_ASSERT(p not_eq paths, "texture paths are the same");
       paths = std::move(p);
       textures.clear();
       set_textures();

@@ -43,10 +43,10 @@ class LogManager {
     static std::string_view get_app_logger_flush_level() {
       return std::string_view(spdlog::level::to_string_view(m_app_logger->flush_level()));
     }
-    static bool is_engine_logger_enabled() { return m_engine_logger->level() != OFF; }
-    static bool is_app_logger_enabled() { return m_app_logger->level() != OFF; }
-    static bool is_engine_backtrace_logger_enabled() { return m_engine_backtrace_logger->level() != OFF; }
-    static bool is_app_backtrace_logger_enabled() { return m_app_backtrace_logger->level() != OFF; }
+    static bool is_engine_logger_enabled() { return m_engine_logger->level() not_eq OFF; }
+    static bool is_app_logger_enabled() { return m_app_logger->level() not_eq OFF; }
+    static bool is_engine_backtrace_logger_enabled() { return m_engine_backtrace_logger->level() not_eq OFF; }
+    static bool is_app_backtrace_logger_enabled() { return m_app_backtrace_logger->level() not_eq OFF; }
 
     static constexpr spdlog::level::level_enum TRACE = spdlog::level::trace;
     static constexpr spdlog::level::level_enum DEBUG = spdlog::level::debug;

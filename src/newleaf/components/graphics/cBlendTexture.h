@@ -54,7 +54,7 @@ struct CBlendTexture {
     }
 
     void reload_texture(std::string&& p) {
-      ENGINE_ASSERT(p != path, "same texture path");
+      ENGINE_ASSERT(p not_eq path, "same texture path");
       path = std::move(p);
       texture.reset();
       set_texture();
