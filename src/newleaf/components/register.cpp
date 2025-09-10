@@ -178,6 +178,7 @@ void register_components() {
     .data<&CTextureAtlas::index>("index"_hs)
     .func<&CTextureAtlas::print>("print"_hs)
     .func<&CTextureAtlas::to_map>("to_map"_hs)
+    .func<&on_component_added<CTextureAtlas>, entt::as_ref_t>("on_component_added"_hs)
     .func<&assign<CTextureAtlas>, entt::as_ref_t>("assign"_hs);
 
   entt::meta<CBlendTexture>()

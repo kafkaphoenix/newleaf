@@ -67,6 +67,10 @@ void WindowsManager::init() {
     set_position(xpos, ypos);
   }
 
+  // TODO after settings refactor think about refactoring how we update settings probably it should go through events
+  // calling get_application is crashing on start, that's why we have a init method and not doing everything in constructor,
+  // and then initilization list of application should be refactored too
+
   ++m_window_count;
 
   m_context = OpenGLContext::create(m_window);

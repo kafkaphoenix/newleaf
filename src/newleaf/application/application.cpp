@@ -21,7 +21,7 @@ Application::Application(std::unique_ptr<SettingsManager>&& s, CLArgs&& args)
   m_instance = this;
   std::filesystem::current_path(m_settings_manager->root);
   // requires application instance to be valid
-  // because windows manager needs to access settings manager
+  // because windows manager needs to access settings manager, refactor TODO
   m_windows_manager->init();
   m_windows_manager->set_event_callback(BIND_EVENT(on_event));
   // requires a valid opengl context provided by windows manager
