@@ -253,6 +253,8 @@ void register_components() {
     .ctor<&cast_ccollider, entt::as_ref_t>()
     .data<&CCollider::_type>("type"_hs)
     .data<&CCollider::size>("size"_hs)
+    .data<&CCollider::color>("color"_hs)
+    .data<&CCollider::display_hitbox>("display_hitbox"_hs)
     .func<&CCollider::print>("print"_hs)
     .func<&CCollider::to_map>("to_map"_hs)
     .func<&on_component_added<CCollider>, entt::as_ref_t>("on_component_added"_hs)

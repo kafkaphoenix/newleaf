@@ -44,7 +44,7 @@ void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTe
     RenderAPI::set_depth_lequal();
   }
   cMesh->bind_textures(render_manager.get_shader_program(cShaderProgram.name), cTexture, cBlendTexture, cTextureAtlas,
-                       cColor, cBlendColor, cMaterial, cReflection, cSkybox, cSkyboxTexture, cSkyboxBlend);
+                       cColor, cBlendColor, cMaterial, cReflection, cSkybox, cSkyboxTexture, cSkyboxBlend, cCollider);
   render_manager.render(cMesh->get_vao(), cTransform.calculate(), cShaderProgram.name);
   cMesh->unbind_textures(cTexture, cTextureAtlas, cBlendTexture);
   if (cTransparent and cTransparent->transparent) {
@@ -52,18 +52,6 @@ void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTe
   }
   if (cSkybox) {
     RenderAPI::set_depth_less();
-  }
-  if (cCollider and Application::get().get_settings_manager().display_collision_boxes) {
-    // TODO fix transparency so I can render this first
-    // disabling culling is not working
-    // TODO move this to a system and this only works for shapes not models
-    auto& sp = render_manager.get_shader_program("shape");
-    sp.reset_active_uniforms();
-    sp.use();
-    sp.set_float("color_enabled", 1.f);
-    sp.set_vec4("color", cCollider->color);
-    sp.unuse();
-    render_manager.render(cCollider->mesh.get_vao(), cTransform.calculate(), "shape");
   }
 }
 
