@@ -12,7 +12,8 @@
 #include "../../scene/scene_manager.h"
 #include "../../utils/assert.h"
 #include "../../utils/numeric_comparator.h"
-#include "../graphics/cMesh.h"
+// TODO reenable when using mesh colliders after cmesh refactor to avoid circular dependency
+//#include "../graphics/cMesh.h"
 
 namespace nl {
 
@@ -22,7 +23,7 @@ struct CCollider {
     std::string _type;
     Type type;
     glm::vec3 size{};
-    CMesh mesh;
+    //CMesh mesh;
     glm::vec4 color{1.0f, 0.0f, 0.0f, 1.f};
     bool display_hitbox{};
 
@@ -54,7 +55,7 @@ struct CCollider {
         type = Type::sphere;
       } else if (_type == "rectangle") {
         type = Type::rectangle;
-        mesh.vao = ShapeFactory::create_rectangle(size.x, size.y, false);
+        //mesh.vao = ShapeFactory::create_rectangle(size.x, size.y, false);
       } else {
         ENGINE_ASSERT(false, "unknown collider type {}", _type);
       }

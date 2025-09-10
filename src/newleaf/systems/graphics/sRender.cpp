@@ -43,8 +43,14 @@ void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTe
   if (cSkybox) {
     RenderAPI::set_depth_lequal();
   }
+  // TODO refactor this to a system
+  bool display_hitbox = false;
+  if (cCollider) {
+    display_hitbox = Application::get().get_settings_manager().display_collision_boxes;
+  }
   cMesh->bind_textures(render_manager.get_shader_program(cShaderProgram.name), cTexture, cBlendTexture, cTextureAtlas,
-                       cColor, cBlendColor, cMaterial, cReflection, cSkybox, cSkyboxTexture, cSkyboxBlend, cCollider);
+                       cColor, cBlendColor, cMaterial, cReflection, cSkybox, cSkyboxTexture, cSkyboxBlend, cCollider,
+                       display_hitbox);
   render_manager.render(cMesh->get_vao(), cTransform.calculate(), cShaderProgram.name);
   cMesh->unbind_textures(cTexture, cTextureAtlas, cBlendTexture);
   if (cTransparent and cTransparent->transparent) {
@@ -62,7 +68,7 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
   // TODO: support more than one?
   entt::entity fbo = registry.view<CFBO, CUUID>().front();
   if (fbo not_eq entt::null) {
-    CFBO& cfbo = registry.get<CFBO>(fbo);
+    const CFBO& cfbo = registry.get<CFBO>(fbo);
     const auto& default_FBO = render_manager.get_framebuffers().at(cfbo.fbo);
     default_FBO->bind_to_draw();
     RenderAPI::toggle_depth_test(true);
