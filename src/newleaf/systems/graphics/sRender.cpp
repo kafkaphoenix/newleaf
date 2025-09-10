@@ -170,7 +170,7 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
     default_FBO->unbind();
     RenderAPI::clear_color();
     // disable depth test so screen-space quad isn't discarded due to depth test.
-    RenderAPI::toggle_depth_test(false); 
+    RenderAPI::toggle_depth_test(false);
     CShape& cShape = registry.get<CShape>(fbo);
     cfbo.setup_properties(render_manager.get_shader_program("fbo"));
     const auto& settings_manager = app.get_settings_manager();
