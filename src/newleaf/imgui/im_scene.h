@@ -30,7 +30,7 @@ inline void render_scene(uint32_t fboTextureID, std::string_view title, glm::vec
   ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
   ImGui::SetNextWindowSize(ImVec2(window_w, window_h));
   if (ImGui::Begin(title.data(), nullptr, window_flags)) {
-    ImGui::Image((void*)fboTextureID, ImVec2(w, h), ImVec2(0, 1), ImVec2(1, 0));
+    ImGui::Image(reinterpret_cast<ImTextureID>(fboTextureID), ImVec2(w, h), ImVec2(0, 1), ImVec2(1, 0));
   }
   ImGui::PopStyleVar();
   ImGui::End();

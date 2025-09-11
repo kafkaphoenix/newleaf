@@ -31,7 +31,7 @@ class SceneManager {
     void on_update(const Time& ts);
     entt::registry& get_registry();
     entt::entity get_entity(std::string_view name);
-    entt::entity get_entity(UUID& uuid);
+    entt::entity get_entity(const UUID& uuid);
     const std::vector<std::string>& get_named_systems();
 
     template <typename Component> void on_component_added(entt::entity e, Component& c);

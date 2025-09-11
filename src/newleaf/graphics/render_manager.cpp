@@ -1,5 +1,7 @@
 #include "render_manager.h"
 
+#include <numeric>
+
 #include "../assets/texture.h"
 #include "../imgui/im_scene.h"
 #include "../logging/log_manager.h"
@@ -55,9 +57,8 @@ void RenderManager::render_framebuffer(const std::shared_ptr<VAO>& vao, std::str
 
   m_draw_calls++;
   m_triangles += vao->get_ebo().get_count() / 3;
-  for (const auto& vbo : vao->get_vbos()) {
-    m_vertices += vbo->get_count();
-  }
+  m_vertices = std::accumulate(vao->get_vbos().begin(), vao->get_vbos().end(), 0u,
+                               [](uint32_t sum, const std::shared_ptr<VBO>& vbo) { return sum + vbo->get_count(); });
   m_indices += vao->get_ebo().get_count();
   sp.unuse();
 }
@@ -69,9 +70,8 @@ void RenderManager::render_inside_imgui(const std::shared_ptr<VAO>& vao, std::st
 
   m_draw_calls++;
   m_triangles += vao->get_ebo().get_count() / 3;
-  for (const auto& vbo : vao->get_vbos()) {
-    m_vertices += vbo->get_count();
-  }
+  m_vertices = std::accumulate(vao->get_vbos().begin(), vao->get_vbos().end(), 0u,
+                               [](uint32_t sum, const std::shared_ptr<VBO>& vbo) { return sum + vbo->get_count(); });
   m_indices += vao->get_ebo().get_count();
 }
 
@@ -87,11 +87,11 @@ void RenderManager::render(const std::shared_ptr<VAO>& vao, const glm::mat4& tra
 
   RenderAPI::draw_indexed(vao);
 
+  // TODO we repeat this in each render method, three times
   m_draw_calls++;
   m_triangles += vao->get_ebo().get_count() / 3;
-  for (const auto& vbo : vao->get_vbos()) {
-    m_vertices += vbo->get_count();
-  }
+  m_vertices = std::accumulate(vao->get_vbos().begin(), vao->get_vbos().end(), 0u,
+                               [](uint32_t sum, const std::shared_ptr<VBO>& vbo) { return sum + vbo->get_count(); });
   m_indices += vao->get_ebo().get_count();
   sp.unuse(); // DONT unuse before the draw call
 }

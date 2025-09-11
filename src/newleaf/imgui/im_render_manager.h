@@ -109,8 +109,8 @@ inline void draw_render_manager(const RenderManager& render_manager, const Setti
                 (selected_render_manager_tabtype + selected_render_manager_tabkey + key + settings_manager.active_scene)
                   .c_str(),
                 key.c_str())) {
-            for (const auto& [key, value] : texture_info) {
-              ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
+            for (const auto& [k, v] : texture_info) {
+              ImGui::BulletText("%s: %s", k.c_str(), v.c_str());
             }
             ImGui::TreePop();
           }

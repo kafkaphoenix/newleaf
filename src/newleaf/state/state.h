@@ -12,9 +12,7 @@ namespace nl {
 
 class State {
   public:
-    State(std::string&& name = "template_state") : m_name(std::move(name)) {
-      m_layers_manager = LayersManager::create();
-    }
+    State(std::string&& name = "template_state") : m_name(std::move(name)), m_layers_manager(LayersManager::create()) {}
     virtual ~State() = default;
 
     virtual void on_attach() {}

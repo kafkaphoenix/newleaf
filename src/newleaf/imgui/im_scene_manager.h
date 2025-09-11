@@ -27,30 +27,30 @@ bool filter_systems{};
 
 inline void draw_leaf_info(const std::map<std::string, std::string, NumericComparator>& info,
                            const std::string& scene_name) {
-  for (const auto& [k, v] : info) {
-    if (k.starts_with("mesh_") or k.starts_with("texture_") or k.starts_with("material_") or
-        k.starts_with("transform_") or (k.starts_with("vao_") and v not_eq "undefined")) {
-      if (ImGui::TreeNode((k + scene_name).c_str(), k.c_str())) {
-        auto childInfoData = json_to_map(v);
-        for (const auto& [key, value] : childInfoData) {
-          if ((key.starts_with("texture_") and not key.ends_with("_type")) or
-              (key.starts_with("vao_") and value not_eq "undefined")) {
-            if (ImGui::TreeNode((key + scene_name).c_str(), key.c_str())) {
+  for (const auto& [key, value] : info) {
+    if (key.starts_with("mesh_") or key.starts_with("texture_") or key.starts_with("material_") or
+        key.starts_with("transform_") or (key.starts_with("vao_") and value not_eq "undefined")) {
+      if (ImGui::TreeNode((key + scene_name).c_str(), key.c_str())) {
+        auto childInfoData = json_to_map(value);
+        for (const auto& [k, v] : childInfoData) {
+          if ((k.starts_with("texture_") and not k.ends_with("_type")) or
+              (k.starts_with("vao_") and v not_eq "undefined")) {
+            if (ImGui::TreeNode((k + scene_name).c_str(), k.c_str())) {
               // CBody, CShape, CChunk have a CMesh that has a vao and CTexture
               auto rechildInfoData = json_to_map(value);
-              for (const auto& [key, value] : rechildInfoData) {
-                ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
+              for (const auto& [kk, vv] : rechildInfoData) {
+                ImGui::BulletText("%s: %s", kk.c_str(), vv.c_str());
               }
               ImGui::TreePop();
             }
           } else {
-            ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
+            ImGui::BulletText("%s: %s", k.c_str(), v.c_str());
           }
         }
         ImGui::TreePop();
       }
     } else {
-      ImGui::BulletText("%s: %s", k.c_str(), v.c_str());
+      ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
     }
   }
 }

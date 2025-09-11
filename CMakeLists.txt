@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(newleaf
-VERSION 0.1.1
+VERSION 0.2.0
 HOMEPAGE_URL "https://github.com/kafkaphoenix/newleaf"
 DESCRIPTION "C++ game engine for 3d and 2d development"
 LANGUAGES CXX

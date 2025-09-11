@@ -71,7 +71,7 @@ entt::entity SceneManager::get_entity(std::string_view name) {
   ENGINE_ASSERT(false, "entity with name {} not found", name);
 }
 
-entt::entity SceneManager::get_entity(UUID& uuid) {
+entt::entity SceneManager::get_entity(const UUID& uuid) {
   for (const auto& [e, cUUID] : m_registry.view<CUUID>().each()) {
     if (cUUID.uuid == uuid) {
       return e;
