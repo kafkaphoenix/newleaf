@@ -70,7 +70,7 @@ struct CMesh {
     // TODO maybe avoid setting uniform at all if disable, check after refactor and removing monostate
     // TODO rethink with uniform buffer object in system
     void configure_fog(ShaderProgram& sp) {
-      sp.set_int("fog_enabled", static_cast<float>(entt::monostate<"fog_enabled"_hs>{}));
+      sp.set_bool("fog_enabled", static_cast<bool>(entt::monostate<"fog_enabled"_hs>{}));
       sp.set_vec4("fog_color", static_cast<glm::vec4>(entt::monostate<"fog_color"_hs>{}));
       sp.set_float("fog_density", static_cast<float>(entt::monostate<"fog_density"_hs>{}));
       sp.set_float("fog_gradient", static_cast<float>(entt::monostate<"fog_gradient"_hs>{}));
@@ -80,7 +80,7 @@ struct CMesh {
 
     // TODO rethink with uniform buffer object in system
     void configure_light(ShaderProgram& sp) {
-      sp.set_int("light_enabled", static_cast<float>(entt::monostate<"light_enabled"_hs>{}));
+      sp.set_bool("light_enabled", static_cast<bool>(entt::monostate<"light_enabled"_hs>{}));
       sp.set_vec3("light_color", static_cast<glm::vec3>(entt::monostate<"light_color"_hs>{}));
       sp.set_vec3("light_position", static_cast<glm::vec3>(entt::monostate<"light_position"_hs>{}));
       sp.set_float("light_intensity", static_cast<float>(entt::monostate<"light_intensity"_hs>{}));
@@ -92,7 +92,7 @@ struct CMesh {
     void configure_reflection(ShaderProgram& sp, CReflection* cReflection, CTexture* cSkyboxTexture,
                               CBlendTexture* cSkyboxBlend) {
       if (cReflection) {
-        sp.set_int("reflection_enabled", cReflection->enabled ? 1 : 0);
+        sp.set_bool("reflection_enabled", cReflection->enabled);
         sp.set_float("reflectivity", cReflection->reflectivity);
         sp.set_float("refractivity", cReflection->refractivity);
         configure_reflected_skybox(sp, cSkyboxTexture, cSkyboxBlend);
@@ -120,40 +120,40 @@ struct CMesh {
         ENGINE_ASSERT(cSkyboxTexture->textures.size() == 1, "invalid skybox texture");
         cSkyboxTexture->textures[0]->bind_slot(10);
         if (cSkyboxBlend) {
-          sp.set_int("blend_skybox_enabled", 1);
+          sp.set_bool("blend_skybox_enabled", true);
           sp.set_int("blend_skybox_texture", 11);
           cSkyboxBlend->texture->bind_slot(11);
           sp.set_float("blend_skybox_factor", cSkyboxBlend->blend_factor);
         } else {
-          sp.set_int("blend_skybox_enabled", 0);
+          sp.set_bool("blend_skybox_enabled", false);
         }
       }
     }
 
     void configure_color(ShaderProgram& sp, CColor* cColor) {
       if (cColor) {
-        sp.set_int("color_enabled", 1);
+        sp.set_bool("color_enabled", true);
         sp.set_vec4("color", cColor->color);
       } else {
-        sp.set_int("color_enabled", 0);
+        sp.set_bool("color_enabled", false);
       }
     }
 
     void configure_blend(ShaderProgram& sp, CBlendTexture* cBlendTexture, CBlendColor* cBlendColor) {
       if (cBlendTexture) {
-        sp.set_int("blend_texture_enabled", 1);
+        sp.set_bool("blend_texture_enabled", true);
         sp.set_float("blend_texture_factor", cBlendTexture->blend_factor);
         sp.set_int("blend_texture", 9); // slot 9 reserved for blend texture
         cBlendTexture->texture->bind_slot(9);
       } else {
-        sp.set_int("blend_texture_enabled", 0);
+        sp.set_bool("blend_texture_enabled", false);
       }
       if (cBlendColor) {
-        sp.set_int("blend_color_enabled", 1);
+        sp.set_bool("blend_color_enabled", true);
         sp.set_float("blend_color_factor", cBlendColor->blend_factor);
         sp.set_vec4("blend_color", cBlendColor->color);
       } else {
-        sp.set_int("blend_color_enabled", 0);
+        sp.set_bool("blend_color_enabled", false);
       }
     }
 
@@ -198,11 +198,11 @@ struct CMesh {
       // TODO improve code for several textures and to select normal/material
       // with arrays
       if (textures.size() == 0) {
-        sp.set_int("texture_enabled", 0); // will use material only
+        sp.set_bool("texture_enabled", false); // will use material only
         ENGINE_ASSERT(cMaterial, "no texture or material found for model");
         return;
       }
-      sp.set_int("texture_enabled", 1);
+      sp.set_bool("texture_enabled", true);
       for (auto& texture : textures) {
         std::string number;
         std::string_view type = texture->get_type();
@@ -222,7 +222,7 @@ struct CMesh {
         ++i;
       }
       // TODO rethink how to use normal and other together
-      sp.set_int("normal_enabled", normal_n > 1 ? 1 : 0);
+      sp.set_bool("normal_enabled", normal_n > 1);
     }
 
     // TODO remove this and rethink in systems with uniform buffer objects

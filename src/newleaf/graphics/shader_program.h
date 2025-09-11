@@ -34,6 +34,7 @@ class ShaderProgram {
     void set_vec3(std::string_view name, const glm::vec3& v);
     void set_vec4(std::string_view name, const glm::vec4& v);
     void set_mat4(std::string_view name, const glm::mat4& m);
+    void set_bool(std::string_view name, bool value);
     void reset_active_uniforms();
     void print_active_uniforms();
     const std::map<std::string, std::string, NumericComparator>& to_map();

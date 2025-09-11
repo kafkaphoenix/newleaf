@@ -25,10 +25,10 @@ void FogSystem::update(entt::registry& registry, const Time& ts) {
 
   registry.view<CFog, CUUID>().each([&](CFog& cFog, const CUUID& cUUID) {
     if (not cFog.enabled) {
-      entt::monostate<"fog_enabled"_hs>{} = 0.f;
+      entt::monostate<"fog_enabled"_hs>{} = false;
       return;
     }
-    entt::monostate<"fog_enabled"_hs>{} = 1.0f;
+    entt::monostate<"fog_enabled"_hs>{} = true;
     entt::monostate<"fog_lower_limit"_hs>{} = cFog.lower_limit;
     entt::monostate<"fog_upper_limit"_hs>{} = cFog.upper_limit;
 

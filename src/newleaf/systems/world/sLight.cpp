@@ -18,10 +18,10 @@ void LightSystem::update(entt::registry& registry, const Time& ts) {
   registry.view<CLight, CTransform, CUUID>().each(
     [&](const CLight& cLight, const CTransform& cTransform, const CUUID& cUUID) {
       if (not cLight.enabled) {
-        entt::monostate<"light_enabled"_hs>{} = 0.f;
+        entt::monostate<"light_enabled"_hs>{} = false;
         return;
       }
-      entt::monostate<"light_enabled"_hs>{} = 1.f;
+      entt::monostate<"light_enabled"_hs>{} = true;
       entt::monostate<"light_position"_hs>{} = cTransform.position;
       entt::monostate<"light_color"_hs>{} = cLight.color;
       entt::monostate<"light_intensity"_hs>{} = cLight.intensity;
