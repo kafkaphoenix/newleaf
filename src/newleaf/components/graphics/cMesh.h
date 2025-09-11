@@ -11,7 +11,6 @@
 #include <glm/glm.hpp>
 
 #include "../../assets/texture.h"
-#include "../../components/physics/cCollider.h"
 #include "../../graphics/buffer.h"
 #include "../../graphics/shader_program.h"
 #include "../../graphics/vao.h"
@@ -157,11 +156,6 @@ struct CMesh {
       }
     }
 
-    void configure_hitbox(ShaderProgram& sp, CCollider* cCollider, bool display_hitbox) {
-      sp.set_float("display_hitbox", cCollider->display_hitbox or display_hitbox ? 1.f : 0.f);
-      sp.set_vec4("hitbox_color", cCollider->color);
-    }
-
     // TODO move to system and rethink with uniform buffer object in system
     void configure_texture_atlas(ShaderProgram& sp, CTextureAtlas* cTextureAtlas) {
       // TODO terrain shader not using this logic at all (get from terrain vertex directly)
@@ -234,7 +228,7 @@ struct CMesh {
     void bind_textures(ShaderProgram& sp, CTexture* cTexture, CBlendTexture* cBlendTexture,
                        CTextureAtlas* cTextureAtlas, CColor* cColor, CBlendColor* cBlendColor, CMaterial* cMaterial,
                        CReflection* cReflection, CSkybox* cSkybox, CTexture* cSkyboxTexture,
-                       CBlendTexture* cSkyboxBlend, CCollider* cCollider, bool display_hitbox) {
+                       CBlendTexture* cSkyboxBlend) {
       sp.reset_active_uniforms();
       sp.use();
       configure_fog(sp);
@@ -247,7 +241,6 @@ struct CMesh {
       configure_model_texture(sp, cMaterial);
       configure_color(sp, cColor);
       configure_blend(sp, cBlendTexture, cBlendColor);
-      configure_hitbox(sp, cCollider, display_hitbox);
     }
 
     void unbind_textures(CTexture* cTexture, CTextureAtlas* cTextureAtlas, CBlendTexture* cBlendTexture) {

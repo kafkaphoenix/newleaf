@@ -46,11 +46,11 @@ void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTe
   // TODO refactor this to a system
   bool display_hitbox = false;
   if (cCollider) {
-    display_hitbox = Application::get().get_settings_manager().display_collision_boxes;
+    display_hitbox = cCollider->display_hitbox or Application::get().get_settings_manager().display_collision_boxes;
   }
-  cMesh->bind_textures(render_manager.get_shader_program(cShaderProgram.name), cTexture, cBlendTexture, cTextureAtlas,
-                       cColor, cBlendColor, cMaterial, cReflection, cSkybox, cSkyboxTexture, cSkyboxBlend, cCollider,
-                       display_hitbox);
+  ShaderProgram& sp = render_manager.get_shader_program(cShaderProgram.name);
+  cMesh->bind_textures(sp, cTexture, cBlendTexture, cTextureAtlas,
+                       cColor, cBlendColor, cMaterial, cReflection, cSkybox, cSkyboxTexture, cSkyboxBlend);
   render_manager.render(cMesh->get_vao(), cTransform.calculate(), cShaderProgram.name);
   cMesh->unbind_textures(cTexture, cTextureAtlas, cBlendTexture);
   if (cTransparent and cTransparent->transparent) {
@@ -58,6 +58,17 @@ void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTe
   }
   if (cSkybox) {
     RenderAPI::set_depth_less();
+  }
+  if (cCollider and display_hitbox) {
+    // TODO fix transparency so I can render this first
+    // disabling culling is not working
+    // this can't be in cmesh bind_textures right now
+    sp.reset_active_uniforms();
+    sp.use();
+    sp.set_float("display_hitbox", 1.f);
+    sp.set_vec4("hitbox_color", cCollider->color);
+    sp.unuse();
+    render_manager.render(cCollider->mesh.get_vao(), cTransform.calculate(), cShaderProgram.name);
   }
 }
 
@@ -122,7 +133,7 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
 
       if (cShaderProgram.visible) {
         if (cMesh) { // TODO objects with one mesh unused
-          if (not cTexture) {
+          if (not cTexture and not cTextureAtlas) {
             CName* cName = registry.try_get<CName>(e);
             if (cName) {
               APP_ASSERT(false, "no texture found for entity {} {}", cUUID.uuid, cName->name);
@@ -144,7 +155,7 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
                    render_manager);
           }
         } else if (cShape) { // primitives
-          if (not cTexture) {
+          if (not cTexture and not cTextureAtlas) {
             CName* cName = registry.try_get<CName>(e);
             if (cName) {
               APP_ASSERT(false, "no texture found for entity {} {}", cUUID.uuid, cName->name);
