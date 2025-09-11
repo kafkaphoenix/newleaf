@@ -17,6 +17,7 @@
 
 namespace nl {
 
+// TODO probably this component should be divided in two, one for fbo properties and other for effect properties
 struct CFBO {
     enum class Mode {
       normal,
@@ -164,63 +165,65 @@ struct CFBO {
       sp.use();
       sp.set_float("time", time);
       if (mode == Mode::normal) {
-        sp.set_float("mode", 0.f);
+        sp.set_int("mode", 0);
       } else if (mode == Mode::inverse) {
-        sp.set_float("mode", 1.f);
+        sp.set_int("mode", 1);
       } else if (mode == Mode::greyscale) {
-        sp.set_float("mode", 2.f);
+        sp.set_int("mode", 2);
       } else if (mode == Mode::blur) {
-        sp.set_float("mode", 3.f);
+        sp.set_int("mode", 3);
       } else if (mode == Mode::edge) {
-        sp.set_float("mode", 4.f);
+        sp.set_int("mode", 4);
       } else if (mode == Mode::sharpen) {
-        sp.set_float("mode", 5.f);
+        sp.set_int("mode", 5);
       } else if (mode == Mode::nightvision) {
-        sp.set_float("mode", 6.f);
+        sp.set_int("mode", 6);
       } else if (mode == Mode::emboss) {
-        sp.set_float("mode", 7.f);
+        sp.set_int("mode", 7);
       } else if (mode == Mode::sepia) {
-        sp.set_float("mode", 8.f);
+        sp.set_int("mode", 8);
       } else if (mode == Mode::comic) {
-        sp.set_float("mode", 9.f);
+        sp.set_int("mode", 9);
       } else if (mode == Mode::one_bit_shading) {
-        sp.set_float("mode", 10.f);
+        sp.set_int("mode", 10);
       } else if (mode == Mode::one_bit_dithered) {
-        sp.set_float("mode", 11.f);
+        sp.set_int("mode", 11);
       } else if (mode == Mode::ps1) {
-        sp.set_float("mode", 12.f);
+        sp.set_int("mode", 12);
       } else if (mode == Mode::cell_shader) {
-        sp.set_float("mode", 13.f);
+        sp.set_int("mode", 13);
       } else if (mode == Mode::thermal) {
-        sp.set_float("mode", 14.f);
+        sp.set_int("mode", 14);
       } else if (mode == Mode::cyanotype) {
-        sp.set_float("mode", 15.f);
+        sp.set_int("mode", 15);
       } else if (mode == Mode::heatmap) {
-        sp.set_float("mode", 16.f);
+        sp.set_int("mode", 16);
       } else if (mode == Mode::crt) {
-        sp.set_float("mode", 17.f);
+        sp.set_int("mode", 17);
       } else if (mode == Mode::chromatic_aberration) {
-        sp.set_float("mode", 18.f);
+        sp.set_int("mode", 18);
       } else if (mode == Mode::swirl) {
-        sp.set_float("mode", 19.f);
+        sp.set_int("mode", 19);
       } else if (mode == Mode::horizontal_glitch) {
-        sp.set_float("mode", 20.f);
+        sp.set_int("mode", 20);
       } else if (mode == Mode::wave) {
-        sp.set_float("mode", 21.f);
+        sp.set_int("mode", 21);
       } else if (mode == Mode::kaleidoscope) {
-        sp.set_float("mode", 22.f);
+        sp.set_int("mode", 22);
       } else if (mode == Mode::datamosh) {
-        sp.set_float("mode", 23.f);
+        sp.set_int("mode", 23);
       } else if (mode == Mode::barrel_distortion) {
-        sp.set_float("mode", 24.f);
+        sp.set_int("mode", 24);
       } else if (mode == Mode::ripple) {
-        sp.set_float("mode", 25.f);
+        sp.set_int("mode", 25);
       } else if (mode == Mode::plasma) {
-        sp.set_float("mode", 26.f);
+        sp.set_int("mode", 26);
       } else if (mode == Mode::pixelate) {
-        sp.set_float("mode", 27.f);
+        sp.set_int("mode", 27);
       } else if (mode == Mode::mirror) {
-        sp.set_float("mode", 28.f);
+        sp.set_int("mode", 28);
+      } else {
+        ENGINE_ASSERT(false, "unknown fbo mode {}", _mode);
       }
       sp.unuse();
     }

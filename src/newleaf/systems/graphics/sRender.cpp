@@ -65,10 +65,14 @@ void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTe
     // this can't be in cmesh bind_textures right now
     sp.reset_active_uniforms();
     sp.use();
-    sp.set_float("display_hitbox", 1.f);
+    sp.set_int("display_hitbox", 1);
     sp.set_vec4("hitbox_color", cCollider->color);
     sp.unuse();
     render_manager.render(cCollider->mesh.get_vao(), cTransform.calculate(), cShaderProgram.name);
+  } else if (cCollider and not display_hitbox) {
+    sp.use();
+    sp.set_int("display_hitbox", 0);
+    sp.unuse();
   }
 }
 
