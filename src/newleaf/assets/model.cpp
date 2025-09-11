@@ -153,7 +153,7 @@ std::vector<std::shared_ptr<Texture>> Model::load_material_textures(aiMaterial* 
     if (loaded_texture not_eq m_loaded_textures.end()) {
       textures.emplace_back(std::make_shared<Texture>(*(*loaded_texture)));
     } else {
-      auto new_texture = std::make_shared<Texture>(path, type);
+      std::shared_ptr<Texture> new_texture = std::make_shared<Texture>(path, type);
       textures.emplace_back(new_texture);
       m_loaded_textures.emplace_back(std::move(new_texture));
     }

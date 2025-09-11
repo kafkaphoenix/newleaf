@@ -17,7 +17,7 @@ inline void draw_logger() {
   if (not show_tool_logger)
     return;
 
-  auto sink = dynamic_cast<ImGuiLogsink*>(LogManager::get_engine_logger().sinks()[1].get());
+  ImGuiLogsink* sink = dynamic_cast<ImGuiLogsink*>(LogManager::get_engine_logger().sinks()[1].get());
   sink->draw(&show_tool_logger);
 }
 }

@@ -160,7 +160,7 @@ void SceneFactory::create_models(const Scene& scene, AssetsManager& assets_manag
 
 void SceneFactory::create_prototypes(const Scene& scene, AssetsManager& assets_manager, entt::registry& registry) {
   for (const auto& [prefab_name, options] : scene.get_prefabs()) {
-    auto prefab =
+    Prefab prefab =
       Prefab(options.at("path").get<std::string>(), options.at("target_prototypes").get<std::vector<std::string>>());
     ENGINE_TRACE("creating prototypes from prefab {}", prefab_name);
     std::vector<std::string> target_prototypes = prefab.get_target_prototypes();

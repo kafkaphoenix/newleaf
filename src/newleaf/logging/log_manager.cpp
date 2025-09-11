@@ -42,7 +42,7 @@ void LogManager::create_file_logger(std::string_view path) {
 
 void LogManager::create_backtrace_logger(std::string_view path, bool engine_backtrace_logger_enabled,
                                          bool app_backtrace_logger_enabled) {
-  auto backtrace_sink = std::make_shared<BacktraceLogsink>(path.data());
+  std::shared_ptr<BacktraceLogsink> backtrace_sink = std::make_shared<BacktraceLogsink>(path.data());
   m_engine_backtrace_logger = std::make_shared<spdlog::logger>("engine", backtrace_sink);
   m_app_backtrace_logger = std::make_shared<spdlog::logger>("app", backtrace_sink);
 
@@ -64,22 +64,22 @@ void LogManager::create_backtrace_logger(std::string_view path, bool engine_back
 }
 
 void LogManager::clear_all_backtrace_logger() {
-  auto sink = dynamic_cast<BacktraceLogsink*>(m_engine_backtrace_logger->sinks()[0].get());
+  BacktraceLogsink* sink = dynamic_cast<BacktraceLogsink*>(m_engine_backtrace_logger->sinks()[0].get());
   sink->clear("all");
 }
 
 void LogManager::clear_engine_backtrace_logger() {
-  auto sink = dynamic_cast<BacktraceLogsink*>(m_engine_backtrace_logger->sinks()[0].get());
+  BacktraceLogsink* sink = dynamic_cast<BacktraceLogsink*>(m_engine_backtrace_logger->sinks()[0].get());
   sink->clear("engine");
 }
 
 void LogManager::clear_app_backtrace_logger() {
-  auto sink = dynamic_cast<BacktraceLogsink*>(m_app_backtrace_logger->sinks()[0].get());
+  BacktraceLogsink* sink = dynamic_cast<BacktraceLogsink*>(m_app_backtrace_logger->sinks()[0].get());
   sink->clear("app");
 }
 
 void LogManager::dump_backtrace() {
-  auto sink = dynamic_cast<BacktraceLogsink*>(m_engine_backtrace_logger->sinks()[0].get());
+  BacktraceLogsink* sink = dynamic_cast<BacktraceLogsink*>(m_engine_backtrace_logger->sinks()[0].get());
   sink->dump_to_file();
 }
 

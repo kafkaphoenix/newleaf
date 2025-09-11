@@ -67,6 +67,7 @@ struct CMesh {
       return vao;
     }
 
+    // TODO maybe avoid setting uniform at all if disable, check after refactor and removing monostate
     // TODO rethink with uniform buffer object in system
     void configure_fog(ShaderProgram& sp) {
       sp.set_float("fog_enabled", static_cast<float>(entt::monostate<"fog_enabled"_hs>{}));

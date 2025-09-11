@@ -13,7 +13,7 @@ BacktraceLogsink::BacktraceLogsink(std::string&& path) : m_path(std::move(path))
 
 void BacktraceLogsink::dump_to_file() {
   std::unique_lock<std::shared_timed_mutex> lock(m_records_mutex);
-  auto path = std::filesystem::path(m_path);
+  std::filesystem::path path = std::filesystem::path(m_path);
   if (!std::filesystem::exists(path.parent_path())) {
     std::filesystem::create_directories(path.parent_path());
   }

@@ -32,7 +32,7 @@ inline void save_settings(const SettingsManager& settings_manager, std::filesyst
 
 inline std::unique_ptr<SettingsManager> load_settings(std::string_view app_name) {
   std::unique_ptr<SettingsManager> settings_manager = std::make_unique<SettingsManager>();
-  auto path = get_default_roaming_path(app_name) / "settings.json";
+  std::filesystem::path path = get_default_roaming_path(app_name) / "settings.json";
 
   if (!std::filesystem::exists(path)) {
     settings_manager->app_name = app_name.data();

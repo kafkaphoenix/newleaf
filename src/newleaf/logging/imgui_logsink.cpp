@@ -27,7 +27,7 @@ void ImGuiLogsink::show_log_format_popup() {
 
 int ImGuiLogsink::calculate_elapsed_local_time(const Record& r) {
   auto now = std::chrono::current_zone()->to_local(std::chrono::system_clock::now());
-  auto now_str = std::format("{:%T}", std::chrono::floor<std::chrono::seconds>(now));
+  std::string now_str = std::format("{:%T}", std::chrono::floor<std::chrono::seconds>(now));
   std::tm tm_now{};
   std::istringstream ss(now_str);
   ss >> std::get_time(&tm_now, "%H:%M:%S");
@@ -44,7 +44,7 @@ int ImGuiLogsink::calculate_elapsed_local_time(const Record& r) {
 void ImGuiLogsink::draw(bool* show_tool_logger) {
   ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
   if (ImGui::Begin("Log", show_tool_logger)) {
-    auto button_color = ImGui::GetStyleColorVec4(ImGuiCol_Button);
+    ImVec4 button_color = ImGui::GetStyleColorVec4(ImGuiCol_Button);
     ImGui::PushStyleColor(ImGuiCol_Border, button_color);
     button_color.w = 0.f;
     ImGui::PushStyleColor(ImGuiCol_Button, button_color);
@@ -301,8 +301,8 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
 
         if (empty) {
           std::string text = "No log records";
-          auto window_width = ImGui::GetWindowSize().x;
-          auto text_width = ImGui::CalcTextSize(text.c_str()).x;
+          float window_width = ImGui::GetWindowSize().x;
+          float text_width = ImGui::CalcTextSize(text.c_str()).x;
 
           ImGui::NewLine();
           ImGui::SetCursorPosX((window_width - text_width) * 0.5f);

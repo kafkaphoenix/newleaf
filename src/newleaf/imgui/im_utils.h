@@ -28,7 +28,7 @@ inline void underline(ImColor color, float thickness = 1.f) {
 inline int collapser() {
   int collapsed = -1;
 
-  auto button_color = ImGui::GetStyleColorVec4(ImGuiCol_Button);
+  ImVec4 button_color = ImGui::GetStyleColorVec4(ImGuiCol_Button);
   ImGui::PushStyleColor(ImGuiCol_Border, button_color);
   ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.f);
   button_color.w = 0.f;

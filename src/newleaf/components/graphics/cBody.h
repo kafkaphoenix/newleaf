@@ -57,7 +57,7 @@ struct CBody {
       // TODO support multiple models
       ENGINE_ASSERT(!path.empty(), "path for model is empty");
       const auto& assets_manager = Application::get().get_assets_manager();
-      auto model = *assets_manager.get<Model>(path); // We need a copy of the model
+      Model model = *assets_manager.get<Model>(path); // We need a copy of the model
       meshes = std::move(model.get_meshes());
       materials = std::move(model.get_materials());
     }
