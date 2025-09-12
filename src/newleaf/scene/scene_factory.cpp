@@ -182,18 +182,19 @@ std::map<std::string, std::string, NumericComparator>& SceneFactory::compute_met
 
   m_metrics.clear();
   m_metrics["active_scene"] = m_active_scene;
-  int total = registry.storage<entt::entity>().free_list();
   int created = registry.storage<entt::entity>().size();
+  int released = registry.storage<entt::entity>().free_list();
+  int total = created - released;
   int n_prototypes = 0;
   for (const auto& [key, prototypes] : m_entity_factory.get_all_prototypes()) {
     n_prototypes += prototypes.size();
     m_metrics["prototypes_alive_from_prefab_" + key] = std::to_string(prototypes.size());
   }
-  m_metrics["prototypes_total_alive"] = std::to_string(n_prototypes);
-  m_metrics["instances_total_alive"] = std::to_string(total - n_prototypes);
-  m_metrics["entities_total_alive"] = std::to_string(total);
-  m_metrics["entities_total_created"] = std::to_string(created);
-  m_metrics["entities_total_released"] = std::to_string(created - total);
+  m_metrics["prototypes_alive"] = std::to_string(n_prototypes);
+  m_metrics["instances_alive"] = std::to_string(total - n_prototypes);
+  m_metrics["entities_alive"] = std::to_string(total);
+  m_metrics["entities_created"] = std::to_string(created);
+  m_metrics["entities_released"] = std::to_string(released);
   m_dirty_metrics = false;
 
   return m_metrics;

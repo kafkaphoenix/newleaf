@@ -58,7 +58,7 @@ inline void draw_leaf_info(const std::map<std::string, std::string, NumericCompa
 inline void draw_scene_manager(SceneManager& scene_manager, const SettingsManager& settings_manager) {
   entt::registry& registry = scene_manager.get_registry();
 
-  if (registry.storage<entt::entity>().free_list() == 0) {
+  if (registry.storage<entt::entity>().size() == 0) {
     ImGui::Text("No entities loaded");
     return;
   }
