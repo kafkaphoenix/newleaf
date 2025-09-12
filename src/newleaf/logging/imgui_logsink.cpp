@@ -78,8 +78,8 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
 
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.f);
     ImGui::SameLine();
-    if (ImGui::Button("Format") or ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_F), false) and
-                                     ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
+    if (ImGui::Button("Format") or ImGui::IsKeyPressed(ImGuiKey_F, false) and
+                                     ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
       ImGui::OpenPopup("LogFormatPopup");
     }
     if (ImGui::IsItemHovered()) {
@@ -96,8 +96,8 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
       clear_ = true;
       ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5F, 0.5F, 0.5F, 1.f));
     }
-    if (ImGui::Button("Auto Scroll") or ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_A), false) and
-                                          ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
+    if (ImGui::Button("Auto Scroll") or ImGui::IsKeyPressed(ImGuiKey_A, false) and
+                                          ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
       m_autoscroll = not m_autoscroll;
     }
     if (ImGui::IsItemHovered()) {
@@ -113,8 +113,8 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
       clear_ = true;
       ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5F, 0.5F, 0.5F, 1.f));
     }
-    if (ImGui::Button("Wrap") or ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_W), false) and
-                                   ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
+    if (ImGui::Button("Wrap") or ImGui::IsKeyPressed(ImGuiKey_W, false) and
+                                   ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
       m_wrap = not m_wrap;
     }
     if (ImGui::IsItemHovered()) {
@@ -126,8 +126,8 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
 
     ImGui::SameLine();
     bool copy = false;
-    if (ImGui::Button("Copy") or ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_C), false) and
-                                   ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
+    if (ImGui::Button("Copy") or ImGui::IsKeyPressed(ImGuiKey_C, false) and
+                                   ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
       copy = true;
     }
     if (ImGui::IsItemHovered()) {
@@ -135,12 +135,12 @@ void ImGuiLogsink::draw(bool* show_tool_logger) {
     }
 
     ImGui::SameLine();
-    if (ImGui::Button("Clear") or ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_K), false) and
-                                    ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
+    if (ImGui::Button("Clear") or ImGui::IsKeyPressed(ImGuiKey_K, false) and
+                                    ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
       clear();
     }
     if (ImGui::IsItemHovered()) {
-      ImGui::SetTooltip("Clear the log. CTRL+K to clear_");
+      ImGui::SetTooltip("Clear the log. CTRL+K to clear");
     }
 
     ImGui::PopStyleColor(2);

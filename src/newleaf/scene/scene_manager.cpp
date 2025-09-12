@@ -15,49 +15,58 @@ SceneManager::SceneManager() : m_scene_factory() { ENGINE_TRACE("initializing sc
 SceneManager::~SceneManager() { ENGINE_WARN("deleting scene manager"); }
 
 void SceneManager::register_system(std::string&& name, std::unique_ptr<System>&& system) {
-  ENGINE_ASSERT(not contains_system(name), "system {} already registered", name);
-  system->init(m_registry);
-  m_systems.emplace(std::make_pair(std::move(name), std::move(system)));
-  m_dirty_systems = true;
+    ENGINE_ASSERT(m_systems_by_name.find(name) == m_systems_by_name.end(),
+                  "system {} already registered", name);
+
+    system->init(m_registry);
+    System* raw = system.get();
+
+    m_systems_by_priority.insert(raw); // not owning, just a pointer
+    m_systems_by_name.emplace(std::move(name), std::move(system));
+
+    m_dirty_systems = true;
 }
 
 void SceneManager::unregister_system(std::string_view name) {
-  bool deleted = false;
-  for (auto it = m_systems.begin(); it not_eq m_systems.end(); ++it) {
-    if (it->first == name) {
-      m_systems.erase(it);
-      deleted = true;
-      break;
-    }
-  }
-  ENGINE_ASSERT(deleted, "system {} not found", name);
-  m_dirty_systems = true;
+    auto it = m_systems_by_name.find(std::string(name));
+    ENGINE_ASSERT(it != m_systems_by_name.end(), "system {} not found", name);
+
+    System* raw = it->second.get();
+    m_systems_by_priority.erase(raw); // not owning, just remove from set
+    m_systems_by_name.erase(it); // owning, will delete the system
+
+    m_dirty_systems = true;
 }
 
 bool SceneManager::contains_system(std::string_view name) const {
-  return std::any_of(m_systems.begin(), m_systems.end(), [&name](const auto& pair) { return pair.first == name; });
+    return m_systems_by_name.find(std::string(name)) != m_systems_by_name.end();
 }
+
 
 void SceneManager::update_system_priority(std::string_view name, int32_t priority) {
-  for (auto& [n, system] : m_systems) {
-    if (n == name) {
-      system->update_priority(priority);
-      m_dirty_systems = true;
-      return;
-    }
-  }
-  ENGINE_ASSERT(false, "system {} not found", name);
+    auto it = m_systems_by_name.find(std::string(name));
+    ENGINE_ASSERT(it != m_systems_by_name.end(), "system {} not found", name);
+
+    System* raw = it->second.get();
+
+    m_systems_by_priority.erase(raw); // not owning, just remove from set
+    raw->update_priority(priority);
+    m_systems_by_priority.insert(raw); // re-insert with new priority
+
+    m_dirty_systems = true;
 }
 
+
 void SceneManager::clear_systems() {
-  m_systems.clear();
-  m_dirty_systems = false;
+    m_systems_by_priority.clear();
+    m_systems_by_name.clear(); // owning, will delete all systems
+    m_dirty_systems = false;
 }
 
 void SceneManager::on_update(const Time& ts) {
-  for (const auto& [_, system] : m_systems) {
-    system->update(m_registry, ts);
-  }
+    for (System* sys : m_systems_by_priority) {
+        sys->update(m_registry, ts);
+    }
 }
 
 entt::registry& SceneManager::get_registry() { return m_registry; }
@@ -81,17 +90,23 @@ entt::entity SceneManager::get_entity(const UUID& uuid) {
 }
 
 const std::vector<std::string>& SceneManager::get_named_systems() {
-  if (not m_dirty_systems) {
+    if (!m_dirty_systems) {
+        return m_named_systems;
+    }
+
+    m_named_systems.clear();
+    // Iterate by priority
+    for (System* sys : m_systems_by_priority) {
+        // Find the corresponding name in map (reverse lookup)
+        auto it = std::find_if(m_systems_by_name.begin(), m_systems_by_name.end(),
+                               [&](const auto& pair) { return pair.second.get() == sys; });
+        if (it != m_systems_by_name.end()) {
+            m_named_systems.emplace_back(it->first + " - Priority " + std::to_string(sys->get_priority()));
+        }
+    }
+
+    m_dirty_systems = false;
     return m_named_systems;
-  }
-
-  m_named_systems.clear();
-  for (const auto& [name, system] : m_systems) {
-    m_named_systems.emplace_back(name + " - Priority " + std::to_string(system->get_priority()));
-  }
-  m_dirty_systems = false;
-
-  return m_named_systems;
 }
 
 template <typename Component> void SceneManager::on_component_added(entt::entity e, Component& c) {
@@ -117,7 +132,7 @@ void SceneManager::delete_entity(entt::entity e) { m_scene_factory.delete_entity
 
 void SceneManager::delete_entity(std::string_view name) { delete_entity(get_entity(name)); }
 
-void SceneManager::delete_entity(UUID& uuid) { delete_entity(get_entity(uuid)); }
+void SceneManager::delete_entity(const UUID& uuid) { delete_entity(get_entity(uuid)); }
 
 void SceneManager::create_scene(std::string scene_name, std::string scene_path) {
   auto& app = Application::get();
@@ -132,9 +147,7 @@ void SceneManager::reload_scene(bool reload_prototypes) {
 
 void SceneManager::clear_scene() {
   m_scene_factory.clear_scene(Application::get().get_render_manager(), m_registry);
-  m_systems.clear();
-  m_named_systems.clear();
-  m_dirty_systems = false;
+  clear_systems();
 }
 
 void SceneManager::print_scene() {

@@ -100,8 +100,8 @@ inline void draw_render_manager(const RenderManager& render_manager, const Setti
         ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
       }
     } else if (selected_render_manager_tabtype == "Framebuffers") {
-      const auto& value = fbos.at(selected_render_manager_tabkey);
-      const auto& fbo_info = value->to_map();
+      const auto& fbo_value = fbos.at(selected_render_manager_tabkey);
+      const auto& fbo_info = fbo_value->to_map();
       for (const auto& [key, value] : fbo_info) {
         if (key == "color_texture" or key == "depth_texture") {
           const auto& texture_info = json_to_map(value);

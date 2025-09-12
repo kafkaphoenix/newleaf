@@ -182,7 +182,7 @@ std::map<std::string, std::string, NumericComparator>& SceneFactory::compute_met
 
   m_metrics.clear();
   m_metrics["active_scene"] = m_active_scene;
-  int total = registry.storage<entt::entity>().in_use();
+  int total = registry.storage<entt::entity>().free_list();
   int created = registry.storage<entt::entity>().size();
   int n_prototypes = 0;
   for (const auto& [key, prototypes] : m_entity_factory.get_all_prototypes()) {

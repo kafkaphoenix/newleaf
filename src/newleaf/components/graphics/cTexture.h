@@ -55,9 +55,8 @@ struct CTexture {
       const auto& assets_manager = Application::get().get_assets_manager();
 
       textures.reserve(paths.size());
-      for (std::string_view path : paths) {
-        textures.emplace_back(assets_manager.get<Texture>(path));
-      }
+      std::transform(paths.begin(), paths.end(), std::back_inserter(textures),
+                     [&](std::string_view path) { return assets_manager.get<Texture>(path); });
     }
 
     void reload_textures(std::vector<std::string>&& p) {

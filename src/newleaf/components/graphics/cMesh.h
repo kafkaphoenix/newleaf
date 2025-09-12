@@ -99,7 +99,7 @@ struct CMesh {
       }
     }
 
-    void configure_material(ShaderProgram& sp, CMaterial* cMaterial) {
+    void configure_material(ShaderProgram& sp, const CMaterial* cMaterial) {
       if (cMaterial) {
         sp.set_vec3("ambient", cMaterial->ambient);
         sp.set_vec3("diffuse", cMaterial->diffuse);
@@ -186,7 +186,7 @@ struct CMesh {
     }
 
     // TODO remove this method after refactor model
-    void configure_model_texture(ShaderProgram& sp, CMaterial* cMaterial) {
+    void configure_model_texture(ShaderProgram& sp, const CMaterial* cMaterial) {
       if (sp.get_name() not_eq "model") {
         return;
       }
@@ -227,7 +227,7 @@ struct CMesh {
 
     // TODO remove this and rethink in systems with uniform buffer objects
     void bind_textures(ShaderProgram& sp, CTexture* cTexture, CBlendTexture* cBlendTexture,
-                       CTextureAtlas* cTextureAtlas, CColor* cColor, CBlendColor* cBlendColor, CMaterial* cMaterial,
+                       CTextureAtlas* cTextureAtlas, CColor* cColor, CBlendColor* cBlendColor, const CMaterial* cMaterial,
                        CReflection* cReflection, CSkybox* cSkybox, CTexture* cSkyboxTexture,
                        CBlendTexture* cSkyboxBlend) {
       sp.reset_active_uniforms();

@@ -17,7 +17,7 @@
 
 namespace nl {
 
-inline void draw_managersbar(const AssetsManager& assets_manager, RenderManager& render_manager,
+inline void draw_managersbar(const AssetsManager& assets_manager, const RenderManager& render_manager,
                              SceneManager& scene_manager, SettingsManager& settings_manager,
                              StatesManager& states_manager, WindowsManager& windows_manager) {
   if (ImGui::BeginTabBar("RootTabBar", ImGuiTabBarFlags_Reorderable)) {

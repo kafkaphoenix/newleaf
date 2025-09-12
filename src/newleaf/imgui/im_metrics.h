@@ -14,7 +14,7 @@ namespace nl {
 bool show_tool_metrics = false;
 
 inline void draw_metrics(AssetsManager& assets_manager, RenderManager& render_manager, SceneManager& scene_manager) {
-  if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_M)) and ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
+  if (ImGui::IsKeyPressed(ImGuiKey_M) and ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
     show_tool_metrics = not show_tool_metrics;
   }
 

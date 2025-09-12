@@ -46,7 +46,7 @@ class SceneManager {
     entt::entity clone_entity(entt::entity e);
     void delete_entity(entt::entity e);
     void delete_entity(std::string_view name);
-    void delete_entity(UUID& uuid);
+    void delete_entity(const UUID& uuid);
 
     void create_scene(std::string scene_name, std::string scene_path);
     void reload_scene(bool reload_prototypes);
@@ -71,7 +71,8 @@ class SceneManager {
   private:
     entt::registry m_registry;
     SceneFactory m_scene_factory;
-    std::set<std::pair<std::string, std::unique_ptr<System>>, SystemComparator> m_systems;
+    std::map<std::string, std::unique_ptr<System>> m_systems_by_name; // fast lookup
+    std::set<System*, SystemPriorityComparator> m_systems_by_priority; // iteration by priority
     std::vector<std::string> m_named_systems;
     bool m_dirty_systems{};
 };

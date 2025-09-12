@@ -128,7 +128,7 @@ inline void draw_assets_manager(const AssetsManager& assets_manager, const Setti
           max_height /= 2;
           max_width /= 2;
         }
-        ImGui::Image(reinterpret_cast<ImTextureID>(texture->get_id()), ImVec2(max_width, max_height), ImVec2(0, 1), ImVec2(1, 0));
+        ImGui::Image((ImTextureID)(intptr_t)texture->get_id(), ImVec2(max_width, max_height), ImVec2(0, 1), ImVec2(1, 0));
       }
     }
   }

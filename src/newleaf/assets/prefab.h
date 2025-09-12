@@ -58,7 +58,7 @@ class Prefab : public Asset {
     std::map<std::string, std::string, NumericComparator> m_info;
     std::map<std::string, std::map<std::string, std::string, NumericComparator>, NumericComparator> m_prototype_info;
 
-    void read(const json& j, std::vector<std::string>& inherits, std::vector<std::string>& ctags,
+    void read(const json& j, const std::vector<std::string>& inherits, std::vector<std::string>& ctags,
               std::unordered_map<std::string, json>& components);
 
     void process_prototype(const std::string& name, const json& prototype_data, const json& data);

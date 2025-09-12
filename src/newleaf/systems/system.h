@@ -25,10 +25,9 @@ class System {
     int32_t m_priority = 0;
 };
 
-struct SystemComparator {
-    bool operator()(const std::pair<std::string, std::unique_ptr<System>>& lhs,
-                    const std::pair<std::string, std::unique_ptr<System>>& rhs) const {
-      return lhs.second->get_priority() < rhs.second->get_priority();
+struct SystemPriorityComparator {
+    bool operator()(const System* lhs, const System* rhs) const {
+        return lhs->get_priority() < rhs->get_priority();
     }
 };
 

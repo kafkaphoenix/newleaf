@@ -53,7 +53,7 @@ Prefab::Prefab(std::filesystem::path&& fp, std::vector<std::string>&& target_pro
   }
 }
 
-void Prefab::read(const json& data, std::vector<std::string>& inherits, std::vector<std::string>& ctags,
+void Prefab::read(const json& data, const std::vector<std::string>& inherits, std::vector<std::string>& ctags,
                   std::unordered_map<std::string, json>& components) {
   if (data.contains("ctags")) {
     const json& c = data.at("ctags");

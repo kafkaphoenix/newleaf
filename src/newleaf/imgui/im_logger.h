@@ -10,7 +10,7 @@ namespace nl {
 bool show_tool_logger = false;
 
 inline void draw_logger() {
-  if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_L)) and ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_LeftCtrl))) {
+  if (ImGui::IsKeyPressed(ImGuiKey_L) and ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
     show_tool_logger = not show_tool_logger;
   }
 
