@@ -73,15 +73,15 @@ inline void draw_scene_manager(SceneManager& scene_manager, const SettingsManage
   if (ImGui::Button("Clear Filter")) {
     scene_objects_text_filter[0] = '\0';
   }
-  ImGui::Checkbox("Prefabs", &filter_prefabs);
+  ImGui::Checkbox("Prefabs##1", &filter_prefabs);
   ImGui::SameLine();
-  ImGui::Checkbox("Prototypes", &filter_prototypes);
+  ImGui::Checkbox("Prototypes##1", &filter_prototypes);
   ImGui::SameLine();
-  ImGui::Checkbox("Instances", &filter_instances);
+  ImGui::Checkbox("Instances##1", &filter_instances);
   ImGui::SameLine();
-  ImGui::Checkbox("Components", &filter_components);
+  ImGui::Checkbox("Components##1", &filter_components);
   ImGui::SameLine();
-  ImGui::Checkbox("Systems", &filter_systems);
+  ImGui::Checkbox("Systems##1", &filter_systems);
 
   ImGui::Separator();
   ImGui::Columns(2);

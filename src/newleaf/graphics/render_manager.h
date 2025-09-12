@@ -56,11 +56,13 @@ class RenderManager {
     glm::vec3 m_camera_position{};
     std::unordered_map<std::string, std::unique_ptr<ShaderProgram>> m_shader_programs;
     std::unordered_map<std::string, std::unique_ptr<FBO>> m_framebuffers;
+    bool m_reorder{};
+    // metrics
     std::map<std::string, std::string, NumericComparator> m_metrics;
     uint32_t m_draw_calls{};
     uint32_t m_triangles{};
     uint32_t m_vertices{};
     uint32_t m_indices{};
-    bool m_reorder{};
+    void update_metrics(const std::shared_ptr<VAO>& vao);
 };
 }

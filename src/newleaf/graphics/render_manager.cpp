@@ -50,29 +50,19 @@ void RenderManager::render_framebuffer(const std::shared_ptr<VAO>& vao, std::str
   auto& sp = get_shader_program("fbo");
 
   sp.use();
+  // TODO avoid hardcoded slot here move to other place and delete this method
   sp.set_int("screen_texture", 100);
   m_framebuffers.at(fbo.data())->get_color_texture().bind_slot(100);
-
   RenderAPI::draw_indexed(vao);
-
-  m_draw_calls++;
-  m_triangles += vao->get_ebo().get_count() / 3;
-  m_vertices = std::accumulate(vao->get_vbos().begin(), vao->get_vbos().end(), 0u,
-                               [](uint32_t sum, const std::shared_ptr<VBO>& vbo) { return sum + vbo->get_count(); });
-  m_indices += vao->get_ebo().get_count();
   sp.unuse();
+  update_metrics(vao);
 }
 
 void RenderManager::render_inside_imgui(const std::shared_ptr<VAO>& vao, std::string_view fbo, std::string_view title,
                                         glm::vec2 size, glm::vec2 position, bool fit_to_window) {
   auto& fbo_ = m_framebuffers.at(fbo.data());
   render_scene(fbo_->get_color_texture().get_id(), title, size, position, fit_to_window);
-
-  m_draw_calls++;
-  m_triangles += vao->get_ebo().get_count() / 3;
-  m_vertices = std::accumulate(vao->get_vbos().begin(), vao->get_vbos().end(), 0u,
-                               [](uint32_t sum, const std::shared_ptr<VBO>& vbo) { return sum + vbo->get_count(); });
-  m_indices += vao->get_ebo().get_count();
+  update_metrics(vao);
 }
 
 void RenderManager::render(const std::shared_ptr<VAO>& vao, const glm::mat4& transform,
@@ -87,13 +77,8 @@ void RenderManager::render(const std::shared_ptr<VAO>& vao, const glm::mat4& tra
 
   RenderAPI::draw_indexed(vao);
 
-  // TODO we repeat this in each render method, three times
-  m_draw_calls++;
-  m_triangles += vao->get_ebo().get_count() / 3;
-  m_vertices = std::accumulate(vao->get_vbos().begin(), vao->get_vbos().end(), 0u,
-                               [](uint32_t sum, const std::shared_ptr<VBO>& vbo) { return sum + vbo->get_count(); });
-  m_indices += vao->get_ebo().get_count();
   sp.unuse(); // DONT unuse before the draw call
+  update_metrics(vao);
 }
 
 void RenderManager::clear() {
@@ -111,6 +96,14 @@ std::unique_ptr<RenderManager> RenderManager::create() { return std::make_unique
 ShaderProgram& RenderManager::get_shader_program(std::string_view name) {
   ENGINE_ASSERT(m_shader_programs.contains(name.data()), "shader program {} not found!", name);
   return *m_shader_programs.at(name.data());
+}
+
+void RenderManager::update_metrics(const std::shared_ptr<VAO>& vao) {
+  m_draw_calls++;
+  m_triangles += vao->get_ebo().get_count() / 3;
+  m_vertices += std::accumulate(vao->get_vbos().begin(), vao->get_vbos().end(), 0u,
+                               [](uint32_t sum, const std::shared_ptr<VBO>& vbo) { return sum + vbo->get_count(); });
+  m_indices += vao->get_ebo().get_count();
 }
 
 std::map<std::string, std::string, NumericComparator>& RenderManager::compute_metrics() {

@@ -33,11 +33,11 @@ inline void draw_render_manager(const RenderManager& render_manager, const Setti
   if (ImGui::Button("Clear Filter")) {
     render_objects_text_filter[0] = '\0';
   }
-  ImGui::Checkbox("FBOs", &filter_fbos);
+  ImGui::Checkbox("FBOs##1", &filter_fbos);
   ImGui::SameLine();
-  ImGui::Checkbox("Shader programs", &filter_shader_programs);
+  ImGui::Checkbox("Shader programs##1", &filter_shader_programs);
   ImGui::SameLine();
-  ImGui::Checkbox("Shader info", &filter_shader_info);
+  ImGui::Checkbox("Shader info##1", &filter_shader_info);
 
   ImGui::Separator();
   ImGui::Columns(2);
