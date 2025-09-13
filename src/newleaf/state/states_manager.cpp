@@ -84,9 +84,15 @@ bool StatesManager::contains_overlay(std::string_view name) const {
   return m_states[m_index - 1]->get_layers_manager().contains_overlay(name);
 }
 
-bool StatesManager::constains_state(std::string_view name) const {
+bool StatesManager::contains_state(std::string_view name) const {
   return std::ranges::find_if(m_states | std::views::take(m_index),
                               [&](const auto& state) { return state->get_name() == name; }) not_eq m_states.end();
+}
+
+void StatesManager::clear_layers() {
+  ENGINE_ASSERT(m_index > 0, "no states to clear layers from");
+  m_states[m_index - 1]->get_layers_manager().clear();
+  m_dirty = true;
 }
 
 State& StatesManager::get_current_state() {
@@ -98,8 +104,6 @@ const State& StatesManager::get_current_state() const {
   ENGINE_ASSERT(m_index > 0, "no states to get current state from");
   return *m_states.at(m_index - 1);
 }
-
-uint32_t StatesManager::get_state_index() { return m_index; }
 
 std::map<std::string, std::string, NumericComparator>& StatesManager::compute_metrics() {
   if (not m_dirty) {
