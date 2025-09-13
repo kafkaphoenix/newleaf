@@ -22,7 +22,7 @@ Shader::Shader(std::filesystem::path&& fp) : m_path(std::move(fp.string())) {
 
   int32_t status = GL_FALSE;
   glGetShaderiv(m_id, GL_COMPILE_STATUS, &status);
-  if (status not_eq GL_TRUE) [[unlikely]] {
+  if (status not_eq GL_TRUE) {
     int log_length = 0;
     glGetShaderiv(m_id, GL_INFO_LOG_LENGTH, &log_length);
     ENGINE_ASSERT(log_length > 0, "shader {} compilation failed!", m_path);

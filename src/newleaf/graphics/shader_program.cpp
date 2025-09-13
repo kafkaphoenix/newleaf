@@ -24,7 +24,7 @@ void ShaderProgram::link() {
 
   int status = GL_FALSE;
   glGetProgramiv(m_id, GL_LINK_STATUS, &status);
-  if (status not_eq GL_TRUE) [[unlikely]] {
+  if (status not_eq GL_TRUE) {
     int log_length = 0;
     glGetProgramiv(m_id, GL_INFO_LOG_LENGTH, &log_length);
     ENGINE_ASSERT(log_length > 0, "shader program {} linking failed!", m_name);

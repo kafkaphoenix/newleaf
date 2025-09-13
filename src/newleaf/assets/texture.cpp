@@ -84,7 +84,7 @@ void Texture::load_texture() {
   }
   for (std::string_view path : m_paths) {
     stbi_uc* data = stbi_load(path.data(), &width, &height, &channels, 0);
-    if (not data) [[unlikely]] {
+    if (not data) {
       stbi_image_free(data);
       ENGINE_ASSERT(false, "failed to load texture: {} {}", path, stbi_failure_reason());
     }
@@ -109,7 +109,7 @@ void Texture::load_texture() {
     } else if (channels == 1) {
       m_opengl_format = GL_R8;
       m_format = GL_RED;
-    } else [[unlikely]] {
+    } else {
       stbi_image_free(data);
       ENGINE_ASSERT(false, "texture format not supported: {} {} channels", path, channels);
     }
