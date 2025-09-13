@@ -28,7 +28,20 @@ class Application {
     Application(std::unique_ptr<SettingsManager>&& settings_manager, CLArgs&& args);
     virtual ~Application();
 
+    std::string_view get_name() const { return m_name; }
     void on_event(Event& e);
+    void close() { m_running = false; }
+    void minimize(bool minimize) { m_minimized = minimize; }
+    void pause(bool pause);
+    void restore_pause(bool restore) { m_restore_pause = restore; }
+    void debug(bool debugging) { m_debugging = debugging; }
+
+    bool is_minimized() const { return m_minimized; }
+    bool is_paused() const { return m_paused; }
+    bool should_restore_pause() const { return m_restore_pause; }
+    bool is_debugging() const { return m_debugging; }
+
+    static Application& get() { return *m_instance; }
 
     const WindowsManager& get_windows_manager() const { return *m_windows_manager; }
     const SceneManager& get_scene_manager() const { return *m_scene_manager; }
@@ -43,19 +56,6 @@ class Application {
     RenderManager& get_render_manager() { return *m_render_manager; }
     SettingsManager& get_settings_manager() { return *m_settings_manager; }
     StatesManager& get_states_manager() { return *m_states_manager; }
-
-    void close() { m_running = false; }
-    void minimize(bool minimize) { m_minimized = minimize; }
-    void pause(bool pause);
-    void restore_pause(bool restore) { m_restore_pause = restore; }
-    void debug(bool debugging) { m_debugging = debugging; }
-
-    bool is_minimized() const { return m_minimized; }
-    bool is_paused() const { return m_paused; }
-    bool should_restore_pause() const { return m_restore_pause; }
-    bool is_debugging() const { return m_debugging; }
-
-    static Application& get() { return *m_instance; }
 
   protected:
     std::unique_ptr<SettingsManager> m_settings_manager;
