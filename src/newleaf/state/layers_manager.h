@@ -16,9 +16,11 @@ class LayersManager {
 
     void push_layer(std::unique_ptr<Layer>&& l);
     void push_overlay(std::unique_ptr<Layer>&& o, bool enabled);
-    bool is_overlay_enabled(std::string_view name) const;
     void enable_overlay(std::string_view name);
     void disable_overlay(std::string_view name);
+    bool is_overlay_enabled(std::string_view name) const;
+    bool contains_layer(std::string_view name) const;
+    bool contains_overlay(std::string_view name) const;
     std::vector<std::unique_ptr<Layer>>& get_layers() { return m_layers; }
     void clear();
 

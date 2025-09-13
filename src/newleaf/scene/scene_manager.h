@@ -72,7 +72,7 @@ class SceneManager {
     entt::registry m_registry;
     SceneFactory m_scene_factory;
     std::map<std::string, std::unique_ptr<System>> m_systems_by_name; // fast lookup
-    std::set<System*, SystemPriorityComparator> m_systems_by_priority; // iteration by priority
+    std::set<System*, SystemPriorityComparator> m_systems_by_priority; // iteration by priority no ownership
     std::vector<std::string> m_named_systems;
     bool m_dirty_systems{};
 };

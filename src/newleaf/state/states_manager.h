@@ -22,6 +22,10 @@ class StatesManager {
     void push_overlay(std::unique_ptr<Layer>&& o, bool enabled);
     void enable_overlay(std::string_view name);
     void disable_overlay(std::string_view name);
+    bool is_overlay_enabled(std::string_view name) const;
+    bool contains_layer(std::string_view name) const;
+    bool contains_overlay(std::string_view name) const;
+    bool constains_state(std::string_view name) const;
     State& get_current_state();
     const State& get_current_state() const;
     uint32_t get_state_index();

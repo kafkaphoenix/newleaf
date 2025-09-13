@@ -69,6 +69,26 @@ void StatesManager::disable_overlay(std::string_view name) {
   m_dirty = true;
 }
 
+bool StatesManager::is_overlay_enabled(std::string_view name) const {
+  ENGINE_ASSERT(m_index > 0, "no states to check overlay in");
+  return m_states[m_index - 1]->get_layers_manager().is_overlay_enabled(name);
+}
+
+bool StatesManager::contains_layer(std::string_view name) const {
+  ENGINE_ASSERT(m_index > 0, "no states to check layer in");
+  return m_states[m_index - 1]->get_layers_manager().contains_layer(name);
+}
+
+bool StatesManager::contains_overlay(std::string_view name) const {
+  ENGINE_ASSERT(m_index > 0, "no states to check overlay in");
+  return m_states[m_index - 1]->get_layers_manager().contains_overlay(name);
+}
+
+bool StatesManager::constains_state(std::string_view name) const {
+  return std::ranges::find_if(m_states | std::views::take(m_index),
+                              [&](const auto& state) { return state->get_name() == name; }) not_eq m_states.end();
+}
+
 State& StatesManager::get_current_state() {
   ENGINE_ASSERT(m_index > 0, "no states to get current state from");
   return *m_states[m_index - 1];
