@@ -12,13 +12,13 @@ target_compile_definitions(${PROJECT_NAME}_tests PRIVATE "GLFW_INCLUDE_NONE")
 target_compile_definitions(${PROJECT_NAME}_tests PRIVATE "GLM_ENABLE_EXPERIMENTAL")
 target_compile_definitions(${PROJECT_NAME}_tests PRIVATE "STBI_FAILURE_USERMSG")
 
-if(ENABLE_DEBUG)
-    target_compile_definitions(${PROJECT_NAME}_tests PRIVATE ENABLE_DEBUG=1)
+if (ENABLE_DEBUG)
+    target_compile_definitions(${PROJECT_NAME}_tests PRIVATE DEBUG_ENABLED=1)
 endif()
 
 if (MSVC)
     set_msvc_compile_options(${PROJECT_NAME}_tests)
-elseif(GCC OR CLANG)
+elseif (GCC OR CLANG)
     set_gcc_clang_compile_options(${PROJECT_NAME}_tests)
 endif()
 

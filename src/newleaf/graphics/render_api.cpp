@@ -10,8 +10,7 @@
 
 namespace nl {
 
-void APIENTRY message_callback(GLenum source, GLenum type, uint32_t id,
-                               GLenum severity, GLsizei, GLchar const* msg,
+void APIENTRY message_callback(GLenum source, GLenum type, uint32_t id, GLenum severity, GLsizei, GLchar const* msg,
                                void const*) {
   std::string_view _source = [source]() {
     switch (source) {
@@ -49,8 +48,7 @@ void APIENTRY message_callback(GLenum source, GLenum type, uint32_t id,
   }();
 
   std::string info =
-    std::format("source[{}]| type [{}]| severity [{}]| id [{}]| message: {}\n",
-                _source, _type, _severity, id, msg);
+    std::format("source[{}]| type [{}]| severity [{}]| id [{}]| message: {}\n", _source, _type, _severity, id, msg);
 
   switch (severity) {
   case GL_DEBUG_SEVERITY_HIGH: ENGINE_CRITICAL(info); return;
@@ -67,8 +65,7 @@ void RenderAPI::init() {
   glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
   glDebugMessageCallback(message_callback, nullptr);
 
-  glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE,
-                        GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
+  glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
 
   glEnable(GL_CULL_FACE); // BACK FACE CULLING CCW
   glCullFace(GL_BACK);
@@ -79,32 +76,21 @@ void RenderAPI::init() {
   glEnable(GL_DEPTH_TEST);
 }
 
-void RenderAPI::toggle_culling(bool enabled) {
-  enabled ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
-}
+void RenderAPI::toggle_culling(bool enabled) { enabled ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE); }
 
-void RenderAPI::set_viewport(uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
-  glViewport(x, y, w, h);
-}
+void RenderAPI::set_viewport(uint32_t x, uint32_t y, uint32_t w, uint32_t h) { glViewport(x, y, w, h); }
 
 void RenderAPI::set_clear_color(const std::array<float, 4>& color) {
   glClearColor(color[0], color[1], color[2], color[3]);
 }
 
-void RenderAPI::set_clear_depth(const float depth) { glClearDepth(depth); }
-
 void RenderAPI::toggle_wireframe(bool enabled) {
-  enabled ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-          : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  enabled ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void RenderAPI::blend(bool enabled) {
-  enabled ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
-}
+void RenderAPI::blend(bool enabled) { enabled ? glEnable(GL_BLEND) : glDisable(GL_BLEND); }
 
-void RenderAPI::toggle_depth_test(bool enabled) {
-  enabled ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
-}
+void RenderAPI::toggle_depth_test(bool enabled) { enabled ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST); }
 
 void RenderAPI::set_depth_lequal() {
   glDepthFunc(GL_LEQUAL); // depth test passes when values are equal to depth
@@ -123,8 +109,7 @@ void RenderAPI::clear_depth() { glClear(GL_DEPTH_BUFFER_BIT); }
 
 void RenderAPI::draw_indexed(const std::shared_ptr<VAO>& vao) {
   vao->bind();
-  glDrawElements(GL_TRIANGLES, vao->get_ebo().get_count(), GL_UNSIGNED_INT,
-                 nullptr);
+  glDrawElements(GL_TRIANGLES, vao->get_ebo().get_count(), GL_UNSIGNED_INT, nullptr);
   vao->unbind();
 }
 

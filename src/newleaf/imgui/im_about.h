@@ -14,8 +14,7 @@ inline void draw_about() {
   if (ImGui::Begin("about newleaf", &show_tool_about)) {
     ImGui::Text("newleaf is open source and licensed under the MIT license");
     ImGui::Text("source code and documentation can be found on");
-    ImGui::TextLinkOpenURL("github",
-                           "https://github.com/kafkaphoenix/newleaf.git");
+    ImGui::TextLinkOpenURL("github", "https://github.com/kafkaphoenix/newleaf.git");
   }
   ImGui::End();
 }

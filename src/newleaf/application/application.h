@@ -20,14 +20,12 @@ class SceneManager;
 class SettingsManager;
 class StatesManager;
 class WindowsManager;
-class ImGuiLayer;
 class Event;
-class State;
+class Layer;
 
 class Application {
   public:
-    Application(std::unique_ptr<SettingsManager>&& settings_manager,
-                CLArgs&& args);
+    Application(std::unique_ptr<SettingsManager>&& settings_manager, CLArgs&& args);
     virtual ~Application();
 
     void on_event(Event& e);
@@ -60,13 +58,13 @@ class Application {
     static Application& get() { return *m_instance; }
 
   protected:
-    std::unique_ptr<SceneManager> m_scene_manager;
-    std::unique_ptr<AssetsManager> m_assets_manager;
-    std::unique_ptr<RenderManager> m_render_manager;
     std::unique_ptr<SettingsManager> m_settings_manager;
+    std::unique_ptr<AssetsManager> m_assets_manager;
+    std::unique_ptr<SceneManager> m_scene_manager;
     std::unique_ptr<StatesManager> m_states_manager;
     std::unique_ptr<WindowsManager> m_windows_manager;
-    std::unique_ptr<ImGuiLayer> m_imgui_layer;
+    std::unique_ptr<RenderManager> m_render_manager;
+    std::unique_ptr<Layer> m_imgui_layer;
 
   private:
     void run();

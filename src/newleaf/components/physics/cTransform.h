@@ -23,22 +23,16 @@ struct CTransform {
 
     glm::mat4 calculate() const {
       // T * R * S
-      return glm::scale(glm::translate(glm::mat4(1.f), position) *
-                          glm::mat4_cast(rotation),
-                        scale);
+      return glm::scale(glm::translate(glm::mat4(1.f), position) * glm::mat4_cast(rotation), scale);
     }
 
-    void rotate(float angle, const glm::vec3& axis) {
-      rotation = glm::angleAxis(glm::radians(angle), axis) * rotation;
-    }
+    void rotate(float angle, const glm::vec3& axis) { rotation = glm::angleAxis(glm::radians(angle), axis) * rotation; }
 
     void rotate(const glm::quat& q) { rotation = q * rotation; }
 
     void print() const {
-      ENGINE_BACKTRACE(
-        "\t\tposition: {0}\n\t\t\t\t\t\trotation: {1}\n\t\t\t\t\t\tscale: {2}",
-        glm::to_string(position), glm::to_string(rotation),
-        glm::to_string(scale));
+      ENGINE_BACKTRACE("\t\tposition: {0}\n\t\t\t\t\t\trotation: {1}\n\t\t\t\t\t\tscale: {2}", glm::to_string(position),
+                       glm::to_string(rotation), glm::to_string(scale));
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {

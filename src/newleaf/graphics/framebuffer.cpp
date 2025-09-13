@@ -18,8 +18,7 @@ FBO::FBO(uint32_t w, uint32_t h, uint32_t t) : m_depth_buffer_type(t) {
   uint32_t window_h;
   if (settings_manager.fullscreen) {
     int monitor_count;
-    GLFWmonitor* monitor =
-      (glfwGetMonitors(&monitor_count))[settings_manager.primary_monitor];
+    GLFWmonitor* monitor = (glfwGetMonitors(&monitor_count))[settings_manager.primary_monitor];
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
     window_w = mode->width;
     window_h = mode->height;
@@ -40,8 +39,7 @@ FBO::FBO(uint32_t w, uint32_t h, uint32_t t) : m_depth_buffer_type(t) {
     attach_stencil_render_buffer();
   }
   uint32_t status = glCheckNamedFramebufferStatus(m_id, GL_FRAMEBUFFER);
-  ENGINE_ASSERT(status == GL_FRAMEBUFFER_COMPLETE, "framebuffer error: {}",
-                status);
+  ENGINE_ASSERT(status == GL_FRAMEBUFFER_COMPLETE, "framebuffer error: {}", status);
 }
 
 FBO::~FBO() {
@@ -53,41 +51,31 @@ FBO::~FBO() {
 
 void FBO::attach_texture() {
   m_color_texture = Texture::create(m_width, m_height, GL_RGBA8, Texture::WRAP);
-  glNamedFramebufferTexture(m_id, GL_COLOR_ATTACHMENT0,
-                            m_color_texture->get_id(), 0);
+  glNamedFramebufferTexture(m_id, GL_COLOR_ATTACHMENT0, m_color_texture->get_id(), 0);
 }
 
 void FBO::attach_depth_texture() {
   // slower than renderbuffer but can be sampled in shaders
-  m_depth_texture = Texture::create(m_width, m_height, GL_DEPTH_COMPONENT24,
-                                    Texture::DONT_WRAP);
-  glNamedFramebufferTexture(m_id, GL_DEPTH_ATTACHMENT,
-                            m_depth_texture->get_id(), 0);
+  m_depth_texture = Texture::create(m_width, m_height, GL_DEPTH_COMPONENT24, Texture::DONT_WRAP);
+  glNamedFramebufferTexture(m_id, GL_DEPTH_ATTACHMENT, m_depth_texture->get_id(), 0);
 }
 
 void FBO::attach_depth_render_buffer() {
   glCreateRenderbuffers(1, &m_depth_render_buffer);
-  glNamedRenderbufferStorage(m_depth_render_buffer, GL_DEPTH_COMPONENT24,
-                             m_width, m_height);
-  glNamedFramebufferRenderbuffer(m_id, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
-                                 m_depth_render_buffer);
+  glNamedRenderbufferStorage(m_depth_render_buffer, GL_DEPTH_COMPONENT24, m_width, m_height);
+  glNamedFramebufferRenderbuffer(m_id, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depth_render_buffer);
 }
 
 void FBO::attach_stencil_render_buffer() {
   glCreateRenderbuffers(1, &m_stencil_render_buffer);
-  glNamedRenderbufferStorage(m_stencil_render_buffer, GL_STENCIL_INDEX8,
-                             m_width, m_height);
-  glNamedFramebufferRenderbuffer(m_id, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
-                                 m_stencil_render_buffer);
+  glNamedRenderbufferStorage(m_stencil_render_buffer, GL_STENCIL_INDEX8, m_width, m_height);
+  glNamedFramebufferRenderbuffer(m_id, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_stencil_render_buffer);
 }
 
 void FBO::attach_depth_stencil_render_buffer() {
   glCreateRenderbuffers(1, &m_depth_stencil_render_buffer);
-  glNamedRenderbufferStorage(m_depth_stencil_render_buffer, GL_DEPTH24_STENCIL8,
-                             m_width, m_height);
-  glNamedFramebufferRenderbuffer(m_id, GL_DEPTH_STENCIL_ATTACHMENT,
-                                 GL_RENDERBUFFER,
-                                 m_depth_stencil_render_buffer);
+  glNamedRenderbufferStorage(m_depth_stencil_render_buffer, GL_DEPTH24_STENCIL8, m_width, m_height);
+  glNamedFramebufferRenderbuffer(m_id, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depth_stencil_render_buffer);
 }
 
 uint32_t FBO::get_buffer_id() const {
@@ -116,7 +104,7 @@ std::string_view FBO::get_buffer_type() const {
     return "depth stencil renderbuffer";
   } else {
     ENGINE_ERROR("no buffer attached to framebuffer {}", m_id);
-    return "none";
+    return "no buffer";
   }
 }
 
@@ -160,13 +148,11 @@ void FBO::unbind() {
   const auto& render_manager = app.get_render_manager();
   if (settings_manager.fullscreen) {
     int monitor_count;
-    GLFWmonitor* monitor =
-      (glfwGetMonitors(&monitor_count))[settings_manager.primary_monitor];
+    GLFWmonitor* monitor = (glfwGetMonitors(&monitor_count))[settings_manager.primary_monitor];
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
     render_manager.on_window_resized(mode->width, mode->height);
   } else {
-    render_manager.on_window_resized(settings_manager.window_w,
-                                     settings_manager.window_h);
+    render_manager.on_window_resized(settings_manager.window_w, settings_manager.window_h);
   }
 }
 
@@ -181,8 +167,7 @@ void FBO::resize(uint32_t width, uint32_t height) {
   bind_to_draw();
 }
 
-std::unique_ptr<FBO> FBO::create(uint32_t width, uint32_t height,
-                                 uint32_t buffer_type) {
+std::unique_ptr<FBO> FBO::create(uint32_t width, uint32_t height, uint32_t buffer_type) {
   return std::make_unique<FBO>(width, height, buffer_type);
 }
 }

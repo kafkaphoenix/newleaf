@@ -30,7 +30,7 @@ void TimeSystem::update(entt::registry& registry, const Time& ts) {
     cTime.current_second = static_cast<uint32_t>(cTime.seconds) % cTime.fps;
 
     // tick every real second
-    if (last_second != cTime.current_second) {
+    if (last_second not_eq cTime.current_second) {
       // then we update minutes and hours
       if (cTime.current_second == 0) {
         app.get_windows_manager().trigger_event(AppTickEvent());

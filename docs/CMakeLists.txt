@@ -9,7 +9,7 @@ FetchContent_Declare(
 
 FetchContent_GetProperties(doxygen-awesome-css)
 
-if(NOT doxygen-awesome-css_POPULATED)
+if (NOT doxygen-awesome-css_POPULATED)
     FetchContent_Populate(doxygen-awesome-css)
     set(doxygen-awesome-css_INCLUDE_DIR ${doxygen-awesome-css_SOURCE_DIR})
 endif()

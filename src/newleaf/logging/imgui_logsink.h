@@ -40,12 +40,10 @@ class ImGuiLogsink : public spdlog::sinks::base_sink<std::mutex> {
     bool m_show_thread{true};
     bool m_show_source{true};
     bool m_show_level{true};
-    std::vector<std::string> m_levels{"all",     "trace", "debug",   "info",
-                                      "warning", "error", "critical"};
+    std::vector<std::string> m_levels{"all", "trace", "debug", "info", "warning", "error", "critical"};
     std::string m_filter_level{"all"};
-    std::vector<std::string> m_times{"all", "1s",  "5s",  "10s", "30s",
-                                     "1m",  "5m",  "10m", "30m", "1h",
-                                     "5h",  "10h", "30h"};
+    std::vector<std::string> m_times{"all", "1s",  "5s", "10s", "30s", "1m", "5m",
+                                     "10m", "30m", "1h", "5h",  "10h", "30h"};
     std::string m_filter_time{"all"};
     char m_text_filter[128]{};
 };

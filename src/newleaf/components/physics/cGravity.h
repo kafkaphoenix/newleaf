@@ -14,9 +14,7 @@ struct CGravity {
     CGravity() = default;
     explicit CGravity(float a) : acceleration(a) {}
 
-    void print() const {
-      ENGINE_BACKTRACE("\t\tacceleration: {0}", acceleration);
-    }
+    void print() const { ENGINE_BACKTRACE("\t\tacceleration: {0}", acceleration); }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
       std::map<std::string, std::string, NumericComparator> info;

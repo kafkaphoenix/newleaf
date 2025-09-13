@@ -12,9 +12,7 @@ namespace nl {
 
 class State {
   public:
-    State(std::string&& name = "template_state") : m_name(std::move(name)) {
-      m_layers_manager = LayersManager::create();
-    }
+    State(std::string&& name = "template_state") : m_name(std::move(name)), m_layers_manager(LayersManager::create()) {}
     virtual ~State() = default;
 
     virtual void on_attach() {}
@@ -24,13 +22,8 @@ class State {
     virtual void on_event(Event&) {}
 
     std::string_view get_name() const { return m_name; }
-    LayersManager& get_layers_manager() {
-      return *m_layers_manager;
-    }
-    const LayersManager& get_layers_manager() const {
-      return *m_layers_manager;
-    }
-    void clear_layers() { m_layers_manager->clear(); }
+    LayersManager& get_layers_manager() { return *m_layers_manager; }
+    const LayersManager& get_layers_manager() const { return *m_layers_manager; }
 
   protected:
     std::string m_name;

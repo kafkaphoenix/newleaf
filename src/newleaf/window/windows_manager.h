@@ -30,10 +30,11 @@ struct WindowData {
     bool maximized{};
     bool focused{};
     bool visible{};
-    bool wireframe{};
+    bool sticky_keys_polling{};
     EventCallbackFn event_callback;
 
-    // settings
+    // TODO once setting is refactored remove settings from here,
+    // settings manager should keep state and call window or renderer
     std::string window_title;
     std::string window_icon_path;
     int width;
@@ -48,6 +49,10 @@ struct WindowData {
     bool fullscreen{};
     bool imgui_window{};
     bool fit_to_window{};
+    bool wireframe{};
+    bool display_collision_boxes{};
+    bool display_fps{};
+    bool enabled_debug{};
 };
 
 class WindowsManager {
@@ -55,6 +60,7 @@ class WindowsManager {
     WindowsManager(const SettingsManager& settings_manager);
     ~WindowsManager();
 
+    void init();
     void shutdown();
     void on_update();
     void trigger_event(Event&& e);
@@ -70,9 +76,8 @@ class WindowsManager {
     void maximize(bool maximize);
     void toggle_focus(bool focused);
     void toggle_visible(bool visible);
-    void toggle_wireframe(bool wireframe);
     void set_event_callback(EventCallbackFn&& cb);
-
+    void toggle_sticky_keys_polling(bool enabled);
     void set_window_title(std::string title);
     void set_window_icon(std::string path);
     void restore_window_icon();
@@ -87,9 +92,12 @@ class WindowsManager {
     void toggle_fullscreen(bool fullscreen);
     void toggle_window_inside_imgui(bool imgui_window);
     void toggle_fit_to_window(bool fit_to_window);
+    void toggle_wireframe(bool wireframe);
+    void toggle_display_collision_boxes(bool display);
+    void toggle_display_fps(bool display);
+    void toggle_enabled_debug(bool enabled);
 
-    static std::unique_ptr<WindowsManager>
-    create(const SettingsManager& settings_manager);
+    static std::unique_ptr<WindowsManager> create(const SettingsManager& settings_manager);
 
   private:
     uint32_t m_window_count{};

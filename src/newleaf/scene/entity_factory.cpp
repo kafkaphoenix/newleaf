@@ -54,8 +54,7 @@ void processCTag(entt::entity e, std::string_view cTag) {
   ENGINE_ASSERT(cType, "no component type found for component tag {}", cTag)
 
   entt::meta_func assign_func = cType.func("assign"_hs);
-  ENGINE_ASSERT(assign_func, "no assign function found for component tag {}",
-                cTag)
+  ENGINE_ASSERT(assign_func, "no assign function found for component tag {}", cTag)
 
   entt::meta_any meta_component = assign_func.invoke({}, e);
   entt::meta_func triggerEventFunc = cType.func("on_component_added"_hs);
@@ -64,14 +63,12 @@ void processCTag(entt::entity e, std::string_view cTag) {
   }
 }
 
-void process_component(entt::entity e, const std::string& cPrefab,
-                      const json& cValue) {
+void process_component(entt::entity e, const std::string& cPrefab, const json& cValue) {
   entt::meta_type cType = entt::resolve(entt::hashed_string{cPrefab.data()});
   ENGINE_ASSERT(cType, "no component type found for component {}", cPrefab)
 
   entt::meta_func assign_func = cType.func("assign"_hs);
-  ENGINE_ASSERT(assign_func, "no assign function found for component {}",
-                cPrefab)
+  ENGINE_ASSERT(assign_func, "no assign function found for component {}", cPrefab)
 
   entt::meta_any meta_component;
   if (cValue.is_string()) {
@@ -82,85 +79,61 @@ void process_component(entt::entity e, const std::string& cPrefab,
     meta_component = assign_func.invoke({}, e, cValue.get<float>());
   } else if (cValue.is_boolean()) {
     meta_component = assign_func.invoke({}, e, cValue.get<bool>());
-  } else if (cValue.is_object() and cValue.contains("x") and
-             cValue.contains("y") and cValue.contains("z")) {
+  } else if (cValue.is_object() and cValue.contains("x") and cValue.contains("y") and cValue.contains("z")) {
     meta_component = assign_func.invoke({}, e, json_to_vec3(cValue));
   } else if (cValue.is_object()) {
     meta_component = assign_func.invoke({}, e);
-    ENGINE_ASSERT(meta_component, "no meta component found for component {}",
-                  cPrefab)
+    ENGINE_ASSERT(meta_component, "no meta component found for component {}", cPrefab)
 
     for (const auto& [cField, cFieldValue] : cValue.items()) {
       if (cFieldValue.is_string()) {
-        meta_component.set(entt::hashed_string{cField.data()},
-                          cFieldValue.get<std::string>());
+        meta_component.set(entt::hashed_string{cField.data()}, cFieldValue.get<std::string>());
       } else if (cFieldValue.is_number_integer()) {
-        meta_component.set(entt::hashed_string{cField.data()},
-                          cFieldValue.get<int>());
+        meta_component.set(entt::hashed_string{cField.data()}, cFieldValue.get<int>());
       } else if (cFieldValue.is_number_float()) {
-        meta_component.set(entt::hashed_string{cField.data()},
-                          cFieldValue.get<float>());
+        meta_component.set(entt::hashed_string{cField.data()}, cFieldValue.get<float>());
       } else if (cFieldValue.is_boolean()) {
-        meta_component.set(entt::hashed_string{cField.data()},
-                          cFieldValue.get<bool>());
+        meta_component.set(entt::hashed_string{cField.data()}, cFieldValue.get<bool>());
       } else if (cFieldValue.is_array()) {
         std::vector<std::string> paths;
         paths.reserve(cFieldValue.size());
         for (const auto& value : cFieldValue) {
-          ENGINE_ASSERT(value.is_string(),
-                        "unsupported type {} for component {} field {}",
-                        value.type_name(), cPrefab, cField);
+          ENGINE_ASSERT(value.is_string(), "unsupported type {} for component {} field {}", value.type_name(), cPrefab,
+                        cField);
           paths.emplace_back(value.get<std::string>());
         }
         meta_component.set(entt::hashed_string{cField.data()}, std::move(paths));
       } else if (cFieldValue.is_object()) {
-        if (cFieldValue.contains("x") and cFieldValue.contains("y") and
-            cFieldValue.contains("z") and cFieldValue.contains("w")) {
+        if (cFieldValue.contains("x") and cFieldValue.contains("y") and cFieldValue.contains("z") and
+            cFieldValue.contains("w")) {
           if (cField == "rotation") {
-            meta_component.set(entt::hashed_string{cField.data()},
-                              json_to_quat(cFieldValue));
+            meta_component.set(entt::hashed_string{cField.data()}, json_to_quat(cFieldValue));
           } else {
-            meta_component.set(entt::hashed_string{cField.data()},
-                              json_to_vec4(cFieldValue));
+            meta_component.set(entt::hashed_string{cField.data()}, json_to_vec4(cFieldValue));
           }
-        } else if (cFieldValue.contains("x") and cFieldValue.contains("y") and
-                   cFieldValue.contains("z")) {
+        } else if (cFieldValue.contains("x") and cFieldValue.contains("y") and cFieldValue.contains("z")) {
           if (cField == "rotation") {
-            meta_component.set(
-              entt::hashed_string{cField.data()},
-              glm::quat(glm::radians(json_to_vec3(cFieldValue))));
+            meta_component.set(entt::hashed_string{cField.data()}, glm::quat(glm::radians(json_to_vec3(cFieldValue))));
           } else {
-            meta_component.set(entt::hashed_string{cField.data()},
-                              json_to_vec3(cFieldValue));
+            meta_component.set(entt::hashed_string{cField.data()}, json_to_vec3(cFieldValue));
           }
         } else if (cFieldValue.contains("x") and cFieldValue.contains("y")) {
-          meta_component.set(entt::hashed_string{cField.data()},
-                            json_to_vec2(cFieldValue));
-        } else if (cFieldValue.contains("r") and cFieldValue.contains("g") and
-                   cFieldValue.contains("b") and cFieldValue.contains("a")) {
-          meta_component.set(entt::hashed_string{cField.data()},
-                            json_to_vec4(cFieldValue, "color"));
-        } else if (cFieldValue.contains("r") and cFieldValue.contains("g") and
-                   cFieldValue.contains("b")) {
-          meta_component.set(entt::hashed_string{cField.data()},
-                            json_to_vec3(cFieldValue, "color"));
-        } else if (cField == "json") { // TODO unused
-          ENGINE_ASSERT(false, "json field is not supported for component {}",
-                        cPrefab);
-          meta_component.set(entt::hashed_string{cField.data()},
-                            std::move(cFieldValue));
+          meta_component.set(entt::hashed_string{cField.data()}, json_to_vec2(cFieldValue));
+        } else if (cFieldValue.contains("r") and cFieldValue.contains("g") and cFieldValue.contains("b") and
+                   cFieldValue.contains("a")) {
+          meta_component.set(entt::hashed_string{cField.data()}, json_to_vec4(cFieldValue, "color"));
+        } else if (cFieldValue.contains("r") and cFieldValue.contains("g") and cFieldValue.contains("b")) {
+          meta_component.set(entt::hashed_string{cField.data()}, json_to_vec3(cFieldValue, "color"));
         } else {
-          ENGINE_ASSERT(false, "unsupported type {} for component {} field {}",
-                        cFieldValue.type_name(), cPrefab, cField)
+          ENGINE_ASSERT(false, "unsupported type {} for component {} field {}", cFieldValue.type_name(), cPrefab,
+                        cField)
         }
       } else {
-        ENGINE_ASSERT(false, "unsupported type {} for component {} field {}",
-                      cFieldValue.type_name(), cPrefab, cField)
+        ENGINE_ASSERT(false, "unsupported type {} for component {} field {}", cFieldValue.type_name(), cPrefab, cField)
       }
     }
   } else {
-    ENGINE_ASSERT(false, "unsupported type {} for component {}",
-                  cValue.type_name(), cPrefab)
+    ENGINE_ASSERT(false, "unsupported type {} for component {}", cValue.type_name(), cPrefab)
   }
   entt::meta_func triggerEventFunc = cType.func("on_component_added"_hs);
   if (triggerEventFunc) {
@@ -168,16 +141,14 @@ void process_component(entt::entity e, const std::string& cPrefab,
   }
 }
 
-void EntityFactory::create_prototypes(
-  std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
-  entt::registry& registry, const AssetsManager& assets_manager) {
+void EntityFactory::create_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
+                                      entt::registry& registry, const AssetsManager& assets_manager) {
   const auto& prefab = assets_manager.get<Prefab>(prefab_name);
 
   auto& prefab_prototypes = m_prefabs[prefab_name.data()];
   for (std::string_view prototype_id : prototype_ids) {
-    ENGINE_ASSERT(not prefab_prototypes.contains(prototype_id.data()),
-                  "prototype {} for prefab {} already exists", prototype_id,
-                  prefab_name);
+    ENGINE_ASSERT(not prefab_prototypes.contains(prototype_id.data()), "prototype {} for prefab {} already exists",
+                  prototype_id, prefab_name);
     entt::entity e = registry.create();
 
     for (std::string_view cTag : prefab->get_ctags(prototype_id)) {
@@ -192,49 +163,38 @@ void EntityFactory::create_prototypes(
   m_dirty = true;
 }
 
-void EntityFactory::update_prototypes(
-  std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
-  entt::registry& registry, const AssetsManager& assets_manager) {
+void EntityFactory::update_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
+                                      entt::registry& registry, const AssetsManager& assets_manager) {
   delete_prototypes(prefab_name, prototype_ids, registry);
   create_prototypes(prefab_name, prototype_ids, registry, assets_manager);
 }
 
-void EntityFactory::delete_prototypes(
-  std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
-  entt::registry& registry) {
+void EntityFactory::delete_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
+                                      entt::registry& registry) {
   for (std::string_view prototype_id : prototype_ids) {
-    ENGINE_ASSERT(
-      m_prefabs.at(prefab_name.data()).contains(prototype_id.data()),
-      "unknown prototype {} for prefab {}", prototype_id, prefab_name);
-    registry.emplace<CDeleted>(
-      m_prefabs.at(prefab_name.data()).at(prototype_id.data()));
+    ENGINE_ASSERT(m_prefabs.at(prefab_name.data()).contains(prototype_id.data()), "unknown prototype {} for prefab {}",
+                  prototype_id, prefab_name);
+    registry.emplace<CDeleted>(m_prefabs.at(prefab_name.data()).at(prototype_id.data()));
     m_prefabs.at(prefab_name.data()).erase(prototype_id.data());
   }
   m_dirty = true;
 }
 
-EntityFactory::Prototypes
-EntityFactory::get_prototypes(std::string_view prefab_name,
-                              const std::vector<std::string>& prototype_ids) {
-  ENGINE_ASSERT(m_prefabs.contains(prefab_name.data()), "unknown prefab {}",
-                prefab_name);
+EntityFactory::Prototypes EntityFactory::get_prototypes(std::string_view prefab_name,
+                                                        const std::vector<std::string>& prototype_ids) {
+  ENGINE_ASSERT(m_prefabs.contains(prefab_name.data()), "unknown prefab {}", prefab_name);
   Prototypes prototypes;
   for (std::string_view prototype_id : prototype_ids) {
-    ENGINE_ASSERT(
-      m_prefabs.at(prefab_name.data()).contains(prototype_id.data()),
-      "unknown prototype {} for prefab {}", prototype_id, prefab_name);
-    prototypes.insert(
-      {prototype_id.data(),
-       m_prefabs.at(prefab_name.data()).at(prototype_id.data())});
+    ENGINE_ASSERT(m_prefabs.at(prefab_name.data()).contains(prototype_id.data()), "unknown prototype {} for prefab {}",
+                  prototype_id, prefab_name);
+    prototypes.insert({prototype_id.data(), m_prefabs.at(prefab_name.data()).at(prototype_id.data())});
   }
   return prototypes;
 }
 
-bool EntityFactory::contains_prototypes(
-  std::string_view prefab_name,
-  const std::vector<std::string>& prototype_ids) const {
-  ENGINE_ASSERT(m_prefabs.contains(prefab_name.data()), "unknown prefab {}",
-                prefab_name);
+bool EntityFactory::contains_prototypes(std::string_view prefab_name,
+                                        const std::vector<std::string>& prototype_ids) const {
+  ENGINE_ASSERT(m_prefabs.contains(prefab_name.data()), "unknown prefab {}", prefab_name);
   for (std::string_view prototype_id : prototype_ids) {
     if (not m_prefabs.at(prefab_name.data()).contains(prototype_id.data())) {
       return false;
@@ -243,24 +203,21 @@ bool EntityFactory::contains_prototypes(
   return true;
 }
 
-const std::map<std::string, std::string, NumericComparator>&
-EntityFactory::get_prototypes_count_by_prefab() {
+const std::map<std::string, std::string, NumericComparator>& EntityFactory::get_prototypes_count_by_prefab() {
   if (not m_dirty) {
     return m_prototypes_count_by_prefab;
   }
 
   m_prototypes_count_by_prefab.clear();
   for (const auto& [prefab_name, prototypes] : m_prefabs) {
-    m_prototypes_count_by_prefab["prefab_" + prefab_name] =
-      std::to_string(prototypes.size());
+    m_prototypes_count_by_prefab["prefab_" + prefab_name] = std::to_string(prototypes.size());
   }
   m_dirty = false;
 
   return m_prototypes_count_by_prefab;
 }
 
-const std::map<std::string, EntityFactory::Prototypes, NumericComparator>&
-EntityFactory::get_all_prototypes() {
+const std::map<std::string, EntityFactory::Prototypes, NumericComparator>& EntityFactory::get_all_prototypes() {
   return m_prefabs;
 }
 

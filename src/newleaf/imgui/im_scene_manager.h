@@ -25,51 +25,47 @@ bool filter_instances{};
 bool filter_components{};
 bool filter_systems{};
 
-inline void draw_leaf_info(
-  const std::map<std::string, std::string, NumericComparator>& info,
-  const std::string& scene_name) {
-  for (const auto& [k, v] : info) {
-    if (k.starts_with("mesh_") or k.starts_with("texture_") or
-        k.starts_with("material_") or k.starts_with("transform_") or
-        (k.starts_with("vao_") and v != "undefined")) {
-      if (ImGui::TreeNode((k + scene_name).c_str(), k.c_str())) {
-        auto childInfoData = json_to_map(v);
-        for (const auto& [key, value] : childInfoData) {
-          if (key.starts_with("texture_") or
-              (key.starts_with("vao_") and value != "undefined")) {
-            if (ImGui::TreeNode((key + scene_name).c_str(), key.c_str())) {
+inline void draw_leaf_info(const std::map<std::string, std::string, NumericComparator>& info,
+                           const std::string& scene_name) {
+  for (const auto& [key, value] : info) {
+    if (key.starts_with("mesh_") or key.starts_with("texture_") or key.starts_with("material_") or
+        key.starts_with("transform_") or (key.starts_with("vao_") and value not_eq "undefined")) {
+      if (ImGui::TreeNode((key + scene_name).c_str(), key.c_str())) {
+        auto childInfoData = json_to_map(value);
+        for (const auto& [k, v] : childInfoData) {
+          if ((k.starts_with("texture_") and not k.ends_with("_type")) or
+              (k.starts_with("vao_") and v not_eq "undefined")) {
+            if (ImGui::TreeNode((k + scene_name).c_str(), k.c_str())) {
               // CBody, CShape, CChunk have a CMesh that has a vao and CTexture
               auto rechildInfoData = json_to_map(value);
-              for (const auto& [key, value] : rechildInfoData) {
-                ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
+              for (const auto& [kk, vv] : rechildInfoData) {
+                ImGui::BulletText("%s: %s", kk.c_str(), vv.c_str());
               }
               ImGui::TreePop();
             }
           } else {
-            ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
+            ImGui::BulletText("%s: %s", k.c_str(), v.c_str());
           }
         }
         ImGui::TreePop();
       }
     } else {
-      ImGui::BulletText("%s: %s", k.c_str(), v.c_str());
+      ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
     }
   }
 }
 
-inline void draw_scene_manager(SceneManager& scene_manager,
-                               const SettingsManager& settings_manager) {
+inline void draw_scene_manager(SceneManager& scene_manager, const SettingsManager& settings_manager) {
   entt::registry& registry = scene_manager.get_registry();
 
-  if (registry.storage<entt::entity>().in_use() == 0) {
+  if (registry.storage<entt::entity>().size() == 0) {
     ImGui::Text("No entities loaded");
     return;
   }
 
   int collapsed = collapser();
 
-  ImGui::InputText("##filter", scene_objects_text_filter,
-                   IM_ARRAYSIZE(scene_objects_text_filter));
+  ImGui::InputText("##filter", scene_objects_text_filter, IM_ARRAYSIZE(scene_objects_text_filter));
   if (ImGui::IsItemHovered()) {
     ImGui::SetTooltip("Filter entities or components by name");
   }
@@ -77,15 +73,15 @@ inline void draw_scene_manager(SceneManager& scene_manager,
   if (ImGui::Button("Clear Filter")) {
     scene_objects_text_filter[0] = '\0';
   }
-  ImGui::Checkbox("Prefabs", &filter_prefabs);
+  ImGui::Checkbox("Prefabs##1", &filter_prefabs);
   ImGui::SameLine();
-  ImGui::Checkbox("Prototypes", &filter_prototypes);
+  ImGui::Checkbox("Prototypes##1", &filter_prototypes);
   ImGui::SameLine();
-  ImGui::Checkbox("Instances", &filter_instances);
+  ImGui::Checkbox("Instances##1", &filter_instances);
   ImGui::SameLine();
-  ImGui::Checkbox("Components", &filter_components);
+  ImGui::Checkbox("Components##1", &filter_components);
   ImGui::SameLine();
-  ImGui::Checkbox("Systems", &filter_systems);
+  ImGui::Checkbox("Systems##1", &filter_systems);
 
   ImGui::Separator();
   ImGui::Columns(2);
@@ -101,17 +97,14 @@ inline void draw_scene_manager(SceneManager& scene_manager,
           strstr(prefab_name.c_str(), scene_objects_text_filter) == nullptr) {
         continue;
       }
-      if (ImGui::TreeNode((prefab_name + settings_manager.active_scene).c_str(),
-                          prefab_name.c_str())) {
+      if (ImGui::TreeNode((prefab_name + settings_manager.active_scene).c_str(), prefab_name.c_str())) {
         for (auto& [prototype_id, entity] : prototypes) {
           if (filter_prototypes and scene_objects_text_filter[0] not_eq '\0' and
-              strstr(prototype_id.c_str(), scene_objects_text_filter) ==
-                nullptr) {
+              strstr(prototype_id.c_str(), scene_objects_text_filter) == nullptr) {
             continue;
           }
           if (ImGui::Selectable(prototype_id.c_str())) {
-            selected_scene_manager_tabkey =
-              std::to_string(entt::to_integral(entity));
+            selected_scene_manager_tabkey = std::to_string(entt::to_integral(entity));
           }
         }
         ImGui::TreePop();
@@ -130,8 +123,7 @@ inline void draw_scene_manager(SceneManager& scene_manager,
         continue;
       }
       if (ImGui::Selectable(name.c_str())) {
-        selected_scene_manager_tabkey =
-          std::to_string(entt::to_integral(entity));
+        selected_scene_manager_tabkey = std::to_string(entt::to_integral(entity));
       }
     }
   }
@@ -156,8 +148,7 @@ inline void draw_scene_manager(SceneManager& scene_manager,
 
   ImGui::NextColumn();
   if (not selected_scene_manager_tabkey.empty()) {
-    entt::entity entity =
-      entt::entity(std::stoul(selected_scene_manager_tabkey));
+    entt::entity entity = entt::entity(std::stoul(selected_scene_manager_tabkey));
     if (registry.valid(entity)) {
       ImGui::SeparatorText("Components");
       std::string cName;
@@ -178,14 +169,11 @@ inline void draw_scene_manager(SceneManager& scene_manager,
           cData = cType.construct(storage.value(entity));
           to_map_func = cType.func("to_map"_hs);
           if (to_map_func) {
-            if (ImGui::TreeNode((selected_scene_manager_tabkey + cName +
-                                 settings_manager.active_scene)
-                                  .c_str(),
+            if (ImGui::TreeNode((selected_scene_manager_tabkey + cName + settings_manager.active_scene).c_str(),
                                 cName.c_str())) {
               data_ = to_map_func.invoke(cData);
               if (data_) {
-                info = data_.cast<
-                  std::map<std::string, std::string, NumericComparator>>();
+                info = data_.cast<std::map<std::string, std::string, NumericComparator>>();
                 if (info.empty()) {
                   ImGui::Text("no data");
                 } else {
@@ -198,9 +186,7 @@ inline void draw_scene_manager(SceneManager& scene_manager,
               ImGui::TreePop();
             }
           } else {
-            if (ImGui::TreeNode((selected_scene_manager_tabkey + cName +
-                                 settings_manager.active_scene)
-                                  .c_str(),
+            if (ImGui::TreeNode((selected_scene_manager_tabkey + cName + settings_manager.active_scene).c_str(),
                                 cName.c_str())) {
               ENGINE_ERROR("failed to get to_map for component {0}", cName);
               ImGui::Text("No to_map method defined");

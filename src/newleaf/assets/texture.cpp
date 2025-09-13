@@ -14,8 +14,7 @@
 
 namespace nl {
 
-Texture::Texture(uint32_t width, uint32_t height, GLenum glFormat,
-                 std::optional<bool> wrap)
+Texture::Texture(uint32_t width, uint32_t height, GLenum glFormat, std::optional<bool> wrap)
   : m_width(width), m_height(height), m_opengl_format(glFormat) {
   glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
   glTextureStorage2D(m_id, 1, m_opengl_format, m_width, m_height);
@@ -29,7 +28,7 @@ Texture::Texture(uint32_t width, uint32_t height, GLenum glFormat,
   m_mipmap_level = 1;
   m_flip_vertically = false;
   m_paths.emplace_back("fbo texture");
-  m_type = "texture_difusse";
+  m_type = "texture_diffuse";
   // https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexStorage2D.xhtml
   if (m_opengl_format == GL_RGBA8) {
     m_format = GL_RGBA;
@@ -40,24 +39,18 @@ Texture::Texture(uint32_t width, uint32_t height, GLenum glFormat,
   }
 }
 
-Texture::Texture(std::filesystem::path&& fp, std::optional<std::string>&& type,
-                 std::optional<bool> flip_vertically,
-                 std::optional<uint32_t> mipmap_level,
-                 std::optional<bool> gamma_correction)
-  : m_directory(std::filesystem::is_directory(fp) ? std::move(fp.string())
-                                                  : ""),
-    m_cubemap(std::filesystem::is_directory(fp)),
-    m_type(std::move(type.value_or(""))),
-    m_flip_vertically(flip_vertically.value_or(true)),
-    m_mipmap_level(mipmap_level.value_or(4)),
-    m_gamma_correction(gamma_correction.value_or(false)) {
+Texture::Texture(std::filesystem::path&& fp, std::optional<std::string>&& type, std::optional<bool> flip_vertically,
+                 std::optional<uint32_t> mipmap_level, std::optional<bool> gamma_correction)
+  : m_directory(std::filesystem::is_directory(fp) ? std::move(fp.string()) : ""),
+    m_cubemap(std::filesystem::is_directory(fp)), m_type(std::move(type.value_or(""))),
+    m_flip_vertically(flip_vertically.value_or(true)), m_gamma_correction(gamma_correction.value_or(false)) {
+  // calculate mipmap levels
+  uint32_t max_mip_levels = 1 + static_cast<uint32_t>(std::floor(std::log2(std::max(m_width, m_height))));
+  m_mipmap_level = std::min(mipmap_level.value_or(max_mip_levels), max_mip_levels);
   if (m_cubemap) {
-    std::string file_ext =
-      std::filesystem::exists(fp / "front.jpg") ? ".jpg" : ".png";
+    std::string file_ext = std::filesystem::exists(fp / "front.jpg") ? ".jpg" : ".png";
     m_paths.reserve(6);
-    m_paths.emplace_back(
-      std::move((fp / ("front" + file_ext))
-                  .string())); // it needs to be added in this order
+    m_paths.emplace_back(std::move((fp / ("front" + file_ext)).string())); // it needs to be added in this order
     m_paths.emplace_back(std::move((fp / ("back" + file_ext)).string()));
     m_paths.emplace_back(std::move((fp / ("top" + file_ext)).string()));
     m_paths.emplace_back(std::move((fp / ("bottom" + file_ext)).string()));
@@ -93,8 +86,7 @@ void Texture::load_texture() {
     stbi_uc* data = stbi_load(path.data(), &width, &height, &channels, 0);
     if (not data) [[unlikely]] {
       stbi_image_free(data);
-      ENGINE_ASSERT(false, "failed to load texture: {} {}", path,
-                    stbi_failure_reason());
+      ENGINE_ASSERT(false, "failed to load texture: {} {}", path, stbi_failure_reason());
     }
     m_width = width;
     m_height = height;
@@ -119,19 +111,16 @@ void Texture::load_texture() {
       m_format = GL_RED;
     } else [[unlikely]] {
       stbi_image_free(data);
-      ENGINE_ASSERT(false, "texture format not supported: {} {} channels", path,
-                    channels);
+      ENGINE_ASSERT(false, "texture format not supported: {} {} channels", path, channels);
     }
 
     if (m_cubemap) {
-      glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, m_format, m_width,
-                   m_height, 0, m_format, GL_UNSIGNED_BYTE, data);
+      glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, m_format, m_width, m_height, 0, m_format, GL_UNSIGNED_BYTE,
+                   data);
       ++face;
     } else {
-      glTextureStorage2D(m_id, m_mipmap_level, m_opengl_format, m_width,
-                         m_height);
-      glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, m_format,
-                          GL_UNSIGNED_BYTE, data);
+      glTextureStorage2D(m_id, m_mipmap_level, m_opengl_format, m_width, m_height);
+      glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, m_format, GL_UNSIGNED_BYTE, data);
       glGenerateTextureMipmap(m_id);
     }
     stbi_image_free(data);
@@ -196,8 +185,7 @@ const std::map<std::string, std::string, NumericComparator>& Texture::to_map() {
   } else {
     m_info["format"] = "unknown";
   }
-  m_info["slot"] =
-    std::to_string(m_slot); // will be 0 if not bound except for fbo texture
+  m_info["slot"] = std::to_string(m_slot); // will be 0 if not bound except for fbo texture
   m_info["cubemap"] = m_cubemap ? "true" : "false";
   m_info["flip_vertically"] = m_flip_vertically ? "true" : "false";
   m_info["mipmap_level"] = std::to_string(m_mipmap_level);
@@ -207,22 +195,19 @@ const std::map<std::string, std::string, NumericComparator>& Texture::to_map() {
 }
 
 bool Texture::operator==(const Asset& other) const {
-  if (typeid(*this) != typeid(other)) {
+  if (typeid(*this) not_eq typeid(other)) {
     ENGINE_ASSERT(false, "cannot compare texture with other asset type!");
   }
   const Texture& other_texture = static_cast<const Texture&>(other);
   for (const std::string& path : m_paths) {
-    if (std::find(other_texture.m_paths.begin(), other_texture.m_paths.end(),
-                  path) == other_texture.m_paths.end()) {
+    if (std::find(other_texture.m_paths.begin(), other_texture.m_paths.end(), path) == other_texture.m_paths.end()) {
       return false;
     }
   }
   return m_id == other_texture.m_id;
 }
 
-std::unique_ptr<Texture> Texture::create(uint32_t width, uint32_t height,
-                                         GLenum glFormat,
-                                         std::optional<bool> wrap) {
+std::unique_ptr<Texture> Texture::create(uint32_t width, uint32_t height, GLenum glFormat, std::optional<bool> wrap) {
   return std::make_unique<Texture>(width, height, glFormat, wrap);
 }
 }

@@ -15,18 +15,15 @@ class AppTickEvent : public Event {
 
 class AppUpdateEvent : public Event {
   public:
-    AppUpdateEvent(std::string&& dispatcher_target)
-      : m_dispatcher_target(dispatcher_target) {}
+    AppUpdateEvent(std::string&& event_target) : m_event_target(event_target) {}
 
-    std::string_view get_dispatcher_target() const {
-      return m_dispatcher_target;
-    }
+    std::string_view get_event_target() const { return m_event_target; }
 
     EVENT_CLASS_TYPE(AppUpdate)
     EVENT_CLASS_CATEGORY(EventCategoryApplication)
 
   private:
-    std::string m_dispatcher_target;
+    std::string m_event_target;
 };
 
 class AppRenderEvent : public Event {

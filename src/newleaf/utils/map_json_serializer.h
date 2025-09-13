@@ -11,8 +11,7 @@ using json = nlohmann::json;
 
 namespace nl {
 
-inline std::string
-map_to_json(const std::map<std::string, std::string, NumericComparator>& m) {
+inline std::string map_to_json(const std::map<std::string, std::string, NumericComparator>& m) {
   json j;
   for (const auto& [key, value] : m) {
     j[key] = value;
@@ -20,8 +19,7 @@ map_to_json(const std::map<std::string, std::string, NumericComparator>& m) {
   return j.dump();
 }
 
-inline std::map<std::string, std::string, NumericComparator>
-json_to_map(const std::string& j) {
+inline std::map<std::string, std::string, NumericComparator> json_to_map(const std::string& j) {
   json j_ = json::parse(j);
   std::map<std::string, std::string, NumericComparator> m;
   for (const auto& [k, v] : j_.items()) {

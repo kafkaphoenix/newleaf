@@ -14,9 +14,7 @@
 
 namespace nl {
 
-inline void draw_menubar(AssetsManager& assets_manager,
-                         RenderManager& render_manager,
-                         SceneManager& scene_manager) {
+inline void draw_menubar(AssetsManager& assets_manager, RenderManager& render_manager, SceneManager& scene_manager) {
   draw_metrics(assets_manager, render_manager, scene_manager);
   draw_logger();
   draw_about();

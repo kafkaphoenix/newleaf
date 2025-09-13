@@ -37,8 +37,7 @@ class MouseButtonEvent : public Event {
   public:
     Mouse get_mouse_button() const { return m_button; }
 
-    EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput |
-                         EventCategoryMouseButton)
+    EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput | EventCategoryMouseButton)
 
   protected:
     MouseButtonEvent(Mouse b) : m_button(b) {}

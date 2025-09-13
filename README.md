@@ -17,7 +17,7 @@ C++ game engine for 3d and 2d development
 
 ## How to use the engine in a personal project
 
-- Use the engine as a library (shared or static)
+Use the engine as a library (shared or static)
 ```cmake
 include(FetchContent)
 FetchContent_Declare(
@@ -27,16 +27,18 @@ FetchContent_Declare(
 )
 
 FetchContent_GetProperties(newleaf)
-if(NOT newleaf_POPULATED)
+if (NOT newleaf_POPULATED)
   FetchContent_Populate(newleaf)
   set(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS} CACHE INTERNAL "" FORCE)
   add_subdirectory(${newleaf_SOURCE_DIR} ${newleaf_BINARY_DIR})
 endif()
 ```
 
+> Currently, only Windows environments are supported.
+
 ## Demos
 
-- Engine use cases can be found in the [newleaf demos repository](https://github.com/kafkaphoenix/newleaf_demos)
+Engine use cases can be found in the [newleaf demos repository](https://github.com/kafkaphoenix/newleaf_demos)
 
 ## Planned features
 
@@ -58,6 +60,7 @@ endif()
 - Scripting language
 - Multiplatform
 - Multithreading
+- Linux support
 
 ## Third party libraries
 

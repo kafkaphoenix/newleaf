@@ -11,8 +11,6 @@ class CustomException : public std::runtime_error {
 
     const char* what() const override;
 
-    ~CustomException();
-
   private:
     std::string m_msg;
 };
@@ -29,7 +27,6 @@ class AppException : public CustomException {
 
 }
 
-#define throw_engine_exception(arg)                                            \
-  throw ::nl::EngineException(std::format(arg), __FILE__, __LINE__)
-#define throw_app_exception(arg)                                               \
-  throw ::nl::AppException(std::format(arg), __FILE__, __LINE__)
+// format takes the string and variadic arguments to create the final message
+#define throw_engine_exception(...) throw ::nl::EngineException(std::format(__VA_ARGS__), __FILE__, __LINE__)
+#define throw_app_exception(...) throw ::nl::AppException(std::format(__VA_ARGS__), __FILE__, __LINE__)

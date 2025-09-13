@@ -19,6 +19,7 @@ PointerAlignment: Left
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ConstructorInitializerIndentWidth: 2
 ContinuationIndentWidth: 2
+ColumnLimit: 120
 
 SortIncludes: true
 SortUsingDeclarations: true

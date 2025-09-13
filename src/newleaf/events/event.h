@@ -35,14 +35,12 @@ enum EventCategory {
   EventCategoryMouseButton = 32,
 };
 
-#define EVENT_CLASS_TYPE(type)                                                 \
-  static EventType get_static_type() { return EventType::type; }               \
-  virtual EventType get_event_type() const override {                          \
-    return get_static_type();                                                  \
-  }                                                                            \
+#define EVENT_CLASS_TYPE(type)                                                                                         \
+  static EventType get_static_type() { return EventType::type; }                                                       \
+  virtual EventType get_event_type() const override { return get_static_type(); }                                      \
   virtual const char* get_name() const override { return #type; }
 
-#define EVENT_CLASS_CATEGORY(category)                                         \
+#define EVENT_CLASS_CATEGORY(category)                                                                                 \
   virtual int get_category_flags() const override { return category; }
 
 class Event {
@@ -54,9 +52,7 @@ class Event {
     virtual const char* get_name() const = 0;
     virtual int get_category_flags() const = 0;
 
-    bool is_in_category(EventCategory category) const {
-      return get_category_flags() & category;
-    }
+    bool is_in_category(EventCategory category) const { return get_category_flags() & category; }
 };
 
 class EventDispatcher {
@@ -77,9 +73,6 @@ class EventDispatcher {
 
 }
 
-#define BIND_EVENT(f)                                                          \
-  [this](auto&&... args) { return f(std::forward<decltype(args)>(args)...); }
-#define BIND_STATIC_EVENT(f, ...)                                              \
-  [&](auto&&... args) {                                                        \
-    return f(std::forward<decltype(args)>(args)..., ##__VA_ARGS__);            \
-  }
+#define BIND_EVENT(f) [this](auto&&... args) { return f(std::forward<decltype(args)>(args)...); }
+#define BIND_STATIC_EVENT(f, ...)                                                                                      \
+  [&](auto&&... args) { return f(std::forward<decltype(args)>(args)..., ##__VA_ARGS__); }

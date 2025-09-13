@@ -2,14 +2,10 @@
 
 #include <format>
 #include <map>
-#include <memory>
 #include <string>
 #include <vector>
 
 #include <entt/entt.hpp>
-#define GLM_FORCE_CTOR_INIT
-#include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
 
 #include "../../application/application.h"
 #include "../../assets/assets_manager.h"
@@ -23,73 +19,26 @@
 namespace nl {
 
 struct CTexture {
-    enum class DrawMode {
-      color,
-      texture,
-      texture_atlas,
-      texture_blend,
-      texture_atlas_blend,
-      texture_blend_color,
-      texture_atlas_blend_color
-    };
-
     std::vector<std::string> paths;
     std::vector<std::shared_ptr<Texture>> textures;
-    glm::vec4 color{};
-    float blend_factor{};
-    float reflectivity{};
-    float refractive_index{};
-    bool enable_transparency{};
-    bool enable_lighting{};
-    bool enable_reflection{};
-    bool enable_refraction{};
-    std::string _draw_mode;
-    DrawMode draw_mode;
 
     CTexture() = default;
-    explicit CTexture(std::vector<std::string>&& p, glm::vec4&& c, float bf,
-                      float r, float ri, bool ht, bool ul, bool ur, bool uf,
-                      std::string&& dm)
-      : paths(std::move(p)), color(std::move(c)), blend_factor(bf),
-        reflectivity(r), refractive_index(ri), enable_transparency(ht),
-        enable_lighting(ul), enable_reflection(ur), enable_refraction(uf),
-        _draw_mode(dm) {}
+    explicit CTexture(std::vector<std::string>&& p) : paths(std::move(p)) {}
 
     void print() const {
       std::string texture_paths;
       if (paths.size() == 0) {
-        texture_paths = "\n\t\t\t\t\t\t none";
+        texture_paths = "\n\t\t\t\t\t\t undefined texture paths";
       } else {
         for (std::string_view path : paths) {
           texture_paths += std::format("\n\t\t\t\t\t\t {}", path);
         }
       }
-      ENGINE_BACKTRACE(
-        "\t\tcolor: {0}\n\t\t\t\t\t\tblend_factor: "
-        "{1}\n\t\t\t\t\t\treflectivity: "
-        "{2}\n\t\t\t\t\t\trefractive_index: "
-        "{3}\n\t\t\t\t\t\tenable_transparency: "
-        "{4}\n\t\t\t\t\t\tenable_lighting: "
-        "{5}\n\t\t\t\t\t\tenable_reflection: "
-        "{6}\n\t\t\t\t\t\tenable_refraction: {7}\n\t\t\t\t\t\tdraw_mode: "
-        "{8}\n\t\t\t\t\t\ttextures: {9}",
-        glm::to_string(color), blend_factor, reflectivity, refractive_index,
-        enable_transparency, enable_lighting, enable_reflection,
-        enable_refraction, _draw_mode, texture_paths);
+      ENGINE_BACKTRACE("\t\ttextures: {0}", texture_paths);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
       std::map<std::string, std::string, NumericComparator> info;
-      info["color"] = glm::to_string(color);
-      info["blend_factor"] = std::to_string(blend_factor);
-      info["reflectivity"] = std::to_string(reflectivity);
-      info["refractive_index"] = std::to_string(refractive_index);
-      info["enable_transparency"] = enable_transparency ? "true" : "false";
-      info["enable_lighting"] = enable_lighting ? "true" : "false";
-      info["enable_reflection"] = enable_reflection ? "true" : "false";
-      info["enable_refraction"] = enable_refraction ? "true" : "false";
-      info["draw_mode"] = _draw_mode;
-
       for (uint32_t i = 0; i < textures.size(); ++i) {
         info["texture_" + std::to_string(i)] = get_texture_info(i);
       }
@@ -97,35 +46,7 @@ struct CTexture {
       return info;
     }
 
-    std::string get_texture_info(uint32_t index) const {
-      return map_to_json(textures.at(index)->to_map());
-    }
-
-    void set_draw_mode() { // TODO maybe send assets manager to this function?
-      if (_draw_mode == "color") {
-        draw_mode = DrawMode::color;
-      } else if (_draw_mode == "texture") {
-        draw_mode = DrawMode::texture;
-      } else if (_draw_mode == "texture_atlas") {
-        draw_mode = DrawMode::texture_atlas;
-      } else if (_draw_mode == "textures_blend") { // blend two textures
-        draw_mode = DrawMode::texture_blend;
-      } else if (_draw_mode ==
-                 "texture_atlas_blend") { // blend two textures in the atlas //
-                                          // TODO: this is not implemented
-        draw_mode = DrawMode::texture_atlas_blend;
-      } else if (_draw_mode ==
-                 "texture_blend_color") { // blend texture with a color
-        draw_mode = DrawMode::texture_blend_color;
-      } else if (_draw_mode ==
-                 "texture_atlas_blend_color") { // blend texture in the atlas
-                                                // with
-                                                // a color
-        draw_mode = DrawMode::texture_atlas_blend_color;
-      } else {
-        ENGINE_ASSERT(false, "unknown draw mode {}", _draw_mode);
-      }
-    }
+    std::string get_texture_info(uint32_t index) const { return map_to_json(textures.at(index)->to_map()); }
 
     void set_textures() {
       if (paths.size() == 0) {
@@ -134,13 +55,12 @@ struct CTexture {
       const auto& assets_manager = Application::get().get_assets_manager();
 
       textures.reserve(paths.size());
-      for (std::string_view path : paths) {
-        textures.emplace_back(assets_manager.get<Texture>(path));
-      }
+      std::transform(paths.begin(), paths.end(), std::back_inserter(textures),
+                     [&](std::string_view path) { return assets_manager.get<Texture>(path); });
     }
 
     void reload_textures(std::vector<std::string>&& p) {
-      ENGINE_ASSERT(p != paths, "texture paths are the same");
+      ENGINE_ASSERT(p not_eq paths, "texture paths are the same");
       paths = std::move(p);
       textures.clear();
       set_textures();
@@ -148,9 +68,7 @@ struct CTexture {
 };
 }
 
-template <>
-inline void nl::SceneManager::on_component_added(entt::entity e, CTexture& c) {
-  c.set_draw_mode();
+template <> inline void nl::SceneManager::on_component_added(entt::entity e, CTexture& c) {
   c.set_textures();
 
   m_registry.replace<CTexture>(e, c);

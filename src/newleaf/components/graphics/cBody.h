@@ -25,8 +25,7 @@ struct CBody {
 
     CBody() = default;
     explicit CBody(std::string&& fp) : path(std::move(fp)) {}
-    explicit CBody(std::string&& fp, std::vector<CMesh>&& m,
-                   std::vector<CMaterial>&& ma)
+    explicit CBody(std::string&& fp, std::vector<CMesh>&& m, std::vector<CMaterial>&& ma)
       : path(std::move(fp)), meshes(std::move(m)), materials(std::move(ma)) {}
 
     void print() const {
@@ -48,13 +47,9 @@ struct CBody {
       return info;
     }
 
-    std::string get_mesh_info(uint32_t index) const {
-      return map_to_json(meshes.at(index).to_map());
-    }
+    std::string get_mesh_info(uint32_t index) const { return map_to_json(meshes.at(index).to_map()); }
 
-    std::string get_material_info(uint32_t index) const {
-      return map_to_json(materials.at(index).to_map());
-    }
+    std::string get_material_info(uint32_t index) const { return map_to_json(materials.at(index).to_map()); }
 
     void set_mesh() {
       // TODO rethink if add if not empty here and do it as ctag but creating
@@ -62,22 +57,20 @@ struct CBody {
       // TODO support multiple models
       ENGINE_ASSERT(!path.empty(), "path for model is empty");
       const auto& assets_manager = Application::get().get_assets_manager();
-      auto model =
-        *assets_manager.get<Model>(path); // We need a copy of the model
+      Model model = *assets_manager.get<Model>(path); // We need a copy of the model
       meshes = std::move(model.get_meshes());
       materials = std::move(model.get_materials());
     }
 
     void reload_mesh(std::string&& fp) {
-      ENGINE_ASSERT(fp != path, "path for model is the same");
+      ENGINE_ASSERT(fp not_eq path, "path for model is the same");
       path = std::move(fp);
       set_mesh();
     }
 };
 }
 
-template <>
-inline void nl::SceneManager::on_component_added(entt::entity e, CBody& c) {
+template <> inline void nl::SceneManager::on_component_added(entt::entity e, CBody& c) {
   c.set_mesh();
 
   m_registry.replace<CBody>(e, c);

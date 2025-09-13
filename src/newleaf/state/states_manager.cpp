@@ -31,9 +31,8 @@ void StatesManager::push_state(std::unique_ptr<State>&& s) {
 }
 
 void StatesManager::pop_state(std::string_view name) {
-  auto it = std::ranges::find_if(
-    m_states | std::views::take(m_index),
-    [&](const auto& state) { return state->get_name() == name; });
+  auto it = std::ranges::find_if(m_states | std::views::take(m_index),
+                                 [&](const auto& state) { return state->get_name() == name; });
   if (it not_eq m_states.begin() + m_index) {
     (*it)->on_detach();
     m_states.erase(it);
@@ -54,8 +53,7 @@ void StatesManager::push_layer(std::unique_ptr<Layer>&& l) {
 
 void StatesManager::push_overlay(std::unique_ptr<Layer>&& o, bool enabled) {
   ENGINE_ASSERT(m_index > 0, "no states to push overlay to");
-  m_states[m_index - 1]->get_layers_manager().push_overlay(std::move(o),
-                                                           enabled);
+  m_states[m_index - 1]->get_layers_manager().push_overlay(std::move(o), enabled);
   m_dirty = true;
 }
 
@@ -71,6 +69,32 @@ void StatesManager::disable_overlay(std::string_view name) {
   m_dirty = true;
 }
 
+bool StatesManager::is_overlay_enabled(std::string_view name) const {
+  ENGINE_ASSERT(m_index > 0, "no states to check overlay in");
+  return m_states[m_index - 1]->get_layers_manager().is_overlay_enabled(name);
+}
+
+bool StatesManager::contains_layer(std::string_view name) const {
+  ENGINE_ASSERT(m_index > 0, "no states to check layer in");
+  return m_states[m_index - 1]->get_layers_manager().contains_layer(name);
+}
+
+bool StatesManager::contains_overlay(std::string_view name) const {
+  ENGINE_ASSERT(m_index > 0, "no states to check overlay in");
+  return m_states[m_index - 1]->get_layers_manager().contains_overlay(name);
+}
+
+bool StatesManager::contains_state(std::string_view name) const {
+  return std::ranges::find_if(m_states | std::views::take(m_index),
+                              [&](const auto& state) { return state->get_name() == name; }) not_eq m_states.end();
+}
+
+void StatesManager::clear_layers() {
+  ENGINE_ASSERT(m_index > 0, "no states to clear layers from");
+  m_states[m_index - 1]->get_layers_manager().clear();
+  m_dirty = true;
+}
+
 State& StatesManager::get_current_state() {
   ENGINE_ASSERT(m_index > 0, "no states to get current state from");
   return *m_states[m_index - 1];
@@ -81,10 +105,7 @@ const State& StatesManager::get_current_state() const {
   return *m_states.at(m_index - 1);
 }
 
-uint32_t StatesManager::get_state_index() { return m_index; }
-
-std::map<std::string, std::string, NumericComparator>&
-StatesManager::compute_metrics() {
+std::map<std::string, std::string, NumericComparator>& StatesManager::compute_metrics() {
   if (not m_dirty) {
     return m_metrics;
   }
@@ -93,8 +114,7 @@ StatesManager::compute_metrics() {
   for (const auto& state : m_states | std::views::take(m_index)) {
     std::map<std::string, std::string, NumericComparator> layers;
     for (const auto& layer : state->get_layers_manager().get_layers()) {
-      layers[layer->get_name().data()] =
-        layer->is_enabled() ? "enabled" : "disabled";
+      layers[layer->get_name().data()] = layer->is_enabled() ? "enabled" : "disabled";
     }
     m_metrics[state->get_name().data()] = map_to_json(layers);
   }
@@ -103,7 +123,5 @@ StatesManager::compute_metrics() {
   return m_metrics;
 }
 
-std::unique_ptr<StatesManager> StatesManager::create() {
-  return std::make_unique<StatesManager>();
-}
+std::unique_ptr<StatesManager> StatesManager::create() { return std::make_unique<StatesManager>(); }
 }

@@ -11,48 +11,45 @@
 namespace nl {
 
 Model::Model(std::filesystem::path&& fp, std::optional<bool> gamma_correction)
-  : m_path(std::move(fp.string())),
-    m_directory(std::move(fp.parent_path().string())) {
-  ENGINE_ASSERT(not gamma_correction.has_value(),
-                "gamma correction not yet implemented");
+  : m_path(std::move(fp.string())), m_directory(std::move(fp.parent_path().string())) {
+  ENGINE_ASSERT(not gamma_correction.has_value(), "gamma correction not yet implemented");
 
   Assimp::Importer importer;
   const aiScene* scene = importer.ReadFile(
-    m_path, aiProcess_Triangulate | aiProcess_GenSmoothNormals |
-              aiProcess_CalcTangentSpace | aiProcess_ValidateDataStructure |
-              aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes |
-              aiProcess_OptimizeGraph | aiProcess_SplitLargeMeshes |
-              aiProcess_FindInvalidData);
+    m_path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace |
+              aiProcess_ValidateDataStructure | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes |
+              aiProcess_OptimizeGraph | aiProcess_SplitLargeMeshes | aiProcess_FindInvalidData);
 
-  ENGINE_ASSERT(scene and scene->mFlags not_eq AI_SCENE_FLAGS_INCOMPLETE and
-                  scene->mRootNode,
-                "failed to load model {}: {}", m_path,
-                importer.GetErrorString());
+  ENGINE_ASSERT(scene and scene->mFlags not_eq AI_SCENE_FLAGS_INCOMPLETE and scene->mRootNode,
+                "failed to load model {}: {}", m_path, importer.GetErrorString());
 
-  process_node(scene->mRootNode, scene);
+  process_node(scene->mRootNode, scene->mMeshes, scene->mMaterials);
 }
 
-void Model::process_node(aiNode* node, const aiScene* scene) {
+void Model::process_node(aiNode* node, aiMesh** meshes, aiMaterial** materials) {
   m_meshes.reserve(node->mNumMeshes);
   for (uint32_t i = 0; i < node->mNumMeshes; ++i) {
-    aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-    m_meshes.emplace_back(std::move(process_mesh(mesh, scene)));
+    aiMesh* mesh = meshes[node->mMeshes[i]];
+    aiMaterial* material = materials[mesh->mMaterialIndex];
+    m_meshes.emplace_back(std::move(process_mesh(mesh, material)));
   }
 
   for (uint32_t i = 0; i < node->mNumChildren; ++i) {
-    process_node(node->mChildren[i], scene);
+    process_node(node->mChildren[i], meshes, materials);
   }
 }
 
-CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
-  std::vector<Vertex> vertices{};
+// TODO each material is related to a texture, so maybe save texture info in material too
+// rethink all this logic after assets manager refactor with handlers
+CMesh Model::process_mesh(aiMesh* mesh, aiMaterial* material) {
+  std::vector<ModelVertex> vertices{};
   std::vector<uint32_t> indices{};
   std::vector<std::shared_ptr<Texture>> textures;
+  vertices.reserve(mesh->mNumVertices);
 
   for (uint32_t i = 0; i < mesh->mNumVertices; ++i) {
-    Vertex vertex{};
-    const auto& position =
-      mesh->mVertices[i]; // assimp vector does not directly convert to glm vec3
+    ModelVertex vertex{};
+    const auto& position = mesh->mVertices[i]; // assimp vector does not directly convert to glm vec3
     vertex.position = glm::vec3(position.x, position.y, position.z);
 
     if (mesh->HasNormals()) {
@@ -68,12 +65,10 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
       vertex.texture_coords = glm::vec2(texture_coords.x, texture_coords.y);
 
       const auto& tangent_vector = mesh->mTangents[i];
-      vertex.tangent =
-        glm::vec3(tangent_vector.x, tangent_vector.y, tangent_vector.z);
+      vertex.tangent = glm::vec3(tangent_vector.x, tangent_vector.y, tangent_vector.z);
 
       const auto& bitangent_vector = mesh->mBitangents[i];
-      vertex.bitangent =
-        glm::vec3(bitangent_vector.x, bitangent_vector.y, bitangent_vector.z);
+      vertex.bitangent = glm::vec3(bitangent_vector.x, bitangent_vector.y, bitangent_vector.z);
     }
 
     if (mesh->HasBones()) {
@@ -81,12 +76,11 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
     }
 
     if (mesh->HasVertexColors(0)) {
-      const auto& color = mesh->mColors[0][i];
-      vertex.color = glm::vec4(color.r, color.g, color.b, color.a);
+      // TODO vertex colors maybe i dont need? or think if adding color component a better way
+      // or sending here an entity
     }
 
-    if (mesh->mAABB.mMin not_eq aiVector3D(0.f, 0.f, 0.f) and
-        mesh->mAABB.mMax not_eq aiVector3D(0.f, 0.f, 0.f)) {
+    if (mesh->mAABB.mMin not_eq aiVector3D(0.f, 0.f, 0.f) and mesh->mAABB.mMax not_eq aiVector3D(0.f, 0.f, 0.f)) {
       // TODO aabb with models
     }
 
@@ -105,7 +99,6 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
     }
   }
 
-  aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
   CMaterial material_data = load_material(material);
 
   // n is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER.
@@ -114,8 +107,7 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   // normal: texture_normal_n
   // height: texture_height_n
   auto load_and_insert_textures = [&](aiTextureType t, std::string type) {
-    std::vector<std::shared_ptr<Texture>> loaded_textures =
-      load_material_textures(material, t, type);
+    std::vector<std::shared_ptr<Texture>> loaded_textures = load_material_textures(material, t, type);
     textures.insert(textures.end(), loaded_textures.begin(),
                     loaded_textures.end()); // Can't be emplace
   };
@@ -126,27 +118,25 @@ CMesh Model::process_mesh(aiMesh* mesh, const aiScene* scene) {
   load_and_insert_textures(aiTextureType_AMBIENT, "texture_height");
 
   // 0.6 is the default value for diffuse in assimp
+  // TODO rethink default texture probably should be just a error
   if (textures.empty() and material_data.diffuse == glm::vec3(0.6f)) {
-    std::string_view default_texture_path =
-      Application::get().get_settings_manager().default_texture_path;
+    std::string_view default_texture_path = Application::get().get_settings_manager().default_texture_path;
     if (not default_texture_path.empty()) {
       auto& assets_manager = Application::get().get_assets_manager();
       if (not assets_manager.contains<Texture>("default")) {
-        assets_manager.load<Texture>("default", default_texture_path,
-                                     "texture_diffuse");
+        ENGINE_ERROR("default texture not found at {}, make sure the path is correct in settings",
+                     default_texture_path);
       }
       textures.emplace_back(assets_manager.get<Texture>("default"));
     }
   }
   m_materials.emplace_back(std::move(material_data));
 
-  return CMesh(std::move(vertices), std::move(indices), std::move(textures),
-               std::string("camera"));
+  return CMesh(std::move(vertices), std::move(indices), std::move(textures), std::string("model"));
 }
 
-std::vector<std::shared_ptr<Texture>>
-Model::load_material_textures(aiMaterial* mat, aiTextureType t,
-                              std::string type) {
+std::vector<std::shared_ptr<Texture>> Model::load_material_textures(aiMaterial* mat, aiTextureType t,
+                                                                    std::string type) {
   std::vector<std::shared_ptr<Texture>> textures;
   textures.reserve(mat->GetTextureCount(t));
   for (uint32_t i = 0; i < mat->GetTextureCount(t); ++i) {
@@ -155,16 +145,15 @@ Model::load_material_textures(aiMaterial* mat, aiTextureType t,
     std::string filename = source.C_Str();
     std::string path = m_directory + "/" + filename;
 
+    // TODO after refactor assets manager with handlers use it here to load textures
     auto loaded_texture =
       std::find_if(m_loaded_textures.begin(), m_loaded_textures.end(),
-                   [&](const std::shared_ptr<Texture>& texture) {
-                     return texture->get_path() == path;
-                   });
+                   [&](const std::shared_ptr<Texture>& texture) { return texture->get_path() == path; });
 
     if (loaded_texture not_eq m_loaded_textures.end()) {
       textures.emplace_back(std::make_shared<Texture>(*(*loaded_texture)));
     } else {
-      auto new_texture = std::make_shared<Texture>(path, type);
+      std::shared_ptr<Texture> new_texture = std::make_shared<Texture>(path, type);
       textures.emplace_back(new_texture);
       m_loaded_textures.emplace_back(std::move(new_texture));
     }
@@ -173,6 +162,7 @@ Model::load_material_textures(aiMaterial* mat, aiTextureType t,
   return textures;
 }
 
+// TODO each material is related to a texture, so maybe save texture info in material too
 CMaterial Model::load_material(aiMaterial* mat) {
   // map_Ns        SHININESS    roughness
   // map_Ka        AMBIENT      ambient occlusion
@@ -222,13 +212,11 @@ const std::map<std::string, std::string, NumericComparator>& Model::to_map() {
 
 const std::map<std::string, std::string, NumericComparator>&
 Model::get_loaded_texture_info(std::string_view textureID) {
-  if (not m_loaded_texture_info.empty() and
-      m_loaded_texture_info.contains(std::string(textureID))) {
+  if (not m_loaded_texture_info.empty() and m_loaded_texture_info.contains(std::string(textureID))) {
     return m_loaded_texture_info.at(std::string(textureID));
   }
 
-  m_loaded_texture_info[std::string(textureID)] =
-    m_loaded_textures.at(std::stoi(textureID.data()))->to_map();
+  m_loaded_texture_info[std::string(textureID)] = m_loaded_textures.at(std::stoi(textureID.data()))->to_map();
 
   return m_loaded_texture_info.at(std::string(textureID));
 }

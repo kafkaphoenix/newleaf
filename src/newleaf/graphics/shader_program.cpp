@@ -6,8 +6,7 @@
 #include "../utils/assert.h"
 
 namespace nl {
-ShaderProgram::ShaderProgram(std::string&& name)
-  : m_id(glCreateProgram()), m_name(std::move(name)) {}
+ShaderProgram::ShaderProgram(std::string&& name) : m_id(glCreateProgram()), m_name(std::move(name)) {}
 
 ShaderProgram::~ShaderProgram() {
   ENGINE_WARN("deleting shader program {}", m_name);
@@ -28,11 +27,9 @@ void ShaderProgram::link() {
   if (status not_eq GL_TRUE) [[unlikely]] {
     int log_length = 0;
     glGetProgramiv(m_id, GL_INFO_LOG_LENGTH, &log_length);
-    ENGINE_ASSERT(log_length > 0, "shader program {} linking failed!",
-                  m_name);
+    ENGINE_ASSERT(log_length > 0, "shader program {} linking failed!", m_name);
     std::vector<GLchar> shader_program_log_length(log_length);
-    glGetProgramInfoLog(m_id, log_length, &log_length,
-                        shader_program_log_length.data());
+    glGetProgramInfoLog(m_id, log_length, &log_length, shader_program_log_length.data());
     ENGINE_ASSERT(false, "shader program {} linking failed: \n{}", m_name,
                   std::string(shader_program_log_length.data()));
   }
@@ -65,14 +62,16 @@ void ShaderProgram::set_vec4(std::string_view name, const glm::vec4& v) {
 }
 
 void ShaderProgram::set_mat4(std::string_view name, const glm::mat4& m) {
-  glUniformMatrix4fv(glGetUniformLocation(m_id, name.data()), 1, GL_FALSE,
-                     glm::value_ptr(m));
+  glUniformMatrix4fv(glGetUniformLocation(m_id, name.data()), 1, GL_FALSE, glm::value_ptr(m));
+}
+
+void ShaderProgram::set_bool(std::string_view name, bool value) {
+  glUniform1i(glGetUniformLocation(m_id, name.data()), value ? 1 : 0);
 }
 
 std::vector<ActiveUniform> ShaderProgram::get_active_uniforms() {
   GLint numActiveUniforms = 0;
-  glGetProgramInterfaceiv(m_id, GL_UNIFORM, GL_ACTIVE_RESOURCES,
-                          &numActiveUniforms);
+  glGetProgramInterfaceiv(m_id, GL_UNIFORM, GL_ACTIVE_RESOURCES, &numActiveUniforms);
 
   std::vector<ActiveUniform> active_uniforms;
 
@@ -87,12 +86,10 @@ std::vector<ActiveUniform> ShaderProgram::get_active_uniforms() {
 
   active_uniforms.reserve(numActiveUniforms);
   for (uint32_t i = 0; i < numActiveUniforms; ++i) {
-    glGetProgramResourceiv(m_id, GL_UNIFORM, i, properties.size(),
-                           &properties[0], values.size(), nullptr, &values[0]);
+    glGetProgramResourceiv(m_id, GL_UNIFORM, i, properties.size(), &properties[0], values.size(), nullptr, &values[0]);
 
     name_data.resize(values[0]);
-    glGetProgramResourceName(m_id, GL_UNIFORM, i, name_data.size(), nullptr,
-                             &name_data[0]);
+    glGetProgramResourceName(m_id, GL_UNIFORM, i, name_data.size(), nullptr, &name_data[0]);
     std::string name(reinterpret_cast<char*>(&name_data[0]), values[0] - 1);
 
     ActiveUniform uniform;
@@ -124,17 +121,17 @@ void ShaderProgram::reset_active_uniforms() {
       set_int(name, 0);
     } else if (type == GL_SAMPLER_CUBE) {
       set_int(name, 0);
+    } else if (type == GL_BOOL) {
+      set_int(name, 0);
     } else {
-      ENGINE_ASSERT(false, "unknown uniform type {} for uniform {}", type,
-                    name);
+      ENGINE_ASSERT(false, "unknown uniform type {} for uniform {}", type, name);
     }
   }
   unuse();
 }
 
 void ShaderProgram::print_active_uniforms() {
-  ENGINE_BACKTRACE(
-    "===================shader program {} uniforms===================", m_name);
+  ENGINE_BACKTRACE("===================shader program {} uniforms===================", m_name);
   for (const auto& [type, name] : m_active_uniforms) {
     if (type == GL_INT) {
       ENGINE_BACKTRACE("uniform {} type: {}", name, "int");
@@ -152,16 +149,16 @@ void ShaderProgram::print_active_uniforms() {
       ENGINE_BACKTRACE("uniform {} type: {}", name, "sampler_2D");
     } else if (type == GL_SAMPLER_CUBE) {
       ENGINE_BACKTRACE("uniform {} type: {}", name, "sampler_cube");
+    } else if (type == GL_BOOL) {
+      ENGINE_BACKTRACE("uniform {} type: {}", name, "bool");
     } else {
-      ENGINE_ASSERT(false, "unknown uniform type {} for uniform {}", type,
-                    name);
+      ENGINE_ASSERT(false, "unknown uniform type {} for uniform {}", type, name);
     }
   }
   ENGINE_BACKTRACE("=====================================================");
 }
 
-const std::map<std::string, std::string, NumericComparator>&
-ShaderProgram::to_map() {
+const std::map<std::string, std::string, NumericComparator>& ShaderProgram::to_map() {
   if (not m_info.empty()) {
     return m_info;
   }
@@ -185,9 +182,10 @@ ShaderProgram::to_map() {
       m_info["uniform_" + name] = "sampler_2D";
     } else if (type == GL_SAMPLER_CUBE) {
       m_info["uniform_" + name] = "sampler_cube";
+    } else if (type == GL_BOOL) {
+      m_info["uniform_" + name] = "bool";
     } else {
-      ENGINE_ASSERT(false, "unknown uniform type {} for uniform {}", type,
-                    name);
+      ENGINE_ASSERT(false, "unknown uniform type {} for uniform {}", type, name);
     }
   }
 

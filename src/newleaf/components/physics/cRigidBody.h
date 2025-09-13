@@ -15,14 +15,12 @@ struct CRigidBody {
     bool kinematic{};
 
     CRigidBody() = default;
-    explicit CRigidBody(float m, float f, float b, bool k)
-      : mass(m), friction(f), bounciness(b), kinematic(k) {}
+    explicit CRigidBody(float m, float f, float b, bool k) : mass(m), friction(f), bounciness(b), kinematic(k) {}
 
     void print() const {
-      ENGINE_BACKTRACE(
-        "\t\tmass: {0}\n\t\t\t\t\t\tfriction: "
-        "{1}\n\t\t\t\t\t\tbounciness: {2}\n\t\t\t\t\t\tkinematic: {3}",
-        mass, friction, bounciness, kinematic);
+      ENGINE_BACKTRACE("\t\tmass: {0}\n\t\t\t\t\t\tfriction: "
+                       "{1}\n\t\t\t\t\t\tbounciness: {2}\n\t\t\t\t\t\tkinematic: {3}",
+                       mass, friction, bounciness, kinematic);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
