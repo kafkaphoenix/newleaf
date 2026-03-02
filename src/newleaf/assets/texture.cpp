@@ -1,5 +1,6 @@
 #include "../assets/texture.h"
 
+#include <cmath>
 #include <filesystem>
 #include <optional>
 #include <string>
@@ -44,9 +45,7 @@ Texture::Texture(std::filesystem::path&& fp, std::optional<std::string>&& type, 
   : m_directory(std::filesystem::is_directory(fp) ? std::move(fp.string()) : ""),
     m_cubemap(std::filesystem::is_directory(fp)), m_type(std::move(type.value_or(""))),
     m_flip_vertically(flip_vertically.value_or(true)), m_gamma_correction(gamma_correction.value_or(false)) {
-  // calculate mipmap levels
-  uint32_t max_mip_levels = 1 + static_cast<uint32_t>(std::floor(std::log2(std::max(m_width, m_height))));
-  m_mipmap_level = std::min(mipmap_level.value_or(max_mip_levels), max_mip_levels);
+  m_mipmap_level = mipmap_level.value_or(0);
   if (m_cubemap) {
     std::string file_ext = std::filesystem::exists(fp / "front.jpg") ? ".jpg" : ".png";
     m_paths.reserve(6);
@@ -90,6 +89,14 @@ void Texture::load_texture() {
     }
     m_width = width;
     m_height = height;
+
+    // compute mip levels so minified textures sample smaller images, reducing moire/aliasing.
+    uint32_t max_mip_levels = 1 + static_cast<uint32_t>(std::floor(std::log2(std::max(m_width, m_height))));
+    if (m_mipmap_level == 0) {
+      m_mipmap_level = max_mip_levels;
+    } else {
+      m_mipmap_level = std::min(m_mipmap_level, max_mip_levels);
+    }
 
     if (channels == 4) {
       m_opengl_format = GL_RGBA8;
