@@ -29,15 +29,15 @@ SceneFactory::SceneFactory() : m_entity_factory() {
 
 entt::entity SceneFactory::create_entity(std::string_view prefab_id, std::string&& prototype_id,
                                          entt::registry& registry, std::string&& name, std::optional<std::string> tag,
-                                         std::optional<uint32_t> uuid) {
+                                         std::optional<uint64_t> uuid) {
   UUID _uuid = uuid.has_value() ? UUID(uuid.value()) : UUID();
   std::string _tag = tag.has_value() ? tag.value() : prototype_id;
-  entt::entity e = clone_entity(m_entity_factory.get_prototypes(prefab_id, {prototype_id}).at(prototype_id), _uuid,
-                                registry, std::move(name), std::move(_tag));
+  entt::entity e = clone_entity(m_entity_factory.get_prototypes(prefab_id, {prototype_id}).at(prototype_id),
+                                _uuid.value(), registry, std::move(name), std::move(_tag));
   return e;
 }
 
-entt::entity SceneFactory::clone_entity(const entt::entity e, uint32_t uuid, entt::registry& registry,
+entt::entity SceneFactory::clone_entity(const entt::entity e, uint64_t uuid, entt::registry& registry,
                                         std::optional<std::string> name, std::optional<std::string> tag) {
   entt::entity cloned = registry.create();
 

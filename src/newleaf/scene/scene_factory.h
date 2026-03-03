@@ -21,8 +21,8 @@ class SceneFactory {
     SceneFactory();
     entt::entity create_entity(std::string_view prefab_id, std::string&& prototype_id, entt::registry& registry,
                                std::string&& name, std::optional<std::string> tag = std::nullopt,
-                               std::optional<uint32_t> uuid = std::nullopt);
-    entt::entity clone_entity(const entt::entity e, uint32_t uuid, entt::registry& registry,
+                               std::optional<uint64_t> uuid = std::nullopt);
+    entt::entity clone_entity(const entt::entity e, uint64_t uuid, entt::registry& registry,
                               std::optional<std::string> name = std::nullopt,
                               std::optional<std::string> tag = std::nullopt);
     void delete_entity(entt::entity e, entt::registry& registry);
