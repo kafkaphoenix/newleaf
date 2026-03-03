@@ -60,8 +60,4 @@ struct CInput {
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CInput& c) {
-  c.set_mode();
-
-  m_registry.replace<CInput>(e, c);
-}
+template <> inline void nl::SceneManager::on_component_added(CInput& c) { c.set_mode(); }

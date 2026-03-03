@@ -34,7 +34,7 @@ class SceneManager {
     entt::entity get_entity(const UUID& uuid);
     const std::vector<std::string>& get_named_systems();
 
-    template <typename Component> void on_component_added(entt::entity e, Component& c);
+    template <typename Component> void on_component_added(Component& c);
     template <typename Component> void on_component_cloned(entt::entity e, Component& c);
 
     static std::unique_ptr<SceneManager> create();

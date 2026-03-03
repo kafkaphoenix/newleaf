@@ -230,11 +230,9 @@ struct CFBO {
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CFBO& c) {
+template <> inline void nl::SceneManager::on_component_added(CFBO& c) {
   c.set_mode();
   c.set_attachment();
   auto& render_manager = Application::get().get_render_manager();
   render_manager.add_framebuffer(std::string(c.fbo), c.width, c.height, c.attachment);
-
-  m_registry.replace<CFBO>(e, c);
 }

@@ -1,9 +1,7 @@
 #pragma once
 
-#include <format>
 #include <map>
 #include <string>
-#include <vector>
 
 #include <entt/entt.hpp>
 
@@ -61,8 +59,4 @@ struct CTextureAtlas {
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CTextureAtlas& c) {
-  c.set_texture();
-
-  m_registry.replace<CTextureAtlas>(e, c);
-}
+template <> inline void nl::SceneManager::on_component_added(CTextureAtlas& c) { c.set_texture(); }

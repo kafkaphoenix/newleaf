@@ -66,12 +66,4 @@ struct CCollider {
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CCollider& c) {
-  c.set_type();
-
-  // mesh is move only (it owns VAO unique ptr) so components containing mesh cannot be copyable or assignable,
-  // replace method uses assignment operator so we need to remove and emplace to update the mesh when type is set and
-  // mesh is created
-  m_registry.remove<CCollider>(e);
-  m_registry.emplace<CCollider>(e, std::move(c));
-}
+template <> inline void nl::SceneManager::on_component_added(CCollider& c) { c.set_type(); }

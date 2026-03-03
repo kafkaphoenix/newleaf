@@ -78,10 +78,4 @@ struct CBody {
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CBody& c) {
-  c.set_mesh();
-
-  // Body does not own meshes and materials so we can just update the component with the new mesh and material pointers
-  // without removing and emplacing like in CShape and CCollider
-  m_registry.replace<CBody>(e, c);
-}
+template <> inline void nl::SceneManager::on_component_added(CBody& c) { c.set_mesh(); }

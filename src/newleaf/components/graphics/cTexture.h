@@ -68,8 +68,4 @@ struct CTexture {
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CTexture& c) {
-  c.set_textures();
-
-  m_registry.replace<CTexture>(e, c);
-}
+template <> inline void nl::SceneManager::on_component_added(CTexture& c) { c.set_textures(); }

@@ -124,11 +124,9 @@ struct CCamera {
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CCamera& c) {
+template <> inline void nl::SceneManager::on_component_added(CCamera& c) {
   c.set_camera_type();
   c.set_aspect_ratio();
   c.set_mode();
   c.calculate_projection();
-
-  m_registry.replace<CCamera>(e, c);
 }

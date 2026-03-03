@@ -17,7 +17,6 @@
 #include "../../utils/map_json_serializer.h"
 #include "../../utils/numeric_comparator.h"
 #include "cMesh.h"
-#include "cShape.h"
 
 namespace nl {
 
@@ -77,11 +76,4 @@ struct CShape {
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CShape& c) {
-  c.create_mesh();
-
-  // mesh is move only (it owns VAO unique ptr) so components containing mesh cannot be copyable or assignable,
-  // replace method uses assignment operator so we need to remove and emplace to update the mesh is created
-  m_registry.remove<CShape>(e);
-  m_registry.emplace<CShape>(e, std::move(c));
-}
+template <> inline void nl::SceneManager::on_component_added(CShape& c) { c.create_mesh(); }

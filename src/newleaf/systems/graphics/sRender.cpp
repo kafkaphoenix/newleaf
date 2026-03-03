@@ -49,8 +49,8 @@ void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTe
     display_hitbox = cCollider->display_hitbox or Application::get().get_settings_manager().display_collision_boxes;
   }
   ShaderProgram& sp = render_manager.get_shader_program(cShaderProgram.name);
-  cMesh->bind_textures(sp, cTexture, cBlendTexture, cTextureAtlas,
-                       cColor, cBlendColor, cMaterial, cReflection, cSkybox, cSkyboxTexture, cSkyboxBlend);
+  cMesh->bind_textures(sp, cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cMaterial, cReflection, cSkybox,
+                       cSkyboxTexture, cSkyboxBlend);
   render_manager.render(cMesh->get_vao(), cTransform.calculate(), cShaderProgram.name);
   cMesh->unbind_textures(cTexture, cTextureAtlas, cBlendTexture);
   if (cTransparent and cTransparent->transparent) {
@@ -154,7 +154,7 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
             CMesh* mesh = cBody->meshes.at(i);
             CMaterial* material = cBody->materials.at(i);
             // TODO Add textures as CTexture
-                 render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, material, cReflection, cSkybox,
+            render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, material, cReflection, cSkybox,
                    cSkyboxTexture, cBlendTexture, mesh, cTransform, cShaderProgram, cCollider, cTransparent,
                    render_manager);
           }

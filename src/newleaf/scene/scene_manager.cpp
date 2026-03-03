@@ -109,7 +109,7 @@ const std::vector<std::string>& SceneManager::get_named_systems() {
     return m_named_systems;
 }
 
-template <typename Component> void SceneManager::on_component_added(entt::entity e, Component& c) {
+template <typename Component> void SceneManager::on_component_added(Component& c) {
   ENGINE_ASSERT(false, "unsupported on_component_added method for component type {}",
                 entt::type_id<Component>().name());
 }

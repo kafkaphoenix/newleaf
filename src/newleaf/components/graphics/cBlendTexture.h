@@ -1,9 +1,7 @@
 #pragma once
 
-#include <format>
 #include <map>
 #include <string>
-#include <vector>
 
 #include <entt/entt.hpp>
 
@@ -62,8 +60,4 @@ struct CBlendTexture {
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CBlendTexture& c) {
-  c.set_texture();
-
-  m_registry.replace<CBlendTexture>(e, c);
-}
+template <> inline void nl::SceneManager::on_component_added(CBlendTexture& c) { c.set_texture(); }
