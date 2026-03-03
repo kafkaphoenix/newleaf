@@ -6,6 +6,7 @@
 #include <entt/entt.hpp>
 
 #include "../../application/application.h"
+#include "../../assets/asset_handle.h"
 #include "../../assets/assets_manager.h"
 #include "../../assets/texture.h"
 #include "../../logging/log_manager.h"
@@ -18,7 +19,7 @@ namespace nl {
 
 struct CTextureAtlas {
     std::string path;
-    std::shared_ptr<Texture> texture;
+    AssetHandle<Texture> handle;
     uint32_t rows{};
     uint32_t index{};
 
@@ -39,7 +40,10 @@ struct CTextureAtlas {
       return info;
     }
 
-    std::string get_texture_info() const { return texture ? map_to_json(texture->to_map()) : "undefined"; }
+    std::string get_texture_info() const {
+      auto texture = handle.get();
+      return texture ? map_to_json(texture->to_map()) : "undefined";
+    }
 
     void set_texture() {
       if (path.empty()) {
@@ -47,13 +51,13 @@ struct CTextureAtlas {
       }
       const auto& assets_manager = Application::get().get_assets_manager();
 
-      texture = assets_manager.get<Texture>(path);
+      handle = assets_manager.get<Texture>(path);
     }
 
     void reload_texture(std::string&& p) {
       ENGINE_ASSERT(p not_eq path, "same texture path");
       path = std::move(p);
-      texture.reset();
+      handle = AssetHandle<Texture>();
       set_texture();
     }
 };

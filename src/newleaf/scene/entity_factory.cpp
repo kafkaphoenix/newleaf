@@ -149,7 +149,7 @@ void process_component(entt::entity e, const std::string& cPrefab, const json& c
 
 void EntityFactory::create_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
                                       entt::registry& registry, const AssetsManager& assets_manager) {
-  const auto& prefab = assets_manager.get<Prefab>(prefab_name);
+  const auto& prefab = assets_manager.get<Prefab>(prefab_name).get();
 
   auto& prefab_prototypes = m_prefabs[prefab_name.data()];
   for (std::string_view prototype_id : prototype_ids) {

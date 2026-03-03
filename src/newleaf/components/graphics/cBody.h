@@ -7,6 +7,7 @@
 #include <entt/entt.hpp>
 
 #include "../../application/application.h"
+#include "../../assets/asset_handle.h"
 #include "../../assets/model.h"
 #include "../../logging/log_manager.h"
 #include "../../scene/scene_manager.h"
@@ -20,6 +21,7 @@ namespace nl {
 
 struct CBody {
     std::string path;
+    AssetHandle<Model> handle;
     std::vector<CMesh*> meshes;
     std::vector<CMaterial*> materials;
 
@@ -57,7 +59,8 @@ struct CBody {
       // TODO support multiple models
       ENGINE_ASSERT(!path.empty(), "path for model is empty");
       const auto& assets_manager = Application::get().get_assets_manager();
-      Model& model = *assets_manager.get<Model>(path);
+      handle = assets_manager.get<Model>(path);
+      Model& model = *handle.get();
       meshes.clear();
       materials.clear();
       meshes.reserve(model.get_meshes().size());
@@ -73,6 +76,7 @@ struct CBody {
     void reload_mesh(std::string&& fp) {
       ENGINE_ASSERT(fp not_eq path, "path for model is the same");
       path = std::move(fp);
+      handle = AssetHandle<Model>();
       set_mesh();
     }
 };

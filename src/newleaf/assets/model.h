@@ -14,6 +14,7 @@
 #include "../components/graphics/cMesh.h"
 #include "../utils/numeric_comparator.h"
 #include "asset.h"
+#include "asset_handle.h"
 #include "texture.h"
 
 namespace nl {
@@ -37,7 +38,7 @@ class Model : public Asset {
     std::string m_directory;
     std::vector<std::shared_ptr<CMesh>> m_meshes;
     std::vector<CMaterial> m_materials;
-    std::vector<std::shared_ptr<Texture>> m_loaded_textures;
+    std::vector<AssetHandle<Texture>> m_loaded_textures;
 
     std::map<std::string, std::string, NumericComparator> m_info;
     std::map<std::string, std::map<std::string, std::string, NumericComparator>, NumericComparator>
@@ -45,7 +46,7 @@ class Model : public Asset {
 
     void process_node(aiNode* node, aiMesh** meshes, aiMaterial** materials);
     CMesh process_mesh(aiMesh* mesh, aiMaterial* material);
-    std::vector<std::shared_ptr<Texture>> load_material_textures(aiMaterial* mat, aiTextureType t, std::string type);
+    std::vector<AssetHandle<Texture>> load_material_textures(aiMaterial* mat, aiTextureType t, std::string type);
     CMaterial load_material(aiMaterial* mat);
 };
 

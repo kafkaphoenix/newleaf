@@ -29,8 +29,8 @@ void RenderManager::end_scene() {}
 
 void RenderManager::add_shader_program(std::string&& name, const AssetsManager& assets_manager) {
   std::unique_ptr<ShaderProgram> shader_program = ShaderProgram::create(std::string(name));
-  const auto& vs = assets_manager.get<Shader>("v" + name);
-  const auto& fs = assets_manager.get<Shader>("f" + name);
+  const auto& vs = assets_manager.get<Shader>("v" + name).get();
+  const auto& fs = assets_manager.get<Shader>("f" + name).get();
   shader_program->attach(*vs);
   shader_program->attach(*fs);
   shader_program->link();
