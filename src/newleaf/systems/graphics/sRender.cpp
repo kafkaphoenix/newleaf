@@ -151,11 +151,11 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
                  render_manager);
         } else if (cBody) { // models
           for (uint32_t i = 0; i < cBody->meshes.size(); ++i) {
-            CMesh& mesh = cBody->meshes.at(i);
-            CMaterial& material = cBody->materials.at(i);
+            CMesh* mesh = cBody->meshes.at(i);
+            CMaterial* material = cBody->materials.at(i);
             // TODO Add textures as CTexture
-            render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, &material, cReflection, cSkybox,
-                   cSkyboxTexture, cBlendTexture, &mesh, cTransform, cShaderProgram, cCollider, cTransparent,
+                 render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, material, cReflection, cSkybox,
+                   cSkyboxTexture, cBlendTexture, mesh, cTransform, cShaderProgram, cCollider, cTransparent,
                    render_manager);
           }
         } else if (cShape) { // primitives
@@ -170,7 +170,7 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
 
           for (auto& mesh : cShape->meshes) {
             render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cMaterial, cReflection, cSkybox,
-                   cSkyboxTexture, cBlendTexture, &mesh, cTransform, cShaderProgram, cCollider, cTransparent,
+                   cSkyboxTexture, cBlendTexture, mesh.get(), cTransform, cShaderProgram, cCollider, cTransparent,
                    render_manager);
           }
         } else {
@@ -196,10 +196,10 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
     cfbo.setup_properties(render_manager.get_shader_program("fbo"));
     const auto& settings_manager = app.get_settings_manager();
     if (settings_manager.imgui_window) {
-      render_manager.render_inside_imgui(cShape.meshes.at(0).get_vao(), cfbo.fbo, "scene", {0, 0}, {0, 0},
+      render_manager.render_inside_imgui(cShape.meshes.at(0)->get_vao(), cfbo.fbo, "scene", {0, 0}, {0, 0},
                                          settings_manager.fit_to_window);
     } else {
-      render_manager.render_framebuffer(cShape.meshes.at(0).get_vao(), cfbo.fbo);
+      render_manager.render_framebuffer(cShape.meshes.at(0)->get_vao(), cfbo.fbo);
     }
   }
 

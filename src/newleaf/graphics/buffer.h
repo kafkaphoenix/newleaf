@@ -41,9 +41,9 @@ class VBO {
     uint32_t get_count() const { return m_count; }
     uint32_t get_id() const { return m_id; }
 
-    static std::unique_ptr<VBO> CreateModel(const std::vector<ModelVertex>& vertices);
-    static std::unique_ptr<VBO> CreateShape(const std::vector<ShapeVertex>& vertices);
-    static std::unique_ptr<VBO> CreateTerrain(const std::vector<TerrainVertex>& vertices);
+    template <typename VertexType> static std::unique_ptr<VBO> create(const std::vector<VertexType>& vertices) {
+      return std::make_unique<VBO>(vertices);
+    }
 
   private:
     uint32_t m_id{};

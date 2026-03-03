@@ -39,10 +39,10 @@ class RenderManager {
     const std::unordered_map<std::string, std::unique_ptr<FBO>>& get_framebuffers() const { return m_framebuffers; }
     ShaderProgram& get_shader_program(std::string_view shader_program);
 
-    void render(const std::shared_ptr<VAO>& vao, const glm::mat4& transform, std::string_view shader_program);
-    void render_framebuffer(const std::shared_ptr<VAO>& vao, std::string_view fbo);
-    void render_inside_imgui(const std::shared_ptr<VAO>& vao, std::string_view fbo, std::string_view title,
-                             glm::vec2 size, glm::vec2 position, bool fit_to_window);
+    void render(const VAO& vao, const glm::mat4& transform, std::string_view shader_program);
+    void render_framebuffer(const VAO& vao, std::string_view fbo);
+    void render_inside_imgui(const VAO& vao, std::string_view fbo, std::string_view title, glm::vec2 size,
+                             glm::vec2 position, bool fit_to_window);
     uint32_t get_shader_programs_count() const { return m_shader_programs.size(); }
     uint32_t get_framebuffers_count() const { return m_framebuffers.size(); }
     void clear();
@@ -63,6 +63,6 @@ class RenderManager {
     uint32_t m_triangles{};
     uint32_t m_vertices{};
     uint32_t m_indices{};
-    void update_metrics(const std::shared_ptr<VAO>& vao);
+    void update_metrics(const VAO& vao);
 };
 }

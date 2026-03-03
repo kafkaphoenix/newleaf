@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <utility>
 
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
@@ -30,7 +31,10 @@ struct CCollider {
     explicit CCollider(Type t, glm::vec3&& s, glm::vec4&& c, bool d)
       : type(t), size(std::move(s)), color(std::move(c)), display_hitbox(d) {}
 
-    void print() const { ENGINE_BACKTRACE("\t\ttype: {0}\n\t\t\t\t\t\tsize: {1}\n\t\t\t\t\tcolor: {2}\n\t\t\t\t\tdisplay_hitbox: {3}", _type, glm::to_string(size), glm::to_string(color), display_hitbox); }
+    void print() const {
+      ENGINE_BACKTRACE("\t\ttype: {0}\n\t\t\t\t\t\tsize: {1}\n\t\t\t\t\tcolor: {2}\n\t\t\t\t\tdisplay_hitbox: {3}",
+                       _type, glm::to_string(size), glm::to_string(color), display_hitbox);
+    }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
       std::map<std::string, std::string, NumericComparator> info;
@@ -54,7 +58,7 @@ struct CCollider {
         type = Type::sphere;
       } else if (_type == "rectangle") {
         type = Type::rectangle;
-        mesh.vao = ShapeFactory::create_rectangle(size.x, size.y, false);
+        mesh = ShapeFactory::create_rectangle(size.x, size.y, false);
       } else {
         ENGINE_ASSERT(false, "unknown collider type {}", _type);
       }
@@ -65,5 +69,9 @@ struct CCollider {
 template <> inline void nl::SceneManager::on_component_added(entt::entity e, CCollider& c) {
   c.set_type();
 
-  m_registry.replace<CCollider>(e, c);
+  // mesh is move only (it owns VAO unique ptr) so components containing mesh cannot be copyable or assignable,
+  // replace method uses assignment operator so we need to remove and emplace to update the mesh when type is set and
+  // mesh is created
+  m_registry.remove<CCollider>(e);
+  m_registry.emplace<CCollider>(e, std::move(c));
 }

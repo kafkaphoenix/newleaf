@@ -32,40 +32,20 @@ using namespace entt::literals;
 namespace nl {
 
 struct CMesh {
+    std::unique_ptr<VAO> vao;
     std::vector<std::shared_ptr<Texture>> textures;
-    std::shared_ptr<VAO> vao;
-    std::vector<ModelVertex> vertices; // TODO: delete this
-    std::shared_ptr<VBO> vbo;
-    std::vector<uint32_t> indices;
-    std::string vertex_type;
 
     CMesh() = default;
-    explicit CMesh(std::vector<ModelVertex>&& v, std::vector<uint32_t>&& i, std::vector<std::shared_ptr<Texture>>&& t,
-                   std::string&& vt)
-      : vertices(std::move(v)), indices(std::move(i)), textures(std::move(t)), vertex_type(std::move(vt)) {}
+    explicit CMesh(std::unique_ptr<VAO>&& vao, std::vector<std::shared_ptr<Texture>>&& textures = {})
+      : vao(std::move(vao)), textures(std::move(textures)) {}
 
-    void setup_mesh() {
-      vao = VAO::create();
-      if (vertex_type == "model") {
-        vao->attach_vertex(VBO::CreateModel(vertices), VAO::VertexType::Model);
-      } else if (vertex_type ==
-                 "shape") { // TODO this is not used and use wrong method, shape factory  use create shape
-        vao->attach_vertex(VBO::CreateModel(vertices), VAO::VertexType::Shape);
-      } else if (vertex_type == "terrain") { // TODO maybe a better way to do
-                                             // this using vertices? terrain returns vbo from other side
-        vao->attach_vertex(std::move(vbo), VAO::VertexType::Terrain);
-      } else {
-        ENGINE_ASSERT(false, "unknown vertex type {}", vertex_type);
-      }
-      vao->set_index(IBO::create(indices));
-    }
+    CMesh(const CMesh&) = delete;
+    CMesh& operator=(const CMesh&) = delete;
+    CMesh(CMesh&&) noexcept = default;
+    CMesh& operator=(CMesh&&) noexcept = default;
 
-    const std::shared_ptr<VAO>& get_vao() {
-      if (not vao) {
-        setup_mesh();
-      }
-      return vao;
-    }
+    VAO& get_vao() { return *vao; }
+    const VAO& get_vao() const { return *vao; }
 
     // TODO maybe avoid setting uniform at all if disable, check after refactor and removing monostate
     // TODO rethink with uniform buffer object in system
@@ -186,6 +166,8 @@ struct CMesh {
     }
 
     // TODO remove this method after refactor model
+    // model should use ctexture so i can remove from cmesh (UPDATE move to Cmaterial instead, i dont need component
+    // referencing a handle of an asset)
     void configure_model_texture(ShaderProgram& sp, const CMaterial* cMaterial) {
       if (sp.get_name() not_eq "model") {
         return;
@@ -227,8 +209,8 @@ struct CMesh {
 
     // TODO remove this and rethink in systems with uniform buffer objects
     void bind_textures(ShaderProgram& sp, CTexture* cTexture, CBlendTexture* cBlendTexture,
-                       CTextureAtlas* cTextureAtlas, CColor* cColor, CBlendColor* cBlendColor, const CMaterial* cMaterial,
-                       CReflection* cReflection, CSkybox* cSkybox, CTexture* cSkyboxTexture,
+                       CTextureAtlas* cTextureAtlas, CColor* cColor, CBlendColor* cBlendColor,
+                       const CMaterial* cMaterial, CReflection* cReflection, CSkybox* cSkybox, CTexture* cSkyboxTexture,
                        CBlendTexture* cSkyboxBlend) {
       sp.reset_active_uniforms();
       sp.use();
@@ -263,7 +245,8 @@ struct CMesh {
       for (const auto& texture : textures) {
         paths += std::format("\n\t\t\ttexture: {}", texture->get_path());
       }
-      ENGINE_BACKTRACE("\t\tvertices: {0}\n\t\tindices: {1}{2}", vertices.size(), indices.size(), paths);
+      ENGINE_BACKTRACE("\t\tvertices: {0}\n\t\tindices: {1}{2}", vao->get_vbo().get_count(), vao->get_ibo().get_count(),
+                       paths);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
@@ -272,7 +255,7 @@ struct CMesh {
         info["texture_" + std::to_string(i)] = get_texture_info(i);
       }
       info["vao_0"] = vao ? get_vao_info() : "undefined";
-      info["vertex_type"] = vertex_type;
+      info["vertex_type"] = vao ? vao->get_vertex_type() : "undefined";
 
       return info;
     }

@@ -1,7 +1,9 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <entt/entt.hpp>
@@ -25,10 +27,11 @@ struct CShape {
     std::string _type;
     Type type;
     glm::vec3 size{glm::vec3(1.f)};
-    std::vector<CMesh> meshes;
+    std::vector<std::shared_ptr<CMesh>> meshes;
 
     CShape() = default;
-    explicit CShape(Type t, glm::vec3&& d, std::vector<CMesh>&& m) : type(t), size(d), meshes(std::move(m)) {}
+    explicit CShape(Type t, glm::vec3&& d, std::vector<std::shared_ptr<CMesh>>&& m)
+      : type(t), size(d), meshes(std::move(m)) {}
 
     void print() const {
       ENGINE_BACKTRACE("\t\ttype: {0}\n\t\t\t\t\t\tsize: {1}\n\t\t\t\t\t\tmeshes: "
@@ -47,31 +50,29 @@ struct CShape {
       return info;
     }
 
-    std::string get_mesh_info(uint32_t index) const { return map_to_json(meshes.at(index).to_map()); }
+    std::string get_mesh_info(uint32_t index) const { return map_to_json(meshes.at(index)->to_map()); }
 
     // TODO repeat texture should be linked to each texture rethink for now always false
     void create_mesh() {
       ENGINE_ASSERT(size.x > 0.f and (size.y > 0.f or _type == "triangle"),
                     "shape witdh and height must be greater than 0");
       ENGINE_ASSERT(size.z > 0.f or _type not_eq "cube", "cube depth must be greater than 0");
-      CMesh mesh;
-      mesh.vertex_type = "shape";
       if (_type == "triangle") {
         type = CShape::Type::triangle;
-        mesh.vao = ShapeFactory::create_triangle(size.x);
+        meshes.emplace_back(std::make_shared<CMesh>(std::move(ShapeFactory::create_triangle(size.x))));
       } else if (_type == "rectangle") {
         type = CShape::Type::rectangle;
-        mesh.vao = ShapeFactory::create_rectangle(size.x, size.y, false);
+        meshes.emplace_back(std::make_shared<CMesh>(std::move(ShapeFactory::create_rectangle(size.x, size.y, false))));
       } else if (_type == "cube") {
         type = CShape::Type::cube;
-        mesh.vao = ShapeFactory::create_cube(size.x, size.y, size.z, false);
+        meshes.emplace_back(
+          std::make_shared<CMesh>(std::move(ShapeFactory::create_cube(size.x, size.y, size.z, false))));
       } else if (_type == "circle") {
         type = CShape::Type::circle;
-        mesh.vao = ShapeFactory::create_circle(size.x, size.y);
+        meshes.emplace_back(std::make_shared<CMesh>(std::move(ShapeFactory::create_circle(size.x, size.y))));
       } else {
         ENGINE_ASSERT(false, "unknown shape type {}", _type);
       }
-      meshes.emplace_back(std::move(mesh));
     }
 };
 }
@@ -79,5 +80,8 @@ struct CShape {
 template <> inline void nl::SceneManager::on_component_added(entt::entity e, CShape& c) {
   c.create_mesh();
 
-  m_registry.replace<CShape>(e, c);
+  // mesh is move only (it owns VAO unique ptr) so components containing mesh cannot be copyable or assignable,
+  // replace method uses assignment operator so we need to remove and emplace to update the mesh is created
+  m_registry.remove<CShape>(e);
+  m_registry.emplace<CShape>(e, std::move(c));
 }

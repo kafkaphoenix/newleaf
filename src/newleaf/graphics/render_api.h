@@ -1,9 +1,7 @@
 #pragma once
 
-#include <array>
-#include <memory>
-
 #include "vao.h"
+#include <array>
 
 namespace nl {
 class RenderAPI {
@@ -20,6 +18,6 @@ class RenderAPI {
     static void clear();
     static void clear_color();
     static void clear_depth();
-    static void draw_indexed(const std::shared_ptr<VAO>& vao);
+    static void draw_indexed(const VAO& vao);
 };
 }

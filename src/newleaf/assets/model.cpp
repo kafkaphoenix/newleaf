@@ -3,8 +3,11 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
+#include <memory>
+
 #include "../application/application.h"
 #include "../graphics/buffer.h"
+#include "../graphics/vao.h"
 #include "../settings/settings_manager.h"
 #include "../utils/assert.h"
 
@@ -31,7 +34,7 @@ void Model::process_node(aiNode* node, aiMesh** meshes, aiMaterial** materials) 
   for (uint32_t i = 0; i < node->mNumMeshes; ++i) {
     aiMesh* mesh = meshes[node->mMeshes[i]];
     aiMaterial* material = materials[mesh->mMaterialIndex];
-    m_meshes.emplace_back(std::move(process_mesh(mesh, material)));
+    m_meshes.emplace_back(std::make_shared<CMesh>(std::move(process_mesh(mesh, material))));
   }
 
   for (uint32_t i = 0; i < node->mNumChildren; ++i) {
@@ -132,7 +135,12 @@ CMesh Model::process_mesh(aiMesh* mesh, aiMaterial* material) {
   }
   m_materials.emplace_back(std::move(material_data));
 
-  return CMesh(std::move(vertices), std::move(indices), std::move(textures), std::string("model"));
+  std::unique_ptr<VAO> vao = VAO::create();
+  std::unique_ptr<VBO> vbo = VBO::create(vertices);
+  std::unique_ptr<IBO> ibo = IBO::create(indices);
+  vao->attach_vertex(std::move(vbo), VAO::VertexType::Model);
+  vao->set_index(std::move(ibo));
+  return CMesh(std::move(vao), std::move(textures));
 }
 
 std::vector<std::shared_ptr<Texture>> Model::load_material_textures(aiMaterial* mat, aiTextureType t,
