@@ -9,8 +9,6 @@
 namespace nl {
 
 struct CActiveCamera {
-    bool dummy;
-
     void print() const { ENGINE_BACKTRACE("\t\tno data"); }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {

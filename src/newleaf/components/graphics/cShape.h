@@ -56,6 +56,7 @@ struct CShape {
       ENGINE_ASSERT(size.x > 0.f and (size.y > 0.f or _type == "triangle"),
                     "shape witdh and height must be greater than 0");
       ENGINE_ASSERT(size.z > 0.f or _type not_eq "cube", "cube depth must be greater than 0");
+      meshes.clear();
       if (_type == "triangle") {
         type = CShape::Type::triangle;
         meshes.emplace_back(std::make_shared<CMesh>(std::move(ShapeFactory::create_triangle(size.x))));

@@ -227,15 +227,21 @@ struct CMesh {
     }
 
     void unbind_textures(CTexture* cTexture, CTextureAtlas* cTextureAtlas, CBlendTexture* cBlendTexture) {
-      auto& unbind_textures = textures; // model textures
       if (cTexture) {
-        unbind_textures = cTexture->textures;
-      } else if (cTextureAtlas) {
-        unbind_textures = {cTextureAtlas->texture};
-      } else if (cBlendTexture) {
-        unbind_textures = {cBlendTexture->texture};
+        for (auto& texture : cTexture->textures) {
+          texture->unbind_slot();
+        }
+        return;
       }
-      for (auto& texture : unbind_textures) {
+      if (cTextureAtlas and cTextureAtlas->texture) {
+        cTextureAtlas->texture->unbind_slot();
+        return;
+      }
+      if (cBlendTexture and cBlendTexture->texture) {
+        cBlendTexture->texture->unbind_slot();
+        return;
+      }
+      for (auto& texture : textures) {
         texture->unbind_slot();
       }
     }

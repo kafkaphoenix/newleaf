@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <format>
 #include <map>
 #include <string>
@@ -49,6 +50,7 @@ struct CTexture {
     std::string get_texture_info(uint32_t index) const { return map_to_json(textures.at(index)->to_map()); }
 
     void set_textures() {
+      textures.clear();
       if (paths.size() == 0) {
         return;
       }

@@ -39,7 +39,7 @@ struct CTextureAtlas {
       return info;
     }
 
-    std::string get_texture_info() const { return map_to_json(texture->to_map()); }
+    std::string get_texture_info() const { return texture ? map_to_json(texture->to_map()) : "undefined"; }
 
     void set_texture() {
       if (path.empty()) {

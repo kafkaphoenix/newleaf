@@ -7,11 +7,13 @@
 
 #include <entt/entt.hpp>
 
+#include "../../application/application.h"
 #include "../../graphics/framebuffer.h"
 #include "../../graphics/render_manager.h"
 #include "../../graphics/shader_program.h"
 #include "../../logging/log_manager.h"
 #include "../../scene/scene_manager.h"
+#include "../../settings/settings_manager.h"
 #include "../../utils/assert.h"
 #include "../../utils/numeric_comparator.h"
 
@@ -233,6 +235,12 @@ struct CFBO {
 template <> inline void nl::SceneManager::on_component_added(CFBO& c) {
   c.set_mode();
   c.set_attachment();
+  ENGINE_ASSERT(!c.fbo.empty(), "fbo name is empty");
+  if (c.width == 0 or c.height == 0) {
+    const auto& settings_manager = Application::get().get_settings_manager();
+    c.width = settings_manager.window_w;
+    c.height = settings_manager.window_h;
+  }
   auto& render_manager = Application::get().get_render_manager();
   render_manager.add_framebuffer(std::string(c.fbo), c.width, c.height, c.attachment);
 }
