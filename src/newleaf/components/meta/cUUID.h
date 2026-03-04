@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <map>
 #include <string>
 
@@ -9,7 +10,7 @@
 namespace nl {
 
 struct CUUID {
-    uint32_t uuid{};
+    uint64_t uuid{};
 
     void print() const { ENGINE_BACKTRACE("\t\tuuid: {}", uuid); }
 

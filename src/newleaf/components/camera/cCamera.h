@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <map>
 #include <string>
 
@@ -29,7 +30,7 @@ struct CCamera {
     CameraType type;
     std::string _aspect_ratio = "16:9";
     AspectRatio aspect_ratio;
-    std::string _mode;
+    std::string _mode = "none";
     Mode mode;
     float aspect_ratio_value = 16.f / 9.f;
     float fov = 90.f;
@@ -124,11 +125,9 @@ struct CCamera {
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CCamera& c) {
+template <> inline void nl::SceneManager::on_component_added(CCamera& c) {
   c.set_camera_type();
   c.set_aspect_ratio();
   c.set_mode();
   c.calculate_projection();
-
-  m_registry.replace<CCamera>(e, c);
 }

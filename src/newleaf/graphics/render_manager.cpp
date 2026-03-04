@@ -29,8 +29,8 @@ void RenderManager::end_scene() {}
 
 void RenderManager::add_shader_program(std::string&& name, const AssetsManager& assets_manager) {
   std::unique_ptr<ShaderProgram> shader_program = ShaderProgram::create(std::string(name));
-  const auto& vs = assets_manager.get<Shader>("v" + name);
-  const auto& fs = assets_manager.get<Shader>("f" + name);
+  const auto& vs = assets_manager.get<Shader>("v" + name).get();
+  const auto& fs = assets_manager.get<Shader>("f" + name).get();
   shader_program->attach(*vs);
   shader_program->attach(*fs);
   shader_program->link();
@@ -46,7 +46,7 @@ void RenderManager::add_framebuffer(std::string&& name, uint32_t w, uint32_t h, 
 
 void RenderManager::delete_framebuffer(std::string_view name) { m_framebuffers.erase(name.data()); }
 
-void RenderManager::render_framebuffer(const std::shared_ptr<VAO>& vao, std::string_view fbo) {
+void RenderManager::render_framebuffer(const VAO& vao, std::string_view fbo) {
   auto& sp = get_shader_program("fbo");
 
   sp.use();
@@ -58,15 +58,14 @@ void RenderManager::render_framebuffer(const std::shared_ptr<VAO>& vao, std::str
   update_metrics(vao);
 }
 
-void RenderManager::render_inside_imgui(const std::shared_ptr<VAO>& vao, std::string_view fbo, std::string_view title,
-                                        glm::vec2 size, glm::vec2 position, bool fit_to_window) {
+void RenderManager::render_inside_imgui(const VAO& vao, std::string_view fbo, std::string_view title, glm::vec2 size,
+                                        glm::vec2 position, bool fit_to_window) {
   auto& fbo_ = m_framebuffers.at(fbo.data());
   render_scene(fbo_->get_color_texture().get_id(), title, size, position, fit_to_window);
   update_metrics(vao);
 }
 
-void RenderManager::render(const std::shared_ptr<VAO>& vao, const glm::mat4& transform,
-                           std::string_view shader_program) {
+void RenderManager::render(const VAO& vao, const glm::mat4& transform, std::string_view shader_program) {
   auto& sp = get_shader_program(shader_program);
 
   sp.use();
@@ -98,12 +97,11 @@ ShaderProgram& RenderManager::get_shader_program(std::string_view name) {
   return *m_shader_programs.at(name.data());
 }
 
-void RenderManager::update_metrics(const std::shared_ptr<VAO>& vao) {
+void RenderManager::update_metrics(const VAO& vao) {
   m_draw_calls++;
-  m_triangles += vao->get_ebo().get_count() / 3;
-  m_vertices += std::accumulate(vao->get_vbos().begin(), vao->get_vbos().end(), 0u,
-                               [](uint32_t sum, const std::shared_ptr<VBO>& vbo) { return sum + vbo->get_count(); });
-  m_indices += vao->get_ebo().get_count();
+  m_triangles += vao.get_ibo().get_count() / 3;
+  m_vertices += vao.get_vbo().get_count();
+  m_indices += vao.get_ibo().get_count();
 }
 
 std::map<std::string, std::string, NumericComparator>& RenderManager::compute_metrics() {

@@ -70,8 +70,4 @@ struct CLight {
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CLight& c) {
-  c.set_light_type();
-
-  m_registry.replace<CLight>(e, c);
-}
+template <> inline void nl::SceneManager::on_component_added(CLight& c) { c.set_light_type(); }

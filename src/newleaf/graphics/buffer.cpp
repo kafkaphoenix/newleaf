@@ -31,18 +31,6 @@ VBO::~VBO() {
   glDeleteBuffers(1, &m_id);
 }
 
-std::unique_ptr<VBO> VBO::CreateModel(const std::vector<ModelVertex>& vertices) {
-  return std::make_unique<VBO>(vertices);
-}
-
-std::unique_ptr<VBO> VBO::CreateShape(const std::vector<ShapeVertex>& vertices) {
-  return std::make_unique<VBO>(vertices);
-}
-
-std::unique_ptr<VBO> VBO::CreateTerrain(const std::vector<TerrainVertex>& vertices) {
-  return std::make_unique<VBO>(vertices);
-}
-
 IBO::IBO(const std::vector<uint32_t>& indices) : m_count(indices.size()) {
   glCreateBuffers(1, &m_id);
   glNamedBufferStorage(m_id, sizeof(uint32_t) * indices.size(), indices.data(), storage_flags);

@@ -3,8 +3,11 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
+#include <memory>
+
 #include "../application/application.h"
 #include "../graphics/buffer.h"
+#include "../graphics/vao.h"
 #include "../settings/settings_manager.h"
 #include "../utils/assert.h"
 
@@ -31,7 +34,7 @@ void Model::process_node(aiNode* node, aiMesh** meshes, aiMaterial** materials) 
   for (uint32_t i = 0; i < node->mNumMeshes; ++i) {
     aiMesh* mesh = meshes[node->mMeshes[i]];
     aiMaterial* material = materials[mesh->mMaterialIndex];
-    m_meshes.emplace_back(std::move(process_mesh(mesh, material)));
+    m_meshes.emplace_back(std::make_shared<CMesh>(std::move(process_mesh(mesh, material))));
   }
 
   for (uint32_t i = 0; i < node->mNumChildren; ++i) {
@@ -44,7 +47,7 @@ void Model::process_node(aiNode* node, aiMesh** meshes, aiMaterial** materials) 
 CMesh Model::process_mesh(aiMesh* mesh, aiMaterial* material) {
   std::vector<ModelVertex> vertices{};
   std::vector<uint32_t> indices{};
-  std::vector<std::shared_ptr<Texture>> textures;
+  std::vector<AssetHandle<Texture>> textures;
   vertices.reserve(mesh->mNumVertices);
 
   for (uint32_t i = 0; i < mesh->mNumVertices; ++i) {
@@ -107,7 +110,7 @@ CMesh Model::process_mesh(aiMesh* mesh, aiMaterial* material) {
   // normal: texture_normal_n
   // height: texture_height_n
   auto load_and_insert_textures = [&](aiTextureType t, std::string type) {
-    std::vector<std::shared_ptr<Texture>> loaded_textures = load_material_textures(material, t, type);
+    std::vector<AssetHandle<Texture>> loaded_textures = load_material_textures(material, t, type);
     textures.insert(textures.end(), loaded_textures.begin(),
                     loaded_textures.end()); // Can't be emplace
   };
@@ -123,21 +126,26 @@ CMesh Model::process_mesh(aiMesh* mesh, aiMaterial* material) {
     std::string_view default_texture_path = Application::get().get_settings_manager().default_texture_path;
     if (not default_texture_path.empty()) {
       auto& assets_manager = Application::get().get_assets_manager();
-      if (not assets_manager.contains<Texture>("default")) {
+      const auto default_handle = assets_manager.get<Texture>("default");
+      if (not default_handle.is_valid()) {
         ENGINE_ERROR("default texture not found at {}, make sure the path is correct in settings",
                      default_texture_path);
       }
-      textures.emplace_back(assets_manager.get<Texture>("default"));
+      textures.emplace_back(default_handle);
     }
   }
   m_materials.emplace_back(std::move(material_data));
 
-  return CMesh(std::move(vertices), std::move(indices), std::move(textures), std::string("model"));
+  std::unique_ptr<VAO> vao = VAO::create();
+  std::unique_ptr<VBO> vbo = VBO::create(vertices);
+  std::unique_ptr<IBO> ibo = IBO::create(indices);
+  vao->attach_vertex(std::move(vbo), VAO::VertexType::Model);
+  vao->set_index(std::move(ibo));
+  return CMesh(std::move(vao), std::move(textures));
 }
 
-std::vector<std::shared_ptr<Texture>> Model::load_material_textures(aiMaterial* mat, aiTextureType t,
-                                                                    std::string type) {
-  std::vector<std::shared_ptr<Texture>> textures;
+std::vector<AssetHandle<Texture>> Model::load_material_textures(aiMaterial* mat, aiTextureType t, std::string type) {
+  std::vector<AssetHandle<Texture>> textures;
   textures.reserve(mat->GetTextureCount(t));
   for (uint32_t i = 0; i < mat->GetTextureCount(t); ++i) {
     aiString source;
@@ -145,17 +153,18 @@ std::vector<std::shared_ptr<Texture>> Model::load_material_textures(aiMaterial* 
     std::string filename = source.C_Str();
     std::string path = m_directory + "/" + filename;
 
-    // TODO after refactor assets manager with handlers use it here to load textures
-    auto loaded_texture =
-      std::find_if(m_loaded_textures.begin(), m_loaded_textures.end(),
-                   [&](const std::shared_ptr<Texture>& texture) { return texture->get_path() == path; });
+    auto& assets_manager = Application::get().get_assets_manager();
+    auto handle = assets_manager.try_get<Texture>(path);
+    if (!handle.is_valid()) {
+      handle = assets_manager.get_or_load<Texture>(path, path, type);
+    }
 
-    if (loaded_texture not_eq m_loaded_textures.end()) {
-      textures.emplace_back(std::make_shared<Texture>(*(*loaded_texture)));
-    } else {
-      std::shared_ptr<Texture> new_texture = std::make_shared<Texture>(path, type);
-      textures.emplace_back(new_texture);
-      m_loaded_textures.emplace_back(std::move(new_texture));
+    textures.emplace_back(handle);
+    auto loaded_it =
+      std::find_if(m_loaded_textures.begin(), m_loaded_textures.end(),
+                   [&](const AssetHandle<Texture>& existing) { return existing.uuid() == handle.uuid(); });
+    if (loaded_it == m_loaded_textures.end()) {
+      m_loaded_textures.emplace_back(handle);
     }
   }
 
@@ -216,7 +225,9 @@ Model::get_loaded_texture_info(std::string_view textureID) {
     return m_loaded_texture_info.at(std::string(textureID));
   }
 
-  m_loaded_texture_info[std::string(textureID)] = m_loaded_textures.at(std::stoi(textureID.data()))->to_map();
+  auto texture = m_loaded_textures.at(std::stoi(textureID.data())).get();
+  m_loaded_texture_info[std::string(textureID)] =
+    texture ? texture->to_map() : std::map<std::string, std::string, NumericComparator>{};
 
   return m_loaded_texture_info.at(std::string(textureID));
 }

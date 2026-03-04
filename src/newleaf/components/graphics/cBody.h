@@ -7,6 +7,7 @@
 #include <entt/entt.hpp>
 
 #include "../../application/application.h"
+#include "../../assets/asset_handle.h"
 #include "../../assets/model.h"
 #include "../../logging/log_manager.h"
 #include "../../scene/scene_manager.h"
@@ -20,12 +21,13 @@ namespace nl {
 
 struct CBody {
     std::string path;
-    std::vector<CMesh> meshes;
-    std::vector<CMaterial> materials;
+    AssetHandle<Model> handle;
+    std::vector<CMesh*> meshes;
+    std::vector<CMaterial*> materials;
 
     CBody() = default;
     explicit CBody(std::string&& fp) : path(std::move(fp)) {}
-    explicit CBody(std::string&& fp, std::vector<CMesh>&& m, std::vector<CMaterial>&& ma)
+    explicit CBody(std::string&& fp, std::vector<CMesh*>&& m, std::vector<CMaterial*>&& ma)
       : path(std::move(fp)), meshes(std::move(m)), materials(std::move(ma)) {}
 
     void print() const {
@@ -47,9 +49,9 @@ struct CBody {
       return info;
     }
 
-    std::string get_mesh_info(uint32_t index) const { return map_to_json(meshes.at(index).to_map()); }
+    std::string get_mesh_info(uint32_t index) const { return map_to_json(meshes.at(index)->to_map()); }
 
-    std::string get_material_info(uint32_t index) const { return map_to_json(materials.at(index).to_map()); }
+    std::string get_material_info(uint32_t index) const { return map_to_json(materials.at(index)->to_map()); }
 
     void set_mesh() {
       // TODO rethink if add if not empty here and do it as ctag but creating
@@ -57,21 +59,27 @@ struct CBody {
       // TODO support multiple models
       ENGINE_ASSERT(!path.empty(), "path for model is empty");
       const auto& assets_manager = Application::get().get_assets_manager();
-      Model model = *assets_manager.get<Model>(path); // We need a copy of the model
-      meshes = std::move(model.get_meshes());
-      materials = std::move(model.get_materials());
+      handle = assets_manager.get<Model>(path);
+      Model& model = *handle.get();
+      meshes.clear();
+      materials.clear();
+      meshes.reserve(model.get_meshes().size());
+      materials.reserve(model.get_materials().size());
+      for (auto& mesh : model.get_meshes()) {
+        meshes.emplace_back(mesh.get());
+      }
+      for (auto& material : model.get_materials()) {
+        materials.emplace_back(&material);
+      }
     }
 
     void reload_mesh(std::string&& fp) {
       ENGINE_ASSERT(fp not_eq path, "path for model is the same");
       path = std::move(fp);
+      handle = AssetHandle<Model>();
       set_mesh();
     }
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CBody& c) {
-  c.set_mesh();
-
-  m_registry.replace<CBody>(e, c);
-}
+template <> inline void nl::SceneManager::on_component_added(CBody& c) { c.set_mesh(); }

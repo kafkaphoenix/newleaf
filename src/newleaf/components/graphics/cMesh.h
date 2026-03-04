@@ -10,6 +10,7 @@
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
 
+#include "../../assets/asset_handle.h"
 #include "../../assets/texture.h"
 #include "../../graphics/buffer.h"
 #include "../../graphics/shader_program.h"
@@ -32,40 +33,20 @@ using namespace entt::literals;
 namespace nl {
 
 struct CMesh {
-    std::vector<std::shared_ptr<Texture>> textures;
-    std::shared_ptr<VAO> vao;
-    std::vector<ModelVertex> vertices; // TODO: delete this
-    std::shared_ptr<VBO> vbo;
-    std::vector<uint32_t> indices;
-    std::string vertex_type;
+    std::unique_ptr<VAO> vao;
+    std::vector<AssetHandle<Texture>> textures;
 
     CMesh() = default;
-    explicit CMesh(std::vector<ModelVertex>&& v, std::vector<uint32_t>&& i, std::vector<std::shared_ptr<Texture>>&& t,
-                   std::string&& vt)
-      : vertices(std::move(v)), indices(std::move(i)), textures(std::move(t)), vertex_type(std::move(vt)) {}
+    explicit CMesh(std::unique_ptr<VAO>&& vao, std::vector<AssetHandle<Texture>>&& textures = {})
+      : vao(std::move(vao)), textures(std::move(textures)) {}
 
-    void setup_mesh() {
-      vao = VAO::create();
-      if (vertex_type == "model") {
-        vao->attach_vertex(VBO::CreateModel(vertices), VAO::VertexType::Model);
-      } else if (vertex_type ==
-                 "shape") { // TODO this is not used and use wrong method, shape factory  use create shape
-        vao->attach_vertex(VBO::CreateModel(vertices), VAO::VertexType::Shape);
-      } else if (vertex_type == "terrain") { // TODO maybe a better way to do
-                                             // this using vertices? terrain returns vbo from other side
-        vao->attach_vertex(std::move(vbo), VAO::VertexType::Terrain);
-      } else {
-        ENGINE_ASSERT(false, "unknown vertex type {}", vertex_type);
-      }
-      vao->set_index(IBO::create(indices));
-    }
+    CMesh(const CMesh&) = delete;
+    CMesh& operator=(const CMesh&) = delete;
+    CMesh(CMesh&&) noexcept = default;
+    CMesh& operator=(CMesh&&) noexcept = default;
 
-    const std::shared_ptr<VAO>& get_vao() {
-      if (not vao) {
-        setup_mesh();
-      }
-      return vao;
-    }
+    VAO& get_vao() { return *vao; }
+    const VAO& get_vao() const { return *vao; }
 
     // TODO maybe avoid setting uniform at all if disable, check after refactor and removing monostate
     // TODO rethink with uniform buffer object in system
@@ -117,12 +98,17 @@ struct CMesh {
         // 10 and 11 are reserved for skybox
         sp.set_int("skybox_texture", 10);
         // we only have one texture for skybox cubemap
-        ENGINE_ASSERT(cSkyboxTexture->textures.size() == 1, "invalid skybox texture");
-        cSkyboxTexture->textures[0]->bind_slot(10);
+        ENGINE_ASSERT(cSkyboxTexture->handles.size() == 1, "invalid skybox texture");
+        auto skybox_texture = cSkyboxTexture->get_texture(0);
+        if (skybox_texture) {
+          skybox_texture->bind_slot(10);
+        }
         if (cSkyboxBlend) {
           sp.set_bool("blend_skybox_enabled", true);
           sp.set_int("blend_skybox_texture", 11);
-          cSkyboxBlend->texture->bind_slot(11);
+          if (auto blend_texture = cSkyboxBlend->handle.get()) {
+            blend_texture->bind_slot(11);
+          }
           sp.set_float("blend_skybox_factor", cSkyboxBlend->blend_factor);
         } else {
           sp.set_bool("blend_skybox_enabled", false);
@@ -144,7 +130,9 @@ struct CMesh {
         sp.set_bool("blend_texture_enabled", true);
         sp.set_float("blend_texture_factor", cBlendTexture->blend_factor);
         sp.set_int("blend_texture", 9); // slot 9 reserved for blend texture
-        cBlendTexture->texture->bind_slot(9);
+        if (auto blend_texture = cBlendTexture->handle.get()) {
+          blend_texture->bind_slot(9);
+        }
       } else {
         sp.set_bool("blend_texture_enabled", false);
       }
@@ -161,8 +149,12 @@ struct CMesh {
     void configure_texture_atlas(ShaderProgram& sp, CTextureAtlas* cTextureAtlas) {
       // TODO terrain shader not using this logic at all (get from terrain vertex directly)
       if (cTextureAtlas) {
-        sp.set_int(cTextureAtlas->texture->get_type().data() + std::string("_1"), 1);
-        cTextureAtlas->texture->bind_slot(1);
+        auto atlas_texture = cTextureAtlas->handle.get();
+        if (!atlas_texture) {
+          return;
+        }
+        sp.set_int(atlas_texture->get_type().data() + std::string("_1"), 1);
+        atlas_texture->bind_slot(1);
         uint32_t index = cTextureAtlas->index;
         uint32_t rows = cTextureAtlas->rows;
         sp.set_float("texture_atlas_rows", rows);
@@ -177,7 +169,11 @@ struct CMesh {
     void configure_texture(ShaderProgram& sp, CTexture* cTexture) {
       if (cTexture) {
         uint32_t i = 1;
-        for (auto& texture : cTexture->textures) {
+        for (uint32_t idx = 0; idx < cTexture->handles.size(); ++idx) {
+          auto texture = cTexture->get_texture(idx);
+          if (!texture) {
+            continue;
+          }
           sp.set_int(texture->get_type().data() + std::string("_") + std::to_string(i), i);
           texture->bind_slot(i);
           ++i;
@@ -186,6 +182,8 @@ struct CMesh {
     }
 
     // TODO remove this method after refactor model
+    // model should use ctexture so i can remove from cmesh (UPDATE move to Cmaterial instead, i dont need component
+    // referencing a handle of an asset)
     void configure_model_texture(ShaderProgram& sp, const CMaterial* cMaterial) {
       if (sp.get_name() not_eq "model") {
         return;
@@ -204,8 +202,12 @@ struct CMesh {
       }
       sp.set_bool("texture_enabled", true);
       for (auto& texture : textures) {
+        auto resolved = texture.get();
+        if (!resolved) {
+          continue;
+        }
         std::string number;
-        std::string_view type = texture->get_type();
+        std::string_view type = resolved->get_type();
         if (type == "texture_diffuse") {
           number = std::to_string(diffuse_n++);
         } else if (type == "texture_specular") {
@@ -218,7 +220,7 @@ struct CMesh {
           ENGINE_ASSERT(false, "unknown texture type {}", type);
         }
         sp.set_int(type.data() + std::string("_") + number, i);
-        texture->bind_slot(i);
+        resolved->bind_slot(i);
         ++i;
       }
       // TODO rethink how to use normal and other together
@@ -227,8 +229,8 @@ struct CMesh {
 
     // TODO remove this and rethink in systems with uniform buffer objects
     void bind_textures(ShaderProgram& sp, CTexture* cTexture, CBlendTexture* cBlendTexture,
-                       CTextureAtlas* cTextureAtlas, CColor* cColor, CBlendColor* cBlendColor, const CMaterial* cMaterial,
-                       CReflection* cReflection, CSkybox* cSkybox, CTexture* cSkyboxTexture,
+                       CTextureAtlas* cTextureAtlas, CColor* cColor, CBlendColor* cBlendColor,
+                       const CMaterial* cMaterial, CReflection* cReflection, CSkybox* cSkybox, CTexture* cSkyboxTexture,
                        CBlendTexture* cSkyboxBlend) {
       sp.reset_active_uniforms();
       sp.use();
@@ -245,25 +247,45 @@ struct CMesh {
     }
 
     void unbind_textures(CTexture* cTexture, CTextureAtlas* cTextureAtlas, CBlendTexture* cBlendTexture) {
-      auto& unbind_textures = textures; // model textures
       if (cTexture) {
-        unbind_textures = cTexture->textures;
-      } else if (cTextureAtlas) {
-        unbind_textures = {cTextureAtlas->texture};
-      } else if (cBlendTexture) {
-        unbind_textures = {cBlendTexture->texture};
+        for (uint32_t idx = 0; idx < cTexture->handles.size(); ++idx) {
+          auto texture = cTexture->get_texture(idx);
+          if (texture) {
+            texture->unbind_slot();
+          }
+        }
+        return;
       }
-      for (auto& texture : unbind_textures) {
-        texture->unbind_slot();
+      if (cTextureAtlas) {
+        if (auto atlas_texture = cTextureAtlas->handle.get()) {
+          atlas_texture->unbind_slot();
+        }
+        return;
+      }
+      if (cBlendTexture) {
+        if (auto blend_texture = cBlendTexture->handle.get()) {
+          blend_texture->unbind_slot();
+        }
+        return;
+      }
+      for (auto& texture : textures) {
+        if (auto resolved = texture.get()) {
+          resolved->unbind_slot();
+        }
       }
     }
 
     void print() const {
       std::string paths;
       for (const auto& texture : textures) {
-        paths += std::format("\n\t\t\ttexture: {}", texture->get_path());
+        if (auto resolved = texture.get()) {
+          paths += std::format("\n\t\t\ttexture: {}", resolved->get_path());
+        } else {
+          paths += "\n\t\t\ttexture: undefined";
+        }
       }
-      ENGINE_BACKTRACE("\t\tvertices: {0}\n\t\tindices: {1}{2}", vertices.size(), indices.size(), paths);
+      ENGINE_BACKTRACE("\t\tvertices: {0}\n\t\tindices: {1}{2}", vao->get_vbo().get_count(), vao->get_ibo().get_count(),
+                       paths);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
@@ -272,13 +294,16 @@ struct CMesh {
         info["texture_" + std::to_string(i)] = get_texture_info(i);
       }
       info["vao_0"] = vao ? get_vao_info() : "undefined";
-      info["vertex_type"] = vertex_type;
+      info["vertex_type"] = vao ? vao->get_vertex_type() : "undefined";
 
       return info;
     }
 
     std::string get_vao_info() const { return map_to_json(vao->to_map()); }
 
-    std::string get_texture_info(uint32_t index) const { return map_to_json(textures.at(index)->to_map()); }
+    std::string get_texture_info(uint32_t index) const {
+      auto resolved = textures.at(index).get();
+      return resolved ? map_to_json(resolved->to_map()) : "undefined";
+    }
 };
 }

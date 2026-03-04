@@ -1,13 +1,12 @@
 #pragma once
 
-#include <format>
 #include <map>
 #include <string>
-#include <vector>
 
 #include <entt/entt.hpp>
 
 #include "../../application/application.h"
+#include "../../assets/asset_handle.h"
 #include "../../assets/assets_manager.h"
 #include "../../assets/texture.h"
 #include "../../logging/log_manager.h"
@@ -20,7 +19,7 @@ namespace nl {
 
 struct CTextureAtlas {
     std::string path;
-    std::shared_ptr<Texture> texture;
+    AssetHandle<Texture> handle;
     uint32_t rows{};
     uint32_t index{};
 
@@ -41,7 +40,10 @@ struct CTextureAtlas {
       return info;
     }
 
-    std::string get_texture_info() const { return map_to_json(texture->to_map()); }
+    std::string get_texture_info() const {
+      auto texture = handle.get();
+      return texture ? map_to_json(texture->to_map()) : "undefined";
+    }
 
     void set_texture() {
       if (path.empty()) {
@@ -49,20 +51,16 @@ struct CTextureAtlas {
       }
       const auto& assets_manager = Application::get().get_assets_manager();
 
-      texture = assets_manager.get<Texture>(path);
+      handle = assets_manager.get<Texture>(path);
     }
 
     void reload_texture(std::string&& p) {
       ENGINE_ASSERT(p not_eq path, "same texture path");
       path = std::move(p);
-      texture.reset();
+      handle = AssetHandle<Texture>();
       set_texture();
     }
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CTextureAtlas& c) {
-  c.set_texture();
-
-  m_registry.replace<CTextureAtlas>(e, c);
-}
+template <> inline void nl::SceneManager::on_component_added(CTextureAtlas& c) { c.set_texture(); }

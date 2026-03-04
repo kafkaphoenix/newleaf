@@ -72,7 +72,7 @@ inline void draw_assets_manager(const AssetsManager& assets_manager, const Setti
 
     for (const auto& [key, value] : asset_info) {
       if (key.starts_with("prototype_") and selected_asset_tab_type == "Prefab") {
-        const auto& prefab = assets_manager.get<Prefab>(selected_asset_manager_tab_key);
+        const auto& prefab = assets_manager.get<Prefab>(selected_asset_manager_tab_key).get();
         const auto& prototype_info = prefab->get_target_prototype_info(value);
         if (ImGui::TreeNode(
               (selected_asset_tab_type + selected_asset_manager_tab_key + key + settings_manager.active_scene).c_str(),
@@ -83,7 +83,7 @@ inline void draw_assets_manager(const AssetsManager& assets_manager, const Setti
           ImGui::TreePop();
         }
       } else if (key.starts_with("loaded_texture_") and selected_asset_tab_type == "Model") {
-        const auto& model = assets_manager.get<Model>(selected_asset_manager_tab_key);
+        const auto& model = assets_manager.get<Model>(selected_asset_manager_tab_key).get();
         const auto& texture_info = model->get_loaded_texture_info(value);
         if (ImGui::TreeNode(
               (selected_asset_tab_type + selected_asset_manager_tab_key + key + settings_manager.active_scene).c_str(),
@@ -94,7 +94,7 @@ inline void draw_assets_manager(const AssetsManager& assets_manager, const Setti
           ImGui::TreePop();
         }
       } else if (key.starts_with("path_") and selected_asset_tab_type == "Texture") {
-        const auto& texture = assets_manager.get<Texture>(selected_asset_manager_tab_key);
+        const auto& texture = assets_manager.get<Texture>(selected_asset_manager_tab_key).get();
         if (texture->is_cubemap()) {
           ImGui::BulletText("%s: %s", key.c_str(), value.c_str());
         } else {
@@ -111,7 +111,7 @@ inline void draw_assets_manager(const AssetsManager& assets_manager, const Setti
     }
 
     if (not selected_path.empty()) {
-      const auto& texture = assets_manager.get<Texture>(selected_asset_manager_tab_key);
+      const auto& texture = assets_manager.get<Texture>(selected_asset_manager_tab_key).get();
       if (not texture->is_cubemap()) {
         uint32_t max_width = texture->get_width();
         uint32_t max_height = texture->get_height();
@@ -128,7 +128,8 @@ inline void draw_assets_manager(const AssetsManager& assets_manager, const Setti
           max_height /= 2;
           max_width /= 2;
         }
-        ImGui::Image((ImTextureID)(intptr_t)texture->get_id(), ImVec2(max_width, max_height), ImVec2(0, 1), ImVec2(1, 0));
+        ImGui::Image((ImTextureID)(intptr_t)texture->get_id(), ImVec2(max_width, max_height), ImVec2(0, 1),
+                     ImVec2(1, 0));
       }
     }
   }

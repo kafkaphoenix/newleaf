@@ -41,7 +41,7 @@ void register_components() {
     .ctor<&cast_cactive_camera, entt::as_ref_t>()
     .func<&CActiveCamera::print>("print"_hs)
     .func<&CActiveCamera::to_map>("to_map"_hs)
-    .func<&assign<CActiveCamera>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CActiveCamera>>("assign"_hs);
 
   entt::meta<CCamera>()
     .type("camera"_hs)
@@ -57,8 +57,8 @@ void register_components() {
     .data<&CCamera::far_clip>("far_clip"_hs)
     .func<&CCamera::print>("print"_hs)
     .func<&CCamera::to_map>("to_map"_hs)
-    .func<&on_component_added<CCamera>, entt::as_ref_t>("on_component_added"_hs)
-    .func<&assign<CCamera>, entt::as_ref_t>("assign"_hs);
+    .func<&on_component_added<CCamera>>("on_component_added"_hs)
+    .func<&assign<CCamera>>("assign"_hs);
 
   entt::meta<CDistanceFromCamera>()
     .type("distance_from_camera"_hs)
@@ -66,7 +66,7 @@ void register_components() {
     .data<&CDistanceFromCamera::distance>("distance"_hs)
     .func<&CDistanceFromCamera::print>("print"_hs)
     .func<&CDistanceFromCamera::to_map>("to_map"_hs)
-    .func<&assign<CDistanceFromCamera>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CDistanceFromCamera>>("assign"_hs);
 
   entt::meta<CName>()
     .type("name"_hs)
@@ -74,7 +74,7 @@ void register_components() {
     .data<&CName::name>("name"_hs)
     .func<&CName::print>("print"_hs)
     .func<&CName::to_map>("to_map"_hs)
-    .func<&assign<CName, std::string>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CName, std::string>>("assign"_hs);
 
   entt::meta<CTag>()
     .type("tag"_hs)
@@ -82,7 +82,7 @@ void register_components() {
     .data<&CTag::tag>("tag"_hs)
     .func<&CTag::print>("print"_hs)
     .func<&CTag::to_map>("to_map"_hs)
-    .func<&assign<CTag, std::string>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CTag, std::string>>("assign"_hs);
 
   entt::meta<CUUID>()
     .type("uuid"_hs)
@@ -95,12 +95,10 @@ void register_components() {
     .type("body"_hs)
     .ctor<&cast_cbody, entt::as_ref_t>()
     .data<&CBody::path>("path"_hs)
-    .data<&CBody::meshes>("meshes"_hs)
-    .data<&CBody::materials>("materials"_hs)
     .func<&CBody::print>("print"_hs)
     .func<&CBody::to_map>("to_map"_hs)
-    .func<&on_component_added<CBody>, entt::as_ref_t>("on_component_added"_hs)
-    .func<&assign<CBody, std::string>, entt::as_ref_t>("assign"_hs);
+    .func<&on_component_added<CBody>>("on_component_added"_hs)
+    .func<&assign<CBody, std::string>>("assign"_hs);
 
   entt::meta<CFBO>()
     .type("fbo"_hs)
@@ -113,8 +111,8 @@ void register_components() {
     .data<&CFBO::height>("height"_hs)
     .func<&CFBO::print>("print"_hs)
     .func<&CFBO::to_map>("to_map"_hs)
-    .func<&on_component_added<CFBO>, entt::as_ref_t>("on_component_added"_hs)
-    .func<&assign<CFBO>, entt::as_ref_t>("assign"_hs);
+    .func<&on_component_added<CFBO>>("on_component_added"_hs)
+    .func<&assign<CFBO>>("assign"_hs);
 
   entt::meta<CMaterial>()
     .type("material"_hs)
@@ -125,19 +123,15 @@ void register_components() {
     .data<&CMaterial::shininess>("shininess"_hs)
     .func<&CMaterial::print>("print"_hs)
     .func<&CMaterial::to_map>("to_map"_hs)
-    .func<&assign<CMaterial>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CMaterial>>("assign"_hs);
 
   entt::meta<CMesh>()
     .type("mesh"_hs)
     .ctor<&cast_cmesh, entt::as_ref_t>()
-    .data<&CMesh::vertices>("vertices"_hs)
-    .data<&CMesh::indices>("indices"_hs)
     .data<&CMesh::textures>("textures"_hs)
-    .data<&CMesh::vao>("vao"_hs)
-    .data<&CMesh::vertex_type>("vertex_type"_hs)
     .func<&CMesh::print>("print"_hs)
     .func<&CMesh::to_map>("to_map"_hs)
-    .func<&assign<CMesh>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CMesh>>("assign"_hs);
 
   entt::meta<CShaderProgram>()
     .type("shader_program"_hs)
@@ -146,52 +140,48 @@ void register_components() {
     .data<&CShaderProgram::visible>("visible"_hs)
     .func<&CShaderProgram::print>("print"_hs)
     .func<&CShaderProgram::to_map>("to_map"_hs)
-    .func<&assign<CShaderProgram>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CShaderProgram>>("assign"_hs);
 
   entt::meta<CShape>()
     .type("shape"_hs)
     .ctor<&cast_cshape, entt::as_ref_t>()
     .data<&CShape::_type>("type"_hs)
     .data<&CShape::size>("size"_hs)
-    .data<&CShape::meshes>("meshes"_hs)
     .func<&CShape::print>("print"_hs)
     .func<&CShape::to_map>("to_map"_hs)
-    .func<&on_component_added<CShape>, entt::as_ref_t>("on_component_added"_hs)
-    .func<&assign<CShape>, entt::as_ref_t>("assign"_hs);
+    .func<&on_component_added<CShape>>("on_component_added"_hs)
+    .func<&assign<CShape>>("assign"_hs);
 
   entt::meta<CTexture>()
     .type("texture"_hs)
     .ctor<&cast_ctexture, entt::as_ref_t>()
     .data<&CTexture::paths>("paths"_hs)
-    .data<&CTexture::textures>("textures"_hs)
     .func<&CTexture::print>("print"_hs)
     .func<&CTexture::to_map>("to_map"_hs)
-    .func<&on_component_added<CTexture>, entt::as_ref_t>("on_component_added"_hs)
-    .func<&assign<CTexture>, entt::as_ref_t>("assign"_hs);
+    .func<&on_component_added<CTexture>>("on_component_added"_hs)
+    .func<&assign<CTexture>>("assign"_hs);
 
   entt::meta<CTextureAtlas>()
     .type("texture_atlas"_hs)
     .ctor<&cast_ctexture_atlas, entt::as_ref_t>()
     .data<&CTextureAtlas::path>("path"_hs)
-    .data<&CTextureAtlas::texture>("texture"_hs)
     .data<&CTextureAtlas::rows>("rows"_hs)
     .data<&CTextureAtlas::index>("index"_hs)
     .func<&CTextureAtlas::print>("print"_hs)
     .func<&CTextureAtlas::to_map>("to_map"_hs)
-    .func<&on_component_added<CTextureAtlas>, entt::as_ref_t>("on_component_added"_hs)
-    .func<&assign<CTextureAtlas>, entt::as_ref_t>("assign"_hs);
+    .func<&on_component_added<CTextureAtlas>>("on_component_added"_hs)
+    .func<&assign<CTextureAtlas>>("assign"_hs);
 
   entt::meta<CBlendTexture>()
     .type("blend_texture"_hs)
     .ctor<&cast_cblend_texture, entt::as_ref_t>()
     .data<&CBlendTexture::path>("path"_hs)
-    .data<&CBlendTexture::texture>("texture"_hs)
     .data<&CBlendTexture::blend_factor>("blend_factor"_hs)
     .data<&CBlendTexture::repeat>("repeat"_hs)
     .func<&CBlendTexture::print>("print"_hs)
     .func<&CBlendTexture::to_map>("to_map"_hs)
-    .func<&on_component_added<CBlendTexture>, entt::as_ref_t>("on_component_added"_hs)
-    .func<&assign<CBlendTexture>, entt::as_ref_t>("assign"_hs);
+    .func<&on_component_added<CBlendTexture>>("on_component_added"_hs)
+    .func<&assign<CBlendTexture>>("assign"_hs);
 
   entt::meta<CBlendColor>()
     .type("blend_color"_hs)
@@ -200,7 +190,7 @@ void register_components() {
     .data<&CBlendColor::blend_factor>("blend_factor"_hs)
     .func<&CBlendColor::print>("print"_hs)
     .func<&CBlendColor::to_map>("to_map"_hs)
-    .func<&assign<CBlendColor>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CBlendColor>>("assign"_hs);
 
   entt::meta<CColor>()
     .type("color"_hs)
@@ -208,7 +198,7 @@ void register_components() {
     .data<&CColor::color>("color"_hs)
     .func<&CColor::print>("print"_hs)
     .func<&CColor::to_map>("to_map"_hs)
-    .func<&assign<CColor>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CColor>>("assign"_hs);
 
   entt::meta<CTransparent>()
     .type("transparent"_hs)
@@ -216,7 +206,7 @@ void register_components() {
     .data<&CTransparent::transparent>("transparent"_hs)
     .func<&CTransparent::print>("print"_hs)
     .func<&CTransparent::to_map>("to_map"_hs)
-    .func<&assign<CTransparent>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CTransparent>>("assign"_hs);
 
   entt::meta<CReflection>()
     .type("reflection"_hs)
@@ -226,14 +216,14 @@ void register_components() {
     .data<&CReflection::refractivity>("refractivity"_hs)
     .func<&CReflection::print>("print"_hs)
     .func<&CReflection::to_map>("to_map"_hs)
-    .func<&assign<CReflection>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CReflection>>("assign"_hs);
 
   entt::meta<CActiveInput>()
     .type("active_input"_hs)
     .ctor<&cast_cactive_input, entt::as_ref_t>()
     .func<&CActiveInput::print>("print"_hs)
     .func<&CActiveInput::to_map>("to_map"_hs)
-    .func<&assign<CActiveInput>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CActiveInput>>("assign"_hs);
 
   entt::meta<CInput>()
     .type("input"_hs)
@@ -245,8 +235,8 @@ void register_components() {
     .data<&CInput::rotation_speed>("rotation_speed"_hs)
     .func<&CInput::print>("print"_hs)
     .func<&CInput::to_map>("to_map"_hs)
-    .func<&on_component_added<CInput>, entt::as_ref_t>("on_component_added"_hs)
-    .func<&assign<CInput>, entt::as_ref_t>("assign"_hs);
+    .func<&on_component_added<CInput>>("on_component_added"_hs)
+    .func<&assign<CInput>>("assign"_hs);
 
   entt::meta<CCollider>()
     .type("collider"_hs)
@@ -257,8 +247,8 @@ void register_components() {
     .data<&CCollider::display_hitbox>("display_hitbox"_hs)
     .func<&CCollider::print>("print"_hs)
     .func<&CCollider::to_map>("to_map"_hs)
-    .func<&on_component_added<CCollider>, entt::as_ref_t>("on_component_added"_hs)
-    .func<&assign<CCollider>, entt::as_ref_t>("assign"_hs);
+    .func<&on_component_added<CCollider>>("on_component_added"_hs)
+    .func<&assign<CCollider>>("assign"_hs);
 
   entt::meta<CGravity>()
     .type("gravity"_hs)
@@ -266,7 +256,7 @@ void register_components() {
     .data<&CGravity::acceleration>("acceleration"_hs)
     .func<&CGravity::print>("print"_hs)
     .func<&CGravity::to_map>("to_map"_hs)
-    .func<&assign<CGravity>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CGravity>>("assign"_hs);
 
   entt::meta<CRigidBody>()
     .type("rigid_body"_hs)
@@ -277,7 +267,7 @@ void register_components() {
     .data<&CRigidBody::kinematic>("kinematic"_hs)
     .func<&CRigidBody::print>("print"_hs)
     .func<&CRigidBody::to_map>("to_map"_hs)
-    .func<&assign<CRigidBody>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CRigidBody>>("assign"_hs);
 
   entt::meta<CTransform>()
     .type("transform"_hs)
@@ -287,7 +277,7 @@ void register_components() {
     .data<&CTransform::scale>("scale"_hs)
     .func<&CTransform::print>("print"_hs)
     .func<&CTransform::to_map>("to_map"_hs)
-    .func<&assign<CTransform>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CTransform>>("assign"_hs);
 
   entt::meta<CLight>()
     .type("light"_hs)
@@ -301,8 +291,8 @@ void register_components() {
     .data<&CLight::outer_cone_angle>("outer_cone_angle"_hs)
     .func<&CLight::print>("print"_hs)
     .func<&CLight::to_map>("to_map"_hs)
-    .func<&on_component_added<CLight>, entt::as_ref_t>("on_component_added"_hs)
-    .func<&assign<CLight>, entt::as_ref_t>("assign"_hs);
+    .func<&on_component_added<CLight>>("on_component_added"_hs)
+    .func<&assign<CLight>>("assign"_hs);
 
   entt::meta<CSkybox>()
     .type("skybox"_hs)
@@ -310,7 +300,7 @@ void register_components() {
     .data<&CSkybox::rotation_speed>("rotation_speed"_hs)
     .func<&CSkybox::print>("print"_hs)
     .func<&CSkybox::to_map>("to_map"_hs)
-    .func<&assign<CSkybox>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CSkybox>>("assign"_hs);
 
   entt::meta<CFog>()
     .type("fog"_hs)
@@ -323,7 +313,7 @@ void register_components() {
     .data<&CFog::upper_limit>("upper_limit"_hs)
     .func<&CFog::print>("print"_hs)
     .func<&CFog::to_map>("to_map"_hs)
-    .func<&assign<CFog>, entt::as_ref_t>("assign"_hs);
+    .func<&assign<CFog>>("assign"_hs);
 
   entt::meta<CTime>()
     .type("time"_hs)
@@ -342,7 +332,7 @@ void register_components() {
     .data<&CTime::fps>("fps"_hs)
     .func<&CTime::print>("print"_hs)
     .func<&CTime::to_map>("to_map"_hs)
-    .func<&on_component_added<CTime>, entt::as_ref_t>("on_component_added"_hs)
-    .func<&assign<CTime>, entt::as_ref_t>("assign"_hs);
+    .func<&on_component_added<CTime>>("on_component_added"_hs)
+    .func<&assign<CTime>>("assign"_hs);
 }
 }

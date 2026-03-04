@@ -1,13 +1,16 @@
 #pragma once
 
+#include <algorithm>
 #include <format>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include <entt/entt.hpp>
 
 #include "../../application/application.h"
+#include "../../assets/asset_handle.h"
 #include "../../assets/assets_manager.h"
 #include "../../assets/texture.h"
 #include "../../logging/log_manager.h"
@@ -20,7 +23,7 @@ namespace nl {
 
 struct CTexture {
     std::vector<std::string> paths;
-    std::vector<std::shared_ptr<Texture>> textures;
+    std::vector<AssetHandle<Texture>> handles;
 
     CTexture() = default;
     explicit CTexture(std::vector<std::string>&& p) : paths(std::move(p)) {}
@@ -39,37 +42,46 @@ struct CTexture {
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
       std::map<std::string, std::string, NumericComparator> info;
-      for (uint32_t i = 0; i < textures.size(); ++i) {
+      for (uint32_t i = 0; i < handles.size(); ++i) {
         info["texture_" + std::to_string(i)] = get_texture_info(i);
       }
 
       return info;
     }
 
-    std::string get_texture_info(uint32_t index) const { return map_to_json(textures.at(index)->to_map()); }
+    std::string get_texture_info(uint32_t index) const {
+      auto texture = get_texture(index);
+      return texture ? map_to_json(texture->to_map()) : "undefined";
+    }
+
+    std::shared_ptr<Texture> get_texture(uint32_t index) const {
+      if (index >= handles.size()) {
+        return nullptr;
+      }
+      return handles.at(index).get();
+    }
 
     void set_textures() {
+      handles.clear();
       if (paths.size() == 0) {
         return;
       }
       const auto& assets_manager = Application::get().get_assets_manager();
 
-      textures.reserve(paths.size());
-      std::transform(paths.begin(), paths.end(), std::back_inserter(textures),
-                     [&](std::string_view path) { return assets_manager.get<Texture>(path); });
+      handles.reserve(paths.size());
+      for (const auto& path : paths) {
+        auto handle = assets_manager.get<Texture>(path);
+        handles.emplace_back(handle);
+      }
     }
 
     void reload_textures(std::vector<std::string>&& p) {
       ENGINE_ASSERT(p not_eq paths, "texture paths are the same");
       paths = std::move(p);
-      textures.clear();
+      handles.clear();
       set_textures();
     }
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CTexture& c) {
-  c.set_textures();
-
-  m_registry.replace<CTexture>(e, c);
-}
+template <> inline void nl::SceneManager::on_component_added(CTexture& c) { c.set_textures(); }

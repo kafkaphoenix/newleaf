@@ -34,7 +34,7 @@ class SceneManager {
     entt::entity get_entity(const UUID& uuid);
     const std::vector<std::string>& get_named_systems();
 
-    template <typename Component> void on_component_added(entt::entity e, Component& c);
+    template <typename Component> void on_component_added(Component& c);
     template <typename Component> void on_component_cloned(entt::entity e, Component& c);
 
     static std::unique_ptr<SceneManager> create();
@@ -42,7 +42,7 @@ class SceneManager {
     // scene factory methods
     entt::entity create_entity(std::string_view prefab_id, std::string&& prototype_id, std::string&& name,
                                std::optional<std::string> tag = std::nullopt,
-                               std::optional<uint32_t> uuid = std::nullopt);
+                               std::optional<uint64_t> uuid = std::nullopt);
     entt::entity clone_entity(entt::entity e);
     void delete_entity(entt::entity e);
     void delete_entity(std::string_view name);
@@ -71,7 +71,7 @@ class SceneManager {
   private:
     entt::registry m_registry;
     SceneFactory m_scene_factory;
-    std::map<std::string, std::unique_ptr<System>> m_systems_by_name; // fast lookup
+    std::map<std::string, std::unique_ptr<System>> m_systems_by_name;  // fast lookup
     std::set<System*, SystemPriorityComparator> m_systems_by_priority; // iteration by priority no ownership
     std::vector<std::string> m_named_systems;
     bool m_dirty_systems{};

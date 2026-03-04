@@ -17,7 +17,7 @@ namespace nl {
 struct CInput {
     enum class Mode { none, _3d, _2d };
 
-    std::string _mode;
+    std::string _mode = "none";
     Mode mode;
     float mouse_sensitivity = 0.1f;
     float translation_speed = 20.f;
@@ -60,8 +60,4 @@ struct CInput {
 };
 }
 
-template <> inline void nl::SceneManager::on_component_added(entt::entity e, CInput& c) {
-  c.set_mode();
-
-  m_registry.replace<CInput>(e, c);
-}
+template <> inline void nl::SceneManager::on_component_added(CInput& c) { c.set_mode(); }
