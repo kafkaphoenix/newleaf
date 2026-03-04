@@ -28,9 +28,8 @@ class SceneFactory {
     void delete_entity(entt::entity e, entt::registry& registry);
 
     void create_scene(std::string scene_name, std::string scene_path, AssetsManager& assets_manager,
-                      RenderManager& render_manager, entt::registry& registry);
-    void reload_scene(const AssetsManager& assets_manager, const RenderManager& render_manager,
-                      entt::registry& registry, bool reload_prototypes);
+                      entt::registry& registry);
+    void reload_scene(const AssetsManager& assets_manager, entt::registry& registry, bool reload_prototypes);
 
     void clear_scene(RenderManager& render_manager, entt::registry& registry);
 
@@ -50,7 +49,7 @@ class SceneFactory {
     bool m_dirty_metrics{};
     bool m_dirty_named_entities{};
 
-    void create_shader_programs(const Scene& scene, AssetsManager& assets_manager, RenderManager& render_manager);
+    void create_shaders(const Scene& scene, AssetsManager& assets_manager);
     void create_textures(const Scene& scene, AssetsManager& assets_manager);
     void create_models(const Scene& scene, AssetsManager& assets_manager);
     void create_prototypes(const Scene& scene, AssetsManager& assets_manager, entt::registry& registry);

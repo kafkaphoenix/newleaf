@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <map>
@@ -9,12 +8,12 @@
 
 namespace nl {
 
-struct CShaderProgram {
+struct CShader {
     std::string name;
     bool visible{true};
 
-    CShaderProgram() = default;
-    explicit CShaderProgram(std::string&& n, bool iv) : name(std::move(n)), visible(iv) {}
+    CShader() = default;
+    explicit CShader(std::string&& n, bool iv) : name(std::move(n)), visible(iv) {}
 
     void print() const { ENGINE_BACKTRACE("\t\tname: {0}\n\t\t\t\t\t\tvisible: {1}", name, visible); }
 

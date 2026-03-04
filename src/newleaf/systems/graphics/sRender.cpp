@@ -16,7 +16,7 @@
 #include "../../components/graphics/cMaterial.h"
 #include "../../components/graphics/cMesh.h"
 #include "../../components/graphics/cReflection.h"
-#include "../../components/graphics/cShaderProgram.h"
+#include "../../components/graphics/cShader.h"
 #include "../../components/graphics/cShape.h"
 #include "../../components/graphics/cTexture.h"
 #include "../../components/graphics/cTextureAtlas.h"
@@ -35,8 +35,8 @@ namespace nl {
 void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTextureAtlas, CColor* cColor,
             CBlendColor* cBlendColor, CMaterial* cMaterial, CReflection* cReflection, CSkybox* cSkybox,
             CTexture* cSkyboxTexture, CBlendTexture* cSkyboxBlend, CMesh* cMesh, const CTransform& cTransform,
-            const CShaderProgram& cShaderProgram, CCollider* cCollider, CTransparent* cTransparent,
-            RenderManager& render_manager) {
+            const CShader& cShader, CCollider* cCollider, CTransparent* cTransparent, RenderManager& render_manager) {
+  const auto& application_manager = Application::get();
   if (cTransparent and cTransparent->transparent) {
     RenderAPI::toggle_culling(false);
   }
@@ -46,12 +46,14 @@ void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTe
   // TODO refactor this to a system
   bool display_hitbox = false;
   if (cCollider) {
-    display_hitbox = cCollider->display_hitbox or Application::get().get_settings_manager().display_collision_boxes;
+    display_hitbox = cCollider->display_hitbox or application_manager.get_settings_manager().display_collision_boxes;
   }
-  ShaderProgram& sp = render_manager.get_shader_program(cShaderProgram.name);
+  // TODO im sending sp in a weird way here *application, reset uniform maybe i dont need?
+  const auto& assets_manager = application_manager.get_assets_manager();
+  Shader& sp = *assets_manager.get<Shader>(cShader.name).get();
   cMesh->bind_textures(sp, cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cMaterial, cReflection, cSkybox,
                        cSkyboxTexture, cSkyboxBlend);
-  render_manager.render(cMesh->get_vao(), cTransform.calculate(), cShaderProgram.name);
+  render_manager.render(cMesh->get_vao(), cTransform.calculate(), cShader.name);
   cMesh->unbind_textures(cTexture, cTextureAtlas, cBlendTexture);
   if (cTransparent and cTransparent->transparent) {
     RenderAPI::toggle_culling(true);
@@ -63,16 +65,15 @@ void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTe
     // TODO fix transparency so I can render this first
     // disabling culling is not working
     // this can't be in cmesh bind_textures right now
-    sp.reset_active_uniforms();
-    sp.use();
+    sp.bind();
     sp.set_bool("display_hitbox", true);
     sp.set_vec4("hitbox_color", cCollider->color);
-    sp.unuse();
-    render_manager.render(cCollider->mesh.get_vao(), cTransform.calculate(), cShaderProgram.name);
+    sp.unbind();
+    render_manager.render(cCollider->mesh.get_vao(), cTransform.calculate(), cShader.name);
   } else if (cCollider and not display_hitbox) {
-    sp.use();
+    sp.bind();
     sp.set_bool("display_hitbox", false);
-    sp.unuse();
+    sp.unbind();
   }
 }
 
@@ -114,8 +115,8 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
     registry.sort<CUUID, CDistanceFromCamera>();
   }
 
-  registry.view<CTransform, CShaderProgram, CUUID>().each(
-    [&](entt::entity e, const CTransform& cTransform, const CShaderProgram& cShaderProgram, const CUUID& cUUID) {
+  registry.view<CTransform, CShader, CUUID>().each(
+    [&](entt::entity e, const CTransform& cTransform, const CShader& cShader, const CUUID& cUUID) {
       // these two we will ignored for the entity sky
       CTexture* cTexture = registry.try_get<CTexture>(e);
       CBlendTexture* cBlendTexture = registry.try_get<CBlendTexture>(e);
@@ -135,7 +136,7 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
       CShape* cShape = registry.try_get<CShape>(e);
       CCollider* cCollider = registry.try_get<CCollider>(e);
 
-      if (cShaderProgram.visible) {
+      if (cShader.visible) {
         if (cMesh) { // TODO objects with one mesh unused
           if (not cTexture and not cTextureAtlas) {
             CName* cName = registry.try_get<CName>(e);
@@ -147,16 +148,14 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
           }
 
           render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cMaterial, cReflection, cSkybox,
-                 cSkyboxTexture, cBlendTexture, cMesh, cTransform, cShaderProgram, cCollider, cTransparent,
-                 render_manager);
+                 cSkyboxTexture, cBlendTexture, cMesh, cTransform, cShader, cCollider, cTransparent, render_manager);
         } else if (cBody) { // models
           for (uint32_t i = 0; i < cBody->meshes.size(); ++i) {
             CMesh* mesh = cBody->meshes.at(i);
             CMaterial* material = cBody->materials.at(i);
             // TODO Add textures as CTexture
             render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, material, cReflection, cSkybox,
-                   cSkyboxTexture, cBlendTexture, mesh, cTransform, cShaderProgram, cCollider, cTransparent,
-                   render_manager);
+                   cSkyboxTexture, cBlendTexture, mesh, cTransform, cShader, cCollider, cTransparent, render_manager);
           }
         } else if (cShape) { // primitives
           if (not cTexture and not cTextureAtlas) {
@@ -170,7 +169,7 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
 
           for (auto& mesh : cShape->meshes) {
             render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cMaterial, cReflection, cSkybox,
-                   cSkyboxTexture, cBlendTexture, mesh.get(), cTransform, cShaderProgram, cCollider, cTransparent,
+                   cSkyboxTexture, cBlendTexture, mesh.get(), cTransform, cShader, cCollider, cTransparent,
                    render_manager);
           }
         } else {
@@ -193,7 +192,7 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
     // disable depth test so screen-space quad isn't discarded due to depth test.
     RenderAPI::toggle_depth_test(false);
     CShape& cShape = registry.get<CShape>(fbo);
-    cfbo.setup_properties(render_manager.get_shader_program("fbo"));
+    cfbo.setup_properties(*app.get_assets_manager().get<Shader>("fbo").get());
     const auto& settings_manager = app.get_settings_manager();
     if (settings_manager.imgui_window) {
       render_manager.render_inside_imgui(cShape.meshes.at(0)->get_vao(), cfbo.fbo, "scene", {0, 0}, {0, 0},

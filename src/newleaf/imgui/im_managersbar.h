@@ -43,14 +43,14 @@ inline void draw_managersbar(const AssetsManager& assets_manager, const RenderMa
       filter_systems = false;
     }
     if (ImGui::BeginTabItem("Render Manager")) {
-      draw_render_manager(render_manager, settings_manager);
+      draw_render_manager(render_manager, assets_manager, settings_manager);
       ImGui::EndTabItem();
     } else {
       selected_render_manager_tabkey.clear();
       selected_render_manager_tabtype.clear();
       render_objects_text_filter[0] = '\0';
       filter_fbos = false;
-      filter_shader_programs = false;
+      filter_shaders = false;
       filter_shader_info = false;
     }
     if (ImGui::BeginTabItem("States Manager")) {

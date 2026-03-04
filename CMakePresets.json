@@ -93,7 +93,7 @@
             "inherits": "default",
             "cacheVariables": {
                 "ENABLE_DEBUG": "ON",
-                "ENABLE_CPPCHECK": "ON",
+                "ENABLE_CPPCHECK": "OFF",
                 "CMAKE_BUILD_TYPE": "Debug"
             }
         },

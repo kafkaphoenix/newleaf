@@ -11,9 +11,9 @@
 #include <glm/glm.hpp>
 
 #include "../../assets/asset_handle.h"
+#include "../../assets/shader.h"
 #include "../../assets/texture.h"
 #include "../../graphics/buffer.h"
-#include "../../graphics/shader_program.h"
 #include "../../graphics/vao.h"
 #include "../../logging/log_manager.h"
 #include "../../utils/assert.h"
@@ -50,7 +50,7 @@ struct CMesh {
 
     // TODO maybe avoid setting uniform at all if disable, check after refactor and removing monostate
     // TODO rethink with uniform buffer object in system
-    void configure_fog(ShaderProgram& sp) {
+    void configure_fog(Shader& sp) {
       sp.set_bool("fog_enabled", static_cast<bool>(entt::monostate<"fog_enabled"_hs>{}));
       sp.set_vec4("fog_color", static_cast<glm::vec4>(entt::monostate<"fog_color"_hs>{}));
       sp.set_float("fog_density", static_cast<float>(entt::monostate<"fog_density"_hs>{}));
@@ -60,7 +60,7 @@ struct CMesh {
     }
 
     // TODO rethink with uniform buffer object in system
-    void configure_light(ShaderProgram& sp) {
+    void configure_light(Shader& sp) {
       sp.set_bool("light_enabled", static_cast<bool>(entt::monostate<"light_enabled"_hs>{}));
       sp.set_vec3("light_color", static_cast<glm::vec3>(entt::monostate<"light_color"_hs>{}));
       sp.set_vec3("light_position", static_cast<glm::vec3>(entt::monostate<"light_position"_hs>{}));
@@ -70,7 +70,7 @@ struct CMesh {
       sp.set_float("light_outer_cone_angle", static_cast<float>(entt::monostate<"light_outer_cone_angle"_hs>{}));
     }
 
-    void configure_reflection(ShaderProgram& sp, CReflection* cReflection, CTexture* cSkyboxTexture,
+    void configure_reflection(Shader& sp, CReflection* cReflection, CTexture* cSkyboxTexture,
                               CBlendTexture* cSkyboxBlend) {
       if (cReflection) {
         sp.set_bool("reflection_enabled", cReflection->enabled);
@@ -80,7 +80,7 @@ struct CMesh {
       }
     }
 
-    void configure_material(ShaderProgram& sp, const CMaterial* cMaterial) {
+    void configure_material(Shader& sp, const CMaterial* cMaterial) {
       if (cMaterial) {
         sp.set_vec3("ambient", cMaterial->ambient);
         sp.set_vec3("diffuse", cMaterial->diffuse);
@@ -89,11 +89,10 @@ struct CMesh {
       }
     }
 
-    void configure_reflected_skybox(ShaderProgram& sp, CTexture* cSkyboxTexture, CBlendTexture* cSkyboxBlend) {
+    void configure_reflected_skybox(Shader& sp, CTexture* cSkyboxTexture, CBlendTexture* cSkyboxBlend) {
       // TODO better reflection than sending the skybox texture and the blend
       // that's why we send them to all shaders
-      // TODO use uniform buffer object for this and think a better way to avoid sky entity that checking shader program
-      // name
+      // TODO use uniform buffer object for this and think a better way to avoid sky entity that checking shader name
       if (cSkyboxTexture and sp.get_name() not_eq "skybox") {
         // 10 and 11 are reserved for skybox
         sp.set_int("skybox_texture", 10);
@@ -116,7 +115,7 @@ struct CMesh {
       }
     }
 
-    void configure_color(ShaderProgram& sp, CColor* cColor) {
+    void configure_color(Shader& sp, CColor* cColor) {
       if (cColor) {
         sp.set_bool("color_enabled", true);
         sp.set_vec4("color", cColor->color);
@@ -125,7 +124,7 @@ struct CMesh {
       }
     }
 
-    void configure_blend(ShaderProgram& sp, CBlendTexture* cBlendTexture, CBlendColor* cBlendColor) {
+    void configure_blend(Shader& sp, CBlendTexture* cBlendTexture, CBlendColor* cBlendColor) {
       if (cBlendTexture) {
         sp.set_bool("blend_texture_enabled", true);
         sp.set_float("blend_texture_factor", cBlendTexture->blend_factor);
@@ -146,7 +145,7 @@ struct CMesh {
     }
 
     // TODO move to system and rethink with uniform buffer object in system
-    void configure_texture_atlas(ShaderProgram& sp, CTextureAtlas* cTextureAtlas) {
+    void configure_texture_atlas(Shader& sp, CTextureAtlas* cTextureAtlas) {
       // TODO terrain shader not using this logic at all (get from terrain vertex directly)
       if (cTextureAtlas) {
         auto atlas_texture = cTextureAtlas->handle.get();
@@ -166,7 +165,7 @@ struct CMesh {
       }
     }
 
-    void configure_texture(ShaderProgram& sp, CTexture* cTexture) {
+    void configure_texture(Shader& sp, CTexture* cTexture) {
       if (cTexture) {
         uint32_t i = 1;
         for (uint32_t idx = 0; idx < cTexture->handles.size(); ++idx) {
@@ -184,7 +183,7 @@ struct CMesh {
     // TODO remove this method after refactor model
     // model should use ctexture so i can remove from cmesh (UPDATE move to Cmaterial instead, i dont need component
     // referencing a handle of an asset)
-    void configure_model_texture(ShaderProgram& sp, const CMaterial* cMaterial) {
+    void configure_model_texture(Shader& sp, const CMaterial* cMaterial) {
       if (sp.get_name() not_eq "model") {
         return;
       }
@@ -228,12 +227,10 @@ struct CMesh {
     }
 
     // TODO remove this and rethink in systems with uniform buffer objects
-    void bind_textures(ShaderProgram& sp, CTexture* cTexture, CBlendTexture* cBlendTexture,
-                       CTextureAtlas* cTextureAtlas, CColor* cColor, CBlendColor* cBlendColor,
-                       const CMaterial* cMaterial, CReflection* cReflection, CSkybox* cSkybox, CTexture* cSkyboxTexture,
-                       CBlendTexture* cSkyboxBlend) {
-      sp.reset_active_uniforms();
-      sp.use();
+    void bind_textures(Shader& sp, CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTextureAtlas,
+                       CColor* cColor, CBlendColor* cBlendColor, const CMaterial* cMaterial, CReflection* cReflection,
+                       CSkybox* cSkybox, CTexture* cSkyboxTexture, CBlendTexture* cSkyboxBlend) {
+      sp.bind();
       configure_fog(sp);
       configure_light(sp);
       configure_reflection(sp, cReflection, cSkyboxTexture, cSkyboxBlend);

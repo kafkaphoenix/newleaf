@@ -66,13 +66,13 @@ entt::entity SceneFactory::clone_entity(const entt::entity e, uint64_t uuid, ent
 }
 
 void SceneFactory::create_scene(std::string scene_id, std::string scene_path, AssetsManager& assets_manager,
-                                RenderManager& render_manager, entt::registry& registry) {
+                                entt::registry& registry) {
   Timer timer;
   ENGINE_TRACE("creating scene");
 
   Scene scene = Scene(scene_path);
-  create_shader_programs(scene, assets_manager, render_manager);
-  ENGINE_INFO("shader programs creation time: {:.6f}s", timer.get_seconds());
+  create_shaders(scene, assets_manager);
+  ENGINE_INFO("shaders creation time: {:.6f}s", timer.get_seconds());
   timer.reset();
   create_textures(scene, assets_manager);
   ENGINE_INFO("textures creation time: {:.6f}s", timer.get_seconds());
@@ -91,10 +91,9 @@ void SceneFactory::create_scene(std::string scene_id, std::string scene_path, As
   m_dirty_named_entities = true;
 }
 
-void SceneFactory::reload_scene(const AssetsManager& assets_manager, const RenderManager& render_manager,
-                                entt::registry& registry, bool reload_prototypes) {
+void SceneFactory::reload_scene(const AssetsManager& assets_manager, entt::registry& registry, bool reload_prototypes) {
   Timer timer;
-  ENGINE_ASSERT(not m_active_scene.empty(), "no scene is active!");
+  ENGINE_ASSERT(not m_active_scene.empty(), "no scene is active!")
   ENGINE_TRACE("reloading scene {}", m_active_scene);
 
   const auto& scene = assets_manager.get<Scene>(m_active_scene).get();
@@ -133,13 +132,11 @@ void SceneFactory::clear_scene(RenderManager& render_manager, entt::registry& re
   m_dirty_named_entities = false;
 }
 
-void SceneFactory::create_shader_programs(const Scene& scene, AssetsManager& assets_manager,
-                                          RenderManager& render_manager) {
-  for (const auto& [shader_program, shader_program_data] : scene.get_shader_programs()) {
-    for (const auto& [shader_type, path] : shader_program_data.items()) {
-      assets_manager.get_or_load<Shader>(shader_type, path);
-    }
-    render_manager.add_shader_program(std::string(shader_program), assets_manager);
+void SceneFactory::create_shaders(const Scene& scene, AssetsManager& assets_manager) {
+  for (const auto& [shader_id, shader_data] : scene.get_shaders()) {
+    ENGINE_ASSERT(shader_data.contains("path"), "shader {} must define a path", shader_id);
+    std::string base_path = shader_data.at("path").get<std::string>();
+    assets_manager.get_or_load<Shader>(shader_id, std::string(shader_id), std::move(base_path));
   }
 }
 

@@ -12,7 +12,7 @@ struct CBody;
 struct CFBO;
 struct CMaterial;
 struct CMesh;
-struct CShaderProgram;
+struct CShader;
 struct CShape;
 struct CTexture;
 struct CTextureAtlas;
@@ -54,7 +54,7 @@ inline CMaterial& cast_cmaterial(void* other) { return *static_cast<CMaterial*>(
 
 inline CMesh& cast_cmesh(void* other) { return *static_cast<CMesh*>(other); }
 
-inline CShaderProgram& cast_cshader_program(void* other) { return *static_cast<CShaderProgram*>(other); }
+inline CShader& cast_cshader(void* other) { return *static_cast<CShader*>(other); }
 
 inline CShape& cast_cshape(void* other) { return *static_cast<CShape*>(other); }
 

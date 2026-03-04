@@ -134,14 +134,12 @@ void SceneManager::delete_entity(std::string_view name) { delete_entity(get_enti
 void SceneManager::delete_entity(const UUID& uuid) { delete_entity(get_entity(uuid)); }
 
 void SceneManager::create_scene(std::string scene_name, std::string scene_path) {
-  auto& app = Application::get();
-  m_scene_factory.create_scene(scene_name, scene_path, app.get_assets_manager(), app.get_render_manager(), m_registry);
+  m_scene_factory.create_scene(scene_name, scene_path, Application::get().get_assets_manager(), m_registry);
   print_scene();
 }
 
 void SceneManager::reload_scene(bool reload_prototypes) {
-  auto& app = Application::get();
-  m_scene_factory.reload_scene(app.get_assets_manager(), app.get_render_manager(), m_registry, reload_prototypes);
+  m_scene_factory.reload_scene(Application::get().get_assets_manager(), m_registry, reload_prototypes);
 }
 
 void SceneManager::clear_scene() {

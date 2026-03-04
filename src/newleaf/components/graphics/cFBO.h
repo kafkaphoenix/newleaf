@@ -8,9 +8,9 @@
 #include <entt/entt.hpp>
 
 #include "../../application/application.h"
+#include "../../assets/shader.h"
 #include "../../graphics/framebuffer.h"
 #include "../../graphics/render_manager.h"
-#include "../../graphics/shader_program.h"
 #include "../../logging/log_manager.h"
 #include "../../scene/scene_manager.h"
 #include "../../settings/settings_manager.h"
@@ -162,9 +162,8 @@ struct CFBO {
       }
     }
 
-    void setup_properties(ShaderProgram& sp) {
-      sp.reset_active_uniforms();
-      sp.use();
+    void setup_properties(Shader& sp) {
+      sp.bind();
       sp.set_float("time", time);
       if (mode == Mode::normal) {
         sp.set_int("mode", 0);
@@ -227,7 +226,7 @@ struct CFBO {
       } else {
         ENGINE_ASSERT(false, "unknown fbo mode {}", _mode);
       }
-      sp.unuse();
+      sp.unbind();
     }
 };
 }

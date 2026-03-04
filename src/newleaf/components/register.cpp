@@ -11,7 +11,7 @@
 #include "graphics/cMaterial.h"
 #include "graphics/cMesh.h"
 #include "graphics/cReflection.h"
-#include "graphics/cShaderProgram.h"
+#include "graphics/cShader.h"
 #include "graphics/cShape.h"
 #include "graphics/cTexture.h"
 #include "graphics/cTextureAtlas.h"
@@ -133,14 +133,14 @@ void register_components() {
     .func<&CMesh::to_map>("to_map"_hs)
     .func<&assign<CMesh>>("assign"_hs);
 
-  entt::meta<CShaderProgram>()
-    .type("shader_program"_hs)
-    .ctor<&cast_cshader_program, entt::as_ref_t>()
-    .data<&CShaderProgram::name>("name"_hs)
-    .data<&CShaderProgram::visible>("visible"_hs)
-    .func<&CShaderProgram::print>("print"_hs)
-    .func<&CShaderProgram::to_map>("to_map"_hs)
-    .func<&assign<CShaderProgram>>("assign"_hs);
+  entt::meta<CShader>()
+    .type("shader"_hs)
+    .ctor<&cast_cshader, entt::as_ref_t>()
+    .data<&CShader::name>("name"_hs)
+    .data<&CShader::visible>("visible"_hs)
+    .func<&CShader::print>("print"_hs)
+    .func<&CShader::to_map>("to_map"_hs)
+    .func<&assign<CShader>>("assign"_hs);
 
   entt::meta<CShape>()
     .type("shape"_hs)

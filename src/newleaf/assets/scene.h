@@ -19,7 +19,7 @@ class Scene : public Asset {
 
     virtual const std::map<std::string, std::string, NumericComparator>& to_map() override final;
 
-    const std::unordered_map<std::string, json>& get_shader_programs() const { return m_shaders; }
+    const std::unordered_map<std::string, json>& get_shaders() const { return m_shaders; }
     const std::unordered_map<std::string, json>& get_textures() const { return m_textures; }
     const std::unordered_map<std::string, json>& get_models() const { return m_models; }
     const std::unordered_map<std::string, json>& get_prefabs() const { return m_prefabs; }
