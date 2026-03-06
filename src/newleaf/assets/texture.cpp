@@ -48,55 +48,23 @@ Texture::Texture(std::filesystem::path&& fp, std::optional<std::string>&& type, 
   m_mipmap_level = mipmap_level.value_or(0);
   if (m_cubemap) {
     std::string file_ext = std::filesystem::exists(fp / "front.jpg") ? ".jpg" : ".png";
-    m_paths.reserve(6);
-    m_paths.emplace_back(std::move((fp / ("front" + file_ext)).string())); // it needs to be added in this order
-    m_paths.emplace_back(std::move((fp / ("back" + file_ext)).string()));
-    m_paths.emplace_back(std::move((fp / ("top" + file_ext)).string()));
-    m_paths.emplace_back(std::move((fp / ("bottom" + file_ext)).string()));
-    m_paths.emplace_back(std::move((fp / ("right" + file_ext)).string()));
-    m_paths.emplace_back(std::move((fp / ("left" + file_ext)).string()));
+    m_paths = default_cubemap_paths(fp, file_ext);
+    setup_cubemap_params();
   } else {
     m_paths.emplace_back(std::move(fp.string()));
+    setup_2d_params();
   }
 
-  load_texture();
-}
-
-void Texture::load_texture() {
   int width, height, channels;
   stbi_set_flip_vertically_on_load(m_flip_vertically);
   uint32_t face{};
-  if (m_cubemap) {
-    glGenTextures(1, &m_id);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-  } else {
-    glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
-    glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  }
   for (std::string_view path : m_paths) {
     stbi_uc* data = stbi_load(path.data(), &width, &height, &channels, 0);
-    if (not data) {
-      stbi_image_free(data);
-      ENGINE_ASSERT(false, "failed to load texture: {} {}", path, stbi_failure_reason());
-    }
+    ENGINE_ASSERT(data, "failed to load texture: {} {}", path, stbi_failure_reason());
     m_width = width;
     m_height = height;
 
-    // compute mip levels so minified textures sample smaller images, reducing moire/aliasing.
-    uint32_t max_mip_levels = 1 + static_cast<uint32_t>(std::floor(std::log2(std::max(m_width, m_height))));
-    if (m_mipmap_level == 0) {
-      m_mipmap_level = max_mip_levels;
-    } else {
-      m_mipmap_level = std::min(m_mipmap_level, max_mip_levels);
-    }
+    m_mipmap_level = calc_mipmap_levels(width, height);
 
     if (channels == 4) {
       m_opengl_format = GL_RGBA8;
@@ -104,12 +72,7 @@ void Texture::load_texture() {
     } else if (channels == 3) {
       m_opengl_format = GL_RGB8;
       m_format = GL_RGB;
-      // https://stackoverflow.com/questions/71284184/opengl-distorted-texture
-      if (3 * width % 4 == 0) {
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-      } else {
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-      }
+      glPixelStorei(GL_UNPACK_ALIGNMENT, (3 * width % 4 == 0) ? 4 : 1);
     } else if (channels == 2) {
       m_opengl_format = GL_RG8;
       m_format = GL_RG;
@@ -132,6 +95,36 @@ void Texture::load_texture() {
     }
     stbi_image_free(data);
   }
+}
+
+void Texture::setup_2d_params() {
+  glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
+  glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+  glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+}
+
+void Texture::setup_cubemap_params() {
+  glGenTextures(1, &m_id);
+  glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+}
+
+std::vector<std::string> Texture::default_cubemap_paths(const std::filesystem::path& dir, const std::string& ext) {
+  // order matters for cubemap to be rendered correctly
+  return {(dir / ("front" + ext)).string(),  (dir / ("back" + ext)).string(),  (dir / ("top" + ext)).string(),
+          (dir / ("bottom" + ext)).string(), (dir / ("right" + ext)).string(), (dir / ("left" + ext)).string()};
+}
+
+// Compute mipmap levels so minified textures sample smaller images, reducing moire/aliasing.
+int Texture::calc_mipmap_levels(int width, int height) {
+  int size = std::max(width, height);
+  return 1 + static_cast<int>(std::floor(std::log2(size)));
 }
 
 Texture::~Texture() {

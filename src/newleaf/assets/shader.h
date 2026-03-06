@@ -23,6 +23,7 @@ struct ActiveUniform {
 
 class Shader : public Asset {
 public:
+    Shader() = delete;
     Shader(std::string&& name, std::filesystem::path&& base_path);
     ~Shader() override final;
 

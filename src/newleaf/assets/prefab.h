@@ -23,9 +23,10 @@ struct Prototype {
 namespace nl {
 class Prefab : public Asset {
   public:
+    Prefab() = delete;
     Prefab(std::filesystem::path&& fp, std::vector<std::string>&& target_prototypes);
 
-    virtual const std::map<std::string, std::string, NumericComparator>& to_map() override final;
+    const std::map<std::string, std::string, NumericComparator>& to_map() override final;
     const std::map<std::string, std::string, NumericComparator>&
     get_target_prototype_info(std::string_view prototype_id);
 
@@ -47,7 +48,7 @@ class Prefab : public Asset {
 
     const std::unordered_map<std::string, Prototype>& get_prototypes() const { return m_prototypes; }
 
-    virtual bool operator==(const Asset& other) const override final;
+    bool operator==(const Asset& other) const override final;
 
   private:
     std::string m_name;

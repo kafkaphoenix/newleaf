@@ -10,9 +10,9 @@ class ImGuiLayer : public Layer {
   public:
     ImGuiLayer();
 
-    virtual void on_attach() override;
-    virtual void on_detach() override;
-    virtual void on_imgui_update() override;
+    void on_attach() override;
+    void on_detach() override;
+    void on_imgui_update() override;
 
     static void begin();
     static void end();

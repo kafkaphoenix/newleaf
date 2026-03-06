@@ -21,9 +21,10 @@ namespace nl {
 
 class Model : public Asset {
   public:
+    Model() = delete;
     Model(std::filesystem::path&& fp, std::optional<bool> gamma_correction = std::nullopt);
 
-    virtual const std::map<std::string, std::string, NumericComparator>& to_map() override final;
+    const std::map<std::string, std::string, NumericComparator>& to_map() override final;
     const std::map<std::string, std::string, NumericComparator>& get_loaded_texture_info(std::string_view textureID);
 
     std::vector<std::shared_ptr<CMesh>>& get_meshes() { return m_meshes; }
@@ -31,7 +32,7 @@ class Model : public Asset {
     std::vector<CMaterial>& get_materials() { return m_materials; }
     const std::vector<CMaterial>& get_materials() const { return m_materials; }
 
-    virtual bool operator==(const Asset& other) const override final;
+    bool operator==(const Asset& other) const override final;
 
   private:
     std::string m_path;

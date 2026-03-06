@@ -15,16 +15,17 @@ using json = nlohmann::json;
 namespace nl {
 class Scene : public Asset {
   public:
+    Scene() = delete;
     Scene(std::filesystem::path&& fp);
 
-    virtual const std::map<std::string, std::string, NumericComparator>& to_map() override final;
+    const std::map<std::string, std::string, NumericComparator>& to_map() override final;
 
     const std::unordered_map<std::string, json>& get_shaders() const { return m_shaders; }
     const std::unordered_map<std::string, json>& get_textures() const { return m_textures; }
     const std::unordered_map<std::string, json>& get_models() const { return m_models; }
     const std::unordered_map<std::string, json>& get_prefabs() const { return m_prefabs; }
 
-    virtual bool operator==(const Asset& other) const override final;
+    bool operator==(const Asset& other) const override final;
 
   private:
     std::string m_path;

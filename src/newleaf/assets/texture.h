@@ -16,12 +16,12 @@
 namespace nl {
 class Texture : public Asset {
   public:
-    Texture() = default; // TODO revisit is for std::vector in Model class. This will create invalid texture
+    Texture() = delete;
     Texture(uint32_t width, uint32_t height, GLenum glFormat, std::optional<bool> wrap = std::nullopt);
     Texture(std::filesystem::path&& fp, std::optional<std::string>&& type = std::nullopt,
             std::optional<bool> flip_vertically = std::nullopt, std::optional<uint32_t> mipmap_level = std::nullopt,
             std::optional<bool> gamma_correction = std::nullopt);
-    virtual ~Texture() override final;
+    ~Texture() override final;
 
     void bind_slot(uint32_t slot);
     void rebind_slot();
@@ -32,10 +32,10 @@ class Texture : public Asset {
     uint32_t get_id() const { return m_id; }
     std::string_view get_path() const { return (m_paths.size() == 1) ? m_paths[0] : m_directory; }
     std::string_view get_type() const { return m_type; }
-    virtual const std::map<std::string, std::string, NumericComparator>& to_map() override final;
+    const std::map<std::string, std::string, NumericComparator>& to_map() override final;
     bool is_cubemap() const { return m_cubemap; }
 
-    virtual bool operator==(const Asset& other) const override final;
+    bool operator==(const Asset& other) const override final;
 
     static constexpr bool FLIP_VERTICALLY = true;
     static constexpr bool DONT_FLIP_VERTICALLY = false;
@@ -60,6 +60,9 @@ class Texture : public Asset {
 
     std::map<std::string, std::string, NumericComparator> m_info;
 
-    void load_texture();
+    void setup_2d_params();
+    void setup_cubemap_params();
+    std::vector<std::string> default_cubemap_paths(const std::filesystem::path& directory, const std::string& ext);
+    int calc_mipmap_levels(int width, int height);
 };
 }
