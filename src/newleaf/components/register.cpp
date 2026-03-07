@@ -8,7 +8,6 @@
 #include "graphics/cBody.h"
 #include "graphics/cColor.h"
 #include "graphics/cFBO.h"
-#include "graphics/cMaterial.h"
 #include "graphics/cMesh.h"
 #include "graphics/cReflection.h"
 #include "graphics/cShader.h"
@@ -113,17 +112,6 @@ void register_components() {
     .func<&CFBO::to_map>("to_map"_hs)
     .func<&on_component_added<CFBO>>("on_component_added"_hs)
     .func<&assign<CFBO>>("assign"_hs);
-
-  entt::meta<CMaterial>()
-    .type("material"_hs)
-    .ctor<&cast_cmaterial, entt::as_ref_t>()
-    .data<&CMaterial::ambient>("ambient"_hs)
-    .data<&CMaterial::diffuse>("diffuse"_hs)
-    .data<&CMaterial::specular>("specular"_hs)
-    .data<&CMaterial::shininess>("shininess"_hs)
-    .func<&CMaterial::print>("print"_hs)
-    .func<&CMaterial::to_map>("to_map"_hs)
-    .func<&assign<CMaterial>>("assign"_hs);
 
   entt::meta<CMesh>()
     .type("mesh"_hs)

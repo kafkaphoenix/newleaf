@@ -10,7 +10,6 @@ struct CTag;
 struct CUUID;
 struct CBody;
 struct CFBO;
-struct CMaterial;
 struct CMesh;
 struct CShader;
 struct CShape;
@@ -49,8 +48,6 @@ inline CUUID& cast_cuuid(void* other) { return *static_cast<CUUID*>(other); }
 inline CBody& cast_cbody(void* other) { return *static_cast<CBody*>(other); }
 
 inline CFBO& cast_cfbo(void* other) { return *static_cast<CFBO*>(other); }
-
-inline CMaterial& cast_cmaterial(void* other) { return *static_cast<CMaterial*>(other); }
 
 inline CMesh& cast_cmesh(void* other) { return *static_cast<CMesh*>(other); }
 

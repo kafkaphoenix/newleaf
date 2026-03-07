@@ -10,7 +10,7 @@
 
 #include <assimp/scene.h>
 
-#include "../components/graphics/cMaterial.h"
+#include "../components/graphics/Material.h"
 #include "../components/graphics/cMesh.h"
 #include "../utils/numeric_comparator.h"
 #include "asset.h"
@@ -19,36 +19,35 @@
 
 namespace nl {
 
+struct SubMesh {
+    std::unique_ptr<CMesh> mesh;
+    AssetHandle<Material> material;
+};
+
 class Model : public Asset {
   public:
     Model() = delete;
-    Model(std::filesystem::path&& fp, std::optional<bool> gamma_correction = std::nullopt);
+    Model(std::filesystem::path fp, std::filesystem::path shader_path,
+          std::optional<bool> gamma_correction = std::nullopt);
+
+    const std::vector<SubMesh>& get_submeshes() const { return m_submeshes; }
 
     const std::map<std::string, std::string, NumericComparator>& to_map() override final;
-    const std::map<std::string, std::string, NumericComparator>& get_loaded_texture_info(std::string_view textureID);
-
-    std::vector<std::shared_ptr<CMesh>>& get_meshes() { return m_meshes; }
-    const std::vector<std::shared_ptr<CMesh>>& get_meshes() const { return m_meshes; }
-    std::vector<CMaterial>& get_materials() { return m_materials; }
-    const std::vector<CMaterial>& get_materials() const { return m_materials; }
+    const std::map<std::string, std::string, NumericComparator>& get_loaded_texture_info(std::string_view texture_id);
 
     bool operator==(const Asset& other) const override final;
 
   private:
     std::string m_path;
-    std::string m_directory;
-    std::vector<std::shared_ptr<CMesh>> m_meshes;
-    std::vector<CMaterial> m_materials;
+    std::vector<SubMesh> m_submeshes;
     std::vector<AssetHandle<Texture>> m_loaded_textures;
-
     std::map<std::string, std::string, NumericComparator> m_info;
-    std::map<std::string, std::map<std::string, std::string, NumericComparator>, NumericComparator>
-      m_loaded_texture_info;
+    std::map<std::string, std::map<std::string, std::string, NumericComparator>, NumericComparator> m_texture_info;
 
-    void process_node(aiNode* node, aiMesh** meshes, aiMaterial** materials);
-    CMesh process_mesh(aiMesh* mesh, aiMaterial* material);
-    std::vector<AssetHandle<Texture>> load_material_textures(aiMaterial* mat, aiTextureType t, std::string type);
-    CMaterial load_material(aiMaterial* mat);
+    void process_node(aiNode* node, aiMesh** meshes, const std::vector<AssetHandle<Material>>& materials);
+    std::unique_ptr<CMesh> create_mesh(aiMesh* mesh);
+    AssetHandle<Material> create_material(aiMaterial* mat, const std::string& directory,
+                                          const std::filesystem::path& shader_path);
 };
 
 }

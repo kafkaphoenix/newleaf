@@ -23,7 +23,6 @@
 #include "cBlendColor.h"
 #include "cBlendTexture.h"
 #include "cColor.h"
-#include "cMaterial.h"
 #include "cReflection.h"
 #include "cTexture.h"
 #include "cTextureAtlas.h"
@@ -77,15 +76,6 @@ struct CMesh {
         sp.set_float("reflectivity", cReflection->reflectivity);
         sp.set_float("refractivity", cReflection->refractivity);
         configure_reflected_skybox(sp, cSkyboxTexture, cSkyboxBlend);
-      }
-    }
-
-    void configure_material(Shader& sp, const CMaterial* cMaterial) {
-      if (cMaterial) {
-        sp.set_vec3("ambient", cMaterial->ambient);
-        sp.set_vec3("diffuse", cMaterial->diffuse);
-        sp.set_vec3("specular", cMaterial->specular);
-        sp.set_float("shininess", cMaterial->shininess);
       }
     }
 
@@ -183,7 +173,7 @@ struct CMesh {
     // TODO remove this method after refactor model
     // model should use ctexture so i can remove from cmesh (UPDATE move to Cmaterial instead, i dont need component
     // referencing a handle of an asset)
-    void configure_model_texture(Shader& sp, const CMaterial* cMaterial) {
+    void configure_model_texture(Shader& sp) {
       if (sp.get_name() not_eq "model") {
         return;
       }
@@ -192,14 +182,6 @@ struct CMesh {
       uint32_t normal_n = 1;
       uint32_t height_n = 1;
       uint32_t i = 1;
-      // TODO improve code for several textures and to select normal/material
-      // with arrays
-      if (textures.size() == 0) {
-        sp.set_bool("texture_enabled", false); // will use material only
-        ENGINE_ASSERT(cMaterial, "no texture or material found for model");
-        return;
-      }
-      sp.set_bool("texture_enabled", true);
       for (auto& texture : textures) {
         auto resolved = texture.get();
         if (!resolved) {
@@ -228,17 +210,16 @@ struct CMesh {
 
     // TODO remove this and rethink in systems with uniform buffer objects
     void bind_textures(Shader& sp, CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTextureAtlas,
-                       CColor* cColor, CBlendColor* cBlendColor, const CMaterial* cMaterial, CReflection* cReflection,
+                       CColor* cColor, CBlendColor* cBlendColor, CReflection* cReflection,
                        CSkybox* cSkybox, CTexture* cSkyboxTexture, CBlendTexture* cSkyboxBlend) {
       sp.bind();
       configure_fog(sp);
       configure_light(sp);
       configure_reflection(sp, cReflection, cSkyboxTexture, cSkyboxBlend);
-      configure_material(sp, cMaterial);
       configure_texture(sp, cTexture);
       configure_texture_atlas(sp, cTextureAtlas);
       // TODO add model textures to CTexture and remove this and use only one shader maybe
-      configure_model_texture(sp, cMaterial);
+      configure_model_texture(sp);
       configure_color(sp, cColor);
       configure_blend(sp, cBlendTexture, cBlendColor);
     }

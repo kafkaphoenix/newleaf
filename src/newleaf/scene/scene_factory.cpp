@@ -150,8 +150,9 @@ void SceneFactory::create_textures(const Scene& scene, AssetsManager& assets_man
 }
 
 void SceneFactory::create_models(const Scene& scene, AssetsManager& assets_manager) {
-  for (const auto& [model, path] : scene.get_models()) {
-    assets_manager.get_or_load<Model>(model, path);
+  for (const auto& [model, options] : scene.get_models()) {
+    bool gamma_correction = options.contains("gamma_correction") ? options.at("gamma_correction").get<bool>() : false;
+    assets_manager.get_or_load<Model>(model, options.at("path").get<std::string>(), options.at("shader_path").get<std::string>(), gamma_correction);
   }
 }
 

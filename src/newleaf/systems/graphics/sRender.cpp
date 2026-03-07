@@ -13,7 +13,6 @@
 #include "../../components/graphics/cBody.h"
 #include "../../components/graphics/cColor.h"
 #include "../../components/graphics/cFBO.h"
-#include "../../components/graphics/cMaterial.h"
 #include "../../components/graphics/cMesh.h"
 #include "../../components/graphics/cReflection.h"
 #include "../../components/graphics/cShader.h"
@@ -33,9 +32,9 @@
 namespace nl {
 
 void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTextureAtlas, CColor* cColor,
-            CBlendColor* cBlendColor, CMaterial* cMaterial, CReflection* cReflection, CSkybox* cSkybox,
-            CTexture* cSkyboxTexture, CBlendTexture* cSkyboxBlend, CMesh* cMesh, const CTransform& cTransform,
-            const CShader& cShader, CCollider* cCollider, CTransparent* cTransparent, RenderManager& render_manager) {
+            CBlendColor* cBlendColor, CReflection* cReflection, CSkybox* cSkybox, CTexture* cSkyboxTexture,
+            CBlendTexture* cSkyboxBlend, CMesh* cMesh, const CTransform& cTransform, const CShader& cShader,
+            CCollider* cCollider, CTransparent* cTransparent, RenderManager& render_manager) {
   const auto& application_manager = Application::get();
   if (cTransparent and cTransparent->transparent) {
     RenderAPI::toggle_culling(false);
@@ -51,7 +50,7 @@ void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTe
   // TODO im sending sp in a weird way here *application, reset uniform maybe i dont need?
   const auto& assets_manager = application_manager.get_assets_manager();
   Shader& sp = *assets_manager.get<Shader>(cShader.name).get();
-  cMesh->bind_textures(sp, cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cMaterial, cReflection, cSkybox,
+  cMesh->bind_textures(sp, cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cReflection, cSkybox,
                        cSkyboxTexture, cSkyboxBlend);
   render_manager.render(cMesh->get_vao(), cTransform.calculate(), cShader.name);
   cMesh->unbind_textures(cTexture, cTextureAtlas, cBlendTexture);
@@ -74,6 +73,57 @@ void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTe
     sp.bind();
     sp.set_bool("display_hitbox", false);
     sp.unbind();
+  }
+}
+
+void render_model(CBody* cBody, RenderManager& render_manager, const CTransform& cTransform, const CShader& cShader) {
+  const Model& model = *cBody->handle.get();
+  for (const auto& submesh : model.get_submeshes()) {
+    const Material& mat = *submesh.material.get();
+    const RenderState& state = mat.get_state();
+    const MaterialParams& params = mat.get_params();
+    const MaterialTextures& textures = mat.get_textures();
+    Shader& sp = *mat.get_shader_handle().get();
+
+    // if (state.blend)
+    //   RenderAPI::toggle_blend(true);
+    // if (!state.depth_write)
+    //   RenderAPI::toggle_depth_write(false);
+    if (!state.cull)
+      RenderAPI::toggle_culling(false);
+
+    // Set material uniforms while shader is bound.
+    // render_manager.render() will re-bind and set MVP on top — that's fine,
+    // OpenGL uniforms are per-program state and survive a re-bind.
+    sp.bind();
+    sp.set_vec4("u_base_color_factor", params.base_color_factor);
+    sp.set_vec3("u_emissive_factor", params.emissive_factor);
+    sp.set_float("u_metallic_factor", params.metallic_factor);
+    sp.set_float("u_roughness_factor", params.roughness_factor);
+    sp.set_float("u_alpha_cutoff", params.alpha_cutoff);
+
+    uint32_t slot = 0;
+    auto bind_tex = [&](const AssetHandle<Texture>& handle, std::string_view uniform) {
+      if (handle.is_valid()) {
+        handle.get()->bind_slot(slot);
+        sp.set_int(uniform, static_cast<int>(slot++));
+      }
+    };
+    bind_tex(textures.base_color, "u_base_color");
+    bind_tex(textures.normal, "u_normal_map");
+    bind_tex(textures.metallic_roughness, "u_metallic_roughness");
+    bind_tex(textures.emissive, "u_emissive_map");
+    bind_tex(textures.occlusion, "u_occlusion_map");
+
+    // render_manager binds shader again, sets projection/view/model/camera, draws, unbinds
+    render_manager.render(submesh.mesh->get_vao(), cTransform.calculate(), cShader.name);
+
+    // if (state.blend)
+    //   RenderAPI::toggle_blend(false);
+    // if (!state.depth_write)
+    //   RenderAPI::toggle_depth_write(true);
+    if (!state.cull)
+      RenderAPI::toggle_culling(true);
   }
 }
 
@@ -124,7 +174,6 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
       CTextureAtlas* cTextureAtlas = registry.try_get<CTextureAtlas>(e);
       CColor* cColor = registry.try_get<CColor>(e);
       CBlendColor* cBlendColor = registry.try_get<CBlendColor>(e);
-      CMaterial* cMaterial = registry.try_get<CMaterial>(e);
       CReflection* cReflection = registry.try_get<CReflection>(e);
       CTransparent* cTransparent = registry.try_get<CTransparent>(e);
       // TODO improve we check this component to see if the entity is a skybox
@@ -147,16 +196,10 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
             }
           }
 
-          render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cMaterial, cReflection, cSkybox,
-                 cSkyboxTexture, cBlendTexture, cMesh, cTransform, cShader, cCollider, cTransparent, render_manager);
+          render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cReflection, cSkybox, cSkyboxTexture,
+                 cBlendTexture, cMesh, cTransform, cShader, cCollider, cTransparent, render_manager);
         } else if (cBody) { // models
-          for (uint32_t i = 0; i < cBody->meshes.size(); ++i) {
-            CMesh* mesh = cBody->meshes.at(i);
-            CMaterial* material = cBody->materials.at(i);
-            // TODO Add textures as CTexture
-            render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, material, cReflection, cSkybox,
-                   cSkyboxTexture, cBlendTexture, mesh, cTransform, cShader, cCollider, cTransparent, render_manager);
-          }
+          render_model(cBody, render_manager, cTransform, cShader);
         } else if (cShape) { // primitives
           if (not cTexture and not cTextureAtlas) {
             CName* cName = registry.try_get<CName>(e);
@@ -168,9 +211,8 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
           }
 
           for (auto& mesh : cShape->meshes) {
-            render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cMaterial, cReflection, cSkybox,
-                   cSkyboxTexture, cBlendTexture, mesh.get(), cTransform, cShader, cCollider, cTransparent,
-                   render_manager);
+            render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cReflection, cSkybox, cSkyboxTexture,
+                   cBlendTexture, mesh.get(), cTransform, cShader, cCollider, cTransparent, render_manager);
           }
         } else {
           CName* cName = registry.try_get<CName>(e);
@@ -204,5 +246,4 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
 
   render_manager.end_scene();
 }
-
 }
