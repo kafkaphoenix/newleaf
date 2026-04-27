@@ -68,9 +68,9 @@ void register_components() {
     .func<&assign<CDistanceFromCamera>>("assign"_hs);
 
   entt::meta<CName>()
-    .type("name"_hs)
+    .type("id"_hs)
     .ctor<&cast_cname, entt::as_ref_t>()
-    .data<&CName::name>("name"_hs)
+    .data<&CName::id>("id"_hs)
     .func<&CName::print>("print"_hs)
     .func<&CName::to_map>("to_map"_hs)
     .func<&assign<CName, std::string>>("assign"_hs);
@@ -102,7 +102,7 @@ void register_components() {
   entt::meta<CFBO>()
     .type("fbo"_hs)
     .ctor<&cast_cfbo, entt::as_ref_t>()
-    .data<&CFBO::fbo>("fbo"_hs)
+    .data<&CFBO::id>("id"_hs)
     .data<&CFBO::_mode>("mode"_hs)
     .data<&CFBO::time>("time"_hs)
     .data<&CFBO::_attachment>("attachment"_hs)
@@ -124,7 +124,7 @@ void register_components() {
   entt::meta<CShader>()
     .type("shader"_hs)
     .ctor<&cast_cshader, entt::as_ref_t>()
-    .data<&CShader::name>("name"_hs)
+    .data<&CShader::id>("id"_hs)
     .data<&CShader::visible>("visible"_hs)
     .func<&CShader::print>("print"_hs)
     .func<&CShader::to_map>("to_map"_hs)

@@ -68,13 +68,14 @@ void SceneManager::on_update(const Time& ts) {
 
 entt::registry& SceneManager::get_registry() { return m_registry; }
 
-entt::entity SceneManager::get_entity(std::string_view name) {
+entt::entity SceneManager::get_entity(std::string_view id) {
   for (const auto& [e, cName, _] : m_registry.view<CName, CUUID>().each()) {
-    if (cName.name == name) {
+    if (cName.id == id) {
       return e;
     }
   }
-  ENGINE_ASSERT(false, "entity with name {} not found", name);
+  ENGINE_WARN("entity with id {} not found", id);
+  return entt::null;
 }
 
 entt::entity SceneManager::get_entity(const UUID& uuid) {
@@ -83,7 +84,8 @@ entt::entity SceneManager::get_entity(const UUID& uuid) {
       return e;
     }
   }
-  ENGINE_ASSERT(false, "entity with UUID {} not found", std::to_string(uuid.value()));
+  ENGINE_WARN("entity with uuid {} not found", std::to_string(uuid.value()));
+  return entt::null;
 }
 
 const std::vector<std::string>& SceneManager::get_named_systems() {

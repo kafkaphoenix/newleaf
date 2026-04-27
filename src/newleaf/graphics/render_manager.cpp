@@ -35,8 +35,9 @@ void RenderManager::add_framebuffer(std::string&& name, uint32_t w, uint32_t h, 
 
 void RenderManager::delete_framebuffer(std::string_view name) { m_framebuffers.erase(name.data()); }
 
-void RenderManager::render_framebuffer(const VAO& vao, std::string_view fbo) {
-  Shader& sp = *Application::get().get_assets_manager().get<Shader>("fbo").get();
+// TODO redo this when updating fbo
+void RenderManager::render_framebuffer(const VAO& vao, const AssetHandle<Shader>& shader, std::string_view fbo) {
+  Shader& sp = *shader.get();
 
   sp.bind();
   // TODO avoid hardcoded slot here move to other place and delete this method
@@ -54,9 +55,8 @@ void RenderManager::render_inside_imgui(const VAO& vao, std::string_view fbo, st
   update_metrics(vao);
 }
 
-void RenderManager::render(const VAO& vao, const glm::mat4& transform, std::string_view shader) {
-  Shader& sp = *Application::get().get_assets_manager().get<Shader>(shader).get();
-
+void RenderManager::render(const VAO& vao, const glm::mat4& transform, const AssetHandle<Shader>& shader) {
+  Shader& sp = *shader.get();
   sp.bind();
   sp.set_mat4("projection", m_projection);
   sp.set_mat4("view", m_view);

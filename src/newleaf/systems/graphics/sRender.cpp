@@ -49,10 +49,11 @@ void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTe
   }
   // TODO im sending sp in a weird way here *application, reset uniform maybe i dont need?
   const auto& assets_manager = application_manager.get_assets_manager();
-  Shader& sp = *assets_manager.get<Shader>(cShader.name).get();
+  AssetHandle<Shader> shader = assets_manager.get<Shader>(cShader.id);
+  Shader& sp = *shader.get();
   cMesh->bind_textures(sp, cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cReflection, cSkybox,
                        cSkyboxTexture, cSkyboxBlend);
-  render_manager.render(cMesh->get_vao(), cTransform.calculate(), cShader.name);
+  render_manager.render(cMesh->get_vao(), cTransform.calculate(), shader);
   cMesh->unbind_textures(cTexture, cTextureAtlas, cBlendTexture);
   if (cTransparent and cTransparent->transparent) {
     RenderAPI::toggle_culling(true);
@@ -68,7 +69,7 @@ void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTe
     sp.set_bool("display_hitbox", true);
     sp.set_vec4("hitbox_color", cCollider->color);
     sp.unbind();
-    render_manager.render(cCollider->mesh.get_vao(), cTransform.calculate(), cShader.name);
+    render_manager.render(cCollider->mesh.get_vao(), cTransform.calculate(), shader);
   } else if (cCollider and not display_hitbox) {
     sp.bind();
     sp.set_bool("display_hitbox", false);
@@ -76,14 +77,15 @@ void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTe
   }
 }
 
-void render_model(CBody* cBody, RenderManager& render_manager, const CTransform& cTransform, const CShader& cShader) {
+void render_model(CBody* cBody, RenderManager& render_manager, const CTransform& cTransform) {
   const Model& model = *cBody->handle.get();
   for (const auto& submesh : model.get_submeshes()) {
     const Material& mat = *submesh.material.get();
     const RenderState& state = mat.get_state();
     const MaterialParams& params = mat.get_params();
     const MaterialTextures& textures = mat.get_textures();
-    Shader& sp = *mat.get_shader_handle().get();
+    AssetHandle<Shader> shader = mat.get_shader_handle();
+    Shader& sp = *shader.get();
 
     // if (state.blend)
     //   RenderAPI::toggle_blend(true);
@@ -102,13 +104,14 @@ void render_model(CBody* cBody, RenderManager& render_manager, const CTransform&
     sp.set_float("u_roughness_factor", params.roughness_factor);
     sp.set_float("u_alpha_cutoff", params.alpha_cutoff);
 
-    uint32_t slot = 0;
+    uint32_t slot = 1;
     auto bind_tex = [&](const AssetHandle<Texture>& handle, std::string_view uniform) {
       if (handle.is_valid()) {
         handle.get()->bind_slot(slot);
         sp.set_int(uniform, static_cast<int>(slot++));
       }
     };
+    // TODO only base color and normal map are accepted for now
     bind_tex(textures.base_color, "u_base_color");
     bind_tex(textures.normal, "u_normal_map");
     bind_tex(textures.metallic_roughness, "u_metallic_roughness");
@@ -116,7 +119,7 @@ void render_model(CBody* cBody, RenderManager& render_manager, const CTransform&
     bind_tex(textures.occlusion, "u_occlusion_map");
 
     // render_manager binds shader again, sets projection/view/model/camera, draws, unbinds
-    render_manager.render(submesh.mesh->get_vao(), cTransform.calculate(), cShader.name);
+    render_manager.render(submesh.mesh->get_vao(), cTransform.calculate(), shader);
 
     // if (state.blend)
     //   RenderAPI::toggle_blend(false);
@@ -135,7 +138,7 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
   entt::entity fbo = registry.view<CFBO, CUUID>().front();
   if (fbo not_eq entt::null) {
     const CFBO& cfbo = registry.get<CFBO>(fbo);
-    const auto& default_FBO = render_manager.get_framebuffers().at(cfbo.fbo);
+    const auto& default_FBO = render_manager.get_framebuffers().at(cfbo.id);
     default_FBO->bind_to_draw();
     RenderAPI::toggle_depth_test(true);
   }
@@ -190,7 +193,7 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
           if (not cTexture and not cTextureAtlas) {
             CName* cName = registry.try_get<CName>(e);
             if (cName) {
-              APP_ASSERT(false, "no texture found for entity {} {}", cUUID.uuid, cName->name);
+              APP_ASSERT(false, "no texture found for entity {} {}", cUUID.uuid, cName->id);
             } else {
               APP_ASSERT(false, "no texture found for entity {}", cUUID.uuid);
             }
@@ -199,12 +202,12 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
           render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cReflection, cSkybox, cSkyboxTexture,
                  cBlendTexture, cMesh, cTransform, cShader, cCollider, cTransparent, render_manager);
         } else if (cBody) { // models
-          render_model(cBody, render_manager, cTransform, cShader);
+          render_model(cBody, render_manager, cTransform);
         } else if (cShape) { // primitives
           if (not cTexture and not cTextureAtlas) {
             CName* cName = registry.try_get<CName>(e);
             if (cName) {
-              APP_ASSERT(false, "no texture found for entity {} {}", cUUID.uuid, cName->name);
+              APP_ASSERT(false, "no texture found for entity {} {}", cUUID.uuid, cName->id);
             } else {
               APP_ASSERT(false, "no texture found for entity {}", cUUID.uuid);
             }
@@ -217,7 +220,7 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
         } else {
           CName* cName = registry.try_get<CName>(e);
           if (cName) {
-            APP_ASSERT(false, "no mesh found for entity {} {}", cUUID.uuid, cName->name);
+            APP_ASSERT(false, "no mesh found for entity {} {}", cUUID.uuid, cName->id);
           } else {
             APP_ASSERT(false, "no mesh found for entity {}", cUUID.uuid);
           }
@@ -227,20 +230,22 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
 
   if (fbo not_eq entt::null) {
     CFBO& cfbo = registry.get<CFBO>(fbo);
-    const auto& default_FBO = render_manager.get_framebuffers().at(cfbo.fbo);
+    const auto& default_FBO = render_manager.get_framebuffers().at(cfbo.id);
     // go back to default framebuffer
     default_FBO->unbind();
     RenderAPI::clear_color();
     // disable depth test so screen-space quad isn't discarded due to depth test.
     RenderAPI::toggle_depth_test(false);
+    CShader& cShader = registry.get<CShader>(fbo);
+    AssetHandle<Shader> shader = Application::get().get_assets_manager().get<Shader>(cShader.id);
     CShape& cShape = registry.get<CShape>(fbo);
-    cfbo.setup_properties(*app.get_assets_manager().get<Shader>("fbo").get());
+    cfbo.setup_properties(shader);
     const auto& settings_manager = app.get_settings_manager();
     if (settings_manager.imgui_window) {
-      render_manager.render_inside_imgui(cShape.meshes.at(0)->get_vao(), cfbo.fbo, "scene", {0, 0}, {0, 0},
+      render_manager.render_inside_imgui(cShape.meshes.at(0)->get_vao(), cfbo.id, "scene", {0, 0}, {0, 0},
                                          settings_manager.fit_to_window);
     } else {
-      render_manager.render_framebuffer(cShape.meshes.at(0)->get_vao(), cfbo.fbo);
+      render_manager.render_framebuffer(cShape.meshes.at(0)->get_vao(), shader, cfbo.id);
     }
   }
 

@@ -1,5 +1,6 @@
 #include "model.h"
 
+#include <assimp/GltfMaterial.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
@@ -12,8 +13,8 @@
 
 namespace nl {
 
-Model::Model(std::filesystem::path fp, std::filesystem::path shader_path, std::optional<bool> gamma_correction)
-  : m_path(fp.string()) {
+Model::Model(std::filesystem::path fp, std::string shader_id, std::optional<bool> gamma_correction)
+  : m_path(fp.string()), m_shader_id(std::move(shader_id)) {
   ENGINE_ASSERT(not gamma_correction.has_value(), "gamma correction not yet implemented");
 
   const std::string directory = fp.parent_path().string();
@@ -30,16 +31,9 @@ Model::Model(std::filesystem::path fp, std::filesystem::path shader_path, std::o
   std::vector<AssetHandle<Material>> materials;
   materials.reserve(scene->mNumMaterials);
   for (uint32_t i = 0; i < scene->mNumMaterials; ++i)
-    materials.push_back(create_material(scene->mMaterials[i], directory, shader_path));
+    materials.push_back(create_material(scene->mMaterials[i], directory, i));
 
-  size_t total_meshes = 0;
-  std::function<void(aiNode*)> count_meshes = [&](aiNode* node) {
-    total_meshes += node->mNumMeshes;
-    for (uint32_t i = 0; i < node->mNumChildren; ++i)
-      count_meshes(node->mChildren[i]);
-  };
-  count_meshes(scene->mRootNode);
-  m_submeshes.reserve(total_meshes);
+  m_submeshes.reserve(scene->mNumMeshes);
 
   process_node(scene->mRootNode, scene->mMeshes, materials);
 }
@@ -47,7 +41,7 @@ Model::Model(std::filesystem::path fp, std::filesystem::path shader_path, std::o
 void Model::process_node(aiNode* node, aiMesh** meshes, const std::vector<AssetHandle<Material>>& materials) {
   for (uint32_t i = 0; i < node->mNumMeshes; ++i) {
     aiMesh* mesh = meshes[node->mMeshes[i]];
-    m_submeshes.push_back(SubMesh{create_mesh(mesh), materials.at(mesh->mMaterialIndex)});
+    m_submeshes.emplace_back(create_mesh(mesh), materials.at(mesh->mMaterialIndex));
   }
   for (uint32_t i = 0; i < node->mNumChildren; ++i)
     process_node(node->mChildren[i], meshes, materials);
@@ -91,21 +85,40 @@ std::unique_ptr<CMesh> Model::create_mesh(aiMesh* mesh) {
   return std::make_unique<CMesh>(std::move(vao));
 }
 
-AssetHandle<Material> Model::create_material(aiMaterial* mat, const std::string& directory,
-                                             const std::filesystem::path& shader_path) {
+AssetHandle<Material> Model::create_material(aiMaterial* mat, const std::string& directory, uint32_t index) {
   MaterialTextures textures{};
   MaterialParams params{};
   RenderState state{};
-  aiColor3D color(0.f, 0.f, 0.f);
-  float shininess{};
+  aiColor4D color{1.0f, 1.0f, 1.0f, 1.0f};
+  aiColor3D emissive_color{0.0f, 0.0f, 0.0f};
+  float metallic = 1.0f;
+  float roughness = 1.0f;
+  aiString alpha_mode;
 
-  mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-  params.base_color_factor = glm::vec4(color.r, color.g, color.b, 1.0f);
-  mat->Get(AI_MATKEY_COLOR_EMISSIVE, color);
-  params.emissive_factor = glm::vec3(color.r, color.g, color.b);
-  mat->Get(AI_MATKEY_SHININESS, shininess);
-  params.metallic_factor = shininess;
-  params.roughness_factor = 1.0f - shininess;
+  mat->Get(AI_MATKEY_BASE_COLOR, color);
+  params.base_color_factor = glm::vec4(color.r, color.g, color.b, color.a);
+  mat->Get(AI_MATKEY_COLOR_EMISSIVE, emissive_color);
+  params.emissive_factor = glm::vec3(emissive_color.r, emissive_color.g, emissive_color.b);
+  mat->Get(AI_MATKEY_METALLIC_FACTOR, metallic);
+  params.metallic_factor = metallic;
+  mat->Get(AI_MATKEY_ROUGHNESS_FACTOR, roughness);
+  params.roughness_factor = roughness;
+
+  if (mat->Get(AI_MATKEY_GLTF_ALPHAMODE, alpha_mode) == AI_SUCCESS) {
+    std::string_view mode = alpha_mode.C_Str();
+
+    if (mode == "MASK") {
+      mat->Get(AI_MATKEY_GLTF_ALPHACUTOFF, params.alpha_cutoff);
+    } else if (mode == "BLEND") {
+      state.blend = true;
+      state.depth_write = false;
+    }
+  }
+
+  int double_sided = 0;
+  if (mat->Get(AI_MATKEY_TWOSIDED, double_sided) == AI_SUCCESS) {
+    state.cull = (double_sided == 0);
+  }
 
   auto& assets_manager = Application::get().get_assets_manager();
   aiString source;
@@ -122,18 +135,34 @@ AssetHandle<Material> Model::create_material(aiMaterial* mat, const std::string&
       m_loaded_textures.emplace_back(dst);
   };
 
-  load_tex(aiTextureType_DIFFUSE, "base_color", textures.base_color);
-  load_tex(aiTextureType_NORMALS, "normal", textures.normal);
-  load_tex(aiTextureType_EMISSIVE, "emissive", textures.emissive);
-  load_tex(aiTextureType_SPECULAR, "metallic_roughness", textures.metallic_roughness);
-  load_tex(aiTextureType_AMBIENT, "occlusion", textures.occlusion);
+  // PBR Metallic/Roughness types first, legacy fallback for non-PBR models (e.g. OBJ)
+  load_tex(aiTextureType_BASE_COLOR, "base_color", textures.base_color);
+  if (!textures.base_color.is_valid())
+    load_tex(aiTextureType_DIFFUSE, "base_color", textures.base_color);
 
-  const std::string shader_id = shader_path.string();
-  AssetHandle<Shader> shader = assets_manager.get_or_load<Shader>(shader_id, std::string(shader_id), std::string(shader_id));
+  load_tex(aiTextureType_NORMALS, "normal", textures.normal);
+
+  load_tex(aiTextureType_EMISSION_COLOR, "emissive", textures.emissive);
+  if (!textures.emissive.is_valid())
+    load_tex(aiTextureType_EMISSIVE, "emissive", textures.emissive);
+
+  load_tex(aiTextureType_METALNESS, "metallic_roughness", textures.metallic_roughness);
+  if (!textures.metallic_roughness.is_valid())
+    load_tex(aiTextureType_UNKNOWN, "metallic_roughness", textures.metallic_roughness);
+  if (!textures.metallic_roughness.is_valid())
+    load_tex(aiTextureType_GLTF_METALLIC_ROUGHNESS, "metallic_roughness", textures.metallic_roughness);
+
+  load_tex(aiTextureType_AMBIENT_OCCLUSION, "occlusion", textures.occlusion);
+  if (!textures.occlusion.is_valid())
+    load_tex(aiTextureType_LIGHTMAP, "occlusion", textures.occlusion);
+
+  AssetHandle<Shader> shader =
+    assets_manager.get<Shader>(m_shader_id);
 
   aiString mat_name;
   mat->Get(AI_MATKEY_NAME, mat_name);
-  std::string material_name = mat_name.length > 0 ? mat_name.C_Str() : "Material";
+  // Assimp material names can be empty, so we use a fallback name based on the model path and material index to ensure uniqueness for caching in the assets manager
+  std::string material_name = mat_name.length > 0 ? mat_name.C_Str() : "Material_" + std::to_string(index);
   std::string material_id = m_path + "::" + material_name;
 
   return assets_manager.get_or_load<Material>(material_id, material_name, shader, textures, params, state);
@@ -145,6 +174,7 @@ const std::map<std::string, std::string, NumericComparator>& Model::to_map() {
 
   m_info["type"] = "Model";
   m_info["path"] = m_path;
+  m_info["shader"] = m_shader_id;
   m_info["meshes"] = std::to_string(m_submeshes.size());
   for (uint32_t i = 0; i < m_loaded_textures.size(); ++i)
     m_info["loaded_texture_" + std::to_string(i)] = std::to_string(i);

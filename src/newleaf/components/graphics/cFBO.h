@@ -8,6 +8,7 @@
 #include <entt/entt.hpp>
 
 #include "../../application/application.h"
+#include "../../assets/asset_handle.h"
 #include "../../assets/shader.h"
 #include "../../graphics/framebuffer.h"
 #include "../../graphics/render_manager.h"
@@ -53,7 +54,7 @@ struct CFBO {
       mirror
     };
 
-    std::string fbo;
+    std::string id;
     std::string _mode;
     Mode mode;
     float time{};
@@ -63,18 +64,18 @@ struct CFBO {
     uint32_t height{};
 
     CFBO() = default;
-    explicit CFBO(std::string&& fbo, Mode m, float t, std::string&& attachment, uint32_t w, uint32_t h)
-      : fbo(std::move(fbo)), mode(m), time(t), _attachment(std::move(attachment)), width(w), height(h) {}
+    explicit CFBO(std::string&& id, Mode m, float t, std::string&& attachment, uint32_t w, uint32_t h)
+      : id(std::move(id)), mode(m), time(t), _attachment(std::move(attachment)), width(w), height(h) {}
 
     void print() const {
-      ENGINE_BACKTRACE("\t\tfbo: {0}\n\t\t\t\t\t\tmode: {1}\n\t\t\t\t\t\ttime: {2}\n\t\t\t\t\t\tattachment: "
+      ENGINE_BACKTRACE("\t\tid: {0}\n\t\t\t\t\t\tmode: {1}\n\t\t\t\t\t\ttime: {2}\n\t\t\t\t\t\tattachment: "
                        "{3}\n\t\t\t\t\t\twidth: {4}\n\t\t\t\t\t\theight: {5}",
-                       fbo, _mode, time, _attachment, width, height);
+                       id, _mode, time, _attachment, width, height);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
       std::map<std::string, std::string, NumericComparator> info;
-      info["fbo"] = fbo;
+      info["id"] = id;
       info["mode"] = _mode;
       info["time"] = std::to_string(time);
       info["attachment"] = _attachment;
@@ -162,7 +163,8 @@ struct CFBO {
       }
     }
 
-    void setup_properties(Shader& sp) {
+    void setup_properties(const AssetHandle<Shader>& shader) {
+      Shader& sp = *shader.get();
       sp.bind();
       sp.set_float("time", time);
       if (mode == Mode::normal) {
@@ -234,12 +236,12 @@ struct CFBO {
 template <> inline void nl::SceneManager::on_component_added(CFBO& c) {
   c.set_mode();
   c.set_attachment();
-  ENGINE_ASSERT(!c.fbo.empty(), "fbo name is empty");
+  ENGINE_ASSERT(!c.id.empty(), "fbo id cannot be empty!");
   if (c.width == 0 or c.height == 0) {
     const auto& settings_manager = Application::get().get_settings_manager();
     c.width = settings_manager.window_w;
     c.height = settings_manager.window_h;
   }
   auto& render_manager = Application::get().get_render_manager();
-  render_manager.add_framebuffer(std::string(c.fbo), c.width, c.height, c.attachment);
+  render_manager.add_framebuffer(std::string(c.id), c.width, c.height, c.attachment);
 }

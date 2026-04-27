@@ -112,7 +112,8 @@ void Shader::unbind() const { glUseProgram(0); }
 GLint Shader::get_uniform_location(std::string_view name) const {
   auto it = m_uniform_lookup.find(std::string(name));
   if (it == m_uniform_lookup.end()) {
-    // TODO after we move uniforms to material and uniform buffer objects we can re enable this, it is useful to catch typos and missing uniforms in shaders
+    // TODO after we move uniforms to material and uniform buffer objects we can re enable this, it is useful to catch
+    // typos and missing uniforms in shaders
     // ENGINE_WARN("uniform '{}' not found in shader '{}'", name, m_name);
     return -1;
   }
@@ -183,6 +184,8 @@ void Shader::save_active_uniforms() {
 
     uniforms.push_back({static_cast<GLenum>(values[1]), name, location});
   }
+
+  m_active_uniforms = std::move(uniforms);
 
   print_active_uniforms();
 }

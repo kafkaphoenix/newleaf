@@ -9,6 +9,7 @@
 #define GLM_FORCE_CTOR_INIT
 #include <glm/glm.hpp>
 
+#include "../assets/asset_handle.h"
 #include "../assets/shader.h"
 #include "../utils/numeric_comparator.h"
 #include "framebuffer.h"
@@ -33,8 +34,9 @@ class RenderManager {
     void delete_framebuffer(std::string_view framebuffer);
     const std::unordered_map<std::string, std::unique_ptr<FBO>>& get_framebuffers() const { return m_framebuffers; }
 
-    void render(const VAO& vao, const glm::mat4& transform, std::string_view shader);
-    void render_framebuffer(const VAO& vao, std::string_view fbo);
+    void render(const VAO& vao, const glm::mat4& transform, const AssetHandle<Shader>& shader);
+    // TODO redo this when updating fbo i shouldn't store fbo
+    void render_framebuffer(const VAO& vao, const AssetHandle<Shader>& shader, std::string_view fbo);
     void render_inside_imgui(const VAO& vao, std::string_view fbo, std::string_view title, glm::vec2 size,
                              glm::vec2 position, bool fit_to_window);
     uint32_t get_framebuffers_count() const { return m_framebuffers.size(); }

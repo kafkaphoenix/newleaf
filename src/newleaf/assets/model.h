@@ -27,8 +27,7 @@ struct SubMesh {
 class Model : public Asset {
   public:
     Model() = delete;
-    Model(std::filesystem::path fp, std::filesystem::path shader_path,
-          std::optional<bool> gamma_correction = std::nullopt);
+    Model(std::filesystem::path fp, std::string shader_id, std::optional<bool> gamma_correction = std::nullopt);
 
     const std::vector<SubMesh>& get_submeshes() const { return m_submeshes; }
 
@@ -39,6 +38,7 @@ class Model : public Asset {
 
   private:
     std::string m_path;
+    std::string m_shader_id;
     std::vector<SubMesh> m_submeshes;
     std::vector<AssetHandle<Texture>> m_loaded_textures;
     std::map<std::string, std::string, NumericComparator> m_info;
@@ -46,8 +46,7 @@ class Model : public Asset {
 
     void process_node(aiNode* node, aiMesh** meshes, const std::vector<AssetHandle<Material>>& materials);
     std::unique_ptr<CMesh> create_mesh(aiMesh* mesh);
-    AssetHandle<Material> create_material(aiMaterial* mat, const std::string& directory,
-                                          const std::filesystem::path& shader_path);
+    AssetHandle<Material> create_material(aiMaterial* mat, const std::string& directory, uint32_t index);
 };
 
 }

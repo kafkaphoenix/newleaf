@@ -152,7 +152,7 @@ void SceneFactory::create_textures(const Scene& scene, AssetsManager& assets_man
 void SceneFactory::create_models(const Scene& scene, AssetsManager& assets_manager) {
   for (const auto& [model, options] : scene.get_models()) {
     bool gamma_correction = options.contains("gamma_correction") ? options.at("gamma_correction").get<bool>() : false;
-    assets_manager.get_or_load<Model>(model, options.at("path").get<std::string>(), options.at("shader_path").get<std::string>(), gamma_correction);
+    assets_manager.get_or_load<Model>(model, options.at("path").get<std::string>(), options.at("shader_id").get<std::string>(), gamma_correction);
   }
 }
 
@@ -206,7 +206,7 @@ SceneFactory::get_named_entities(entt::registry& registry) {
 
   m_named_entities.clear();
   registry.view<CName, CUUID>().each(
-    [&](entt::entity e, const CName& cName, const CUUID& cUUID) { m_named_entities.emplace(cName.name, e); });
+    [&](entt::entity e, const CName& cName, const CUUID& cUUID) { m_named_entities.emplace(cName.id, e); });
   m_dirty_named_entities = false;
 
   return m_named_entities;

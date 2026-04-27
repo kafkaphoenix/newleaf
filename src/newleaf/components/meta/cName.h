@@ -9,16 +9,16 @@
 namespace nl {
 
 struct CName {
-    std::string name;
+    std::string id;
 
     CName() = default;
-    explicit CName(std::string&& n) : name(std::move(n)) {}
+    explicit CName(std::string&& id) : id(std::move(id)) {}
 
-    void print() const { ENGINE_BACKTRACE("\t\tname: {}", name); }
+    void print() const { ENGINE_BACKTRACE("\t\tid: {}", id); }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
       std::map<std::string, std::string, NumericComparator> info;
-      info["name"] = name;
+      info["id"] = id;
 
       return info;
     }
