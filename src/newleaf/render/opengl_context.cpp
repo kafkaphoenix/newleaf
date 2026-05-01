@@ -7,6 +7,7 @@
 
 namespace nl {
 
+// TODO with multi we need to indicate which window's context we want to load? ir which window we refer in the error messages
 OpenGLContext::OpenGLContext(GLFWwindow* w) : m_window(w) { ENGINE_ASSERT(w, "window is null!"); }
 
 void OpenGLContext::init() {

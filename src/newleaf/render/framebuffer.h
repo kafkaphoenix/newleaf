@@ -22,7 +22,7 @@ class FBO {
     void attach_depth_stencil_render_buffer();
     void bind_to_draw();
     void bind_to_read();
-    void unbind();
+    void unbind() const;
     void clear(const float color[4], const float depth);
 
     void resize(uint32_t width, uint32_t height);

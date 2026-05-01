@@ -8,7 +8,7 @@
 
 #include <entt/entt.hpp>
 
-#include "../assets/assets_manager.h"
+#include "../assets/asset_handle.h"
 #include "../assets/prefab.h"
 #include "../utils/numeric_comparator.h"
 
@@ -18,17 +18,12 @@ class EntityFactory {
   public:
     using Prototypes = std::map<std::string, entt::entity, NumericComparator>;
 
-    void create_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
-                           entt::registry& registry, const AssetsManager& assets_manager);
-    void update_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
-                           entt::registry& registry, const AssetsManager& assets_manager);
-    void delete_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids,
-                           entt::registry& registry);
-    Prototypes get_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids);
-    bool contains_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids) const;
+    void create_prototypes(AssetHandle<Prefab> handle, entt::registry& registry);
+    void update_prototypes(AssetHandle<Prefab> handle, entt::registry& registry);
+    void delete_prototypes(AssetHandle<Prefab> handle, entt::registry& registry);
+    Prototypes get_prototypes(std::string_view uuid, const std::vector<std::string>& prototype_ids);
 
     const std::map<std::string, Prototypes, NumericComparator>& get_all_prototypes();
-    const std::map<std::string, std::string, NumericComparator>& get_prototypes_count_by_prefab();
     // does not delete entt entities, just clears the map
     void clear_prototypes();
 

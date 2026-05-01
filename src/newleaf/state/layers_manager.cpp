@@ -9,10 +9,9 @@ namespace nl {
 LayersManager::LayersManager() { ENGINE_TRACE("initializing layers manager"); }
 
 LayersManager::~LayersManager() {
-  ENGINE_WARN("deleting layers manager");
   for (auto& l : m_layers) {
     if (l->is_enabled()) {
-      ENGINE_WARN("detaching layer {}", l->get_name());
+      ENGINE_TRACE("detaching layer {}", l->get_name());
       l->on_detach();
     }
   }
@@ -93,10 +92,9 @@ void LayersManager::disable_overlay(std::string_view name) {
 }
 
 void LayersManager::clear() {
-  ENGINE_DEBUG("clearing layers manager");
   for (auto& l : m_layers) {
     if (l->is_enabled()) {
-      ENGINE_DEBUG("detaching layer {}", l->get_name());
+      ENGINE_TRACE("detaching layer {}", l->get_name());
       l->on_detach();
     }
   }

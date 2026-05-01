@@ -10,13 +10,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-#include "../../graphics/shape_factory.h"
 #include "../../logging/log_manager.h"
+#include "../../render/shape_factory.h"
 #include "../../scene/scene_manager.h"
 #include "../../utils/assert.h"
 #include "../../utils/map_json_serializer.h"
 #include "../../utils/numeric_comparator.h"
-#include "cMesh.h"
+#include "../../render/mesh.h"
 
 namespace nl {
 
@@ -26,11 +26,11 @@ struct CShape {
     std::string _type;
     Type type;
     glm::vec3 size{glm::vec3(1.f)};
-    std::vector<std::shared_ptr<CMesh>> meshes;
+    std::vector<std::shared_ptr<Mesh>> meshes;
 
     CShape() = default;
-    explicit CShape(Type t, glm::vec3&& d, std::vector<std::shared_ptr<CMesh>>&& m)
-      : type(t), size(d), meshes(std::move(m)) {}
+    explicit CShape(Type t, glm::vec3&& d, std::vector<std::shared_ptr<Mesh>>&& m)
+      : type(t), size(std::move(d)), meshes(std::move(m)) {}
 
     void print() const {
       ENGINE_BACKTRACE("\t\ttype: {0}\n\t\t\t\t\t\tsize: {1}\n\t\t\t\t\t\tmeshes: "
@@ -59,17 +59,17 @@ struct CShape {
       meshes.clear();
       if (_type == "triangle") {
         type = CShape::Type::triangle;
-        meshes.emplace_back(std::make_shared<CMesh>(std::move(ShapeFactory::create_triangle(size.x))));
+        meshes.emplace_back(std::make_shared<Mesh>(std::move(ShapeFactory::create_triangle(size.x))));
       } else if (_type == "rectangle") {
         type = CShape::Type::rectangle;
-        meshes.emplace_back(std::make_shared<CMesh>(std::move(ShapeFactory::create_rectangle(size.x, size.y, false))));
+        meshes.emplace_back(std::make_shared<Mesh>(std::move(ShapeFactory::create_rectangle(size.x, size.y, false))));
       } else if (_type == "cube") {
         type = CShape::Type::cube;
         meshes.emplace_back(
-          std::make_shared<CMesh>(std::move(ShapeFactory::create_cube(size.x, size.y, size.z, false))));
+          std::make_shared<Mesh>(std::move(ShapeFactory::create_cube(size.x, size.y, size.z, false))));
       } else if (_type == "circle") {
         type = CShape::Type::circle;
-        meshes.emplace_back(std::make_shared<CMesh>(std::move(ShapeFactory::create_circle(size.x, size.y))));
+        meshes.emplace_back(std::make_shared<Mesh>(std::move(ShapeFactory::create_circle(size.x, size.y))));
       } else {
         ENGINE_ASSERT(false, "unknown shape type {}", _type);
       }

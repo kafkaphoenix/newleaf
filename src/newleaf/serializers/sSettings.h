@@ -24,7 +24,7 @@ inline void save_settings(const SettingsManager& settings_manager, std::filesyst
   }
 
   std::ofstream file(path);
-  ENGINE_ASSERT(file.is_open(), "failed to open settings file!");
+  ENGINE_ASSERT(file.is_open(), "failed to open settings file {} for writing!", path.string());
 
   file << data.dump(4);
   file.close();
@@ -40,8 +40,8 @@ inline std::unique_ptr<SettingsManager> load_settings(std::string_view app_name)
     save_settings(*settings_manager, path);
   } else {
     std::ifstream file(path);
-    ENGINE_ASSERT(file.is_open(), "failed to open settings file!");
-    ENGINE_ASSERT(file.peek() not_eq std::ifstream::traits_type::eof(), "settings file is empty!");
+    ENGINE_ASSERT(file.is_open(), "failed to open settings file {} for reading!", path.string());
+    ENGINE_ASSERT(file.peek() not_eq std::ifstream::traits_type::eof(), "settings file {} is empty!", path.string());
     json data = json::parse(file);
     file.close();
     *settings_manager = data.get<SettingsManager>();

@@ -15,6 +15,7 @@
 
 namespace nl {
 
+// TODO rethink after SSBO support or if used for mirrors refactor removing parameteri
 Texture::Texture(uint32_t width, uint32_t height, GLenum glFormat, std::optional<bool> wrap)
   : m_width(width), m_height(height), m_opengl_format(glFormat) {
   glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
@@ -29,7 +30,6 @@ Texture::Texture(uint32_t width, uint32_t height, GLenum glFormat, std::optional
   m_mipmap_level = 1;
   m_flip_vertically = false;
   m_paths.emplace_back("fbo texture");
-  m_type = "texture_diffuse";
   // https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexStorage2D.xhtml
   if (m_opengl_format == GL_RGBA8) {
     m_format = GL_RGBA;
@@ -40,19 +40,18 @@ Texture::Texture(uint32_t width, uint32_t height, GLenum glFormat, std::optional
   }
 }
 
-Texture::Texture(std::filesystem::path&& fp, std::optional<std::string>&& type, std::optional<bool> flip_vertically,
-                 std::optional<uint32_t> mipmap_level, std::optional<bool> gamma_correction)
+Texture::Texture(std::filesystem::path&& fp, std::optional<bool> flip_vertically, std::optional<bool> gamma_correction)
   : m_directory(std::filesystem::is_directory(fp) ? std::move(fp.string()) : ""),
-    m_cubemap(std::filesystem::is_directory(fp)), m_type(std::move(type.value_or(""))),
-    m_flip_vertically(flip_vertically.value_or(true)), m_gamma_correction(gamma_correction.value_or(false)) {
-  m_mipmap_level = mipmap_level.value_or(0);
+    m_cubemap(std::filesystem::is_directory(fp)), m_flip_vertically(flip_vertically.value_or(true)),
+    m_gamma_correction(gamma_correction.value_or(false)) {
   if (m_cubemap) {
     std::string file_ext = std::filesystem::exists(fp / "front.jpg") ? ".jpg" : ".png";
     m_paths = default_cubemap_paths(fp, file_ext);
-    setup_cubemap_params();
+    glGenTextures(1, &m_id);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
   } else {
     m_paths.emplace_back(std::move(fp.string()));
-    setup_2d_params();
+    glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
   }
 
   int width, height, channels;
@@ -67,10 +66,18 @@ Texture::Texture(std::filesystem::path&& fp, std::optional<std::string>&& type, 
     m_mipmap_level = calc_mipmap_levels(width, height);
 
     if (channels == 4) {
-      m_opengl_format = GL_RGBA8;
+      if (m_gamma_correction) {
+        m_opengl_format = GL_SRGB8_ALPHA8;
+      } else {
+        m_opengl_format = GL_RGBA8;
+      }
       m_format = GL_RGBA;
     } else if (channels == 3) {
-      m_opengl_format = GL_RGB8;
+      if (m_gamma_correction) {
+        m_opengl_format = GL_SRGB8;
+      } else {
+        m_opengl_format = GL_RGB8;
+      }
       m_format = GL_RGB;
       glPixelStorei(GL_UNPACK_ALIGNMENT, (3 * width % 4 == 0) ? 4 : 1);
     } else if (channels == 2) {
@@ -97,24 +104,6 @@ Texture::Texture(std::filesystem::path&& fp, std::optional<std::string>&& type, 
   }
 }
 
-void Texture::setup_2d_params() {
-  glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
-  glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTextureParameteri(m_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-  glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
-}
-
-void Texture::setup_cubemap_params() {
-  glGenTextures(1, &m_id);
-  glBindTexture(GL_TEXTURE_CUBE_MAP, m_id);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-}
-
 std::vector<std::string> Texture::default_cubemap_paths(const std::filesystem::path& dir, const std::string& ext) {
   // order matters for cubemap to be rendered correctly
   return {(dir / ("front" + ext)).string(),  (dir / ("back" + ext)).string(),  (dir / ("top" + ext)).string(),
@@ -129,22 +118,11 @@ int Texture::calc_mipmap_levels(int width, int height) {
 
 Texture::~Texture() {
   std::string_view source = (m_paths.size() == 1) ? m_paths[0] : m_directory;
-  ENGINE_WARN("deleting texture {}: {}", m_id, source);
+  ENGINE_TRACE("deleting texture {}: {}", m_id, source);
   glDeleteTextures(1, &m_id);
 }
 
-void Texture::bind_slot(uint32_t slot) {
-  ENGINE_ASSERT(slot > 0, "texture slot {} is not allowed!", slot);
-  m_slot = slot;
-  glBindTextureUnit(slot, m_id);
-}
-
-void Texture::rebind_slot() { glBindTextureUnit(m_slot, m_id); }
-
-void Texture::unbind_slot() {
-  glBindTextureUnit(m_slot, 0); // unbind texture from slot
-  m_slot = 0;                   // nothing render to this slot
-}
+void Texture::bind(uint32_t slot) const { glBindTextureUnit(slot, m_id); }
 
 const std::map<std::string, std::string, NumericComparator>& Texture::to_map() {
   if (not m_info.empty()) {
@@ -153,12 +131,12 @@ const std::map<std::string, std::string, NumericComparator>& Texture::to_map() {
 
   m_info["type"] = "texture";
   m_info["id"] = std::to_string(m_id);
+  m_info["uuid"] = m_uuid;
   for (uint32_t i = 0; i < m_paths.size(); ++i) {
     m_info["path_" + std::to_string(i)] = m_paths[i];
   }
   m_info["width"] = std::to_string(m_width);
   m_info["height"] = std::to_string(m_height);
-  m_info["texture_type"] = m_type;
   if (m_opengl_format == GL_RGBA8) {
     m_info["openGL_format"] = "rgba8";
   } else if (m_opengl_format == GL_RGB8) {
@@ -185,7 +163,6 @@ const std::map<std::string, std::string, NumericComparator>& Texture::to_map() {
   } else {
     m_info["format"] = "unknown";
   }
-  m_info["slot"] = std::to_string(m_slot); // will be 0 if not bound except for fbo texture
   m_info["cubemap"] = m_cubemap ? "true" : "false";
   m_info["flip_vertically"] = m_flip_vertically ? "true" : "false";
   m_info["mipmap_level"] = std::to_string(m_mipmap_level);

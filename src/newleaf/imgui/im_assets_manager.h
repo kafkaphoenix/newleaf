@@ -82,13 +82,13 @@ inline void draw_assets_manager(const AssetsManager& assets_manager, const Setti
           }
           ImGui::TreePop();
         }
-      } else if (key.starts_with("loaded_texture_") and selected_asset_tab_type == "Model") {
+      } else if (key.starts_with("material_") and selected_asset_tab_type == "Model") {
         const auto& model = assets_manager.get<Model>(selected_asset_manager_tab_key).get();
-        const auto& texture_info = model->get_loaded_texture_info(value);
+        const auto& material_info = model->get_material_info(key);
         if (ImGui::TreeNode(
               (selected_asset_tab_type + selected_asset_manager_tab_key + key + settings_manager.active_scene).c_str(),
               key.c_str())) {
-          for (const auto& [k, v] : texture_info) {
+          for (const auto& [k, v] : material_info) {
             ImGui::BulletText("%s: %s", k.c_str(), v.c_str());
           }
           ImGui::TreePop();

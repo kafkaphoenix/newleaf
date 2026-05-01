@@ -59,8 +59,8 @@ void check_program_linking(uint32_t program_id) {
 
 }
 
-Shader::Shader(std::string&& name, std::filesystem::path&& base_path)
-  : m_name(std::move(name)), m_base_path(std::move(base_path)) {
+Shader::Shader(std::filesystem::path&& base_path)
+  : m_base_path(std::move(base_path)) {
 
   uint32_t vertex_id = compile_stage(GL_VERTEX_SHADER, m_base_path.string() + ".vert");
   uint32_t fragment_id = compile_stage(GL_FRAGMENT_SHADER, m_base_path.string() + ".frag");
@@ -70,16 +70,17 @@ Shader::Shader(std::string&& name, std::filesystem::path&& base_path)
   glDeleteShader(vertex_id);
   glDeleteShader(fragment_id);
 
-#ifdef GL_KHR_debug
-  // label the shader program with its name for easier debugging in tools like RenderDoc
-  glObjectLabel(GL_PROGRAM, m_id, -1, m_name.c_str());
-#endif
+  // Set the program's debug label to the shader path for easier identification in render debuggers.
+  if (glad_glObjectLabel != nullptr) {
+    glad_glObjectLabel(GL_PROGRAM, m_id, static_cast<GLsizei>(m_base_path.string().size()),
+                       m_base_path.string().c_str());
+  }
 
   save_active_uniforms();
 }
 
 Shader::~Shader() {
-  ENGINE_WARN("deleting shader {}", m_name);
+  ENGINE_TRACE("deleting shader {}", m_uuid);
   if (m_id != 0)
     glDeleteProgram(m_id);
 }
@@ -182,7 +183,7 @@ void Shader::save_active_uniforms() {
 
     m_uniform_lookup[name] = location;
 
-    uniforms.push_back({static_cast<GLenum>(values[1]), name, location});
+    uniforms.push_back(ActiveUniform{.type = static_cast<GLenum>(values[1]), .name = name, .location = location});
   }
 
   m_active_uniforms = std::move(uniforms);
@@ -206,14 +207,20 @@ std::string_view Shader::uniform_type_to_string(GLenum type) {
 }
 
 void Shader::print_active_uniforms() const {
+  constexpr std::string_view separator = "=================================";
+
+  ENGINE_BACKTRACE("===== shader {} uniforms =====", m_uuid);
+
   if (m_active_uniforms.empty()) {
-    ENGINE_WARN("shader '{}' has no active uniforms to print", m_name);
+    ENGINE_BACKTRACE("shader '{}' has no active uniforms to print", m_uuid);
+    ENGINE_BACKTRACE(separator);
     return;
   }
-  ENGINE_BACKTRACE("===== shader {} uniforms =====", m_name);
+
   for (const auto& u : m_active_uniforms)
     ENGINE_BACKTRACE("uniform {} type: {}", u.name, uniform_type_to_string(u.type));
-  ENGINE_BACKTRACE("=================================");
+
+  ENGINE_BACKTRACE(separator);
 }
 
 const std::map<std::string, std::string, NumericComparator>& Shader::to_map() {
@@ -221,7 +228,7 @@ const std::map<std::string, std::string, NumericComparator>& Shader::to_map() {
     return m_info;
 
   m_info["type"] = "shader";
-  m_info["name"] = m_name;
+  m_info["uuid"] = m_uuid;
   m_info["path"] = m_base_path.string();
   m_info["id"] = std::to_string(m_id);
 

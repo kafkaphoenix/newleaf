@@ -56,15 +56,7 @@ class SceneManager {
     const std::map<std::string, entt::entity, NumericComparator>& get_named_entities();
     std::map<std::string, std::string, NumericComparator>& compute_metrics();
 
-    // entity factory methods
-    void create_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids);
-    void update_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids);
-    void delete_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids);
-    EntityFactory::Prototypes get_prototypes(std::string_view prefab_name,
-                                             const std::vector<std::string>& prototype_ids);
-    bool contains_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids) const;
     const std::map<std::string, EntityFactory::Prototypes, NumericComparator>& get_all_prototypes();
-    const std::map<std::string, std::string, NumericComparator>& get_prototypes_count_by_prefab();
     // does not delete entt entities, just clears the map
     void clear_prototypes();
 

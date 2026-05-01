@@ -11,55 +11,39 @@
 #include "../../assets/texture.h"
 #include "../../logging/log_manager.h"
 #include "../../scene/scene_manager.h"
-#include "../../utils/assert.h"
 #include "../../utils/map_json_serializer.h"
 #include "../../utils/numeric_comparator.h"
 
 namespace nl {
 
 struct CBlendTexture {
-    std::string path;
+    std::string uuid;
     AssetHandle<Texture> handle;
     float blend_factor{};
     bool repeat{};
 
     CBlendTexture() = default;
-    explicit CBlendTexture(std::string&& p, float b) : path(std::move(p)), blend_factor(b) {}
+    explicit CBlendTexture(std::string&& uuid, float bf, bool r) : uuid(std::move(uuid)), blend_factor(bf), repeat(r) {}
 
     void print() const {
-      ENGINE_BACKTRACE("\t\tpath: {0}\n\t\t\t\t\t\tblend_factor: {1}\n\t\t\t\t\t\trepeat: {2}", path, blend_factor,
-                       repeat);
+      ENGINE_BACKTRACE("\t\tuuid: {0}\n\t\t\t\t\t\tpath: {1}\n\t\t\t\t\t\tblend_factor: {2}\n\t\t\t\t\t\trepeat: {3}",
+                       uuid, handle.get() ? handle.get()->get_path() : "undefined", blend_factor, repeat);
     }
 
     std::map<std::string, std::string, NumericComparator> to_map() const {
       std::map<std::string, std::string, NumericComparator> info;
-      info["path"] = path;
+      info["uuid"] = uuid;
       info["blend_factor"] = std::to_string(blend_factor);
-      info["texture_0"] = get_texture_info();
+      info["texture_0"] = handle.is_valid() ? map_to_json(handle.get()->to_map()) : "undefined";
       info["repeat"] = repeat ? "true" : "false";
 
       return info;
     }
 
-    std::string get_texture_info() const {
-      auto texture = handle.get();
-      return texture ? map_to_json(texture->to_map()) : "undefined";
-    }
-
     void set_texture() {
-      if (path.empty()) {
-        return;
-      }
+      ENGINE_ASSERT(!uuid.empty(), "uuid for blend texture is empty");
       const auto& assets_manager = Application::get().get_assets_manager();
-
-      handle = assets_manager.get<Texture>(path);
-    }
-
-    void reload_texture(std::string&& p) {
-      ENGINE_ASSERT(p not_eq path, "same texture path");
-      path = std::move(p);
-      handle = AssetHandle<Texture>();
-      set_texture();
+      handle = assets_manager.get<Texture>(uuid);
     }
 };
 }

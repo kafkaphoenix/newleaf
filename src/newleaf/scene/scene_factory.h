@@ -10,7 +10,7 @@
 
 #include "../assets/assets_manager.h"
 #include "../assets/scene.h"
-#include "../graphics/render_manager.h"
+#include "../render/render_manager.h"
 #include "../utils/numeric_comparator.h"
 #include "entity_factory.h"
 
@@ -37,8 +37,10 @@ class SceneFactory {
     std::map<std::string, std::string, NumericComparator>& compute_metrics(entt::registry& registry);
     const std::map<std::string, entt::entity, NumericComparator>& get_named_entities(entt::registry& registry);
 
-    EntityFactory& get_entity_factory() { return m_entity_factory; }
-    const EntityFactory& get_entity_factory() const { return m_entity_factory; }
+    const std::map<std::string, EntityFactory::Prototypes, NumericComparator>& get_all_prototypes() {
+      return m_entity_factory.get_all_prototypes();
+    }
+    void clear_prototypes() { m_entity_factory.clear_prototypes(); }
 
   private:
     std::string m_active_scene;

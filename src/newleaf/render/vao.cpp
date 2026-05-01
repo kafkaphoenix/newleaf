@@ -9,7 +9,7 @@ namespace nl {
 VAO::VAO() { glCreateVertexArrays(1, &m_id); }
 
 VAO::~VAO() {
-  ENGINE_WARN("deleting vao {}", m_id);
+  ENGINE_TRACE("deleting vao {}", m_id);
   glDeleteVertexArrays(1, &m_id);
 }
 

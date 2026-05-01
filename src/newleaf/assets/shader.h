@@ -12,6 +12,7 @@
 
 #include "../utils/numeric_comparator.h"
 #include "asset.h"
+#include "stringhash.h"
 
 namespace nl {
 
@@ -24,7 +25,7 @@ struct ActiveUniform {
 class Shader : public Asset {
 public:
     Shader() = delete;
-    Shader(std::string&& name, std::filesystem::path&& base_path);
+    Shader(std::filesystem::path&& base_path);
     ~Shader() override final;
 
     Shader(const Shader&) = delete;
@@ -41,7 +42,6 @@ public:
     void set_mat4(std::string_view name, const glm::mat4& m);
     void set_bool(std::string_view name, bool value);
     
-    std::string_view get_name() const { return m_name; }
     uint32_t get_id() const { return m_id; }
     operator GLuint() const { return m_id; }
     
@@ -49,11 +49,10 @@ public:
     bool operator==(const Asset& other) const override final;
     
     private:
-    std::string m_name;
     std::filesystem::path m_base_path;
     uint32_t m_id{};
     std::vector<ActiveUniform> m_active_uniforms;
-    std::unordered_map<std::string, GLint> m_uniform_lookup;
+    std::unordered_map<std::string, GLint, StringHash, std::equal_to<>> m_uniform_lookup;
     std::map<std::string, std::string, NumericComparator> m_info;
     
     uint32_t compile_stage(GLenum type, const std::filesystem::path& fp);

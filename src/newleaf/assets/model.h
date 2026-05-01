@@ -10,29 +10,29 @@
 
 #include <assimp/scene.h>
 
-#include "../components/graphics/Material.h"
-#include "../components/graphics/cMesh.h"
+#include "../render/mesh.h"
 #include "../utils/numeric_comparator.h"
 #include "asset.h"
 #include "asset_handle.h"
+#include "material.h"
 #include "texture.h"
 
 namespace nl {
 
 struct SubMesh {
-    std::unique_ptr<CMesh> mesh;
+    std::unique_ptr<Mesh> mesh;
     AssetHandle<Material> material;
 };
 
 class Model : public Asset {
   public:
     Model() = delete;
-    Model(std::filesystem::path fp, std::string shader_id, std::optional<bool> gamma_correction = std::nullopt);
+    Model(std::filesystem::path fp, std::string shader_id);
 
     const std::vector<SubMesh>& get_submeshes() const { return m_submeshes; }
-
+    std::string_view get_path() const { return m_path; }
     const std::map<std::string, std::string, NumericComparator>& to_map() override final;
-    const std::map<std::string, std::string, NumericComparator>& get_loaded_texture_info(std::string_view texture_id);
+    const std::map<std::string, std::string, NumericComparator>& get_material_info(std::string_view material_id);
 
     bool operator==(const Asset& other) const override final;
 
@@ -40,12 +40,10 @@ class Model : public Asset {
     std::string m_path;
     std::string m_shader_id;
     std::vector<SubMesh> m_submeshes;
-    std::vector<AssetHandle<Texture>> m_loaded_textures;
     std::map<std::string, std::string, NumericComparator> m_info;
-    std::map<std::string, std::map<std::string, std::string, NumericComparator>, NumericComparator> m_texture_info;
 
     void process_node(aiNode* node, aiMesh** meshes, const std::vector<AssetHandle<Material>>& materials);
-    std::unique_ptr<CMesh> create_mesh(aiMesh* mesh);
+    std::unique_ptr<Mesh> create_mesh(aiMesh* mesh);
     AssetHandle<Material> create_material(aiMaterial* mat, const std::string& directory, uint32_t index);
 };
 

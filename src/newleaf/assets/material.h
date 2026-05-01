@@ -8,11 +8,11 @@
 #include <string_view>
 #include <vector>
 
-#include "../../assets/asset.h"
-#include "../../assets/asset_handle.h"
-#include "../../assets/shader.h"
-#include "../../assets/texture.h"
-#include "../../utils/numeric_comparator.h"
+#include "asset.h"
+#include "asset_handle.h"
+#include "shader.h"
+#include "texture.h"
+#include "../utils/numeric_comparator.h"
 
 namespace nl {
 
@@ -41,7 +41,7 @@ struct MaterialParams {
 class Material : public Asset {
   public:
     Material() = default;
-    Material(std::string name, AssetHandle<Shader> shader, const MaterialTextures& textures,
+    Material(AssetHandle<Shader> shader, const MaterialTextures& textures,
              const MaterialParams& params, const RenderState& state);
     ~Material() override = default;
 
@@ -50,12 +50,11 @@ class Material : public Asset {
     const MaterialTextures& get_textures() const { return m_textures; }
     const MaterialParams& get_params() const { return m_params; }
     const RenderState& get_state() const { return m_state; }
-    std::string_view get_path() const { return m_path; }
     const std::map<std::string, std::string, NumericComparator>& to_map() override final;
+    const std::map<std::string, std::string, NumericComparator>& get_texture_info(std::string_view uuid);
     bool operator==(const Asset& other) const override final;
 
   private:
-    std::string m_path;
     AssetHandle<Shader> m_shader;
     MaterialTextures m_textures;
     MaterialParams m_params;

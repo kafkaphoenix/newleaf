@@ -5,7 +5,7 @@
 #include <imgui.h>
 
 #include "../assets/assets_manager.h"
-#include "../graphics/render_manager.h"
+#include "../render/render_manager.h"
 #include "../scene/scene_manager.h"
 #include "../settings/settings_manager.h"
 #include "im_about.h"
@@ -23,7 +23,7 @@ inline void draw_menubar(AssetsManager& assets_manager, RenderManager& render_ma
     if (ImGui::BeginMenu("Tools")) {
       ImGui::MenuItem("Metrics", "CTRL+M", &show_tool_metrics);
       ImGui::MenuItem("Logger", "CTRL+L", &show_tool_logger);
-      ImGui::MenuItem("About", NULL, &show_tool_about);
+      ImGui::MenuItem("About", nullptr, &show_tool_about);
       ImGui::EndMenu();
     }
     ImGui::EndMenuBar();

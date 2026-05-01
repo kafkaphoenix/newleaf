@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <map>
 #include <memory>
 #include <string>
@@ -12,47 +13,61 @@
 #include "../utils/uuid.h"
 #include "asset.h"
 #include "asset_handle.h"
+#include "stringhash.h"
 
 namespace nl {
+
 class AssetsManager {
   public:
     AssetsManager();
     ~AssetsManager();
 
-    template <typename Type, typename... Args> AssetHandle<Type> get_or_load(std::string_view id, Args&&... args) {
-      const std::string type = get_type_name<Type>();
-      auto& ids = m_assets_by_type[type]; // create type map if not exists
-      auto it = ids.find(id.data());
-      if (it != ids.end()) {
-        return AssetHandle<Type>(this, it->second);
-      }
-      UUID uuid;
-      m_assets_by_uuid.emplace(uuid, std::make_shared<Type>(std::forward<Args>(args)...));
-      ids.emplace(id, uuid);
+    template <typename Type, typename... Args> AssetHandle<Type> load(std::string_view uuid, Args&&... args) {
+      ENGINE_ASSERT(!uuid.empty(), "asset uuid cannot be empty for type {}!", get_type_name<Type>());
+      ENGINE_ASSERT(!contains<Type>(uuid), "asset {} already exists for type {}!", uuid, get_type_name<Type>());
+
+      UUID index;
+      auto asset = std::make_shared<Type>(std::forward<Args>(args)...);
+      asset->set_uuid(std::string(uuid));
+      m_assets.emplace(index, std::move(asset));
+      m_index[get_type_name<Type>()].emplace(std::string(uuid), index);
       m_dirty_view = true;
       m_dirty_metrics = true;
-      return AssetHandle<Type>(this, uuid);
+      return AssetHandle<Type>(this, index);
     }
 
-    template <typename Type> AssetHandle<Type> get(std::string_view id) const {
-      const std::string type = get_type_name<Type>();
-      auto it = m_assets_by_type.find(type);
-      ENGINE_ASSERT(it != m_assets_by_type.end() && it->second.contains(id.data()), "asset {} not found for type {}!",
-                    id, type);
-      return AssetHandle<Type>(const_cast<AssetsManager*>(this), it->second.at(id.data()));
+    template <typename Type, typename... Args> AssetHandle<Type> get_or_load(std::string_view uuid, Args&&... args) {
+      if (contains<Type>(uuid))
+        return get<Type>(uuid);
+      return load<Type>(uuid, std::forward<Args>(args)...);
     }
 
-    template <typename Type> AssetHandle<Type> try_get(std::string_view id) const {
+    template <typename Type> AssetHandle<Type> get(std::string_view uuid) const {
       const std::string type = get_type_name<Type>();
-      auto it = m_assets_by_type.find(type);
-      if (it == m_assets_by_type.end()) {
-        return AssetHandle<Type>();
-      }
-      auto id_it = it->second.find(id.data());
-      if (id_it == it->second.end()) {
-        return AssetHandle<Type>();
-      }
-      return AssetHandle<Type>(const_cast<AssetsManager*>(this), id_it->second);
+      auto type_it = m_index.find(type);
+      ENGINE_ASSERT(type_it != m_index.end(), "no assets of type {} exist!", type);
+      auto uuid_it = type_it->second.find(uuid);
+      ENGINE_ASSERT(uuid_it != type_it->second.end(), "asset {} not found for type {}!", uuid, type);
+      return AssetHandle<Type>(const_cast<AssetsManager*>(this), uuid_it->second);
+    }
+
+    template <typename Type> void unload(std::string_view id) {
+      const std::string type = get_type_name<Type>();
+      auto type_it = m_index.find(type);
+      ENGINE_ASSERT(type_it != m_index.end(), "no assets of type {} exist!", type);
+      auto id_it = type_it->second.find(id);
+      ENGINE_ASSERT(id_it != type_it->second.end(), "asset {} not found for type {}!", id, type);
+      m_assets.erase(id_it->second);
+      type_it->second.erase(id_it);
+      if (type_it->second.empty())
+        m_index.erase(type_it);
+      m_dirty_view = true;
+      m_dirty_metrics = true;
+    }
+
+    template <typename Type> bool contains(std::string_view id) const {
+      auto type_it = m_index.find(get_type_name<Type>());
+      return type_it != m_index.end() and type_it->second.contains(id);
     }
 
     void clear();
@@ -71,27 +86,26 @@ class AssetsManager {
     }
 
     template <typename Type> std::shared_ptr<Type> get_asset_ptr(UUID uuid) const {
-      auto it = m_assets_by_uuid.find(uuid);
-      if (it == m_assets_by_uuid.end()) {
+      auto it = m_assets.find(uuid);
+      if (it == m_assets.end())
         return nullptr;
-      }
-      return std::dynamic_pointer_cast<Type>(it->second);
+      return std::static_pointer_cast<Type>(it->second);
     }
 
-    std::unordered_map<UUID, std::shared_ptr<Asset>> m_assets_by_uuid;
-    std::unordered_map<std::string, std::unordered_map<std::string, UUID>> m_assets_by_type;
-    mutable std::unordered_map<std::string, std::unordered_map<std::string, std::shared_ptr<Asset>>> m_assets_view;
+    std::unordered_map<UUID, std::shared_ptr<Asset>> m_assets;
+    std::unordered_map<std::string, std::unordered_map<std::string, UUID, StringHash, std::equal_to<>>> m_index;
+    mutable std::unordered_map<std::string, std::unordered_map<std::string, std::shared_ptr<Asset>>> m_view;
     std::map<std::string, std::string, NumericComparator> m_metrics;
     mutable bool m_dirty_view{};
     bool m_dirty_metrics{};
 
     template <typename Type> friend class AssetHandle;
 };
+
 }
 
 template <typename Type> std::shared_ptr<Type> nl::AssetHandle<Type>::get() const {
-  if (!is_valid()) {
+  if (not is_valid() or m_manager == nullptr)
     return nullptr;
-  }
   return m_manager->get_asset_ptr<Type>(m_uuid);
 }

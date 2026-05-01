@@ -12,7 +12,7 @@ namespace nl {
 
 SceneManager::SceneManager() : m_scene_factory() { ENGINE_TRACE("initializing scene manager"); }
 
-SceneManager::~SceneManager() { ENGINE_WARN("deleting scene manager"); }
+SceneManager::~SceneManager() { ENGINE_TRACE("deleting scene manager"); }
 
 void SceneManager::register_system(std::string&& name, std::unique_ptr<System>&& system) {
   ENGINE_ASSERT(m_systems_by_name.find(name) == m_systems_by_name.end(), "system {} already registered", name);
@@ -198,38 +198,10 @@ std::map<std::string, std::string, NumericComparator>& SceneManager::compute_met
   return m_scene_factory.compute_metrics(m_registry);
 }
 
-void SceneManager::create_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids) {
-  m_scene_factory.get_entity_factory().create_prototypes(prefab_name, prototype_ids, m_registry,
-                                                         Application::get().get_assets_manager());
-}
-
-void SceneManager::update_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids) {
-  m_scene_factory.get_entity_factory().update_prototypes(prefab_name, prototype_ids, m_registry,
-                                                         Application::get().get_assets_manager());
-}
-
-void SceneManager::delete_prototypes(std::string_view prefab_name, const std::vector<std::string>& prototype_ids) {
-  m_scene_factory.get_entity_factory().delete_prototypes(prefab_name, prototype_ids, m_registry);
-}
-
-EntityFactory::Prototypes SceneManager::get_prototypes(std::string_view prefab_name,
-                                                       const std::vector<std::string>& prototype_ids) {
-  return m_scene_factory.get_entity_factory().get_prototypes(prefab_name, prototype_ids);
-}
-
-bool SceneManager::contains_prototypes(std::string_view prefab_name,
-                                       const std::vector<std::string>& prototype_ids) const {
-  return m_scene_factory.get_entity_factory().contains_prototypes(prefab_name, prototype_ids);
-}
-
 const std::map<std::string, EntityFactory::Prototypes, NumericComparator>& SceneManager::get_all_prototypes() {
-  return m_scene_factory.get_entity_factory().get_all_prototypes();
+  return m_scene_factory.get_all_prototypes();
 }
 
-const std::map<std::string, std::string, NumericComparator>& SceneManager::get_prototypes_count_by_prefab() {
-  return m_scene_factory.get_entity_factory().get_prototypes_count_by_prefab();
-}
-
-void SceneManager::clear_prototypes() { m_scene_factory.get_entity_factory().clear_prototypes(); }
+void SceneManager::clear_prototypes() { m_scene_factory.clear_prototypes(); }
 
 }

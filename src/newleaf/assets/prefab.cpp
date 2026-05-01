@@ -27,28 +27,27 @@ void Prefab::process_prototype(const std::string& name, const json& prototype_da
 }
 
 Prefab::Prefab(std::filesystem::path&& fp, std::vector<std::string>&& target_prototypes)
-  : m_name(std::move(fp.filename().string())), m_path(std::move(fp.string())),
-    m_target_prototypes(std::move(target_prototypes)) {
+  : m_path(std::move(fp.string())), m_target_prototypes(std::move(target_prototypes)) {
   // One prefab file can contain multiple prototypes and we target only a subset
   // of them
   std::ifstream f(fp);
-  ENGINE_ASSERT(f.is_open(), "failed to open prefab file!");
-  ENGINE_ASSERT(f.peek() not_eq std::ifstream::traits_type::eof(), "prefab file is empty!");
+  ENGINE_ASSERT(f.is_open(), "failed to open prefab file: {}", fp.string());
+  ENGINE_ASSERT(f.peek() not_eq std::ifstream::traits_type::eof(), "prefab file is empty: {}", fp.string());
   json data = json::parse(f);
   f.close();
 
   if (m_target_prototypes == std::vector<std::string>{"*"}) {
     m_target_prototypes.clear();
-    for (const auto& [name, prototype_data] : data.items()) {
-      m_target_prototypes.emplace_back(name);
-      process_prototype(name, prototype_data, data);
+    for (const auto& [id, prototype_data] : data.items()) {
+      m_target_prototypes.emplace_back(id);
+      process_prototype(id, prototype_data, data);
     }
   } else {
-    for (const auto& [name, prototype_data] : data.items()) {
-      if (std::find(m_target_prototypes.begin(), m_target_prototypes.end(), name) == m_target_prototypes.end()) {
+    for (const auto& [id, prototype_data] : data.items()) {
+      if (std::find(m_target_prototypes.begin(), m_target_prototypes.end(), id) == m_target_prototypes.end()) {
         continue;
       }
-      process_prototype(name, prototype_data, data);
+      process_prototype(id, prototype_data, data);
     }
   }
 }
@@ -86,6 +85,7 @@ const std::map<std::string, std::string, NumericComparator>& Prefab::to_map() {
   }
 
   m_info["type"] = "prefab";
+  m_info["uuid"] = m_uuid;
   m_info["path"] = m_path;
   for (const auto& [prototype_id, prototype_data] : m_prototypes) {
     m_info["prototype_" + prototype_id] = prototype_id;

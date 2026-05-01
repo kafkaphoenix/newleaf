@@ -2,8 +2,8 @@
 
 #include "../assets/assets_manager.h"
 #include "../events/event.h"
-#include "../graphics/render_manager.h"
 #include "../logging/log_manager.h"
+#include "../render/render_manager.h"
 #include "../scene/scene_manager.h"
 #include "../settings/settings_manager.h"
 #include "../state/imgui_layer.h"
@@ -30,7 +30,7 @@ Application::Application(std::unique_ptr<SettingsManager>&& s, CLArgs&& args)
 }
 
 Application::~Application() {
-  ENGINE_WARN("deleting application");
+  ENGINE_TRACE("deleting application");
   m_imgui_layer->on_detach();
 }
 

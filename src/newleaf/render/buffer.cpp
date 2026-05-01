@@ -27,7 +27,7 @@ VBO::VBO(const std::vector<TerrainVertex>& vertices) : m_count(vertices.size()) 
 }
 
 VBO::~VBO() {
-  ENGINE_WARN("deleting vbo {}", m_id);
+  ENGINE_TRACE("deleting vbo {}", m_id);
   glDeleteBuffers(1, &m_id);
 }
 
@@ -42,7 +42,7 @@ void IBO::reload(const std::vector<uint32_t>& indices) {
 }
 
 IBO::~IBO() {
-  ENGINE_WARN("deleting ibo {}", m_id);
+  ENGINE_TRACE("deleting ibo {}", m_id);
   glDeleteBuffers(1, &m_id);
 }
 

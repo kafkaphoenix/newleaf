@@ -3,18 +3,6 @@
 #include "camera/cActiveCamera.h"
 #include "camera/cCamera.h"
 #include "camera/cDistanceFromCamera.h"
-#include "graphics/cBlendColor.h"
-#include "graphics/cBlendTexture.h"
-#include "graphics/cBody.h"
-#include "graphics/cColor.h"
-#include "graphics/cFBO.h"
-#include "graphics/cMesh.h"
-#include "graphics/cReflection.h"
-#include "graphics/cShader.h"
-#include "graphics/cShape.h"
-#include "graphics/cTexture.h"
-#include "graphics/cTextureAtlas.h"
-#include "graphics/cTransparent.h"
 #include "input/cActiveInput.h"
 #include "input/cInput.h"
 #include "meta.h"
@@ -25,6 +13,17 @@
 #include "physics/cGravity.h"
 #include "physics/cRigidBody.h"
 #include "physics/cTransform.h"
+#include "render/CModel.h"
+#include "render/cBlendColor.h"
+#include "render/cBlendTexture.h"
+#include "render/cColor.h"
+#include "render/cFBO.h"
+#include "render/cReflection.h"
+#include "render/cShader.h"
+#include "render/cShape.h"
+#include "render/cTexture.h"
+#include "render/cTextureAtlas.h"
+#include "render/cTransparent.h"
 #include "world/cFog.h"
 #include "world/cLight.h"
 #include "world/cSkybox.h"
@@ -68,7 +67,7 @@ void register_components() {
     .func<&assign<CDistanceFromCamera>>("assign"_hs);
 
   entt::meta<CName>()
-    .type("id"_hs)
+    .type("name"_hs)
     .ctor<&cast_cname, entt::as_ref_t>()
     .data<&CName::id>("id"_hs)
     .func<&CName::print>("print"_hs)
@@ -90,14 +89,14 @@ void register_components() {
     .func<&CUUID::print>("print"_hs)
     .func<&CUUID::to_map>("to_map"_hs);
 
-  entt::meta<CBody>()
-    .type("body"_hs)
-    .ctor<&cast_cbody, entt::as_ref_t>()
-    .data<&CBody::path>("path"_hs)
-    .func<&CBody::print>("print"_hs)
-    .func<&CBody::to_map>("to_map"_hs)
-    .func<&on_component_added<CBody>>("on_component_added"_hs)
-    .func<&assign<CBody, std::string>>("assign"_hs);
+  entt::meta<CModel>()
+    .type("model"_hs)
+    .ctor<&cast_CModel, entt::as_ref_t>()
+    .data<&CModel::uuid>("uuid"_hs)
+    .func<&CModel::print>("print"_hs)
+    .func<&CModel::to_map>("to_map"_hs)
+    .func<&on_component_added<CModel>>("on_component_added"_hs)
+    .func<&assign<CModel, std::string>>("assign"_hs);
 
   entt::meta<CFBO>()
     .type("fbo"_hs)
@@ -113,21 +112,14 @@ void register_components() {
     .func<&on_component_added<CFBO>>("on_component_added"_hs)
     .func<&assign<CFBO>>("assign"_hs);
 
-  entt::meta<CMesh>()
-    .type("mesh"_hs)
-    .ctor<&cast_cmesh, entt::as_ref_t>()
-    .data<&CMesh::textures>("textures"_hs)
-    .func<&CMesh::print>("print"_hs)
-    .func<&CMesh::to_map>("to_map"_hs)
-    .func<&assign<CMesh>>("assign"_hs);
-
   entt::meta<CShader>()
     .type("shader"_hs)
     .ctor<&cast_cshader, entt::as_ref_t>()
-    .data<&CShader::id>("id"_hs)
+    .data<&CShader::uuid>("uuid"_hs)
     .data<&CShader::visible>("visible"_hs)
     .func<&CShader::print>("print"_hs)
     .func<&CShader::to_map>("to_map"_hs)
+    .func<&on_component_added<CShader>>("on_component_added"_hs)
     .func<&assign<CShader>>("assign"_hs);
 
   entt::meta<CShape>()
@@ -143,7 +135,7 @@ void register_components() {
   entt::meta<CTexture>()
     .type("texture"_hs)
     .ctor<&cast_ctexture, entt::as_ref_t>()
-    .data<&CTexture::paths>("paths"_hs)
+    .data<&CTexture::uuid>("uuid"_hs)
     .func<&CTexture::print>("print"_hs)
     .func<&CTexture::to_map>("to_map"_hs)
     .func<&on_component_added<CTexture>>("on_component_added"_hs)
@@ -152,7 +144,7 @@ void register_components() {
   entt::meta<CTextureAtlas>()
     .type("texture_atlas"_hs)
     .ctor<&cast_ctexture_atlas, entt::as_ref_t>()
-    .data<&CTextureAtlas::path>("path"_hs)
+    .data<&CTextureAtlas::uuid>("uuid"_hs)
     .data<&CTextureAtlas::rows>("rows"_hs)
     .data<&CTextureAtlas::index>("index"_hs)
     .func<&CTextureAtlas::print>("print"_hs)
@@ -163,7 +155,7 @@ void register_components() {
   entt::meta<CBlendTexture>()
     .type("blend_texture"_hs)
     .ctor<&cast_cblend_texture, entt::as_ref_t>()
-    .data<&CBlendTexture::path>("path"_hs)
+    .data<&CBlendTexture::uuid>("uuid"_hs)
     .data<&CBlendTexture::blend_factor>("blend_factor"_hs)
     .data<&CBlendTexture::repeat>("repeat"_hs)
     .func<&CBlendTexture::print>("print"_hs)

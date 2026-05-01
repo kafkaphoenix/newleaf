@@ -11,9 +11,8 @@ namespace nl {
 StatesManager::StatesManager() { ENGINE_TRACE("initializing states manager"); }
 
 StatesManager::~StatesManager() {
-  ENGINE_WARN("deleting states manager");
   for (auto& s : m_states) {
-    ENGINE_WARN("detaching state {}", s->get_name());
+    ENGINE_TRACE("detaching state {}", s->get_name());
     s->on_detach();
   }
   m_states.clear();
@@ -46,41 +45,41 @@ void StatesManager::pop_state(std::string_view name) {
 }
 
 void StatesManager::push_layer(std::unique_ptr<Layer>&& l) {
-  ENGINE_ASSERT(m_index > 0, "no states to push layer to");
+  ENGINE_ASSERT(m_index > 0, "no states to push layer {} to", l->get_name());
   m_states[m_index - 1]->get_layers_manager().push_layer(std::move(l));
   m_dirty = true;
 }
 
 void StatesManager::push_overlay(std::unique_ptr<Layer>&& o, bool enabled) {
-  ENGINE_ASSERT(m_index > 0, "no states to push overlay to");
+  ENGINE_ASSERT(m_index > 0, "no states to push overlay {} to", o->get_name());
   m_states[m_index - 1]->get_layers_manager().push_overlay(std::move(o), enabled);
   m_dirty = true;
 }
 
 void StatesManager::enable_overlay(std::string_view name) {
-  ENGINE_ASSERT(m_index > 0, "no states to enable overlay in");
+  ENGINE_ASSERT(m_index > 0, "no states to enable overlay {} in", name);
   m_states[m_index - 1]->get_layers_manager().enable_overlay(name);
   m_dirty = true;
 }
 
 void StatesManager::disable_overlay(std::string_view name) {
-  ENGINE_ASSERT(m_index > 0, "no states to disable overlay in");
+  ENGINE_ASSERT(m_index > 0, "no states to disable overlay {} in", name);
   m_states[m_index - 1]->get_layers_manager().disable_overlay(name);
   m_dirty = true;
 }
 
 bool StatesManager::is_overlay_enabled(std::string_view name) const {
-  ENGINE_ASSERT(m_index > 0, "no states to check overlay in");
+  ENGINE_ASSERT(m_index > 0, "no states to check overlay {} in", name);
   return m_states[m_index - 1]->get_layers_manager().is_overlay_enabled(name);
 }
 
 bool StatesManager::contains_layer(std::string_view name) const {
-  ENGINE_ASSERT(m_index > 0, "no states to check layer in");
+  ENGINE_ASSERT(m_index > 0, "no states to check layer {} in", name);
   return m_states[m_index - 1]->get_layers_manager().contains_layer(name);
 }
 
 bool StatesManager::contains_overlay(std::string_view name) const {
-  ENGINE_ASSERT(m_index > 0, "no states to check overlay in");
+  ENGINE_ASSERT(m_index > 0, "no states to check overlay {} in", name);
   return m_states[m_index - 1]->get_layers_manager().contains_overlay(name);
 }
 

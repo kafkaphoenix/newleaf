@@ -83,7 +83,7 @@ void SceneFactory::create_scene(std::string scene_id, std::string scene_path, As
   create_prototypes(scene, assets_manager, registry);
   ENGINE_INFO("entities creation time: {:.6f}s", timer.get_seconds());
   timer.reset();
-  assets_manager.get_or_load<Scene>(scene_id, std::move(scene));
+  assets_manager.load<Scene>(scene_id, std::move(scene));
   ENGINE_INFO("scene {} creation time: {:.6f}s", scene_id, timer.get_seconds());
   m_active_scene = std::move(scene_id);
 
@@ -103,8 +103,8 @@ void SceneFactory::reload_scene(const AssetsManager& assets_manager, entt::regis
 
     for (const auto& [prefab_name, options] : scene->get_prefabs()) {
       ENGINE_TRACE("reloading scene prototypes");
-      const auto& prefab = assets_manager.get<Prefab>(prefab_name).get();
-      m_entity_factory.create_prototypes(prefab_name, prefab->get_target_prototypes(), registry, assets_manager);
+      auto handle = assets_manager.get<Prefab>(prefab_name);
+      m_entity_factory.create_prototypes(handle, registry);
     }
   } else {
     auto to_destroy = registry.view<CUUID>();
@@ -119,7 +119,7 @@ void SceneFactory::reload_scene(const AssetsManager& assets_manager, entt::regis
 
 void SceneFactory::clear_scene(RenderManager& render_manager, entt::registry& registry) {
   ENGINE_ASSERT(not m_active_scene.empty(), "no scene is active!");
-  ENGINE_WARN("clearing scene {}", m_active_scene);
+  ENGINE_TRACE("clearing scene {}", m_active_scene);
 
   registry.clear(); // soft delete / = {};  would delete them completely but
                     // does not invoke signals/mixin methods
@@ -133,37 +133,35 @@ void SceneFactory::clear_scene(RenderManager& render_manager, entt::registry& re
 }
 
 void SceneFactory::create_shaders(const Scene& scene, AssetsManager& assets_manager) {
-  for (const auto& [shader_id, shader_data] : scene.get_shaders()) {
-    ENGINE_ASSERT(shader_data.contains("path"), "shader {} must define a path", shader_id);
-    std::string base_path = shader_data.at("path").get<std::string>();
-    assets_manager.get_or_load<Shader>(shader_id, std::string(shader_id), std::move(base_path));
+  for (const auto& [uuid, options] : scene.get_shaders()) {
+    ENGINE_ASSERT(options.contains("base_path"), "shader {} must define a base path for fragment and vertex shaders", uuid);
+    std::string base_path = options.at("base_path").get<std::string>();
+    assets_manager.load<Shader>(uuid, std::filesystem::path(std::move(base_path)));
   }
 }
 
 void SceneFactory::create_textures(const Scene& scene, AssetsManager& assets_manager) {
-  for (const auto& [texture, options] : scene.get_textures()) {
+  for (const auto& [uuid, options] : scene.get_textures()) {
     bool flip_y = options.contains("flip_vertically") ? options.at("flip_vertically").get<bool>() : true;
     bool flip_option = flip_y ? Texture::FLIP_VERTICALLY : Texture::DONT_FLIP_VERTICALLY;
-    assets_manager.get_or_load<Texture>(texture, options.at("path").get<std::string>(),
-                                        options.at("type").get<std::string>(), flip_option);
+    bool gamma_correction = options.contains("gamma_correction") ? options.at("gamma_correction").get<bool>() : false;
+    assets_manager.load<Texture>(uuid, std::filesystem::path(options.at("path").get<std::string>()), flip_option, gamma_correction);
   }
 }
 
 void SceneFactory::create_models(const Scene& scene, AssetsManager& assets_manager) {
-  for (const auto& [model, options] : scene.get_models()) {
-    bool gamma_correction = options.contains("gamma_correction") ? options.at("gamma_correction").get<bool>() : false;
-    assets_manager.get_or_load<Model>(model, options.at("path").get<std::string>(), options.at("shader_id").get<std::string>(), gamma_correction);
+  for (const auto& [uuid, options] : scene.get_models()) {
+    assets_manager.load<Model>(uuid, std::filesystem::path(options.at("path").get<std::string>()), options.at("shader_uuid").get<std::string>());
   }
 }
 
 void SceneFactory::create_prototypes(const Scene& scene, AssetsManager& assets_manager, entt::registry& registry) {
-  for (const auto& [prefab_name, options] : scene.get_prefabs()) {
+  for (const auto& [uuid, options] : scene.get_prefabs()) {
     Prefab prefab =
       Prefab(options.at("path").get<std::string>(), options.at("target_prototypes").get<std::vector<std::string>>());
-    ENGINE_TRACE("creating prototypes from prefab {}", prefab_name);
-    std::vector<std::string> target_prototypes = prefab.get_target_prototypes();
-    assets_manager.get_or_load<Prefab>(prefab_name, std::move(prefab));
-    m_entity_factory.create_prototypes(prefab_name, target_prototypes, registry, assets_manager);
+    ENGINE_TRACE("creating prototypes from prefab {}", uuid);
+    auto handle = assets_manager.load<Prefab>(uuid, std::move(prefab));
+    m_entity_factory.create_prototypes(handle, registry);
   }
 }
 

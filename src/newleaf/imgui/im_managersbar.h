@@ -5,7 +5,7 @@
 #include <imgui.h>
 
 #include "../assets/assets_manager.h"
-#include "../graphics/render_manager.h"
+#include "../render/render_manager.h"
 #include "../scene/scene_manager.h"
 #include "../settings/settings_manager.h"
 #include "../state/states_manager.h"

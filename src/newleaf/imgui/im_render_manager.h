@@ -6,7 +6,7 @@
 #include <imgui.h>
 
 #include "../assets/assets_manager.h"
-#include "../graphics/render_manager.h"
+#include "../render/render_manager.h"
 #include "../settings/settings_manager.h"
 #include "../utils/map_json_serializer.h"
 #include "im_utils.h"

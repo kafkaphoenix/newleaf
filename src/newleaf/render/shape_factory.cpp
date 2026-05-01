@@ -7,16 +7,16 @@
 
 namespace nl {
 
-CMesh ShapeFactory::create(const std::vector<ShapeVertex>& vertices, const std::vector<uint32_t>& indices) {
+Mesh ShapeFactory::create(const std::vector<ShapeVertex>& vertices, const std::vector<uint32_t>& indices) {
   std::unique_ptr<VAO> vao = VAO::create();
   std::unique_ptr<VBO> vbo = VBO::create(vertices);
   std::unique_ptr<IBO> ibo = IBO::create(indices);
   vao->attach_vertex(std::move(vbo), VAO::VertexType::Shape);
   vao->set_index(std::move(ibo));
-  return CMesh(std::move(vao));
+  return Mesh(std::move(vao));
 }
 
-CMesh ShapeFactory::create_triangle(float size) {
+Mesh ShapeFactory::create_triangle(float size) {
   std::vector<ShapeVertex> vertices = {
     {{0.f, size, 0.f}, {0.5f, 1.f}}, {{-size, -size, 0.f}, {0.f, 0.f}}, {{size, -size, 0.f}, {1.f, 0.f}}};
 
@@ -25,10 +25,10 @@ CMesh ShapeFactory::create_triangle(float size) {
   return create(vertices, indices);
 }
 
-CMesh ShapeFactory::create_rectangle(float width, float height, bool repeat_texture) {
+Mesh ShapeFactory::create_rectangle(float width, float height, bool repeat_texture) {
   uint32_t overflow = 1;
   if (repeat_texture) {
-    ENGINE_ASSERT(width == height, "cannot repeat texture on non-square shape");
+    ENGINE_ASSERT(width == height, "cannot repeat texture on non-square shape width: {}, height: {}", width, height);
     overflow = width;
   }
 
@@ -42,10 +42,10 @@ CMesh ShapeFactory::create_rectangle(float width, float height, bool repeat_text
   return create(vertices, indices);
 }
 
-CMesh ShapeFactory::create_cube(float width, float height, float depth, bool repeat_texture) {
+Mesh ShapeFactory::create_cube(float width, float height, float depth, bool repeat_texture) {
   uint32_t overflow = 1;
   if (repeat_texture) {
-    ENGINE_ASSERT(width == height, "cannot repeat texture on non-square shape");
+    ENGINE_ASSERT(width == height, "cannot repeat texture on non-square shape width: {}, height: {}", width, height);
     overflow = width;
   }
 
@@ -88,7 +88,7 @@ CMesh ShapeFactory::create_cube(float width, float height, float depth, bool rep
   return create(vertices, indices);
 }
 
-CMesh ShapeFactory::create_circle(float radius, uint32_t segments) {
+Mesh ShapeFactory::create_circle(float radius, uint32_t segments) {
   std::vector<ShapeVertex> vertices;
   std::vector<uint32_t> indices;
 

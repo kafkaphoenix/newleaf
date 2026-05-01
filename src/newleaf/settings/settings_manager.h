@@ -68,6 +68,7 @@ struct SettingsManager {
     bool reload_scene = false;
     bool reload_prototypes = false;
 
+    // TODO this should be string? anyways im redoing settings
     std::vector<const char*> cursor_modes{"normal", "hidden", "disabled"};
     std::vector<const char*> log_levels{"trace", "debug", "info", "warning", "error", "critical"};
 };

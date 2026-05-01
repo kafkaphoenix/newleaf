@@ -8,7 +8,7 @@
 #include <glad/glad.h>
 
 #include "../events/event.h"
-#include "../graphics/opengl_context.h"
+#include "../render/opengl_context.h"
 #include "../settings/settings_manager.h"
 
 namespace nl {
@@ -92,7 +92,7 @@ class WindowsManager {
     void toggle_fullscreen(bool fullscreen);
     void toggle_window_inside_imgui(bool imgui_window);
     void toggle_fit_to_window(bool fit_to_window);
-    void toggle_wireframe(bool wireframe);
+    void set_wireframe(bool wireframe);
     void toggle_display_collision_boxes(bool display);
     void toggle_display_fps(bool display);
     void toggle_enabled_debug(bool enabled);

@@ -79,7 +79,7 @@ struct CCamera {
       } else if (_type == "orthographic") {
         type = CameraType::orthographic;
       } else {
-        ENGINE_ASSERT(false, "invalid camera type!");
+        ENGINE_ASSERT(false, "invalid camera type: {}", _type);
       }
     }
 
@@ -91,7 +91,7 @@ struct CCamera {
         aspect_ratio = AspectRatio::_4_3;
         aspect_ratio_value = 4.f / 3.f;
       } else {
-        ENGINE_ASSERT(false, "invalid camera aspect ratio!");
+        ENGINE_ASSERT(false, "invalid camera aspect ratio: {}", _aspect_ratio);
       }
     }
 
@@ -103,7 +103,7 @@ struct CCamera {
       } else if (_mode == "none") {
         mode = Mode::none;
       } else {
-        ENGINE_ASSERT(false, "invalid camera mode!");
+        ENGINE_ASSERT(false, "invalid camera mode: {}", _mode);
       }
     }
 

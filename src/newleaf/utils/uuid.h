@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <random>
+#include <limits>
 
 namespace nl {
 
@@ -15,7 +16,7 @@ class UUID {
 
     bool operator==(const UUID& other) const { return m_uuid == other.m_uuid; }
     bool operator!=(const UUID& other) const { return m_uuid != other.m_uuid; }
-    bool operator<(const UUID& other) const { return m_uuid < other.m_uuid; }
+    bool operator<(const UUID& other) const { return m_uuid < other.m_uuid; } // For ordered containers
 
   private:
     static inline std::random_device rd{};
@@ -29,6 +30,6 @@ class UUID {
 
 namespace std {
 template <> struct hash<nl::UUID> {
-    size_t operator()(const nl::UUID& value) const noexcept { return std::hash<uint64_t>{}(value.value()); }
+    size_t operator()(const nl::UUID& uuid) const noexcept { return std::hash<uint64_t>{}(uuid.value()); }
 };
 }

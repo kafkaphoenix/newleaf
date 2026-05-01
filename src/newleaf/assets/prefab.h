@@ -44,14 +44,11 @@ class Prefab : public Asset {
 
     const std::vector<std::string>& get_target_prototypes() const { return m_target_prototypes; }
 
-    std::string_view get_name() const { return m_name; }
-
     const std::unordered_map<std::string, Prototype>& get_prototypes() const { return m_prototypes; }
 
     bool operator==(const Asset& other) const override final;
 
   private:
-    std::string m_name;
     std::string m_path;
     std::vector<std::string> m_target_prototypes;
     std::unordered_map<std::string, Prototype> m_prototypes;

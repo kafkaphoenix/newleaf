@@ -11,21 +11,22 @@ class AssetsManager;
 
 template <typename Type> class AssetHandle {
   public:
-    AssetHandle() : m_manager(nullptr), m_uuid(UUID(0)) {}
+    AssetHandle() = default;
     AssetHandle(AssetsManager* manager, UUID uuid) : m_manager(manager), m_uuid(uuid) {}
 
-    std::shared_ptr<Type> get() const;
+    [[nodiscard]] std::shared_ptr<Type> get() const;
 
-    bool is_valid() const { return m_manager != nullptr && m_uuid.value() != 0; }
-    UUID uuid() const { return m_uuid; }
+    [[nodiscard]] bool is_valid() const { return m_manager != nullptr and m_uuid.value() != 0; }
+    [[nodiscard]] UUID uuid() const { return m_uuid; }
 
-    bool operator==(const AssetHandle& other) const { return m_manager == other.m_manager && m_uuid == other.m_uuid; }
-    bool operator!=(const AssetHandle& other) const { return !(*this == other); }
+    bool operator==(const AssetHandle& other) const { return m_manager == other.m_manager and m_uuid == other.m_uuid; }
+    bool operator!=(const AssetHandle& other) const { return not(*this == other); }
 
   private:
-    AssetsManager* m_manager;
-    UUID m_uuid;
+    AssetsManager* m_manager{nullptr};
+    UUID m_uuid{0};
 };
+
 }
 
 namespace std {

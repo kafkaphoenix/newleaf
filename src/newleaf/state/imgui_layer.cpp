@@ -17,7 +17,7 @@ namespace nl {
 ImGuiLayer::ImGuiLayer() : Layer("ImGui layer") {}
 
 void ImGuiLayer::on_attach() {
-  ENGINE_TRACE("initializing ImGui layer");
+  ENGINE_TRACE("initializing {} layer", get_name());
   auto& app = Application::get();
   const auto& settings_manager = app.get_settings_manager();
   std::string glsl_version =
@@ -67,8 +67,7 @@ void ImGuiLayer::on_imgui_update() {
 }
 
 void ImGuiLayer::on_detach() {
-  ENGINE_WARN("removing ImGui layer");
-  ENGINE_WARN("shutting down imgui api");
+  ENGINE_TRACE("removing {} layer", get_name());
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();

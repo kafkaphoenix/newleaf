@@ -61,22 +61,24 @@ void APIENTRY message_callback(GLenum source, GLenum type, uint32_t id, GLenum s
 void RenderAPI::init() {
   ENGINE_TRACE("initializing render api");
 
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+  glFrontFace(GL_CCW);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
   glEnable(GL_DEBUG_OUTPUT);
   glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
   glDebugMessageCallback(message_callback, nullptr);
-
   glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
 
-  glEnable(GL_CULL_FACE); // BACK FACE CULLING CCW
-  glCullFace(GL_BACK);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
   glEnable(GL_LINE_SMOOTH);
-  glEnable(GL_DEPTH_TEST);
 }
 
-void RenderAPI::toggle_culling(bool enabled) { enabled ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE); }
+void RenderAPI::set_culling(bool enabled) { enabled ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE); }
 
 void RenderAPI::set_viewport(uint32_t x, uint32_t y, uint32_t w, uint32_t h) { glViewport(x, y, w, h); }
 
@@ -84,21 +86,29 @@ void RenderAPI::set_clear_color(const std::array<float, 4>& color) {
   glClearColor(color[0], color[1], color[2], color[3]);
 }
 
-void RenderAPI::toggle_wireframe(bool enabled) {
+void RenderAPI::set_wireframe(bool enabled) {
   enabled ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void RenderAPI::blend(bool enabled) { enabled ? glEnable(GL_BLEND) : glDisable(GL_BLEND); }
+void RenderAPI::set_blend(bool enabled) { enabled ? glEnable(GL_BLEND) : glDisable(GL_BLEND); }
 
-void RenderAPI::toggle_depth_test(bool enabled) { enabled ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST); }
+void RenderAPI::set_depth_mask(bool enabled) { glDepthMask(enabled ? GL_TRUE : GL_FALSE); }
 
-void RenderAPI::set_depth_lequal() {
-  glDepthFunc(GL_LEQUAL); // depth test passes when values are equal to depth
-                          // buffer content [for cubemaps]
-}
+void RenderAPI::set_depth_test(bool enabled) { enabled ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST); }
 
-void RenderAPI::set_depth_less() {
-  glDepthFunc(GL_LESS); // default
+void RenderAPI::set_depth_func(RenderAPI::DepthFunc func) {
+  GLenum gl_func = GL_LEQUAL;
+  switch (func) {
+  case DepthFunc::Never: gl_func = GL_NEVER; break;
+  case DepthFunc::Less: gl_func = GL_LESS; break;
+  case DepthFunc::Equal: gl_func = GL_EQUAL; break;
+  case DepthFunc::LessEqual: gl_func = GL_LEQUAL; break;
+  case DepthFunc::Greater: gl_func = GL_GREATER; break;
+  case DepthFunc::NotEqual: gl_func = GL_NOTEQUAL; break;
+  case DepthFunc::GreaterEqual: gl_func = GL_GEQUAL; break;
+  case DepthFunc::Always: gl_func = GL_ALWAYS; break;
+  }
+  glDepthFunc(gl_func);
 }
 
 void RenderAPI::clear() { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }

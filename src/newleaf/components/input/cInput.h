@@ -54,7 +54,7 @@ struct CInput {
       } else if (_mode == "none") {
         mode = Mode::none;
       } else {
-        ENGINE_ASSERT(false, "invalid input mode!");
+        ENGINE_ASSERT(false, "invalid input mode: {}", _mode);
       }
     }
 };

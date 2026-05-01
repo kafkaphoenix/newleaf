@@ -8,12 +8,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-#include "../../graphics/shape_factory.h"
 #include "../../logging/log_manager.h"
+#include "../../render/shape_factory.h"
 #include "../../scene/scene_manager.h"
 #include "../../utils/assert.h"
 #include "../../utils/numeric_comparator.h"
-#include "../graphics/cMesh.h"
+#include "../../render/mesh.h"
 
 namespace nl {
 
@@ -23,7 +23,7 @@ struct CCollider {
     std::string _type;
     Type type;
     glm::vec3 size{};
-    CMesh mesh;
+    Mesh mesh;
     glm::vec4 color{1.0f, 0.0f, 0.0f, 1.f};
     bool display_hitbox{};
 
@@ -51,7 +51,8 @@ struct CCollider {
       if (!other._type.empty()) {
         set_type();
       } else {
-        mesh = CMesh{};
+        // TODO rethink this after mesh refactor
+        mesh = Mesh();
       }
       return *this;
     }

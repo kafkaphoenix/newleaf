@@ -17,7 +17,7 @@ RenderManager::RenderManager() {
   RenderAPI::init();
 }
 
-RenderManager::~RenderManager() { ENGINE_WARN("deleting render manager"); }
+RenderManager::~RenderManager() { ENGINE_TRACE("deleting render manager"); }
 
 void RenderManager::on_window_resized(uint32_t w, uint32_t h) const { RenderAPI::set_viewport(0, 0, w, h); }
 
@@ -42,7 +42,7 @@ void RenderManager::render_framebuffer(const VAO& vao, const AssetHandle<Shader>
   sp.bind();
   // TODO avoid hardcoded slot here move to other place and delete this method
   sp.set_int("screen_texture", 100);
-  m_framebuffers.at(fbo.data())->get_color_texture().bind_slot(100);
+  m_framebuffers.at(fbo.data())->get_color_texture().bind(100);
   RenderAPI::draw_indexed(vao);
   sp.unbind();
   update_metrics(vao);
@@ -70,11 +70,11 @@ void RenderManager::render(const VAO& vao, const glm::mat4& transform, const Ass
 }
 
 void RenderManager::clear() {
-  ENGINE_DEBUG("clearing render manager");
+  ENGINE_TRACE("clearing render manager");
   if (not m_framebuffers.empty()) {
     m_framebuffers.clear();
-    // to avoid problems after using scenes with fbo
-    RenderAPI::toggle_depth_test(true);
+    // to avoid problems after using scenes with fbo FIXME checks this after fbo refactor
+    RenderAPI::set_depth_test(true);
   }
 }
 

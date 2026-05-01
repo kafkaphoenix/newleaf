@@ -43,7 +43,7 @@ FBO::FBO(uint32_t w, uint32_t h, uint32_t t) : m_depth_buffer_type(t) {
 }
 
 FBO::~FBO() {
-  ENGINE_WARN("deleting framebuffer {}", m_id);
+  ENGINE_TRACE("deleting framebuffer {}", m_id);
   glDeleteFramebuffers(1, &m_id);
   glDeleteRenderbuffers(1, &m_depth_render_buffer);
   glDeleteRenderbuffers(1, &m_stencil_render_buffer);
@@ -136,12 +136,13 @@ void FBO::bind_to_draw() {
 }
 
 void FBO::bind_to_read() {
-  m_color_texture->bind_slot(100);
+  // TODO rethink instead of crating a quad using SSBO and rendering it we can just 
+  m_color_texture->bind(100);
   glBindFramebuffer(GL_READ_FRAMEBUFFER, m_id);
   glNamedFramebufferReadBuffer(m_id, GL_COLOR_ATTACHMENT0);
 }
 
-void FBO::unbind() {
+void FBO::unbind() const {
   glBindFramebuffer(GL_FRAMEBUFFER, 0); // default framebuffer
   auto& app = Application::get();
   const auto& settings_manager = app.get_settings_manager();

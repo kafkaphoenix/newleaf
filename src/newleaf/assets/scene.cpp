@@ -9,8 +9,8 @@
 namespace nl {
 Scene::Scene(std::filesystem::path&& fp) : m_path(std::move(fp.string())) {
   std::ifstream f(fp);
-  ENGINE_ASSERT(f.is_open(), "failed to open scene file!");
-  ENGINE_ASSERT(f.peek() not_eq std::ifstream::traits_type::eof(), "scene file is empty!");
+  ENGINE_ASSERT(f.is_open(), "failed to open scene file: {}", fp.string());
+  ENGINE_ASSERT(f.peek() not_eq std::ifstream::traits_type::eof(), "scene file is empty: {}", fp.string());
   json data = json::parse(f);
   f.close();
 

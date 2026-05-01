@@ -3,11 +3,11 @@
 #include <glm/glm.hpp>
 
 #include "../../application/application.h"
-#include "../../components/graphics/cBlendTexture.h"
-#include "../../components/graphics/cTexture.h"
 #include "../../components/meta/cUUID.h"
 #include "../../components/physics/cRigidBody.h"
 #include "../../components/physics/cTransform.h"
+#include "../../components/render/cBlendTexture.h"
+#include "../../components/render/cTexture.h"
 #include "../../components/world/cSkybox.h"
 #include "../../components/world/cTime.h"
 

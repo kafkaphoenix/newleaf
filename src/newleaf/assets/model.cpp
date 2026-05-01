@@ -4,18 +4,20 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
+#include <format>
 #include <memory>
 
 #include "../application/application.h"
-#include "../graphics/buffer.h"
-#include "../graphics/vao.h"
+#include "../render/buffer.h"
+#include "../render/vao.h"
 #include "../utils/assert.h"
+#include "assets_manager.h"
+#include "shader.h"
 
 namespace nl {
 
-Model::Model(std::filesystem::path fp, std::string shader_id, std::optional<bool> gamma_correction)
+Model::Model(std::filesystem::path fp, std::string shader_id)
   : m_path(fp.string()), m_shader_id(std::move(shader_id)) {
-  ENGINE_ASSERT(not gamma_correction.has_value(), "gamma correction not yet implemented");
 
   const std::string directory = fp.parent_path().string();
 
@@ -47,12 +49,11 @@ void Model::process_node(aiNode* node, aiMesh** meshes, const std::vector<AssetH
     process_node(node->mChildren[i], meshes, materials);
 }
 
-std::unique_ptr<CMesh> Model::create_mesh(aiMesh* mesh) {
+std::unique_ptr<Mesh> Model::create_mesh(aiMesh* mesh) {
   std::vector<ModelVertex> vertices;
   std::vector<uint32_t> indices;
-  vertices.reserve(mesh->mNumVertices);
-  indices.reserve(mesh->mNumFaces * 3);
 
+  vertices.reserve(mesh->mNumVertices);
   for (uint32_t i = 0; i < mesh->mNumVertices; ++i) {
     ModelVertex vertex{};
     const auto& position = mesh->mVertices[i];
@@ -73,6 +74,7 @@ std::unique_ptr<CMesh> Model::create_mesh(aiMesh* mesh) {
     vertices.emplace_back(vertex);
   }
 
+  indices.reserve(mesh->mNumFaces * 3);
   for (uint32_t i = 0; i < mesh->mNumFaces; ++i) {
     const aiFace& face = mesh->mFaces[i];
     for (uint32_t j = 0; j < face.mNumIndices; ++j)
@@ -82,7 +84,7 @@ std::unique_ptr<CMesh> Model::create_mesh(aiMesh* mesh) {
   std::unique_ptr<VAO> vao = VAO::create();
   vao->attach_vertex(VBO::create(vertices), VAO::VertexType::Model);
   vao->set_index(IBO::create(indices));
-  return std::make_unique<CMesh>(std::move(vao));
+  return std::make_unique<Mesh>(std::move(vao));
 }
 
 AssetHandle<Material> Model::create_material(aiMaterial* mat, const std::string& directory, uint32_t index) {
@@ -121,51 +123,42 @@ AssetHandle<Material> Model::create_material(aiMaterial* mat, const std::string&
   }
 
   auto& assets_manager = Application::get().get_assets_manager();
-  aiString source;
-
-  auto load_tex = [&](aiTextureType type, const std::string& role, AssetHandle<Texture>& dst) {
+  auto load_texture = [&](aiTextureType type) -> AssetHandle<Texture> {
     if (mat->GetTextureCount(type) == 0)
-      return;
+      return {};
+
+    aiString source;
     mat->GetTexture(type, 0, &source);
-    std::string path = directory + "/" + source.C_Str();
-    dst = assets_manager.get_or_load<Texture>(path, path);
-    auto it = std::find_if(m_loaded_textures.begin(), m_loaded_textures.end(),
-                           [&](const AssetHandle<Texture>& t) { return t.uuid() == dst.uuid(); });
-    if (it == m_loaded_textures.end())
-      m_loaded_textures.emplace_back(dst);
+    const auto path = (std::filesystem::path(directory) / source.C_Str()).lexically_normal();
+    return assets_manager.get_or_load<Texture>(path.string(), std::filesystem::path(path));
+  };
+
+  auto load_first_texture = [&](std::initializer_list<aiTextureType> types) -> AssetHandle<Texture> {
+    for (const auto type : types) {
+      if (auto texture = load_texture(type); texture.is_valid())
+        return texture;
+    }
+    return {};
   };
 
   // PBR Metallic/Roughness types first, legacy fallback for non-PBR models (e.g. OBJ)
-  load_tex(aiTextureType_BASE_COLOR, "base_color", textures.base_color);
-  if (!textures.base_color.is_valid())
-    load_tex(aiTextureType_DIFFUSE, "base_color", textures.base_color);
+  textures.base_color = load_first_texture({aiTextureType_BASE_COLOR, aiTextureType_DIFFUSE});
+  textures.normal = load_first_texture({aiTextureType_NORMALS});
+  textures.emissive = load_first_texture({aiTextureType_EMISSION_COLOR, aiTextureType_EMISSIVE});
+  textures.metallic_roughness =
+    load_first_texture({aiTextureType_METALNESS, aiTextureType_UNKNOWN, aiTextureType_GLTF_METALLIC_ROUGHNESS});
+  textures.occlusion = load_first_texture({aiTextureType_AMBIENT_OCCLUSION, aiTextureType_LIGHTMAP});
 
-  load_tex(aiTextureType_NORMALS, "normal", textures.normal);
-
-  load_tex(aiTextureType_EMISSION_COLOR, "emissive", textures.emissive);
-  if (!textures.emissive.is_valid())
-    load_tex(aiTextureType_EMISSIVE, "emissive", textures.emissive);
-
-  load_tex(aiTextureType_METALNESS, "metallic_roughness", textures.metallic_roughness);
-  if (!textures.metallic_roughness.is_valid())
-    load_tex(aiTextureType_UNKNOWN, "metallic_roughness", textures.metallic_roughness);
-  if (!textures.metallic_roughness.is_valid())
-    load_tex(aiTextureType_GLTF_METALLIC_ROUGHNESS, "metallic_roughness", textures.metallic_roughness);
-
-  load_tex(aiTextureType_AMBIENT_OCCLUSION, "occlusion", textures.occlusion);
-  if (!textures.occlusion.is_valid())
-    load_tex(aiTextureType_LIGHTMAP, "occlusion", textures.occlusion);
-
-  AssetHandle<Shader> shader =
-    assets_manager.get<Shader>(m_shader_id);
+  AssetHandle<Shader> shader = assets_manager.get<Shader>(m_shader_id);
 
   aiString mat_name;
   mat->Get(AI_MATKEY_NAME, mat_name);
-  // Assimp material names can be empty, so we use a fallback name based on the model path and material index to ensure uniqueness for caching in the assets manager
+  // Assimp material names can be empty, so we use a fallback name based on the model path and material index to ensure
+  // uniqueness for caching in the assets manager
   std::string material_name = mat_name.length > 0 ? mat_name.C_Str() : "Material_" + std::to_string(index);
   std::string material_id = m_path + "::" + material_name;
 
-  return assets_manager.get_or_load<Material>(material_id, material_name, shader, textures, params, state);
+  return assets_manager.get_or_load<Material>(material_id, shader, textures, params, state);
 }
 
 const std::map<std::string, std::string, NumericComparator>& Model::to_map() {
@@ -173,26 +166,28 @@ const std::map<std::string, std::string, NumericComparator>& Model::to_map() {
     return m_info;
 
   m_info["type"] = "Model";
+  m_info["uuid"] = m_uuid;
   m_info["path"] = m_path;
-  m_info["shader"] = m_shader_id;
-  m_info["meshes"] = std::to_string(m_submeshes.size());
-  for (uint32_t i = 0; i < m_loaded_textures.size(); ++i)
-    m_info["loaded_texture_" + std::to_string(i)] = std::to_string(i);
+  for (const auto& submesh : m_submeshes) {
+    if (submesh.material.is_valid()) {
+      m_info[submesh.material.get()->get_uuid().data()] = submesh.material.get()->get_uuid().data();
+    } else {
+      m_info["unvalid_material_" + std::to_string(&submesh - &m_submeshes[0])] = "undefined";
+    }
+  }
 
   return m_info;
 }
 
-const std::map<std::string, std::string, NumericComparator>&
-Model::get_loaded_texture_info(std::string_view texture_id) {
-  std::string key(texture_id);
-
-  if (m_texture_info.contains(key))
-    return m_texture_info.at(key);
-
-  auto texture = m_loaded_textures.at(std::stoul(key)).get();
-  m_texture_info[key] = texture ? texture->to_map() : std::map<std::string, std::string, NumericComparator>{};
-
-  return m_texture_info.at(key);
+const std::map<std::string, std::string, NumericComparator>& Model::get_material_info(std::string_view material_id) {
+  auto it = std::find_if(m_submeshes.begin(), m_submeshes.end(), [&](const SubMesh& submesh) {
+    return submesh.material.is_valid() && submesh.material.get()->get_uuid() == material_id;
+  });
+  if (it != m_submeshes.end()) {
+    return it->material.get()->to_map();
+  }
+  return std::map<std::string, std::string, NumericComparator>{
+    {"error", std::format("material with uuid {} not found in model", material_id)}};
 }
 
 bool Model::operator==(const Asset& other) const {

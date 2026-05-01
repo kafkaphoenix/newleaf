@@ -18,20 +18,16 @@ class Texture : public Asset {
   public:
     Texture() = delete;
     Texture(uint32_t width, uint32_t height, GLenum glFormat, std::optional<bool> wrap = std::nullopt);
-    Texture(std::filesystem::path&& fp, std::optional<std::string>&& type = std::nullopt,
-            std::optional<bool> flip_vertically = std::nullopt, std::optional<uint32_t> mipmap_level = std::nullopt,
+    Texture(std::filesystem::path&& fp, std::optional<bool> flip_vertically = std::nullopt,
             std::optional<bool> gamma_correction = std::nullopt);
     ~Texture() override final;
 
-    void bind_slot(uint32_t slot);
-    void rebind_slot();
-    void unbind_slot();
+    void bind(uint32_t slot) const;
 
     uint32_t get_width() const { return m_width; }
     uint32_t get_height() const { return m_height; }
     uint32_t get_id() const { return m_id; }
     std::string_view get_path() const { return (m_paths.size() == 1) ? m_paths[0] : m_directory; }
-    std::string_view get_type() const { return m_type; }
     const std::map<std::string, std::string, NumericComparator>& to_map() override final;
     bool is_cubemap() const { return m_cubemap; }
 
@@ -48,11 +44,9 @@ class Texture : public Asset {
   private:
     std::vector<std::string> m_paths;
     std::string m_directory;
-    std::string m_type;
     uint32_t m_width{}, m_height{};
     uint32_t m_id{};
     GLenum m_opengl_format{}, m_format{};
-    uint32_t m_slot{};
     bool m_cubemap{};
     bool m_flip_vertically{true};
     uint32_t m_mipmap_level{};
