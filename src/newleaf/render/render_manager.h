@@ -2,6 +2,7 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -35,10 +36,16 @@ class RenderManager {
     const std::unordered_map<std::string, std::unique_ptr<FBO>>& get_framebuffers() const { return m_framebuffers; }
 
     void render(const VAO& vao, const glm::mat4& transform, const AssetHandle<Shader>& shader);
+
+    struct ImGuiParams {
+        std::string_view title;
+        glm::vec2 size;
+        glm::vec2 position;
+        bool fit_to_window;
+    };
     // TODO redo this when updating fbo i shouldn't store fbo
-    void render_framebuffer(const VAO& vao, const AssetHandle<Shader>& shader, std::string_view fbo);
-    void render_inside_imgui(const VAO& vao, std::string_view fbo, std::string_view title, glm::vec2 size,
-                             glm::vec2 position, bool fit_to_window);
+    void render_framebuffer(const VAO& vao, const AssetHandle<Shader>& shader, std::string_view fbo,
+                            const std::optional<ImGuiParams>& imgui = std::nullopt);
     uint32_t get_framebuffers_count() const { return m_framebuffers.size(); }
     void clear();
     void reset_metrics();
@@ -50,6 +57,7 @@ class RenderManager {
     glm::mat4 m_projection{};
     glm::vec3 m_camera_position{};
     std::unordered_map<std::string, std::unique_ptr<FBO>> m_framebuffers;
+    std::unique_ptr<FBO> m_postprocess_fbo;
     bool m_reorder{};
     // metrics
     std::map<std::string, std::string, NumericComparator> m_metrics;

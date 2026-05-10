@@ -134,9 +134,9 @@ void SceneFactory::clear_scene(RenderManager& render_manager, entt::registry& re
 
 void SceneFactory::create_shaders(const Scene& scene, AssetsManager& assets_manager) {
   for (const auto& [uuid, options] : scene.get_shaders()) {
-    ENGINE_ASSERT(options.contains("base_path"), "shader {} must define a base path for fragment and vertex shaders", uuid);
-    std::string base_path = options.at("base_path").get<std::string>();
-    assets_manager.load<Shader>(uuid, std::filesystem::path(std::move(base_path)));
+    ENGINE_ASSERT(options.contains("path"), "shader {} must define a folder path for fragment and vertex shaders",
+                  uuid);
+    assets_manager.load<Shader>(uuid, std::filesystem::path(options.at("path").get<std::string>()));
   }
 }
 
@@ -145,13 +145,15 @@ void SceneFactory::create_textures(const Scene& scene, AssetsManager& assets_man
     bool flip_y = options.contains("flip_vertically") ? options.at("flip_vertically").get<bool>() : true;
     bool flip_option = flip_y ? Texture::FLIP_VERTICALLY : Texture::DONT_FLIP_VERTICALLY;
     bool gamma_correction = options.contains("gamma_correction") ? options.at("gamma_correction").get<bool>() : false;
-    assets_manager.load<Texture>(uuid, std::filesystem::path(options.at("path").get<std::string>()), flip_option, gamma_correction);
+    assets_manager.load<Texture>(uuid, std::filesystem::path(options.at("path").get<std::string>()), flip_option,
+                                 gamma_correction);
   }
 }
 
 void SceneFactory::create_models(const Scene& scene, AssetsManager& assets_manager) {
   for (const auto& [uuid, options] : scene.get_models()) {
-    assets_manager.load<Model>(uuid, std::filesystem::path(options.at("path").get<std::string>()), options.at("shader_uuid").get<std::string>());
+    auto shader = assets_manager.get<Shader>(options.at("shader_uuid").get<std::string>());
+    assets_manager.load<Model>(uuid, std::filesystem::path(options.at("path").get<std::string>()), shader);
   }
 }
 

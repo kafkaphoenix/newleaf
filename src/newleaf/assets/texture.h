@@ -54,8 +54,6 @@ class Texture : public Asset {
 
     std::map<std::string, std::string, NumericComparator> m_info;
 
-    void setup_2d_params();
-    void setup_cubemap_params();
     std::vector<std::string> default_cubemap_paths(const std::filesystem::path& directory, const std::string& ext);
     int calc_mipmap_levels(int width, int height);
 };

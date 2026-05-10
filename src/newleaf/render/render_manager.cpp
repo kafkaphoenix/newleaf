@@ -36,22 +36,37 @@ void RenderManager::add_framebuffer(std::string&& name, uint32_t w, uint32_t h, 
 void RenderManager::delete_framebuffer(std::string_view name) { m_framebuffers.erase(name.data()); }
 
 // TODO redo this when updating fbo
-void RenderManager::render_framebuffer(const VAO& vao, const AssetHandle<Shader>& shader, std::string_view fbo) {
-  Shader& sp = *shader.get();
+void RenderManager::render_framebuffer(const VAO& vao, const AssetHandle<Shader>& shader, std::string_view fbo,
+                                       const std::optional<ImGuiParams>& imgui) {
+  auto& scene_fbo = m_framebuffers.at(fbo.data());
 
+  if (imgui) {
+    uint32_t w = scene_fbo->get_color_texture().get_width();
+    uint32_t h = scene_fbo->get_color_texture().get_height();
+
+    // Create or recreate post-process FBO if size changed
+    if (!m_postprocess_fbo || m_postprocess_fbo->get_color_texture().get_width() != w ||
+        m_postprocess_fbo->get_color_texture().get_height() != h) {
+      m_postprocess_fbo = FBO::create(w, h, FBO::DEPTH_RENDERBUFFER);
+    }
+
+    m_postprocess_fbo->bind_to_draw();
+    RenderAPI::clear();
+  }
+
+  Shader& sp = *shader.get();
   sp.bind();
-  // TODO avoid hardcoded slot here move to other place and delete this method
   sp.set_int("screen_texture", 100);
-  m_framebuffers.at(fbo.data())->get_color_texture().bind(100);
+  scene_fbo->get_color_texture().bind(100);
   RenderAPI::draw_indexed(vao);
   sp.unbind();
-  update_metrics(vao);
-}
 
-void RenderManager::render_inside_imgui(const VAO& vao, std::string_view fbo, std::string_view title, glm::vec2 size,
-                                        glm::vec2 position, bool fit_to_window) {
-  auto& fbo_ = m_framebuffers.at(fbo.data());
-  render_scene(fbo_->get_color_texture().get_id(), title, size, position, fit_to_window);
+  if (imgui) {
+    m_postprocess_fbo->unbind();
+    render_scene(m_postprocess_fbo->get_color_texture().get_id(), imgui->title, imgui->size, imgui->position,
+                 imgui->fit_to_window);
+  }
+
   update_metrics(vao);
 }
 

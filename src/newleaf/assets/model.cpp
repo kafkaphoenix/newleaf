@@ -16,8 +16,7 @@
 
 namespace nl {
 
-Model::Model(std::filesystem::path fp, std::string shader_id)
-  : m_path(fp.string()), m_shader_id(std::move(shader_id)) {
+Model::Model(std::filesystem::path fp, AssetHandle<Shader> shader) : m_path(fp.string()), m_shader(std::move(shader)) {
 
   const std::string directory = fp.parent_path().string();
 
@@ -149,8 +148,6 @@ AssetHandle<Material> Model::create_material(aiMaterial* mat, const std::string&
     load_first_texture({aiTextureType_METALNESS, aiTextureType_UNKNOWN, aiTextureType_GLTF_METALLIC_ROUGHNESS});
   textures.occlusion = load_first_texture({aiTextureType_AMBIENT_OCCLUSION, aiTextureType_LIGHTMAP});
 
-  AssetHandle<Shader> shader = assets_manager.get<Shader>(m_shader_id);
-
   aiString mat_name;
   mat->Get(AI_MATKEY_NAME, mat_name);
   // Assimp material names can be empty, so we use a fallback name based on the model path and material index to ensure
@@ -158,7 +155,7 @@ AssetHandle<Material> Model::create_material(aiMaterial* mat, const std::string&
   std::string material_name = mat_name.length > 0 ? mat_name.C_Str() : "Material_" + std::to_string(index);
   std::string material_id = m_path + "::" + material_name;
 
-  return assets_manager.get_or_load<Material>(material_id, shader, textures, params, state);
+  return assets_manager.get_or_load<Material>(material_id, m_shader, textures, params, state);
 }
 
 const std::map<std::string, std::string, NumericComparator>& Model::to_map() {

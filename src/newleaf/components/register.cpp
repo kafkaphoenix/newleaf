@@ -101,7 +101,7 @@ void register_components() {
   entt::meta<CFBO>()
     .type("fbo"_hs)
     .ctor<&cast_cfbo, entt::as_ref_t>()
-    .data<&CFBO::id>("id"_hs)
+    .data<&CFBO::uuid>("uuid"_hs)
     .data<&CFBO::_mode>("mode"_hs)
     .data<&CFBO::time>("time"_hs)
     .data<&CFBO::_attachment>("attachment"_hs)

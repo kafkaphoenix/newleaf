@@ -161,12 +161,13 @@ inline void draw_scene_manager(SceneManager& scene_manager, const SettingsManage
         if (storage.contains(entity)) {
           cName = storage.type().name();
           cName = cName.substr(cName.find_last_of(':') + 1);
+
           if (filter_components and scene_objects_text_filter[0] not_eq '\0' and
               strstr(cName.c_str(), scene_objects_text_filter) == nullptr) {
             continue;
           }
           cType = entt::resolve(storage.type());
-          cData = cType.construct(storage.value(entity));
+          cData = cType.from_void(storage.value(entity));
           to_map_func = cType.func("to_map"_hs);
           if (to_map_func) {
             if (ImGui::TreeNode((selected_scene_manager_tabkey + cName + settings_manager.active_scene).c_str(),

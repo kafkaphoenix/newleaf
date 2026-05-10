@@ -99,13 +99,15 @@ void configure_color(Shader& sp, CColor* cColor) {
   }
 }
 
-void configure_blend(Shader& sp, CBlendTexture* cBlendTexture, CBlendColor* cBlendColor) {
+void configure_blend(Shader& sp, CBlendTexture* cBlendTexture, CBlendColor* cBlendColor, uint32_t default_sampler,
+                     uint32_t cubemap_sampler) {
   if (cBlendTexture) {
     sp.set_bool("blend_texture_enabled", true);
     sp.set_float("blend_texture_factor", cBlendTexture->blend_factor);
     sp.set_int("blend_texture", 9); // slot 9 reserved for blend texture
     if (auto blend_texture = cBlendTexture->handle.get()) {
       blend_texture->bind(9);
+      glBindSampler(9, blend_texture->is_cubemap() ? cubemap_sampler : default_sampler);
     }
   } else {
     sp.set_bool("blend_texture_enabled", false);
@@ -120,15 +122,14 @@ void configure_blend(Shader& sp, CBlendTexture* cBlendTexture, CBlendColor* cBle
 }
 
 // TODO move to system and rethink with uniform buffer object in system
-void configure_texture_atlas(Shader& sp, CTextureAtlas* cTextureAtlas) {
+void configure_texture_atlas(Shader& sp, CTextureAtlas* cTextureAtlas, uint32_t default_sampler) {
   // TODO terrain shader not using this logic at all (get from terrain vertex directly)
   if (cTextureAtlas) {
     auto atlas_texture = cTextureAtlas->handle.get();
-    if (!atlas_texture) {
-      return;
-    }
-    // FIXME remove text parameteri from texture and have here a default one
-    atlas_texture->bind(1);
+    ENGINE_ASSERT(atlas_texture, "invalid texture atlas handle for entity with uuid {}", cTextureAtlas->uuid);
+    sp.set_int("u_base_color", 0);
+    atlas_texture->bind(0);
+    glBindSampler(0, default_sampler);
     uint32_t index = cTextureAtlas->index;
     uint32_t rows = cTextureAtlas->rows;
     sp.set_float("texture_atlas_rows", rows);
@@ -141,34 +142,42 @@ void configure_texture_atlas(Shader& sp, CTextureAtlas* cTextureAtlas) {
 }
 
 // TODO remove probably
-void configure_texture(Shader& sp, CTexture* cTexture) {
+void configure_texture(Shader& sp, CTexture* cTexture, uint32_t default_sampler, uint32_t cubemap_sampler) {
   if (cTexture) {
     auto texture = cTexture->handle.get();
     ENGINE_ASSERT(texture, "invalid texture handle for entity with uuid {}", cTexture->uuid);
+    sp.set_int("u_base_color", 0);
     texture->bind(0);
+    if (texture->is_cubemap()) {
+      glBindSampler(0, cubemap_sampler);
+    } else {
+      glBindSampler(0, default_sampler);
+    }
   }
 }
 
 // TODO remove this and rethink in systems with uniform buffer objects
 void bind_textures(Shader& sp, CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTextureAtlas,
                    CColor* cColor, CBlendColor* cBlendColor, CReflection* cReflection, CSkybox* cSkybox,
-                   CTexture* cSkyboxTexture, CBlendTexture* cSkyboxBlend, uint32_t cubemap_sampler) {
+                   CTexture* cSkyboxTexture, CBlendTexture* cSkyboxBlend, uint32_t default_sampler,
+                   uint32_t cubemap_sampler) {
   sp.bind();
   configure_fog(sp);
   configure_light(sp);
   configure_reflection(sp, cReflection, cSkyboxTexture, cSkyboxBlend, cubemap_sampler);
   // TODO add model textures to CTexture and remove this and use only one shader maybe
-  configure_texture(sp, cTexture);
-  configure_texture_atlas(sp, cTextureAtlas);
+  configure_texture(sp, cTexture, default_sampler, cubemap_sampler);
+  configure_texture_atlas(sp, cTextureAtlas, default_sampler);
   configure_color(sp, cColor);
-  configure_blend(sp, cBlendTexture, cBlendColor);
+  configure_blend(sp, cBlendTexture, cBlendColor, default_sampler, cubemap_sampler);
 }
 
 // TODO refactor this or delete
 void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTextureAtlas, CColor* cColor,
             CBlendColor* cBlendColor, CReflection* cReflection, CSkybox* cSkybox, CTexture* cSkyboxTexture,
-            CBlendTexture* cSkyboxBlend, CModel* cModel, const CTransform& cTransform, const CShader& cShader,
-            CCollider* cCollider, CTransparent* cTransparent, RenderManager& render_manager, uint32_t cubemap_sampler) {
+            CBlendTexture* cSkyboxBlend, Mesh* mesh, const CTransform& cTransform, const CShader& cShader,
+            CCollider* cCollider, CTransparent* cTransparent, RenderManager& render_manager, uint32_t default_sampler,
+            uint32_t cubemap_sampler) {
   const auto& application_manager = Application::get();
   if (cTransparent and cTransparent->transparent) {
     RenderAPI::set_culling(false);
@@ -187,13 +196,13 @@ void render(CTexture* cTexture, CBlendTexture* cBlendTexture, CTextureAtlas* cTe
   AssetHandle<Shader> shader = cShader.handle;
   Shader& sp = *shader.get();
   bind_textures(sp, cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cReflection, cSkybox, cSkyboxTexture,
-                cSkyboxBlend, cubemap_sampler);
-  // FIXME render_manager.render(cModel.->get_vao(), cTransform.calculate(), shader);
+                cSkyboxBlend, default_sampler, cubemap_sampler);
+  render_manager.render(mesh->get_vao(), cTransform.calculate(), shader);
   if (cTransparent and cTransparent->transparent) {
     RenderAPI::set_culling(true);
   }
   if (cSkybox) {
-    RenderAPI::set_depth_func(RenderAPI::DepthFunc::LessEqual);
+    RenderAPI::set_depth_func(RenderAPI::DepthFunc::Less);
   }
   if (cCollider and display_hitbox) {
     // TODO fix transparency so I can render this first
@@ -307,7 +316,7 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
   entt::entity fbo = registry.view<CFBO, CUUID>().front();
   if (fbo not_eq entt::null) {
     const CFBO& cfbo = registry.get<CFBO>(fbo);
-    const auto& default_FBO = render_manager.get_framebuffers().at(cfbo.id);
+    const auto& default_FBO = render_manager.get_framebuffers().at(cfbo.uuid);
     default_FBO->bind_to_draw();
     RenderAPI::set_depth_test(true);
   }
@@ -363,20 +372,21 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
           // adding textures from model to CTexture
           render_model(cModel, render_manager, cTransform, m_default_sampler);
         } else if (cShape) { // primitives
-          // TODO rethink with new model class and mesh class
-          // if (not cTexture and not cTextureAtlas) {
-          //   CName* cName = registry.try_get<CName>(e);
-          //   if (cName) {
-          //     APP_ASSERT(false, "no texture found for entity {} {}", cUUID.uuid, cName->id);
-          //   } else {
-          //     APP_ASSERT(false, "no texture found for entity {}", cUUID.uuid);
-          //   }
-          // }
+          // TODO this is right now rendering in demo the sky cube and flappy everything
+          if (not cTexture and not cTextureAtlas) {
+            CName* cName = registry.try_get<CName>(e);
+            if (cName) {
+              APP_ASSERT(false, "no texture found for entity {} {}", cUUID.uuid, cName->id);
+            } else {
+              APP_ASSERT(false, "no texture found for entity {}", cUUID.uuid);
+            }
+          }
 
-          // for (auto& mesh : cShape->meshes) {
-          //   render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cReflection, cSkybox, cSkyboxTexture,
-          //          cBlendTexture, mesh.get(), cTransform, cShader, cCollider, cTransparent, render_manager);
-          // }
+          for (auto& mesh : cShape->meshes) {
+            render(cTexture, cBlendTexture, cTextureAtlas, cColor, cBlendColor, cReflection, cSkybox, cSkyboxTexture,
+                   cBlendTexture, mesh.get(), cTransform, cShader, cCollider, cTransparent, render_manager,
+                   m_default_sampler, m_cubemap_sampler);
+          }
         } else {
           CName* cName = registry.try_get<CName>(e);
           if (cName) {
@@ -390,7 +400,7 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
 
   if (fbo not_eq entt::null) {
     CFBO& cfbo = registry.get<CFBO>(fbo);
-    const auto& default_FBO = render_manager.get_framebuffers().at(cfbo.id);
+    const auto& default_FBO = render_manager.get_framebuffers().at(cfbo.uuid);
     // go back to default framebuffer
     default_FBO->unbind();
     RenderAPI::clear_color();
@@ -401,12 +411,11 @@ void RenderSystem::update(entt::registry& registry, const Time& ts) {
     CShape& cShape = registry.get<CShape>(fbo);
     cfbo.setup_properties(cShader.handle);
     const auto& settings_manager = app.get_settings_manager();
+    std::optional<RenderManager::ImGuiParams> imgui_params;
     if (settings_manager.imgui_window) {
-      render_manager.render_inside_imgui(cShape.meshes.at(0)->get_vao(), cfbo.id, "scene", {0, 0}, {0, 0},
-                                         settings_manager.fit_to_window);
-    } else {
-      render_manager.render_framebuffer(cShape.meshes.at(0)->get_vao(), cShader.handle, cfbo.id);
+      imgui_params = {"scene", {0, 0}, {0, 0}, settings_manager.fit_to_window};
     }
+    render_manager.render_framebuffer(cShape.meshes.at(0)->get_vao(), cShader.handle, cfbo.uuid, imgui_params);
   }
 
   render_manager.end_scene();

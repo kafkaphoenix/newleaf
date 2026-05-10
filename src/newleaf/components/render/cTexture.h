@@ -42,6 +42,13 @@ struct CTexture {
       const auto& assets_manager = Application::get().get_assets_manager();
       handle = assets_manager.get<Texture>(uuid);
     }
+
+    void reload_texture(std::string_view new_uuid) {
+      ENGINE_ASSERT(!new_uuid.empty(), "new uuid for texture is empty");
+      ENGINE_ASSERT(new_uuid != uuid, "new uuid is the same as current uuid for texture");
+      uuid = std::string(new_uuid);
+      set_texture();
+    }
 };
 }
 

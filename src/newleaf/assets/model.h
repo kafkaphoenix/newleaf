@@ -27,7 +27,7 @@ struct SubMesh {
 class Model : public Asset {
   public:
     Model() = delete;
-    Model(std::filesystem::path fp, std::string shader_id);
+    Model(std::filesystem::path fp, AssetHandle<Shader> shader);
 
     const std::vector<SubMesh>& get_submeshes() const { return m_submeshes; }
     std::string_view get_path() const { return m_path; }
@@ -38,7 +38,7 @@ class Model : public Asset {
 
   private:
     std::string m_path;
-    std::string m_shader_id;
+    AssetHandle<Shader> m_shader;
     std::vector<SubMesh> m_submeshes;
     std::map<std::string, std::string, NumericComparator> m_info;
 

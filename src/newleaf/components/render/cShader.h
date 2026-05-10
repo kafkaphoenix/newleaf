@@ -8,6 +8,7 @@
 #include "../../application/application.h"
 #include "../../assets/asset_handle.h"
 #include "../../assets/assets_manager.h"
+#include "../../scene/scene_manager.h"
 #include "../../assets/shader.h"
 
 namespace nl {

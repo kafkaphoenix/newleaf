@@ -8,6 +8,8 @@
 #include "../../assets/asset_handle.h"
 #include "../../assets/texture.h"
 #include "../../logging/log_manager.h"
+#include "../../assets/assets_manager.h"
+#include "../../scene/scene_manager.h"
 #include "../../utils/map_json_serializer.h"
 #include "../../utils/numeric_comparator.h"
 
@@ -39,6 +41,13 @@ struct CTextureAtlas {
       ENGINE_ASSERT(!uuid.empty(), "uuid for texture atlas is empty");
       const auto& assets_manager = Application::get().get_assets_manager();
       handle = assets_manager.get<Texture>(uuid);
+    }
+
+    void reload_texture(std::string_view new_uuid) {
+      ENGINE_ASSERT(!new_uuid.empty(), "new uuid for texture atlas is empty");
+      ENGINE_ASSERT(new_uuid != uuid, "new uuid is the same as current uuid for texture atlas");
+      uuid = std::string(new_uuid);
+      set_texture();
     }
 };
 }
