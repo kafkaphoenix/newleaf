@@ -37,7 +37,7 @@ inline void draw_leaf_info(const std::map<std::string, std::string, NumericCompa
               (k.starts_with("vao_") and v not_eq "undefined")) {
             if (ImGui::TreeNode((k + scene_name).c_str(), k.c_str())) {
               // CModel, CShape, CChunk have a Mesh that has a vao and CTexture
-              auto rechildInfoData = json_to_map(value);
+              auto rechildInfoData = json_to_map(v);
               for (const auto& [kk, vv] : rechildInfoData) {
                 ImGui::BulletText("%s: %s", kk.c_str(), vv.c_str());
               }

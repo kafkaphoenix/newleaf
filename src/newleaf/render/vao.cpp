@@ -111,17 +111,6 @@ void VAO::set_index(std::unique_ptr<IBO>&& ibo) { // TODO: should not be binded 
   m_dirty = true;
 }
 
-std::string_view VAO::get_vertex_type() const {
-  if (m_vertex_type == VertexType::Model) {
-    return "model";
-  } else if (m_vertex_type == VertexType::Shape) {
-    return "shape";
-  } else if (m_vertex_type == VertexType::Terrain) {
-    return "terrain";
-  }
-  return "undefined";
-}
-
 const std::map<std::string, std::string, NumericComparator>& VAO::to_map() {
   if (not m_dirty) {
     return m_info;

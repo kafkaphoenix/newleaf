@@ -40,8 +40,7 @@ class Mesh {
   std::map<std::string, std::string, NumericComparator> to_map() const {
     std::map<std::string, std::string, NumericComparator> info;
     info["vao_0"] = vao ? get_vao_info() : "undefined";
-    info["vertex_type"] = vao ? vao->get_vertex_type() : "undefined";
-    
+
     return info;
   }
   
